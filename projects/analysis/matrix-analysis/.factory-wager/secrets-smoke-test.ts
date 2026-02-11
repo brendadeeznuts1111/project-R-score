@@ -146,7 +146,7 @@ class FactoryWagerSecretsSmokeTest {
       // Retrieve and display
       console.log(`📋 Retrieved secrets:`);
       for (const name of Object.keys(secrets)) {
-        const value = await Bun.secrets.get(this.serviceName, name);
+        const value = await Bun.secrets.get({ service: this.serviceName, name });
         const displayValue = name.includes("PASSWORD") || name.includes("SECRET") 
           ? `${value?.substring(0, 4)}...` 
           : value;
@@ -154,7 +154,7 @@ class FactoryWagerSecretsSmokeTest {
       }
 
       // Test secret deletion
-      await Bun.secrets.delete(this.serviceName, "TEST_KEY");
+      await Bun.secrets.delete({ service: this.serviceName, name: "TEST_KEY" });
       console.log(`✅ Test secret deleted`);
 
     } catch (error) {

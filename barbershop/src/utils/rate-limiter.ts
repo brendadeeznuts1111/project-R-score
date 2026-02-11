@@ -19,9 +19,9 @@ import { nanoseconds, redis } from 'bun';
 // RATE LIMIT STRATEGIES
 // ═══════════════════════════════════════════════════════════════════════════════
 
-type RateLimitStrategy = 'token_bucket' | 'sliding_window' | 'fixed_window';
+export type RateLimitStrategy = 'token_bucket' | 'sliding_window' | 'fixed_window';
 
-interface RateLimitConfig {
+export interface RateLimitConfig {
   strategy: RateLimitStrategy;
   maxRequests: number;      // Requests per window
   windowMs: number;         // Window size in ms
@@ -29,7 +29,7 @@ interface RateLimitConfig {
   keyPrefix?: string;       // Redis key prefix
 }
 
-interface RateLimitResult {
+export interface RateLimitResult {
   allowed: boolean;
   limit: number;
   remaining: number;
@@ -37,7 +37,7 @@ interface RateLimitResult {
   retryAfter?: number;      // Seconds to wait
 }
 
-interface RateLimitHeaders {
+export interface RateLimitHeaders {
   'X-RateLimit-Limit': string;
   'X-RateLimit-Remaining': string;
   'X-RateLimit-Reset': string;
@@ -353,6 +353,9 @@ export class MultiTierRateLimiter {
     return { ...result, tier: lastTier?.name || 'default' };
   }
 }
+
+// Backward-compatible name used by older imports.
+export class RateLimiter extends EliteRateLimiter {}
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // DEMO

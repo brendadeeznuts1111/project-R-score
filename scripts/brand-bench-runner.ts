@@ -2,9 +2,13 @@
 import { existsSync } from 'node:fs';
 import { mkdir, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
+import { cpus, totalmem, release } from 'node:os';
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 import { InstrumentedDomain } from './lib/instrumented-domain';
 import type { BrandBenchReport, DomainScenarioMetrics, MetricSummary } from './lib/brand-bench-types';
+import { createShutdown, type ShutdownState } from './lib/graceful-shutdown';
+
+let shutdown: ShutdownState | null = null;
 
 type RunnerOptions = {
   full360: boolean;
@@ -54,7 +58,7 @@ function parseArgs(argv: string[]): RunnerOptions {
   const full360 = argv.includes('--full360');
   const seedArg = argv.find(a => a.startsWith('--seeds='))?.slice('--seeds='.length) || '';
   const seeds = seedArg
-    ? seedArg.split(',').map(v => Number(v.trim())).filter(v => Number.isFinite(v) && v >= 0 && v <= 360)
+    ? seedArg.split(',').map(v => Number(v.trim())).filter(v => Number.isFinite(v) && v >= 0 && v <= 359)
     : defaultSeeds(full360);
 
   const iterations = parseIntArg('iterations', argv.find(a => a.startsWith('--iterations='))?.split('=')[1], isCi ? 1500 : 20000);
@@ -94,7 +98,9 @@ function metricFromSync(
   const samples: number[] = [];
 
   const startNs = Bun.nanoseconds();
+  let completed = 0;
   for (let i = 0; i < options.iterations; i += 1) {
+    if (shutdown?.requested) break;
     if (i % sampleEvery === 0) {
       const s = Bun.nanoseconds();
       fn(i);
@@ -103,15 +109,16 @@ function metricFromSync(
     } else {
       fn(i);
     }
+    completed = i + 1;
   }
   const endNs = Bun.nanoseconds();
 
   const totalMs = Number(endNs - startNs) / 1e6;
-  const opsPerSec = options.iterations / (totalMs / 1000);
+  const opsPerSec = completed / (totalMs / 1000);
   const sorted = samples.sort((a, b) => a - b);
 
   const metric: MetricSummary = {
-    iterations: options.iterations,
+    iterations: completed,
     warmup: options.warmup,
     totalMs: Number(totalMs.toFixed(3)),
     opsPerSec: Number(opsPerSec.toFixed(2)),
@@ -120,7 +127,8 @@ function metricFromSync(
   };
 
   if (!options.quiet) {
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)`);
+    const tag = shutdown?.requested ? ' [interrupted]' : '';
+    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
   }
   return metric;
 }
@@ -138,7 +146,9 @@ async function metricFromAsync(
   const samples: number[] = [];
 
   const startNs = Bun.nanoseconds();
+  let completed = 0;
   for (let i = 0; i < iterations; i += 1) {
+    if (shutdown?.requested) break;
     if (i % sampleEvery === 0) {
       const s = Bun.nanoseconds();
       await fn(i);
@@ -147,15 +157,16 @@ async function metricFromAsync(
     } else {
       await fn(i);
     }
+    completed = i + 1;
   }
   const endNs = Bun.nanoseconds();
 
   const totalMs = Number(endNs - startNs) / 1e6;
-  const opsPerSec = iterations / (totalMs / 1000);
+  const opsPerSec = completed / (totalMs / 1000);
   const sorted = samples.sort((a, b) => a - b);
 
   const metric: MetricSummary = {
-    iterations,
+    iterations: completed,
     warmup,
     totalMs: Number(totalMs.toFixed(3)),
     opsPerSec: Number(opsPerSec.toFixed(2)),
@@ -164,7 +175,8 @@ async function metricFromAsync(
   };
 
   if (!options.quiet) {
-    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)`);
+    const tag = shutdown?.requested ? ' [interrupted]' : '';
+    console.log(`${name}: ${metric.opsPerSec.toFixed(0)} ops/sec (p95=${metric.p95Ms.toFixed(4)}ms)${tag}`);
   }
   return metric;
 }
@@ -245,12 +257,19 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
     }),
   };
 
-  const domainInstrumentation: Record<string, DomainScenarioMetrics> = {
-    lowMemLowTension: await runDomainScenario('low-mem-low-tension', 128, 0.2, options),
-    highMemLowTension: await runDomainScenario('high-mem-low-tension', 512, 0.2, options),
-    lowMemHighTension: await runDomainScenario('low-mem-high-tension', 128, 0.9, options),
-    highMemHighTension: await runDomainScenario('high-mem-high-tension', 512, 0.9, options),
-  };
+  const domainInstrumentation: Record<string, DomainScenarioMetrics> = {};
+  const scenarios: [string, number, number][] = [
+    ['low-mem-low-tension', 128, 0.2],
+    ['high-mem-low-tension', 512, 0.2],
+    ['low-mem-high-tension', 128, 0.9],
+    ['high-mem-high-tension', 512, 0.9],
+  ];
+  const scenarioKeys = ['lowMemLowTension', 'highMemLowTension', 'lowMemHighTension', 'highMemHighTension'];
+  for (let s = 0; s < scenarios.length; s += 1) {
+    if (shutdown?.requested) break;
+    const [name, memory, tension] = scenarios[s]!;
+    domainInstrumentation[scenarioKeys[s]!] = await runDomainScenario(name, memory, tension, options);
+  }
 
   const violations: BrandBenchReport['violations'] = [];
   const opValues = Object.values(operations);
@@ -267,6 +286,19 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
     });
   }
 
+  if (shutdown?.requested) {
+    violations.push({
+      metric: 'runner',
+      kind: 'throughput_drop',
+      severity: 'warn',
+      baseline: options.iterations,
+      current: Object.values(operations)[0]?.iterations ?? 0,
+      deltaAbs: 0,
+      deltaPct: 0,
+      message: `Run interrupted by ${shutdown.signal ?? 'signal'}; partial results written.`,
+    });
+  }
+
   const status: BrandBenchReport['status'] = violations.some(v => v.severity === 'fail')
     ? 'fail'
     : violations.some(v => v.severity === 'warn')
@@ -278,9 +310,16 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   const report: BrandBenchReport = {
     runId: options.runId,
     createdAt: new Date().toISOString(),
+    runtime: "Bun",
     bunVersion: Bun.version,
+    bunRevision: Bun.revision,
+    gitCommit: Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim(),
     platform: process.platform,
     arch: process.arch,
+    osRelease: release(),
+    cpuModel: cpus()[0]?.model ?? "unknown",
+    cpuCores: cpus().length,
+    totalMemoryMB: Math.round(totalmem() / 1024 / 1024),
     seedSet: options.seeds,
     iterations: options.iterations,
     warmup: options.warmup,
@@ -300,7 +339,18 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
   await writeFile(latestPath, JSON.stringify(report, null, 2));
 
   if (!options.quiet) {
-    console.log(`brand-bench report: ${runPath}`);
+    // Print operations table
+    console.log('\n📊 Brand Bench Results:');
+    const opsTable = Object.entries(operations).map(([name, metric]) => ({
+      operation: name,
+      'ops/sec': metric.opsPerSec.toFixed(0),
+      p50: `${metric.p50Ms.toFixed(3)}ms`,
+      p95: `${metric.p95Ms.toFixed(3)}ms`,
+      rating: metric.opsPerSec > 2_000_000 ? '🔥 Fast' : metric.opsPerSec > 1_000_000 ? '⚡ Good' : '✅ OK'
+    }));
+    console.log(Bun.inspect.table(opsTable, ['operation', 'ops/sec', 'p50', 'p95', 'rating'], { colors: true }));
+    
+    console.log(`\nbrand-bench report: ${runPath}`);
     console.log(`brand-bench latest: ${latestPath}`);
   }
 
@@ -308,8 +358,10 @@ export async function runBrandBench(options: RunnerOptions): Promise<BrandBenchR
 }
 
 if (import.meta.main) {
+  shutdown = createShutdown({ name: 'brand-bench-runner', quiet: false });
   const options = parseArgs(process.argv.slice(2));
   const report = await runBrandBench(options);
+  shutdown.dispose();
   if (options.quiet) {
     console.log(JSON.stringify(report, null, 2));
   }

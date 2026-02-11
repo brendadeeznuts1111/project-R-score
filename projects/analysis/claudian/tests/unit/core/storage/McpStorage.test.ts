@@ -29,7 +29,7 @@ describe('McpStorage', () => {
     it('returns empty array when file does not exist', async () => {
       const adapter = createMockAdapter();
       const storage = new McpStorage(adapter);
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
       expect(servers).toEqual([]);
     });
 
@@ -53,7 +53,7 @@ describe('McpStorage', () => {
         '.claude/mcp.json': JSON.stringify(config),
       });
       const storage = new McpStorage(adapter);
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
 
       expect(servers).toHaveLength(1);
       expect(servers[0]).toMatchObject({
@@ -83,7 +83,7 @@ describe('McpStorage', () => {
         '.claude/mcp.json': JSON.stringify(config),
       });
       const storage = new McpStorage(adapter);
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
 
       expect(servers[0].disabledTools).toEqual(['valid', 'also_valid']);
     });
@@ -106,7 +106,7 @@ describe('McpStorage', () => {
         '.claude/mcp.json': JSON.stringify(config),
       });
       const storage = new McpStorage(adapter);
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
 
       expect(servers[0].disabledTools).toBeUndefined();
     });
@@ -117,7 +117,7 @@ describe('McpStorage', () => {
       });
       const storage = new McpStorage(adapter);
 
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
       expect(servers).toEqual([]);
     });
   });
@@ -233,7 +233,7 @@ describe('McpStorage', () => {
       ];
 
       await storage.save(original);
-      const loaded = await storage.YAML.parse();
+      const loaded = await storage['YAML.parse']();
 
       expect(loaded).toHaveLength(2);
       expect(loaded[0]).toMatchObject({

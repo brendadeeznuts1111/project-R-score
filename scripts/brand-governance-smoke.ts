@@ -1,5 +1,6 @@
 #!/usr/bin/env bun
 import { spawnSync } from 'node:child_process';
+import { createShutdown } from './lib/graceful-shutdown';
 
 type CmdResult = {
   cmd: string[];
@@ -24,18 +25,29 @@ function run(cmd: string[]): CmdResult {
 }
 
 async function main(): Promise<void> {
+  const shutdown = createShutdown({ name: 'brand-governance-smoke' });
   const strict = process.argv.slice(2).includes('--strict');
   const steps: CmdResult[] = [];
-  steps.push(run(['bun', 'run', 'decision:evidence:verify']));
-  steps.push(run(['bun', 'run', 'brand:bench:run', '--iterations=1200', '--warmup=120', '--scenario-iterations=3']));
-  steps.push(run(['bun', 'run', 'brand:bench:evaluate']));
+
+  const cmds: string[][] = [
+    ['bun', 'run', 'decision:evidence:verify'],
+    ['bun', 'run', 'brand:bench:run', '--iterations=1200', '--warmup=120', '--scenario-iterations=3'],
+    ['bun', 'run', 'brand:bench:evaluate'],
+  ];
   if (strict) {
-    steps.push(run(['bun', 'run', 'scripts/brand-bench-evaluate.ts', '--json', '--strict']));
+    cmds.push(['bun', 'run', 'scripts/brand-bench-evaluate.ts', '--json', '--strict']);
   }
 
+  for (const cmd of cmds) {
+    if (shutdown.requested) break;
+    steps.push(run(cmd));
+  }
+
+  shutdown.dispose();
   const summary = {
     strict,
-    ok: steps.every((step) => step.ok),
+    interrupted: shutdown.requested,
+    ok: !shutdown.requested && steps.every((step) => step.ok),
     steps: steps.map((step) => ({
       cmd: step.cmd.join(' '),
       ok: step.ok,

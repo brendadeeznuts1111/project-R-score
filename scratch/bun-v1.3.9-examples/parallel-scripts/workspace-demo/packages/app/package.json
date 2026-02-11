@@ -1,0 +1,9 @@
+{
+  "name": "app",
+  "version": "1.0.0",
+  "scripts": {
+    "build": "echo '[app] Building application...' && sleep 1 && echo '[app] Build complete'",
+    "test": "echo '[app] Running tests...' && sleep 1 && echo '[app] Tests passed'",
+    "lint": "echo '[app] Linting...' && sleep 0.5"
+  }
+}

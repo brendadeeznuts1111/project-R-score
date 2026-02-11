@@ -45,7 +45,7 @@ describe('InlineEditService', () => {
   let mockPlugin: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     resetMockMessages();
     mockPlugin = createMockPlugin();
     service = new InlineEditService(mockPlugin);
@@ -66,7 +66,7 @@ describe('InlineEditService', () => {
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     it('should block Read outside vault', async () => {

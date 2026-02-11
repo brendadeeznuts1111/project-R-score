@@ -174,7 +174,7 @@ describe('StreamController - Text Content', () => {
   let deps: StreamControllerDeps;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     jest.useFakeTimers();
     deps = createMockDeps();
     controller = new StreamController(deps);

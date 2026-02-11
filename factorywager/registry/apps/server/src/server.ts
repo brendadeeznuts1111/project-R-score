@@ -15,6 +15,7 @@ import { styled } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { RegistryAuth, AuthConfigs } from '@factorywager/registry-core/auth';
 import type { PackageManifest, PackageVersion, PublishRequest } from '@factorywager/registry-core/types';
+import { resolveR2InfraConfig } from '../../../../../lib/security/infra-secrets';
 
 export interface ServerOptions {
   port?: number;
@@ -545,15 +546,25 @@ export class NPMRegistryServer {
 
 // CLI interface
 if (import.meta.main) {
+  const infraR2 = await resolveR2InfraConfig({
+    services: [
+      Bun.env.REGISTRY_SECRETS_SERVICE || 'com.factorywager.registry',
+      Bun.env.FW_R2_SECRETS_SERVICE || 'com.factorywager.r2',
+      Bun.env.FW_INFRA_SECRETS_SERVICE || 'com.factorywager.infra',
+      'default',
+    ],
+    bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+  });
+
   const server = new NPMRegistryServer({
     port: parseInt(process.env.REGISTRY_PORT || '4873'),
     auth: (process.env.REGISTRY_AUTH as any) || 'none',
     authSecret: process.env.REGISTRY_SECRET,
     storage: {
-      accountId: process.env.R2_ACCOUNT_ID,
-      accessKeyId: process.env.R2_ACCESS_KEY_ID,
-      secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-      bucketName: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+      accountId: infraR2.accountId,
+      accessKeyId: infraR2.accessKeyId,
+      secretAccessKey: infraR2.secretAccessKey,
+      bucketName: infraR2.bucketName,
     },
     cdnUrl: process.env.REGISTRY_CDN_URL,
   });

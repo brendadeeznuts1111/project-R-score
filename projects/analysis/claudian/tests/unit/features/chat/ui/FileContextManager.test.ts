@@ -212,7 +212,7 @@ describe('FileContextManager', () => {
   let inputEl: HTMLTextAreaElement;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockVaultPath = '/vault';
     mockScanPaths.mockReturnValue([]);
     containerEl = createMockElement();

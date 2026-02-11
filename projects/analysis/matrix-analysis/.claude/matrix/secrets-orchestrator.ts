@@ -152,7 +152,10 @@ export class SecureOrchestrator {
 
 async function workerMain() {
 	// ✅ Secrets available WITHOUT explicit passing from parent
-	const r2Key = Bun.secrets.get("R2_ACCESS_KEY_ID");
+	const r2Key = await Bun.secrets.get({
+		service: "com.factorywager.matrix",
+		name: "R2_ACCESS_KEY_ID",
+	});
 
 	if (!r2Key) {
 		console.error("❌ SECURITY: Worker cannot access secrets");

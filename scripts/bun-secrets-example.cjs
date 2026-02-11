@@ -10,13 +10,14 @@ console.log('🔐 Setting up Bun secrets...');
 
 // Method 1: Using Bun.secrets API (Recommended)
 if (typeof Bun !== 'undefined') {
-    Bun.secrets.set("R2_SECRET_KEY", "my-secret-key");
-    Bun.secrets.set("R2_ACCOUNT_ID", "your-account-id");
-    Bun.secrets.set("R2_ACCESS_KEY_ID", "your-access-key");
-    Bun.secrets.set("R2_SECRET_ACCESS_KEY", "your-secret-access-key");
-    Bun.secrets.set("CLOUDFLARE_API_TOKEN", "your-cloudflare-token");
-    Bun.secrets.set("FACTORY_WAGER_TOKEN", "your-factory-wager-token");
-    Bun.secrets.set("GITHUB_TOKEN", "your-github-token");
+    const demoService = "com.factorywager.demo";
+    Bun.secrets.set({ service: demoService, name: "R2_SECRET_KEY", value: "my-secret-key" });
+    Bun.secrets.set({ service: demoService, name: "R2_ACCOUNT_ID", value: "your-account-id" });
+    Bun.secrets.set({ service: demoService, name: "R2_ACCESS_KEY_ID", value: "your-access-key" });
+    Bun.secrets.set({ service: demoService, name: "R2_SECRET_ACCESS_KEY", value: "your-secret-access-key" });
+    Bun.secrets.set({ service: demoService, name: "CLOUDFLARE_API_TOKEN", value: "your-cloudflare-token" });
+    Bun.secrets.set({ service: demoService, name: "FACTORY_WAGER_TOKEN", value: "your-factory-wager-token" });
+    Bun.secrets.set({ service: demoService, name: "GITHUB_TOKEN", value: "your-github-token" });
     
     console.log('✅ Secrets set in Bun.secrets');
 } else {

@@ -10,7 +10,7 @@ import {
   Tier1380CookieSecurity, 
   SecureVariantManager,
   type SecurityReport 
-} from '../lib/cookie-security-v3.26';
+} from '../lib/cookie-security';
 
 describe('Tier1380CookieSecurity', () => {
   let security: Tier1380CookieSecurity;

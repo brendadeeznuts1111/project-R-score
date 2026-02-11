@@ -767,7 +767,7 @@ describe('Tab - Title', () => {
 
 describe('Tab - UI Initialization', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('initializeTabUI', () => {
@@ -925,7 +925,7 @@ describe('Tab - UI Initialization', () => {
 
 describe('Tab - Controller Initialization', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('initializeTabControllers', () => {
@@ -1012,7 +1012,7 @@ describe('Tab - Controller Initialization', () => {
 
 describe('Tab - Event Handler Behavior', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('wireTabInputEvents - keydown handlers', () => {
@@ -1289,7 +1289,7 @@ describe('Tab - Event Handler Behavior', () => {
 
 describe('Tab - ChatState Callback Integration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   it('should invoke onStreamingChanged callback when streaming state changes', () => {
@@ -1328,7 +1328,7 @@ describe('Tab - ChatState Callback Integration', () => {
 
 describe('Tab - UI Callback Wiring', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('initializeTabUI callbacks', () => {
@@ -1544,7 +1544,7 @@ describe('Tab - UI Callback Wiring', () => {
 
 describe('Tab - Service Initialization Error Handling', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   it('should skip re-initialization if already initialized', async () => {
@@ -1597,7 +1597,7 @@ describe('Tab - Service Initialization Error Handling', () => {
 
 describe('Tab - Controller Configuration', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('InputController configuration', () => {

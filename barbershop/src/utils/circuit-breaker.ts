@@ -13,7 +13,7 @@
  */
 
 import { nanoseconds } from 'bun';
-import { metrics } from '../core/barber-elite-metrics';
+import { metrics } from '../core/metrics';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // CIRCUIT BREAKER STATES

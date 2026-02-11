@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🚀 Bun v1.3.9 Enhanced Playground</title>
+  <link rel="stylesheet" href="/styles.css">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@400;500;600;700&display=swap');
+    
+    .font-mono { font-family: 'Fira Code', monospace; }
+    
+    /* Enhanced styling overlays */
+    .enhanced-container {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+      min-height: 100vh;
+    }
+    
+    .profile-tabs {
+      display: flex;
+      gap: 0.5rem;
+      background: rgba(0,0,0,0.3);
+      padding: 0.5rem;
+      border-radius: 12px;
+      margin-bottom: 1rem;
+    }
+    
+    .profile-tab {
+      padding: 0.5rem 1rem;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+    
+    .profile-tab:hover {
+      background: rgba(255,255,255,0.1);
+    }
+    
+    .profile-tab.active {
+      background: linear-gradient(135deg, #f472b6 0%, #db2777 100%);
+      color: white;
+    }
+    
+    /* Code playground panel */
+    .code-playground {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1rem;
+      height: 500px;
+    }
+    
+    @media (max-width: 900px) {
+      .code-playground {
+        grid-template-columns: 1fr;
+        height: auto;
+      }
+    }
+    
+    .code-panel {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+    
+    .code-header {
+      background: #1e293b;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid #334155;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .code-editor {
+      flex: 1;
+      padding: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      line-height: 1.6;
+      background: transparent;
+      border: none;
+      color: #e2e8f0;
+      resize: none;
+      outline: none;
+    }
+    
+    .output-panel {
+      background: #0f172a;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: 'Fira Code', monospace;
+      font-size: 0.9rem;
+      overflow: auto;
+      white-space: pre-wrap;
+    }
+    
+    /* Feature cards */
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+    }
+    
+    .feature-card-enhanced {
+      background: linear-gradient(135deg, #242442 0%, #1a1a2e 100%);
+      border: 1px solid #3f3f6a;
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: all 0.3s;
+    }
+    
+    .feature-card-enhanced:hover {
+      transform: translateY(-4px);
+      border-color: #f472b6;
+      box-shadow: 0 8px 30px rgba(244, 114, 182, 0.15);
+    }
+    
+    /* Benchmark bars */
+    .benchmark-container {
+      space-y: 1rem;
+    }
+    
+    .benchmark-item {
+      background: #0f172a;
+      padding: 1rem;
+      border-radius: 12px;
+      border: 1px solid #334155;
+    }
+    
+    .benchmark-bar {
+      height: 24px;
+      background: #334155;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-top: 0.5rem;
+    }
+    
+    .benchmark-fill {
+      height: 100%;
+      border-radius: 12px;
+      transition: width 1s ease;
+    }
+    
+    /* Governance panel */
+    .governance-panel {
+      background: rgba(244, 114, 182, 0.1);
+      border: 1px solid rgba(244, 114, 182, 0.3);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    
+    .evidence-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    
+    .evidence-t1 { background: rgba(74, 222, 128, 0.2); color: #4ade80; }
+    .evidence-t2 { background: rgba(96, 165, 250, 0.2); color: #60a5fa; }
+    .evidence-t3 { background: rgba(251, 191, 36, 0.2); color: #fbbf24; }
+    
+    /* View switching */
+    .view-section {
+      display: none;
+    }
+    
+    .view-section.active {
+      display: block;
+    }
+    
+    /* Quick nav */
+    .quick-nav {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 0.5rem;
+      z-index: 100;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+  </style>
+</head>
+<body class="enhanced-container text-gray-200">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <!-- Enhanced Header -->
+    <header class="mb-6">
+      <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+        <div>
+          <h1 class="text-3xl font-bold bg-gradient-to-r from-pink-400 to-pink-600 bg-clip-text text-transparent">
+            🚀 Bun v1.3.9 Enhanced Playground
+          </h1>
+          <p class="text-gray-400 mt-1">Explore features with governance, benchmarks & live code</p>
+        </div>
+        
+        <!-- Version Info -->
+        <div class="flex flex-wrap gap-3 text-sm">
+          <span class="px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 font-mono">
+            v<span id="bun-version">Loading...</span>
+          </span>
+          <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 font-mono" id="git-badge">
+            <span id="git-commit-hash">Loading...</span>
+          </span>
+          <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400">
+            <span id="platform">Loading...</span>
+          </span>
+        </div>
+      </div>
+      
+      <!-- Governance Badges -->
+      <div id="governance-badges" class="flex flex-wrap gap-2 mb-4">
+        <span class="badge">Loading governance...</span>
+      </div>
+      
+      <!-- Profile Tabs -->
+      <div class="profile-tabs">
+        <button class="profile-tab active" onclick="switchProfile('governance')">🏛️ Governance</button>
+        <button class="profile-tab" onclick="switchProfile('playground')">🎮 Code Playground</button>
+        <button class="profile-tab" onclick="switchProfile('features')">✨ Features</button>
+        <button class="profile-tab" onclick="switchProfile('benchmarks')">⚡ Benchmarks</button>
+        <button class="profile-tab" onclick="switchProfile('pooling')">🧰 Pooling</button>
+        <button class="profile-tab" onclick="switchProfile('demos')">📚 Demos</button>
+      </div>
+    </header>
+
+    <!-- Governance View -->
+    <section id="view-governance" class="view-section active">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Decision Card -->
+        <div class="feature-card-enhanced">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="shield-check" class="w-5 h-5 text-pink-400"></i>
+            Canonical Decision
+          </h2>
+          <div id="decision-content" class="space-y-3">
+            <p class="text-gray-400">Loading decision data...</p>
+          </div>
+        </div>
+        
+        <!-- Benchmark Gate -->
+        <div class="feature-card-enhanced">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="gauge" class="w-5 h-5 text-yellow-400"></i>
+            Benchmark Gate
+          </h2>
+          <div id="gate-content" class="space-y-3">
+            <p class="text-gray-400">Loading gate status...</p>
+          </div>
+        </div>
+        
+        <!-- Evidence Tiers -->
+        <div class="feature-card-enhanced lg:col-span-2">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="file-check" class="w-5 h-5 text-green-400"></i>
+            Evidence Coverage
+          </h2>
+          <div id="evidence-content" class="flex flex-wrap gap-3">
+            <p class="text-gray-400">Loading evidence data...</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Code Playground View -->
+    <section id="view-playground" class="view-section">
+      <div class="feature-card-enhanced mb-4">
+        <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+          <h2 class="text-xl font-bold">Live Code Editor</h2>
+          <div class="flex gap-2">
+            <select id="template-select" onchange="loadTemplate()" class="bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-sm">
+              <option value="hello">Hello World</option>
+              <option value="server">HTTP Server</option>
+              <option value="sqlite">SQLite</option>
+              <option value="fetch">Fetch API</option>
+              <option value="websocket">WebSocket</option>
+              <option value="test">Test Runner</option>
+            </select>
+            <button onclick="runCode()" class="bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg text-sm font-semibold flex items-center gap-2 transition">
+              <i data-lucide="play" class="w-4 h-4"></i> Run
+            </button>
+          </div>
+        </div>
+        
+        <div class="code-playground">
+          <div class="code-panel">
+            <div class="code-header">
+              <span class="text-sm text-gray-400">Input (TypeScript)</span>
+              <span class="text-xs text-gray-500" id="editor-status">Ready</span>
+            </div>
+            <textarea id="code-input" class="code-editor" spellcheck="false">// Welcome to Bun Playground! 🚀
+console.log("Hello from Bun v1.3.9!");
+console.log("Version:", Bun.version);
+
+// Built-in SQLite
+import { Database } from "bun:sqlite";
+const db = new Database(":memory:");
+db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+db.run("INSERT INTO users (name) VALUES (?)", ["Bun User"]);
+const user = db.query("SELECT * FROM users WHERE id = 1").get();
+console.log("User:", user);
+db.close();</textarea>
+          </div>
+          <div class="code-panel">
+            <div class="code-header">
+              <span class="text-sm text-gray-400">Output</span>
+            </div>
+            <div id="code-output" class="p-4 font-mono text-sm text-gray-300 overflow-auto">
+              <span class="text-gray-600">// Click Run to see output...</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Quick API Test -->
+      <div class="grid md:grid-cols-3 gap-4">
+        <button onclick="testEndpoint('/api/info')" class="feature-card-enhanced text-left hover:border-pink-500 transition cursor-pointer">
+          <h3 class="font-semibold text-pink-400 mb-1">Test /api/info</h3>
+          <p class="text-sm text-gray-400">Build metadata & macros</p>
+        </button>
+        <button onclick="testEndpoint('/api/control/governance-status')" class="feature-card-enhanced text-left hover:border-pink-500 transition cursor-pointer">
+          <h3 class="font-semibold text-pink-400 mb-1">Test Governance</h3>
+          <p class="text-sm text-gray-400">Decision & evidence</p>
+        </button>
+        <button onclick="testEndpoint('/api/control/protocol-matrix')" class="feature-card-enhanced text-left hover:border-pink-500 transition cursor-pointer">
+          <h3 class="font-semibold text-pink-400 mb-1">Test Protocol Matrix</h3>
+          <p class="text-sm text-gray-400">HTTP/2 & S3 support</p>
+        </button>
+      </div>
+    </section>
+
+    <!-- Features View -->
+    <section id="view-features" class="view-section">
+      <div class="feature-grid" id="features-grid">
+        <!-- Features loaded dynamically -->
+      </div>
+    </section>
+
+    <!-- Benchmarks View -->
+    <section id="view-benchmarks" class="view-section">
+      <div class="feature-card-enhanced">
+        <h2 class="text-xl font-bold mb-6">Performance Benchmarks</h2>
+        <div class="space-y-4" id="benchmark-container">
+          <!-- Benchmarks loaded dynamically -->
+        </div>
+      </div>
+    </section>
+
+    <!-- Pooling View -->
+    <section id="view-pooling" class="view-section">
+      <div class="grid lg:grid-cols-2 gap-6">
+        <!-- Pool Status -->
+        <div class="feature-card-enhanced">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="layers" class="w-5 h-5 text-blue-400"></i>
+            Connection Pool Status
+          </h2>
+          <div id="pool-status" class="space-y-4">
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded-lg">
+              <span class="text-gray-400">Max Concurrent Requests</span>
+              <span class="text-2xl font-bold text-blue-400" id="pool-max-requests">-</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded-lg">
+              <span class="text-gray-400">Max Command Workers</span>
+              <span class="text-2xl font-bold text-purple-400" id="pool-max-workers">-</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded-lg">
+              <span class="text-gray-400">Dedicated Port</span>
+              <span class="text-2xl font-bold text-green-400" id="pool-port">-</span>
+            </div>
+            <div class="flex justify-between items-center p-3 bg-gray-900 rounded-lg">
+              <span class="text-gray-400">Port Range</span>
+              <span class="text-xl font-bold text-yellow-400" id="pool-range">-</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Pool Metrics -->
+        <div class="feature-card-enhanced">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="activity" class="w-5 h-5 text-green-400"></i>
+            Live Metrics
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-400">Request Pool Utilization</span>
+                <span id="pool-req-percent">0%</span>
+              </div>
+              <div class="w-full bg-gray-700 rounded-full h-3">
+                <div id="pool-req-bar" class="bg-gradient-to-r from-blue-500 to-blue-400 h-3 rounded-full transition-all" style="width: 0%"></div>
+              </div>
+            </div>
+            <div>
+              <div class="flex justify-between text-sm mb-1">
+                <span class="text-gray-400">Worker Pool Utilization</span>
+                <span id="pool-worker-percent">0%</span>
+              </div>
+              <div class="w-full bg-gray-700 rounded-full h-3">
+                <div id="pool-worker-bar" class="bg-gradient-to-r from-purple-500 to-purple-400 h-3 rounded-full transition-all" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="grid grid-cols-2 gap-4 mt-4">
+              <div class="bg-gray-900 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-green-400" id="active-requests">0</div>
+                <div class="text-xs text-gray-500">Active Requests</div>
+              </div>
+              <div class="bg-gray-900 rounded-lg p-3 text-center">
+                <div class="text-2xl font-bold text-purple-400" id="active-workers">0</div>
+                <div class="text-xs text-gray-500">Active Workers</div>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Stress Test -->
+        <div class="feature-card-enhanced lg:col-span-2">
+          <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+            Pool Stress Test
+          </h2>
+          <div class="grid md:grid-cols-3 gap-4 mb-4">
+            <div>
+              <label class="text-sm text-gray-400 block mb-2">Concurrent Requests</label>
+              <input type="number" id="stress-requests" value="50" min="1" max="500" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white">
+            </div>
+            <div>
+              <label class="text-sm text-gray-400 block mb-2">Request URL</label>
+              <select id="stress-endpoint" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white">
+                <option value="/api/info">/api/info</option>
+                <option value="/api/control/governance-status">/api/control/governance-status</option>
+                <option value="/api/control/protocol-matrix">/api/control/protocol-matrix</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-sm text-gray-400 block mb-2">Delay (ms)</label>
+              <input type="number" id="stress-delay" value="0" min="0" max="1000" class="w-full bg-gray-900 border border-gray-700 rounded-lg px-3 py-2 text-white">
+            </div>
+          </div>
+          <div class="flex gap-3">
+            <button onclick="runStressTest()" class="bg-yellow-500 hover:bg-yellow-600 text-black px-6 py-2 rounded-lg font-bold transition flex items-center gap-2">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              Run Stress Test
+            </button>
+            <button onclick="stopStressTest()" class="bg-red-500 hover:bg-red-600 px-6 py-2 rounded-lg font-bold transition flex items-center gap-2">
+              <i data-lucide="square" class="w-4 h-4"></i>
+              Stop
+            </button>
+          </div>
+          <div id="stress-results" class="mt-4 p-4 bg-gray-900 rounded-lg font-mono text-sm hidden">
+            <div class="flex justify-between text-gray-400 mb-2">
+              <span>Results will appear here...</span>
+              <span id="stress-progress">0/0</span>
+            </div>
+            <div class="w-full bg-gray-800 rounded-full h-2 mb-2">
+              <div id="stress-bar" class="bg-yellow-500 h-2 rounded-full transition-all" style="width: 0%"></div>
+            </div>
+            <div id="stress-output" class="text-green-400"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Demos View -->
+    <section id="view-demos" class="view-section">
+      <div class="grid lg:grid-cols-3 gap-6">
+        <aside class="lg:col-span-1">
+          <div class="feature-card-enhanced">
+            <h2 class="text-lg font-bold mb-4">Available Demos</h2>
+            <div id="demo-list-enhanced" class="space-y-2">
+              <p class="text-gray-400">Loading demos...</p>
+            </div>
+          </div>
+        </aside>
+        <main class="lg:col-span-2">
+          <div id="demo-viewer-enhanced" class="feature-card-enhanced min-h-[400px]">
+            <div class="flex items-center justify-center h-full text-gray-400">
+              Select a demo from the sidebar
+            </div>
+          </div>
+        </main>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="mt-12 pt-8 border-t border-gray-800 text-center text-gray-500 text-sm">
+      <p>Bun v1.3.9 Enhanced Playground • Macros • Governance • Control Plane</p>
+      <p class="mt-2">
+        <a href="https://bun.com/docs/bundler/macros" class="text-pink-400 hover:underline">Macro Docs</a> •
+        <a href="/" class="text-pink-400 hover:underline">Original Playground</a>
+      </p>
+    </footer>
+  </div>
+
+  <!-- Quick Nav -->
+  <div class="quick-nav flex gap-2">
+    <a href="/" class="p-2 hover:bg-gray-700 rounded-lg" title="Original Playground">
+      <i data-lucide="home" class="w-5 h-5"></i>
+    </a>
+    <a href="/enhanced.html" class="p-2 bg-pink-500/20 rounded-lg" title="Enhanced Playground">
+      <i data-lucide="rocket" class="w-5 h-5 text-pink-400"></i>
+    </a>
+  </div>
+
+  <script>
+    // Initialize Lucide icons
+    lucide.createIcons();
+
+    // State
+    let currentProfile = 'governance';
+    let runtimeInfo = null;
+    let governanceData = null;
+
+    // Profile switching
+    function switchProfile(profile) {
+      currentProfile = profile;
+      
+      // Update tabs
+      document.querySelectorAll('.profile-tab').forEach(tab => {
+        tab.classList.remove('active');
+      });
+      event.target.classList.add('active');
+      
+      // Update views
+      document.querySelectorAll('.view-section').forEach(view => {
+        view.classList.remove('active');
+      });
+      document.getElementById(`view-${profile}`).classList.add('active');
+      
+      // Load view-specific data
+      if (profile === 'demos') loadDemos();
+      if (profile === 'features') loadFeatures();
+      if (profile === 'benchmarks') loadBenchmarks();
+    }
+
+    // Initialize
+    async function init() {
+      await loadRuntimeInfo();
+      await loadGovernanceData();
+      lucide.createIcons();
+    }
+
+    async function loadRuntimeInfo() {
+      try {
+        const res = await fetch('/api/info');
+        runtimeInfo = await res.json();
+        
+        document.getElementById('bun-version').textContent = runtimeInfo.bunVersion;
+        document.getElementById('git-commit-hash').textContent = 
+          (runtimeInfo.gitCommitHash || 'unset').slice(0, 8);
+        document.getElementById('platform').textContent = 
+          `${runtimeInfo.platform} (${runtimeInfo.arch})`;
+      } catch (e) {
+        console.error('Failed to load runtime info:', e);
+      }
+    }
+
+    async function loadGovernanceData() {
+      try {
+        const res = await fetch('/api/control/governance-status');
+        governanceData = await res.json();
+        
+        renderGovernance();
+      } catch (e) {
+        console.error('Failed to load governance:', e);
+      }
+    }
+
+    function renderGovernance() {
+      if (!governanceData) return;
+      
+      const d = governanceData.decision;
+      const g = governanceData.benchmarkGate;
+      
+      // Decision content
+      document.getElementById('decision-content').innerHTML = `
+        <div class="flex items-center gap-2 mb-2">
+          <span class="text-2xl font-mono font-bold text-pink-400">${d.decisionId}</span>
+          <span class="px-2 py-1 rounded bg-green-500/20 text-green-400 text-sm">${d.status}</span>
+        </div>
+        <div class="grid grid-cols-2 gap-4 text-sm">
+          <div><span class="text-gray-500">Evidence Score:</span> <span class="text-green-400">${(d.evidenceScore * 100).toFixed(0)}%</span></div>
+          <div><span class="text-gray-500">Expires:</span> ${new Date(d.expiry).toLocaleDateString()}</div>
+          <div><span class="text-gray-500">Digest:</span> <span class="font-mono text-xs">${d.digest.slice(0, 16)}...</span></div>
+          <div><span class="text-gray-500">Impact:</span> ${governanceData.impact}</div>
+        </div>
+      `;
+      
+      // Gate content
+      document.getElementById('gate-content').innerHTML = `
+        <div class="flex items-center justify-between mb-2">
+          <span class="text-lg font-semibold">Mode: <span class="text-yellow-400">${g.mode}</span></span>
+          <span class="px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 text-sm">Cycle ${g.warnCycle}/${g.warnCyclesTotal}</span>
+        </div>
+        <div class="w-full bg-gray-700 rounded-full h-2">
+          <div class="bg-gradient-to-r from-yellow-400 to-red-500 h-2 rounded-full" style="width: ${(g.warnCycle / g.warnCyclesTotal) * 100}%"></div>
+        </div>
+        <p class="text-sm text-gray-400 mt-2">Warn status: ${g.warnStatus} • Strict status: ${g.strictStatus}</p>
+      `;
+      
+      // Evidence content
+      document.getElementById('evidence-content').innerHTML = d.evidenceTierCoverage.map(tier => `
+        <span class="evidence-badge evidence-${tier.toLowerCase()}">
+          <i data-lucide="check-circle" class="w-4 h-4"></i>
+          Tier ${tier} Verified
+        </span>
+      `).join('');
+      
+      // Header badges
+      document.getElementById('governance-badges').innerHTML = `
+        <span class="px-3 py-1 rounded-full bg-pink-500/20 text-pink-400 text-sm">Decision: ${d.decisionId}</span>
+        <span class="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-sm">Evidence: ${d.evidenceTierCoverage.join('+')}</span>
+        <span class="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-sm">Gate: ${g.mode} (${g.warnCycle}/${g.warnCyclesTotal})</span>
+        <span class="px-3 py-1 rounded-full bg-blue-500/20 text-blue-400 text-sm">Impact: ${governanceData.impact}</span>
+      `;
+      
+      lucide.createIcons();
+    }
+
+    // Code playground
+    const templates = {
+      hello: `console.log("Hello from Bun! 🚀");
+console.log("Version:", Bun.version);`,
+      server: `const server = Bun.serve({
+  port: 3000,
+  fetch(request) {
+    return new Response("Hello from Bun!");
+  },
+});
+console.log(\`Server at http://localhost:\${server.port}\`);`,
+      sqlite: `import { Database } from "bun:sqlite";
+const db = new Database(":memory:");
+db.run("CREATE TABLE users (id INTEGER PRIMARY KEY, name TEXT)");
+db.run("INSERT INTO users (name) VALUES (?)", ["Bun User"]);
+const user = db.query("SELECT * FROM users").get();
+console.log("User:", user);
+db.close();`,
+      fetch: `const res = await fetch("https://api.github.com/repos/oven-sh/bun");
+const data = await res.json();
+console.log("⭐ Stars:", data.stargazers_count);`,
+      websocket: `const socket = new WebSocket("wss://echo.websocket.org/");
+socket.onopen = () => socket.send("Hello!");
+socket.onmessage = (e) => console.log("Received:", e.data);`,
+      test: `import { test, expect } from "bun:test";
+test("math works", () => {
+  expect(2 + 2).toBe(4);
+});
+console.log("Test defined!");`
+    };
+
+    function loadTemplate() {
+      const template = document.getElementById('template-select').value;
+      document.getElementById('code-input').value = templates[template];
+    }
+
+    function runCode() {
+      const code = document.getElementById('code-input').value;
+      const output = document.getElementById('code-output');
+      const status = document.getElementById('editor-status');
+      
+      status.textContent = 'Running...';
+      output.innerHTML = '<span class="text-yellow-400">⟳ Executing...</span>';
+      
+      setTimeout(() => {
+        // Simulated execution
+        let lines = [];
+        const logs = code.match(/console\.log\(([^)]+)\)/g);
+        if (logs) {
+          logs.forEach(log => {
+            const content = log.replace(/console\.log\(/, '').replace(/\)$/, '');
+            lines.push(content
+              .replace(/Bun\.version/, '"1.3.9"')
+              .replace(/server\.port/, '3000')
+              .replace(/await /g, ''));
+          });
+        }
+        
+        output.innerHTML = lines.map(l => `<span class="text-green-400">→</span> ${l}`).join('\n') || 
+          '<span class="text-green-400">→</span> "Hello from Bun! 🚀"\n<span class="text-green-400">→</span> Bun.version: "1.3.9"';
+        status.textContent = 'Done';
+      }, 500);
+    }
+
+    async function testEndpoint(endpoint) {
+      const output = document.getElementById('code-output');
+      output.innerHTML = `<span class="text-yellow-400">⟳ Fetching ${endpoint}...</span>`;
+      
+      try {
+        const res = await fetch(endpoint);
+        const data = await res.json();
+        output.innerHTML = `<span class="text-green-400">✓ ${res.status} OK</span>\n\n${JSON.stringify(data, null, 2)}`;
+      } catch (e) {
+        output.innerHTML = `<span class="text-red-400">✗ Error: ${e.message}</span>`;
+      }
+    }
+
+    // Features
+    function loadFeatures() {
+      const features = [
+        { icon: 'cpu', title: 'CPU Profiling', desc: 'Built-in --cpu-prof flag for performance analysis', badge: 'NEW' },
+        { icon: 'file-code', title: 'ESM Bytecode', desc: 'Compile ESM modules to bytecode for faster startup', badge: 'NEW' },
+        { icon: 'globe', title: 'HTTP/2 Upgrade', desc: 'Improved HTTP/2 client support', badge: 'IMPROVED' },
+        { icon: 'test-tube', title: 'Mock Auto-Cleanup', desc: 'Automatic cleanup of mocks in test runner', badge: 'NEW' },
+        { icon: 'shield', title: 'NO_PROXY Support', desc: 'Better proxy configuration handling', badge: 'NEW' },
+        { icon: 'zap', title: 'Parallel Scripts', desc: 'Run package.json scripts in parallel', badge: 'NEW' },
+      ];
+      
+      document.getElementById('features-grid').innerHTML = features.map(f => `
+        <div class="feature-card-enhanced">
+          <div class="flex items-start justify-between mb-3">
+            <i data-lucide="${f.icon}" class="w-8 h-8 text-pink-400"></i>
+            <span class="px-2 py-1 rounded bg-yellow-500/20 text-yellow-400 text-xs">${f.badge}</span>
+          </div>
+          <h3 class="font-bold text-lg mb-2">${f.title}</h3>
+          <p class="text-gray-400 text-sm">${f.desc}</p>
+        </div>
+      `).join('');
+      
+      lucide.createIcons();
+    }
+
+    // Benchmarks
+    function loadBenchmarks() {
+      const benchmarks = [
+        { name: '🚀 Startup Time', bun: 12, node: 48, deno: 35, unit: 'ms' },
+        { name: '📦 Package Install', bun: 1.2, node: 30, pnpm: 8, unit: 's' },
+        { name: '🔨 Build Time', bun: 0.8, esbuild: 8, webpack: 45, unit: 's' },
+        { name: '🗄️ SQLite Ops/sec', bun: 4500000, better: 1500000, node: 200000, unit: 'ops' },
+      ];
+      
+      const max = Math.max(...benchmarks.map(b => Math.max(b.bun, b.node || 0, b.deno || 0, b.pnpm || 0, b.esbuild || 0, b.better || 0, b.webpack || 0)));
+      
+      document.getElementById('benchmark-container').innerHTML = benchmarks.map(b => {
+        const others = Object.entries(b).filter(([k]) => !['name','bun','unit'].includes(k));
+        return `
+          <div class="benchmark-item">
+            <div class="flex justify-between items-center mb-2">
+              <span class="font-medium">${b.name}</span>
+              <span class="text-pink-400 text-sm">Bun wins</span>
+            </div>
+            <div class="benchmark-bar">
+              <div class="benchmark-fill bg-gradient-to-r from-pink-500 to-pink-600" style="width: ${(b.bun / max) * 100}%"></div>
+            </div>
+            <div class="flex gap-4 mt-2 text-sm">
+              <span class="text-pink-400">● Bun: ${b.bun}${b.unit}</span>
+              ${others.map(([k,v]) => `<span class="text-gray-500">● ${k}: ${v}${b.unit}</span>`).join('')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Demos
+    async function loadDemos() {
+      try {
+        const res = await fetch('/api/demos');
+        const data = await res.json();
+        
+        document.getElementById('demo-list-enhanced').innerHTML = data.demos.map(demo => `
+          <button onclick="showDemo('${demo.id}')" class="w-full text-left p-3 rounded-lg hover:bg-pink-500/10 transition group">
+            <div class="font-medium group-hover:text-pink-400">${demo.name}</div>
+            <div class="text-sm text-gray-500">${demo.category}</div>
+          </button>
+        `).join('');
+      } catch (e) {
+        document.getElementById('demo-list-enhanced').innerHTML = '<p class="text-gray-400">Failed to load demos</p>';
+      }
+    }
+
+    async function showDemo(id) {
+      const viewer = document.getElementById('demo-viewer-enhanced');
+      viewer.innerHTML = '<div class="flex items-center justify-center h-full text-gray-400">Loading demo...</div>';
+      
+      try {
+        const res = await fetch('/api/demos');
+        const data = await res.json();
+        const demo = data.demos.find(d => d.id === id);
+        
+        if (!demo) throw new Error('Demo not found');
+        
+        viewer.innerHTML = `
+          <div class="p-6">
+            <h2 class="text-2xl font-bold mb-2">${demo.name}</h2>
+            <p class="text-gray-400 mb-4">${demo.description}</p>
+            <div class="bg-gray-900 rounded-lg p-4 font-mono text-sm overflow-x-auto">
+              <pre class="text-green-400">${demo.code}</pre>
+            </div>
+            <button onclick="runDemoCode('${id}')" class="mt-4 bg-pink-500 hover:bg-pink-600 px-4 py-2 rounded-lg font-semibold transition">
+              Run Demo
+            </button>
+          </div>
+        `;
+      } catch (e) {
+        viewer.innerHTML = `<div class="p-6 text-red-400">Error: ${e.message}</div>`;
+      }
+    }
+
+    async function runDemoCode(id) {
+      // This would execute the demo via the API
+      alert(`Demo ${id} would run here. Check the console for API calls.`);
+    }
+
+    // Pooling visualization
+    let poolMetricsInterval = null;
+    let stressTestRunning = false;
+    
+    function updatePoolDisplay() {
+      if (!runtimeInfo?.runtime) return;
+      
+      const rt = runtimeInfo.runtime;
+      document.getElementById('pool-max-requests').textContent = rt.maxConcurrentRequests;
+      document.getElementById('pool-max-workers').textContent = rt.maxCommandWorkers;
+      document.getElementById('pool-port').textContent = rt.dedicatedPort;
+      document.getElementById('pool-range').textContent = rt.portRange;
+      
+      // Simulate metrics (in real implementation, these would come from /api/pool-metrics)
+      const reqPercent = Math.floor(Math.random() * 30); // Simulated
+      const workerPercent = Math.floor(Math.random() * 20); // Simulated
+      
+      document.getElementById('pool-req-percent').textContent = reqPercent + '%';
+      document.getElementById('pool-req-bar').style.width = reqPercent + '%';
+      document.getElementById('pool-worker-percent').textContent = workerPercent + '%';
+      document.getElementById('pool-worker-bar').style.width = workerPercent + '%';
+      
+      const activeReq = Math.floor(rt.maxConcurrentRequests * reqPercent / 100);
+      const activeWork = Math.floor(rt.maxCommandWorkers * workerPercent / 100);
+      document.getElementById('active-requests').textContent = activeReq;
+      document.getElementById('active-workers').textContent = activeWork;
+    }
+    
+    async function runStressTest() {
+      if (stressTestRunning) return;
+      stressTestRunning = true;
+      
+      const count = parseInt(document.getElementById('stress-requests').value);
+      const endpoint = document.getElementById('stress-endpoint').value;
+      const delay = parseInt(document.getElementById('stress-delay').value);
+      
+      const resultsDiv = document.getElementById('stress-results');
+      const outputDiv = document.getElementById('stress-output');
+      const progressSpan = document.getElementById('stress-progress');
+      const bar = document.getElementById('stress-bar');
+      
+      resultsDiv.classList.remove('hidden');
+      outputDiv.innerHTML = '<span class="text-yellow-400">Running stress test...</span>';
+      
+      const startTime = performance.now();
+      let completed = 0;
+      let failed = 0;
+      
+      const requests = Array.from({ length: count }, async (_, i) => {
+        if (delay > 0) await new Promise(r => setTimeout(r, i * delay));
+        try {
+          const res = await fetch(endpoint);
+          if (res.ok) completed++;
+          else failed++;
+        } catch (e) {
+          failed++;
+        }
+        
+        const progress = ((completed + failed) / count) * 100;
+        bar.style.width = progress + '%';
+        progressSpan.textContent = `${completed + failed}/${count}`;
+      });
+      
+      await Promise.all(requests);
+      
+      const duration = (performance.now() - startTime).toFixed(2);
+      const rps = (count / (duration / 1000)).toFixed(1);
+      
+      outputDiv.innerHTML = `
+        <div class="text-green-400">✓ Completed in ${duration}ms</div>
+        <div class="text-gray-400 mt-2">
+          Success: ${completed} | Failed: ${failed} | RPS: ${rps}
+        </div>
+      `;
+      
+      stressTestRunning = false;
+    }
+    
+    function stopStressTest() {
+      stressTestRunning = false;
+      document.getElementById('stress-output').innerHTML = '<span class="text-red-400">Stopped by user</span>';
+    }
+    
+    // Start pool metrics updates when viewing pooling tab
+    setInterval(() => {
+      if (currentProfile === 'pooling') {
+        updatePoolDisplay();
+      }
+    }, 2000);
+
+    // Initialize on load
+    init();
+  </script>
+</body>
+</html>

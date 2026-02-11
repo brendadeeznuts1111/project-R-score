@@ -11,6 +11,7 @@ import { existsSync, readFileSync, unlinkSync } from 'fs';
 const API_BASE = 'http://localhost:3001';
 const TEST_TIMEOUT = 30000;
 const PID_FILE = '/tmp/payment-server.pid';
+const BARBERSHOP_ROOT = `${import.meta.dir}/../..`;
 
 // Helper to make API requests
 async function request(
@@ -46,6 +47,7 @@ async function request(
 
 describe('Payment API Integration Tests', () => {
   let serverProcess: ChildProcess | null = null;
+  let startupError: Error | null = null;
   
   // Start server before tests
   beforeAll(async () => {
@@ -66,14 +68,28 @@ describe('Payment API Integration Tests', () => {
       'run',
       'src/payment/server.ts'
     ], {
+      cwd: BARBERSHOP_ROOT,
       env: {
         ...process.env,
         PAYMENT_PORT: '3001',
         PAYMENT_HOST: '0.0.0.0',
+        REDIS_URL: process.env.REDIS_URL || 'redis://127.0.0.1:6379',
+        RATE_LIMIT_WINDOW_MS: '60000',
+        RATE_LIMIT_MAX_REQUESTS: '10000',
         NODE_ENV: 'test',
         LOG_LEVEL: 'error',
       },
       stdio: 'pipe',
+    });
+
+    serverProcess.once('error', (error) => {
+      startupError = error;
+    });
+
+    serverProcess.once('exit', (code, signal) => {
+      if (code !== 0) {
+        startupError = new Error(`payment server exited during startup (code=${code}, signal=${signal})`);
+      }
     });
     
     // Wait for server to be ready
@@ -81,6 +97,10 @@ describe('Payment API Integration Tests', () => {
     const maxAttempts = 30;
     
     while (attempts < maxAttempts) {
+      if (startupError) {
+        throw startupError;
+      }
+
       try {
         const health = await fetch(`${API_BASE}/health`);
         if (health.ok) {

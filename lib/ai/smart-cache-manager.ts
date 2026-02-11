@@ -1,9 +1,8 @@
 // lib/ai/smart-cache-manager.ts — AI-enhanced caching with predictive capabilities
 
-import { CacheManager } from '../performance/cache-manager';
-import { aiOperations } from './ai-operations-manager';
-import { logger } from '../core/structured-logger';
 import { Mutex } from '../core/safe-concurrency';
+import { logger } from '../core/structured-logger';
+import { CacheManager } from '../performance/cache-manager';
 
 interface AccessPattern {
   key: string;
@@ -82,12 +81,12 @@ export class SmartCacheManager<K = string, V = any> {
 
       // Update learning model
       if (this.learningEnabled) {
-        await this.updateLearningModel(key, value !== undefined);
+        this.updateLearningModel(key, value !== undefined);
       }
 
       // Check if we should preload related items
       if (value !== undefined && this.config.enablePredictions) {
-        await this.considerPreload(key);
+        this.considerPreload(key);
       }
 
       const duration = Date.now() - startTime;
@@ -114,7 +113,7 @@ export class SmartCacheManager<K = string, V = any> {
       const size = this.calculateSize(value);
 
       // Get AI recommendation for TTL
-      const recommendedTtl = await this.getRecommendedTTL(key, size);
+      const recommendedTtl = this.getRecommendedTTL(key, size);
       const finalTtl = ttl ?? recommendedTtl;
 
       await this.cache.set(key, value, finalTtl);
@@ -124,7 +123,7 @@ export class SmartCacheManager<K = string, V = any> {
 
       // Update predictions
       if (this.config.enablePredictions) {
-        await this.updatePredictions(key);
+        this.updatePredictions(key);
       }
 
       logger.debug(
@@ -143,7 +142,7 @@ export class SmartCacheManager<K = string, V = any> {
   /**
    * Predict future cache accesses
    */
-  async predictAccesses(keys?: K[]): Promise<Map<K, CachePrediction>> {
+  predictAccesses(keys?: K[]): Map<K, CachePrediction> {
     const keysToAnalyze = keys ?? Array.from(this.accessPatterns.keys());
     const predictions = new Map<K, CachePrediction>();
 
@@ -151,7 +150,7 @@ export class SmartCacheManager<K = string, V = any> {
       const pattern = this.accessPatterns.get(key);
       if (!pattern) continue;
 
-      const prediction = await this.predictAccess(pattern);
+      const prediction = this.predictAccess(pattern);
       predictions.set(key, prediction);
       this.predictions.set(key, prediction);
     }
@@ -191,10 +190,10 @@ export class SmartCacheManager<K = string, V = any> {
     }
 
     // Get current predictions
-    await this.predictAccesses();
+    this.predictAccesses();
 
     // Preload high-confidence items
-    for (const [key, prediction] of this.predictions) {
+    for (const [, prediction] of this.predictions) {
       if (
         prediction.recommendedAction === 'preload' &&
         prediction.confidence >= this.config.minConfidence
@@ -216,7 +215,7 @@ export class SmartCacheManager<K = string, V = any> {
     }
 
     // Promote frequently accessed items
-    for (const [key, pattern] of this.accessPatterns) {
+    for (const [, pattern] of this.accessPatterns) {
       if (pattern.frequency > 10 && pattern.recency < 300000) {
         // 5 minutes
         // Promote by extending TTL
@@ -225,7 +224,6 @@ export class SmartCacheManager<K = string, V = any> {
     }
 
     // Estimate performance improvement
-    const cacheStats = this.cache.getStats();
     results.performanceImprovement = this.estimatePerformanceImprovement(results);
 
     logger.info('Smart cache optimization completed', results, ['cache', 'optimization']);
@@ -261,7 +259,7 @@ export class SmartCacheManager<K = string, V = any> {
    * Record access pattern for learning
    */
   private async recordAccess(key: K, size?: number): Promise<void> {
-    await this.patternMutex.withLock(async () => {
+    await this.patternMutex.withLock(() => {
       const now = Date.now();
       let pattern = this.accessPatterns.get(key);
 
@@ -301,7 +299,7 @@ export class SmartCacheManager<K = string, V = any> {
   /**
    * Update learning model based on access results
    */
-  private async updateLearningModel(key: K, wasHit: boolean): Promise<void> {
+  private updateLearningModel(key: K, _wasHit: boolean): void {
     const pattern = this.accessPatterns.get(key);
     if (!pattern) return;
 
@@ -322,8 +320,9 @@ export class SmartCacheManager<K = string, V = any> {
   /**
    * Predict next access for a key
    */
-  private async predictAccess(pattern: AccessPattern): Promise<CachePrediction> {
+  private predictAccess(pattern: AccessPattern): CachePrediction {
     const now = Date.now();
+    let timeToNextAccess = Number.POSITIVE_INFINITY;
 
     if (pattern.frequency < 2) {
       return {
@@ -346,7 +345,7 @@ export class SmartCacheManager<K = string, V = any> {
       const periodsSinceLast = Math.floor(timeSinceLastAccess / pattern.periodicity);
       nextAccessTime = pattern.recency + (periodsSinceLast + 1) * pattern.periodicity;
 
-      const timeToNextAccess = nextAccessTime - now;
+      timeToNextAccess = nextAccessTime - now;
       if (timeToNextAccess <= this.config.predictionWindow * 60000) {
         willBeAccessed = true;
         confidence = Math.min(0.9, pattern.frequency / 10);
@@ -361,7 +360,7 @@ export class SmartCacheManager<K = string, V = any> {
 
       if (avgInterval > 0) {
         nextAccessTime = pattern.recency + avgInterval;
-        const timeToNextAccess = nextAccessTime - now;
+        timeToNextAccess = nextAccessTime - now;
 
         if (timeToNextAccess <= this.config.predictionWindow * 60000) {
           willBeAccessed = true;
@@ -392,18 +391,18 @@ export class SmartCacheManager<K = string, V = any> {
   /**
    * Update predictions for a key
    */
-  private async updatePredictions(key: K): Promise<void> {
+  private updatePredictions(key: K): void {
     const pattern = this.accessPatterns.get(key);
     if (!pattern) return;
 
-    const prediction = await this.predictAccess(pattern);
+    const prediction = this.predictAccess(pattern);
     this.predictions.set(key, prediction);
   }
 
   /**
    * Consider preloading related items
    */
-  private async considerPreload(key: K): Promise<void> {
+  private considerPreload(key: K): void {
     // In a real implementation, use ML to find related keys
     // For now, just log the consideration
     logger.debug(
@@ -419,7 +418,7 @@ export class SmartCacheManager<K = string, V = any> {
   /**
    * Get recommended TTL based on access patterns
    */
-  private async getRecommendedTTL(key: K, size: number): Promise<number> {
+  private getRecommendedTTL(key: K, size: number): number {
     const pattern = this.accessPatterns.get(key);
     if (!pattern) return 300000; // Default 5 minutes
 
@@ -448,8 +447,8 @@ export class SmartCacheManager<K = string, V = any> {
    */
   private startLearning(): void {
     if (this.config.autoOptimization) {
-      this.optimizationTimer = setInterval(async () => {
-        await this.optimize();
+      this.optimizationTimer = setInterval(() => {
+        void this.optimize();
       }, 300000); // Optimize every 5 minutes
     }
   }

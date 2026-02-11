@@ -270,7 +270,7 @@ class FactoryWagerCLI {
 
       // Test Bun.secrets (local)
       try {
-        await Bun.secrets.get("test", "simulation-test");
+        await Bun.secrets.get({ service: "test", name: "simulation-test" });
         console.log("✅ Bun.secrets API accessible");
       } catch {
         console.log("⚠️ Bun.secrets API limited (expected in simulation)");

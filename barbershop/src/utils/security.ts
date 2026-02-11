@@ -122,7 +122,7 @@ export class RequestSigner {
     return { valid, expired };
   }
   
-  generateApiKey(prefix = 'barber'): string {
+  generateApiKey(prefix = 'elite'): string {
     const random = crypto.getRandomValues(new Uint8Array(32));
     const hash = new Bun.CryptoHasher('sha256');
     hash.update(random);

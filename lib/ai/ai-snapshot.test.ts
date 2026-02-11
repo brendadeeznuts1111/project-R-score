@@ -1,9 +1,10 @@
 // lib/ai/ai-snapshot.test.ts — Snapshot tests for lib/ai/ Bun-native API outputs
-import { describe, it, expect } from 'bun:test';
-import { AdvancedLRUCache } from './ai-operations-manager';
-import { AnomalyDetector } from './anomaly-detector';
 import { YAML } from 'bun';
 import { heapStats } from 'bun:jsc';
+import { describe, it, expect } from 'bun:test';
+
+import { AdvancedLRUCache } from './ai-operations-manager';
+import { AnomalyDetector } from './anomaly-detector';
 
 describe('snapshots', () => {
   // ========================================================================

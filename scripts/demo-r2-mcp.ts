@@ -52,9 +52,9 @@ class MCPDemo {
 // Confidence: 85%
 
 try {
-  const secret = await Bun.secrets.get('API_KEY', {
-    region: 'auto',  // ← Changed from invalid region
-    ttl: 3600
+  const secret = await Bun.secrets.get({
+    service: 'com.factorywager.demo',
+    name: 'API_KEY'
   });
 } catch (error) {
   console.error('Secret retrieval failed:', error);
@@ -62,7 +62,7 @@ try {
   const maxRetries = 3;
   for (let i = 0; i < maxRetries; i++) {
     try {
-      return await Bun.secrets.get('API_KEY', { region: 'auto' });
+      return await Bun.secrets.get({ service: 'com.factorywager.demo', name: 'API_KEY' });
     } catch (retryError) {
       if (i === maxRetries - 1) throw retryError;
       await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, i)));

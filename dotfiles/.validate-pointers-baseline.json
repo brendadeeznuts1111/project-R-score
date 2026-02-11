@@ -37,7 +37,7 @@
   },
   {
     "id": 25590,
-    "pointer": "/Users/nolarose/Projects/shared/tools/entry-guard.ts",
+    "pointer": "/Users/nolarose/Projects/lib/shared/tools/entry-guard.ts",
     "conceptual": "Entry guard",
     "category": "SHARED_UTILS",
     "protocol": "file:",

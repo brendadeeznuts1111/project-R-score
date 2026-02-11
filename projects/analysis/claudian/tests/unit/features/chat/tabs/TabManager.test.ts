@@ -130,7 +130,7 @@ describe('TabManager - Tab Lifecycle', () => {
   let callbacks: TabManagerCallbacks;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     plugin = createMockPlugin();
     mcpManager = createMockMcpManager();
     containerEl = createMockElement();
@@ -223,7 +223,7 @@ describe('TabManager - Tab Lifecycle', () => {
       await manager.switchToTab(tab2!.id);
 
       // Clear mocks to check switch behavior
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
 
       // Now switch from tab2 (currently active) back to tab1
       await manager.switchToTab(tab1!.id);
@@ -237,7 +237,7 @@ describe('TabManager - Tab Lifecycle', () => {
       const manager = new TabManager(plugin, mcpManager, containerEl, view, callbacks);
       await manager.createTab();
 
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
       await manager.switchToTab('non-existent-id');
 
       expect(mockActivateTab).not.toHaveBeenCalled();
@@ -436,7 +436,7 @@ describe('TabManager - Tab Queries', () => {
   let manager: TabManager;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -517,7 +517,7 @@ describe('TabManager - Tab Bar Data', () => {
   let manager: TabManager;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -584,7 +584,7 @@ describe('TabManager - Conversation Management', () => {
   let plugin: any;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -657,7 +657,7 @@ describe('TabManager - Persistence', () => {
   let manager: TabManager;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -764,7 +764,7 @@ describe('TabManager - Broadcast', () => {
   let manager: TabManager;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -823,7 +823,7 @@ describe('TabManager - Cleanup', () => {
   let manager: TabManager;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     let tabCounter = 0;
     mockCreateTab.mockImplementation(() => {
       tabCounter++;
@@ -876,7 +876,7 @@ describe('TabManager - Callback Wiring', () => {
   let mcpManager: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     plugin = createMockPlugin();
     containerEl = createMockElement();
     view = createMockView();
@@ -969,7 +969,7 @@ describe('TabManager - openConversation Current Tab Path', () => {
   let plugin: any;
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     plugin = createMockPlugin();
 
     let tabCounter = 0;

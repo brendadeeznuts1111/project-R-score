@@ -6,7 +6,8 @@
  * Uses Bun.wrapAnsi() for 33-88x faster ANSI text wrapping
  */
 
-import { sanitizeEnvVar } from '../../../../lib/utils/env-validator';
+import { sanitizeEnvVar } from '../../../../../lib/utils/env-validator';
+import { resolveR2InfraConfig } from '../../../../../lib/security/infra-secrets';
 import { styled, FW_COLORS } from '@factorywager/theme';
 import { R2StorageAdapter } from '@factorywager/r2-storage';
 import { NPMRegistryServer } from '../src/server';
@@ -100,6 +101,9 @@ class RegistryCLI {
    */
   private async handleStart(options: any): Promise<void> {
     console.log(styled('\n🚀 Starting NPM Registry...', 'accent'));
+    const infraR2 = await resolveR2InfraConfig({
+      bucketFallback: options.bucket || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+    });
 
     const server = new NPMRegistryServer({
       port: parseInt(options.port || process.env.REGISTRY_PORT || '4873'),
@@ -107,10 +111,10 @@ class RegistryCLI {
       auth: options.auth || process.env.REGISTRY_AUTH || 'none',
       authSecret: options.secret || process.env.REGISTRY_SECRET,
       storage: {
-        accountId: process.env.R2_ACCOUNT_ID,
-        accessKeyId: process.env.R2_ACCESS_KEY_ID,
-        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY,
-        bucketName: options.bucket || process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+        accountId: infraR2.accountId,
+        accessKeyId: infraR2.accessKeyId,
+        secretAccessKey: infraR2.secretAccessKey,
+        bucketName: infraR2.bucketName,
       },
       cdnUrl: options.cdn || process.env.REGISTRY_CDN_URL,
       allowProxy: options.proxy !== 'false',
@@ -503,6 +507,9 @@ class RegistryCLI {
    * Show registry configuration
    */
   private async handleConfig(): Promise<void> {
+    const infraR2 = await resolveR2InfraConfig({
+      bucketFallback: process.env.R2_REGISTRY_BUCKET || 'npm-registry',
+    });
     console.log(styled('\n⚙️  Registry Configuration', 'accent'));
     console.log(styled('==========================', 'accent'));
     
@@ -511,8 +518,8 @@ class RegistryCLI {
     console.log(styled(`  Auth: ${sanitizeEnvVar(process.env.REGISTRY_AUTH, 'none', true)}`, 'muted'));
 
     console.log(styled('\n🪣 R2 Storage:', 'info'));
-    console.log(styled(`  Bucket: ${sanitizeEnvVar(process.env.R2_REGISTRY_BUCKET, 'npm-registry')}`, 'muted'));
-    console.log(styled(`  Account: ${sanitizeEnvVar(process.env.R2_ACCOUNT_ID, 'not set', true)}`, 'muted'));
+    console.log(styled(`  Bucket: ${sanitizeEnvVar(infraR2.bucketName, 'npm-registry')}`, 'muted'));
+    console.log(styled(`  Account: ${sanitizeEnvVar(infraR2.accountId, 'not set', true)}`, 'muted'));
 
     console.log(styled('\n📡 CDN:', 'info'));
     console.log(styled(`  URL: ${sanitizeEnvVar(process.env.REGISTRY_CDN_URL, 'not set')}`, 'muted'));

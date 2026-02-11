@@ -1,8 +1,8 @@
 // lib/ab-testing/ab-testing.bench.ts — AB Testing Performance Benchmark
 // Run: bun lib/ab-testing/ab-testing.bench.ts
 
-import { ABTestManager } from './manager';
 import { ABTestingManager } from './cookie-manager';
+import { ABTestManager } from './manager';
 
 const ITERATIONS = 10_000;
 
@@ -30,8 +30,8 @@ function bench(name: string, fn: () => void, iters = ITERATIONS): BenchResult {
   };
 }
 
-console.log('AB Testing Performance Benchmark');
-console.log('='.repeat(60));
+console.info('AB Testing Performance Benchmark');
+console.info('='.repeat(60));
 
 const results: BenchResult[] = [];
 
@@ -186,20 +186,20 @@ results.push(
 }
 
 // Print results
-console.log('');
-console.log(Bun.inspect.table(results));
+console.info('');
+console.table(results);
 
 // Summary
 const fullCycle = results.find(r => r.operation.startsWith('Full cycle'));
 const cachedRead = results.find(r => r.operation.includes('cached read'));
 const serialize = results.find(r => r.operation.includes('SetCookieHeaders'));
 
-console.log('Summary:');
-console.log(`  Full request cycle: ${fullCycle?.['ns/op']}ns/op (${fullCycle?.['ops/s']} ops/s)`);
-console.log(
+console.info('Summary:');
+console.info(`  Full request cycle: ${fullCycle?.['ns/op']}ns/op (${fullCycle?.['ops/s']} ops/s)`);
+console.info(
   `  Cached variant read: ${cachedRead?.['ns/op']}ns/op (${cachedRead?.['ops/s']} ops/s)`
 );
-console.log(`  Cookie serialization: ${serialize?.['ns/op']}ns/op (${serialize?.['ops/s']} ops/s)`);
+console.info(`  Cookie serialization: ${serialize?.['ns/op']}ns/op (${serialize?.['ops/s']} ops/s)`);
 
 // Save results
 const report = {
@@ -213,4 +213,4 @@ const report = {
   })),
 };
 await Bun.write('lib/ab-testing/bench-results.json', JSON.stringify(report, null, 2));
-console.log('\nResults saved to lib/ab-testing/bench-results.json');
+console.info('\nResults saved to lib/ab-testing/bench-results.json');

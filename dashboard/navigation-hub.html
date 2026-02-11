@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏭 FactoryWager Dashboard Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .dashboard-card {
+            transition: all 0.3s ease;
+        }
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 min-h-screen text-white">
+    <!-- Header -->
+    <nav class="bg-slate-900/80 backdrop-blur-md border-b border-slate-700 sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <i data-lucide="factory" class="w-8 h-8 text-green-400"></i>
+                    <h1 class="text-2xl font-bold">FactoryWager Dashboard Hub</h1>
+                </div>
+                <div class="text-slate-400 text-sm">
+                    All dashboards in one place
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <!-- Featured Bun Section -->
+        <section class="mb-10">
+            <div class="bg-gradient-to-r from-pink-600 to-pink-500 rounded-2xl p-8 shadow-2xl">
+                <div class="flex flex-col lg:flex-row items-center justify-between gap-6">
+                    <div class="flex items-center gap-5">
+                        <div class="text-6xl">🚀</div>
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Bun v1.3.9 Interactive Playground</h2>
+                            <p class="text-pink-100 text-lg">Experience the fastest JavaScript runtime with live code editor, benchmarks, and feature demos.</p>
+                            <div class="flex gap-4 mt-3 text-sm">
+                                <span class="bg-white/20 px-3 py-1 rounded-full">⚡ 4x Faster</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full">📦 All-in-One</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full">🧪 Built-in Test Runner</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex gap-3">
+                        <a href="http://localhost:3011/enhanced.html" class="bg-white text-pink-600 px-6 py-4 rounded-xl font-bold text-lg hover:bg-pink-50 transition shadow-lg flex items-center gap-2">
+                            <span>🎨 Enhanced</span>
+                            <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                        </a>
+                        <a href="http://localhost:3011/" class="bg-pink-800 text-white px-4 py-4 rounded-xl font-bold hover:bg-pink-900 transition flex items-center gap-2">
+                            <span>🏛️ Gov</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main MCP Dashboard -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="activity" class="w-5 h-5 text-green-400"></i>
+                Primary Dashboards
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <a href="/" class="dashboard-card bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-green-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-green-500/20 p-3 rounded-lg">
+                            <i data-lucide="layout-dashboard" class="w-6 h-6 text-green-400"></i>
+                        </div>
+                        <span class="text-xs bg-green-500/20 text-green-400 px-2 py-1 rounded">Live</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">MCP System Dashboard</h3>
+                    <p class="text-slate-400 text-sm">Main FactoryWager dashboard with system status, metrics, and token management.</p>
+                </a>
+
+                <a href="http://localhost:3011/enhanced.html" class="dashboard-card bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-pink-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-pink-500/20 p-3 rounded-lg">
+                            <i data-lucide="rocket" class="w-6 h-6 text-pink-400"></i>
+                        </div>
+                        <span class="text-xs bg-pink-500/20 text-pink-400 px-2 py-1 rounded">Enhanced</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">Bun Playground</h3>
+                    <p class="text-slate-400 text-sm">Interactive Bun v1.3.9 playground with code editor, governance & benchmarks.</p>
+                </a>
+
+                <a href="/api/dashboard" class="dashboard-card bg-slate-800 rounded-xl p-6 border border-slate-700 hover:border-blue-400">
+                    <div class="flex items-start justify-between mb-4">
+                        <div class="bg-blue-500/20 p-3 rounded-lg">
+                            <i data-lucide="code" class="w-6 h-6 text-blue-400"></i>
+                        </div>
+                        <span class="text-xs bg-blue-500/20 text-blue-400 px-2 py-1 rounded">API</span>
+                    </div>
+                    <h3 class="font-bold text-lg mb-1">Dashboard API</h3>
+                    <p class="text-slate-400 text-sm">JSON API endpoint for dashboard data and system metrics.</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- Additional Dashboards -->
+        <section class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="folder-open" class="w-5 h-5 text-blue-400"></i>
+                Additional Dashboards
+            </h2>
+            <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <a href="/dashboards/dns-status-dashboard.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-cyan-400">
+                    <div class="bg-cyan-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="globe" class="w-5 h-5 text-cyan-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">DNS Status</h3>
+                    <p class="text-slate-400 text-xs">Domain health monitoring</p>
+                </a>
+
+                <a href="/dashboards/registry-dashboard.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-purple-400">
+                    <div class="bg-purple-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="package" class="w-5 h-5 text-purple-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Registry</h3>
+                    <p class="text-slate-400 text-xs">Package registry status</p>
+                </a>
+
+                <a href="/dashboards/real-zen-dashboard-bun.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-yellow-400">
+                    <div class="bg-yellow-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="zap" class="w-5 h-5 text-yellow-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Zen Bun Dashboard</h3>
+                    <p class="text-slate-400 text-xs">Bun protocol metrics</p>
+                </a>
+
+                <a href="/dashboards/metrics-index.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-orange-400">
+                    <div class="bg-orange-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="bar-chart-2" class="w-5 h-5 text-orange-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Metrics</h3>
+                    <p class="text-slate-400 text-xs">Performance metrics</p>
+                </a>
+
+                <a href="/dashboards/storage-index.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-indigo-400">
+                    <div class="bg-indigo-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="database" class="w-5 h-5 text-indigo-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Storage</h3>
+                    <p class="text-slate-400 text-xs">R2 storage overview</p>
+                </a>
+
+                <a href="/dashboards/wiki-index.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-emerald-400">
+                    <div class="bg-emerald-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="book-open" class="w-5 h-5 text-emerald-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Wiki</h3>
+                    <p class="text-slate-400 text-xs">Documentation wiki</p>
+                </a>
+
+                <a href="/dashboards/profiles-index.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-rose-400">
+                    <div class="bg-rose-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="user" class="w-5 h-5 text-rose-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">Profiles</h3>
+                    <p class="text-slate-400 text-xs">User profiles</p>
+                </a>
+
+                <a href="/dashboards/rss-index.html" class="dashboard-card bg-slate-800/50 rounded-xl p-5 border border-slate-700 hover:border-teal-400">
+                    <div class="bg-teal-500/20 p-2 rounded-lg w-fit mb-3">
+                        <i data-lucide="rss" class="w-5 h-5 text-teal-400"></i>
+                    </div>
+                    <h3 class="font-semibold mb-1">RSS</h3>
+                    <p class="text-slate-400 text-xs">RSS feeds</p>
+                </a>
+            </div>
+        </section>
+
+        <!-- System Status -->
+        <section>
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <i data-lucide="server" class="w-5 h-5 text-slate-400"></i>
+                System Status
+            </h2>
+            <div class="bg-slate-800 rounded-xl p-6 border border-slate-700" id="system-status">
+                <div class="animate-pulse flex space-x-4">
+                    <div class="flex-1 space-y-4 py-1">
+                        <div class="h-4 bg-slate-700 rounded w-3/4"></div>
+                        <div class="space-y-2">
+                            <div class="h-4 bg-slate-700 rounded"></div>
+                            <div class="h-4 bg-slate-700 rounded w-5/6"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="border-t border-slate-800 mt-16 py-8">
+        <div class="max-w-7xl mx-auto px-4 text-center text-slate-500 text-sm">
+            <p>FactoryWager Dashboard Hub • Powered by Bun v1.3.10 🚀</p>
+            <p class="mt-2">Port 3011 • All systems operational</p>
+        </div>
+    </footer>
+
+    <script>
+        lucide.createIcons();
+
+        // Load system status
+        fetch('/api/dashboard')
+            .then(r => r.json())
+            .then(data => {
+                const container = document.getElementById('system-status');
+                const status = data.systemStatus || [];
+                
+                container.innerHTML = status.map(s => `
+                    <div class="flex items-center justify-between py-2 border-b border-slate-700 last:border-0">
+                        <div class="flex items-center gap-3">
+                            <span class="w-2 h-2 rounded-full ${s.status === 'healthy' ? 'bg-green-400' : s.status === 'warning' ? 'bg-yellow-400' : 'bg-red-400'}"></span>
+                            <span class="font-medium">${s.component}</span>
+                        </div>
+                        <span class="text-sm text-slate-400">${s.message}</span>
+                    </div>
+                `).join('');
+            })
+            .catch(() => {
+                document.getElementById('system-status').innerHTML = '<p class="text-slate-500">Unable to load system status</p>';
+            });
+    </script>
+</body>
+</html>

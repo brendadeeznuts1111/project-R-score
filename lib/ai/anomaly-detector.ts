@@ -1,6 +1,7 @@
 // lib/ai/anomaly-detector.ts — Anomaly detection system
 
 import { EventEmitter } from 'events';
+
 import { logger } from '../core/structured-logger';
 import { auditLogger } from '../security/secret-audit-logger';
 
@@ -107,7 +108,7 @@ export class AnomalyDetector extends EventEmitter {
 
     // Update baselines
     if (this.learningEnabled) {
-      await this.updateBaseline(data.source);
+      this.updateBaseline(data.source);
     }
 
     // Immediate anomaly check for critical metrics
@@ -192,7 +193,7 @@ export class AnomalyDetector extends EventEmitter {
         .slice(-100); // Last 100 data points
 
       for (const data of recentDataForSource) {
-        const detectedAnomalies = await this.detectAnomalies(data, baseline);
+        const detectedAnomalies = this.detectAnomalies(data, baseline);
         newAnomalies.push(...detectedAnomalies);
       }
     }
@@ -325,22 +326,20 @@ export class AnomalyDetector extends EventEmitter {
    * Start continuous detection
    */
   private startDetection(): void {
-    this.detectionTimer = setInterval(async () => {
-      try {
-        await this.runDetection();
-      } catch (error) {
+    this.detectionTimer = setInterval(() => {
+      void this.runDetection().catch(error => {
         logger.error(
           'Anomaly detection error',
           error instanceof Error ? error : new Error(String(error))
         );
-      }
+      });
     }, this.detectionInterval);
   }
 
   /**
    * Update baseline for a source
    */
-  private async updateBaseline(source: string): Promise<void> {
+  private updateBaseline(source: string): void {
     const sourceData = this.recentData.filter(d => d.source === source);
     if (sourceData.length < 10) return; // Need minimum data points
 
@@ -386,7 +385,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Detect anomalies in data compared to baseline
    */
-  private async detectAnomalies(data: MetricData, baseline: BaselineProfile): Promise<Anomaly[]> {
+  private detectAnomalies(data: MetricData, baseline: BaselineProfile): Anomaly[] {
     const anomalies: Anomaly[] = [];
 
     for (const [metricName, value] of Object.entries(data.metrics)) {
@@ -398,15 +397,15 @@ export class AnomalyDetector extends EventEmitter {
 
       if (zScore > 2.0) {
         // 2 standard deviations
-        const anomaly = await this.createAnomaly(data, baseline, metricName, value, zScore);
+        const anomaly = this.createAnomaly(data, baseline, metricName, value, zScore);
         anomalies.push(anomaly);
       }
     }
 
     // Check custom rules
     for (const rule of Array.from(this.rules.values()).filter(r => r.enabled)) {
-      if (await this.evaluateRule(data, rule)) {
-        const anomaly = await this.createRuleBasedAnomaly(data, rule);
+      if (this.evaluateRule(data, rule)) {
+        const anomaly = this.createRuleBasedAnomaly(data, rule);
         anomalies.push(anomaly);
       }
     }
@@ -417,13 +416,13 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Create anomaly from metric deviation
    */
-  private async createAnomaly(
+  private createAnomaly(
     data: MetricData,
     baseline: BaselineProfile,
     metricName: string,
     value: number,
     deviation: number
-  ): Promise<Anomaly> {
+  ): Anomaly {
     const severity = this.calculateSeverity(deviation);
     const type = this.determineAnomalyType(metricName);
 
@@ -444,14 +443,14 @@ export class AnomalyDetector extends EventEmitter {
         value,
         baseline.metrics[metricName]
       ),
-      relatedEvents: await this.findRelatedEvents(data, metricName),
+      relatedEvents: this.findRelatedEvents(data, metricName),
     };
   }
 
   /**
    * Create anomaly from rule
    */
-  private async createRuleBasedAnomaly(data: MetricData, rule: DetectionRule): Promise<Anomaly> {
+  private createRuleBasedAnomaly(data: MetricData, rule: DetectionRule): Anomaly {
     return {
       id: `rule-anomaly-${Bun.randomUUIDv7()}`,
       type: rule.type,
@@ -490,7 +489,7 @@ export class AnomalyDetector extends EventEmitter {
 
     // Auto-response if configured
     if (anomaly.autoResponse) {
-      await this.executeAutoResponse(anomaly);
+      this.executeAutoResponse(anomaly);
     }
 
     // Security anomalies get special handling
@@ -502,7 +501,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Execute automatic response
    */
-  private async executeAutoResponse(anomaly: Anomaly): Promise<void> {
+  private executeAutoResponse(anomaly: Anomaly): void {
     // In a real implementation, execute the actual response
     logger.info(
       'Executing auto-response',
@@ -675,7 +674,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Find related events for anomaly
    */
-  private async findRelatedEvents(data: MetricData, metricName: string): Promise<string[]> {
+  private findRelatedEvents(_data: MetricData, _metricName: string): string[] {
     // In a real implementation, query logs and events
     return [`event-${Bun.randomUUIDv7()}`, `event-${Bun.randomUUIDv7()}`];
   }
@@ -683,7 +682,7 @@ export class AnomalyDetector extends EventEmitter {
   /**
    * Evaluate detection rule against data
    */
-  private async evaluateRule(data: MetricData, rule: DetectionRule): Promise<boolean> {
+  private evaluateRule(data: MetricData, rule: DetectionRule): boolean {
     for (const condition of rule.conditions) {
       const value = data.metrics[condition.metric];
       if (value === undefined) continue;

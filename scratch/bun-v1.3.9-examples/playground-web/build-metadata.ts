@@ -11,6 +11,38 @@ export function getGitCommitHash(): string {
   return hash || "unset";
 }
 
+export async function extractMetaTags(url: string): Promise<Record<string, string>> {
+  const response = await fetch(url, {
+    signal: AbortSignal.timeout(3000),
+  });
+
+  const meta: Record<string, string> = {
+    title: "",
+  };
+
+  const transformed = new HTMLRewriter()
+    .on("title", {
+      text(textChunk) {
+        meta.title += textChunk.text;
+      },
+    })
+    .on("meta", {
+      element(element) {
+        const name =
+          element.getAttribute("name") ||
+          element.getAttribute("property") ||
+          element.getAttribute("itemprop");
+        const content = element.getAttribute("content");
+        if (name && content) meta[name] = content;
+      },
+    })
+    .transform(response);
+
+  // Important: consume the transformed stream so HTMLRewriter callbacks execute.
+  await transformed.text();
+  return meta;
+}
+
 export async function getBuildMetadata() {
   const macroDocs = {
     embedLatestGitCommitHash:
@@ -29,6 +61,7 @@ export async function getBuildMetadata() {
     status: null,
     url: "https://bun.com/docs/bundler/macros",
   };
+  let bundleTimeMeta: Record<string, string> = {};
 
   try {
     const response = await fetch(bundleTimeFetch.url, {
@@ -39,6 +72,7 @@ export async function getBuildMetadata() {
       status: response.status,
       url: bundleTimeFetch.url,
     };
+    bundleTimeMeta = await extractMetaTags(bundleTimeFetch.url);
   } catch (error) {
     bundleTimeFetch = {
       ok: false,
@@ -46,6 +80,7 @@ export async function getBuildMetadata() {
       url: bundleTimeFetch.url,
       error: error instanceof Error ? error.message : String(error),
     };
+    bundleTimeMeta = {};
   }
 
   return {
@@ -53,6 +88,6 @@ export async function getBuildMetadata() {
     gitCommitHash: getGitCommitHash(),
     macroDocs,
     bundleTimeFetch,
+    bundleTimeMeta,
   };
 }
-

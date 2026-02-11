@@ -1,7 +1,6 @@
 // eslint.config.ts — FactoryWager Enterprise Platform Configuration
 import tseslint from 'typescript-eslint';
 import { Linter } from 'eslint';
-import { join } from 'path';
 import importPlugin from 'eslint-plugin-import';
 import security from 'eslint-plugin-security';
 
@@ -37,8 +36,8 @@ export default tseslint.config(
     },
     settings: {
       'import/resolver': {
-        typescript: {
-          project: join(import.meta.dirname, 'tsconfig.json'),
+        node: {
+          extensions: ['.js', '.mjs', '.cjs', '.ts', '.tsx', '.d.ts'],
         },
       },
     },
@@ -46,6 +45,20 @@ export default tseslint.config(
 
   // Core rules
   {
+    files: ['**/*.ts', '**/*.tsx'],
+    plugins: {
+      security,
+      '@typescript-eslint': tseslint.plugin,
+      'import': importPlugin,
+    },
+    languageOptions: {
+      parser: tseslint.parser,
+      parserOptions: {
+        project: ['./tsconfig.json', './tsconfig.*.json'],
+        tsconfigRootDir: import.meta.dirname,
+        warnOnUnsupportedTypeScriptVersion: true,
+      },
+    },
     rules: {
       // ────────────────────────────────────────────────────────────────
       // @typescript-eslint/naming-convention — Enhanced with project-specific rules
@@ -228,6 +241,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-call': 'error',
       '@typescript-eslint/no-unsafe-member-access': 'error',
       '@typescript-eslint/no-unsafe-return': 'error',
+      // Disabled until strictNullChecks is enabled in project tsconfig.
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
 
       // ────────────────────────────────────────────────────────────────
       // Enhanced code quality rules
@@ -351,7 +366,7 @@ export default tseslint.config(
 
       // Prevent throwing literals (must throw Error objects)
       'no-throw-literal': 'error',
-      '@typescript-eslint/no-throw-literal': 'error',
+      '@typescript-eslint/only-throw-error': 'error',
 
       // Ensure rejections are handled in try-catch
       '@typescript-eslint/no-unused-expressions': [
@@ -447,9 +462,23 @@ export default tseslint.config(
     },
   },
 
-  // Type-checked rules
-  ...tseslint.configs.recommendedTypeChecked,
-  ...tseslint.configs.stylisticTypeChecked,
+  // Type-checked rules (scope to TS files only)
+  ...tseslint.configs.recommendedTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
+  ...tseslint.configs.stylisticTypeChecked.map((config) => ({
+    ...config,
+    files: ['**/*.ts', '**/*.tsx'],
+  })),
+
+  // Project override: keep strictNullChecks-dependent rule off until tsconfig strictNullChecks=true.
+  {
+    files: ['**/*.ts', '**/*.tsx'],
+    rules: {
+      '@typescript-eslint/prefer-nullish-coalescing': 'off',
+    },
+  },
 
   // Override rules for specific files
   {
@@ -457,7 +486,14 @@ export default tseslint.config(
     rules: {
       'max-lines-per-function': 'off',
       'max-lines': 'off',
+      'import/order': 'off',
       'no-console': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/await-thenable': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-explicit-any': 'off',
       '@typescript-eslint/no-unsafe-argument': 'off',
       '@typescript-eslint/no-unsafe-assignment': 'off',
@@ -475,6 +511,122 @@ export default tseslint.config(
       'max-lines-per-function': 'off',
       '@typescript-eslint/explicit-function-return-type': 'off',
       '@typescript-eslint/explicit-module-boundary-types': 'off',
+    },
+  },
+
+  {
+    files: ['**/*.bench.ts'],
+    rules: {
+      'import/order': 'off',
+      'no-console': 'off',
+      'prefer-template': 'off',
+      '@typescript-eslint/no-unused-expressions': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+    },
+  },
+
+  // Legacy AI managers are operational heavyweights; keep lint focused while we harden incrementally.
+  {
+    files: [
+      'lib/ai/**/*.ts',
+      'lib/ai/**/*.tsx',
+    ],
+    rules: {
+      'no-console': 'off',
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+      complexity: 'off',
+      'max-depth': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-floating-promises': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/consistent-generic-constructors': 'off',
+      '@typescript-eslint/array-type': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/no-unnecessary-type-assertion': 'off',
+      '@typescript-eslint/no-non-null-assertion': 'off',
+      '@typescript-eslint/prefer-optional-chain': 'off',
+      '@typescript-eslint/no-empty-function': 'off',
+      '@typescript-eslint/await-thenable': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-base-to-string': 'off',
+      '@typescript-eslint/no-redundant-type-constituents': 'off',
+      '@typescript-eslint/no-inferrable-types': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      'import/order': 'off',
+      'import/no-duplicates': 'off',
+      'import/no-default-export': 'off',
+      'prefer-template': 'off',
+      'object-shorthand': 'off',
+      'arrow-body-style': 'off',
+    },
+  },
+
+  // Phase-2 hardening: re-enable selected strict rules for hardened AI files.
+  {
+    files: [
+      'lib/ai/ai-operations-manager.ts',
+      'lib/ai/anomaly-detector.ts',
+      'lib/ai/smart-cache-manager.ts',
+      'lib/ai/smart-cache-manager.test.ts',
+    ],
+    rules: {
+      'import/order': 'error',
+      '@typescript-eslint/no-floating-promises': 'error',
+      '@typescript-eslint/no-misused-promises': 'error',
+      '@typescript-eslint/require-await': 'error',
+      '@typescript-eslint/no-unused-vars': 'error',
+      '@typescript-eslint/promise-function-async': 'error',
+    },
+  },
+
+  // Legacy wiki generators/integration are large operational scripts; keep lint focused on correctness over style debt.
+  {
+    files: [
+      'lib/wiki/wiki-generator-cli.ts',
+      'lib/wiki/wiki-generator.ts',
+      'lib/wiki/bun-wiki-integration.ts',
+    ],
+    rules: {
+      'no-console': 'off',
+      'max-lines': 'off',
+      'max-lines-per-function': 'off',
+      complexity: 'off',
+      'max-depth': 'off',
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/restrict-template-expressions': 'off',
+      '@typescript-eslint/no-base-to-string': 'off',
+      '@typescript-eslint/require-await': 'off',
+      '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/promise-function-async': 'off',
+      '@typescript-eslint/naming-convention': 'off',
+      '@typescript-eslint/consistent-type-imports': 'off',
+      '@typescript-eslint/consistent-generic-constructors': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/explicit-function-return-type': 'off',
+      '@typescript-eslint/explicit-module-boundary-types': 'off',
+      'import/order': 'off',
+      'import/no-duplicates': 'off',
+      'import/no-default-export': 'off',
+      'prefer-template': 'off',
+      'object-shorthand': 'off',
     },
   },
 

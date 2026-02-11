@@ -32,7 +32,7 @@ const mockOs = os as jest.Mocked<typeof os>;
 
 describe('sdkSession', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     mockOs.homedir.mockReturnValue('/Users/test');
   });
 

@@ -15,8 +15,7 @@ import {
   AppConfigSchema,
   type ConfigOptions 
 } from '../../src/utils/elite-config';
-import { writeFile, unlink, mkdir, rmdir } from 'node:fs/promises';
-import { existsSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
 
@@ -33,17 +32,20 @@ async function createTestConfigFile(content: Record<string, unknown>): Promise<s
   const testDir = join(tmpdir(), `elite-config-test-${uniqueId}`);
   tempDirectories.push(testDir);
   const filename = join(testDir, 'config.json');
-  await mkdir(testDir, { recursive: true });
-  await writeFile(filename, JSON.stringify(content, null, 2));
+  mkdirSync(testDir, { recursive: true });
+  writeFileSync(filename, JSON.stringify(content, null, 2));
   return filename;
 }
 
-async function cleanupTestFiles(): Promise<void> {
-  // Clean up all tracked temp directories
+async function cleanupTestFiles(force = false): Promise<void> {
+  // Avoid deleting shared temp dirs during per-test teardown because
+  // Bun may run tests concurrently and another test can still be using them.
+  if (!force) return;
+
   for (const dir of tempDirectories) {
     try {
       if (existsSync(dir)) {
-        await rmdir(dir, { recursive: true });
+        rmSync(dir, { recursive: true, force: true });
       }
     } catch {
       // Ignore cleanup errors
@@ -1485,8 +1487,8 @@ describe('EliteConfigManager - File Loading Errors', () => {
   test('should handle invalid JSON in config file', async () => {
     const testDir = join(tmpdir(), `elite-config-test-invalid-${Date.now()}`);
     const configPath = join(testDir, 'invalid.json');
-    await mkdir(testDir, { recursive: true });
-    await writeFile(configPath, 'not valid json');
+    mkdirSync(testDir, { recursive: true });
+    writeFileSync(configPath, 'not valid json');
 
     const manager = new EliteConfigManager({
       value: s.string().default('default')
@@ -1503,7 +1505,7 @@ describe('EliteConfigManager - File Loading Errors', () => {
     
     // Cleanup
     try {
-      await rmdir(testDir, { recursive: true });
+      rmSync(testDir, { recursive: true, force: true });
     } catch {}
   });
 
@@ -1540,5 +1542,5 @@ describe('EliteConfigManager - File Loading Errors', () => {
 // Global cleanup after all tests
 import { afterAll } from "bun:test";
 afterAll(async () => {
-  await cleanupTestFiles();
+  await cleanupTestFiles(true);
 });

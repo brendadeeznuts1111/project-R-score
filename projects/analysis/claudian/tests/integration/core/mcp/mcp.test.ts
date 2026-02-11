@@ -428,7 +428,7 @@ describe('McpStorage', () => {
       };
       const { storage } = createMemoryStorage(initial);
 
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
 
       expect(servers).toHaveLength(2);
       const stdio = servers.find((server) => server.name === 'stdio')!;
@@ -456,7 +456,7 @@ describe('McpStorage', () => {
       };
       const { storage } = createMemoryStorage(initial);
 
-      const servers = await storage.YAML.parse();
+      const servers = await storage['YAML.parse']();
 
       expect(servers).toHaveLength(1);
       expect(servers[0].name).toBe('valid');
@@ -874,7 +874,7 @@ describe('McpTester', () => {
   };
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
   });
 
   it('should test stdio server and return tools', async () => {

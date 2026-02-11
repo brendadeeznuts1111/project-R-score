@@ -2,6 +2,7 @@
 
 import { FW_COLORS, styled } from '../theme/colors';
 import { DocsUrlBuilder } from '../docs/url-builder';
+import { getSecret as getManagedSecret } from './bun-secrets-adapter';
 // Security level configurations with FactoryWager standards
 export const SECURITY_LEVELS = {
   CRITICAL: {
@@ -78,6 +79,20 @@ export class SecretManager {
     setInterval(() => this.flushAuditQueue(), 5000); // Every 5 seconds
   }
 
+  private parseKey(key: string): { service: string; name: string } {
+    const idx = key.indexOf(':');
+    if (idx > 0) {
+      return {
+        service: key.slice(0, idx),
+        name: key.slice(idx + 1),
+      };
+    }
+    return {
+      service: Bun.env.SECRETS_V5_SERVICE || 'com.factorywager.secrets-v5',
+      name: key,
+    };
+  }
+
   /**
    * Get a secret with security level configuration
    */
@@ -126,11 +141,11 @@ export class SecretManager {
     }
 
     try {
-      // Fetch secret with security level configuration
-      const secret = await Bun.secrets.get(key, {
-        ttl: config.ttl,
-        region: config.region,
-        cache: config.cache,
+      // Bun.secrets currently uses service/name object options.
+      const ref = this.parseKey(key);
+      const secret = await getManagedSecret({
+        service: ref.service,
+        name: ref.name,
       });
 
       // Validate secret (basic checks)

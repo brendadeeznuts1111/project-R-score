@@ -15,7 +15,7 @@ describe('ClaudianPlugin', () => {
 
   beforeEach(() => {
     // Reset mocks
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
 
     mockApp = {
       vault: {

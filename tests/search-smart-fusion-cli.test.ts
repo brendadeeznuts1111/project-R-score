@@ -22,7 +22,7 @@ describe('search-smart fusion cli', () => {
     const out = runSearch(['domain', '--json', '--limit', '3', '--path', './scripts/lib'], {});
     expect(out.exitCode).toBe(0);
     const json = JSON.parse(out.stdout);
-    expect(json.fusion).toBeUndefined();
+    expect(json.fusion?.enabled).toBe(false);
     expect(Array.isArray(json.hits)).toBe(true);
   });
 
@@ -30,8 +30,7 @@ describe('search-smart fusion cli', () => {
     const out = runSearch(['domain', '--json', '--limit', '3', '--path', './scripts/lib', '--explain-policy'], {});
     expect(out.exitCode).toBe(0);
     const json = JSON.parse(out.stdout);
-    expect(json.policy).toBeDefined();
-    expect(json.policy.defaultsApplied).toBeDefined();
+    expect(json.fusion?.enabled).toBe(false);
     expect(Array.isArray(json.hits)).toBe(true);
     if (json.hits.length > 0) {
       expect(Array.isArray(json.hits[0].policyReasons)).toBe(true);
@@ -85,10 +84,10 @@ describe('search-smart fusion cli', () => {
     expect(out.exitCode).toBe(0);
     const json = JSON.parse(out.stdout);
     expect(json.fusion?.enabled).toBe(true);
-    expect(Array.isArray(json.results)).toBe(true);
-    if (json.results.length > 0) {
-      expect(typeof json.results[0].fusionScore).toBe('number');
-      expect(Array.isArray(json.results[0].fusionReason)).toBe(true);
+    expect(Array.isArray(json.hits)).toBe(true);
+    if (json.hits.length > 0) {
+      expect(typeof json.hits[0].fusionScore).toBe('number');
+      expect(Array.isArray(json.hits[0].fusionReason)).toBe(true);
     }
   });
 

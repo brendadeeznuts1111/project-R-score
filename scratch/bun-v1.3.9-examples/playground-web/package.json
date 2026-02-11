@@ -1,0 +1,9 @@
+{
+  "name": "bun-v1.3.9-playground-web",
+  "version": "1.0.0",
+  "description": "Browser-based playground for Bun v1.3.9",
+  "scripts": {
+    "start": "bun run server.ts",
+    "dev": "bun --hot server.ts"
+  }
+}

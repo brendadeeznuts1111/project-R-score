@@ -1,0 +1,25 @@
+{
+  "name": "bun-v1.3.9-examples",
+  "version": "1.0.0",
+  "description": "Bun v1.3.9 feature examples and demonstrations",
+  "type": "module",
+  "scripts": {
+    "start": "bun run runner.ts",
+    "all": "bun run runner.ts all",
+    "test": "bun test mock-auto-cleanup.test.ts",
+    "benchmark": "bun run benchmarks/regex-benchmark.ts",
+    "parallel": "bun run parallel-scripts.ts",
+    "regex": "bun run regex-jit-demo.ts",
+    "esm": "bun run esm-bytecode-demo.ts",
+    "profiling": "bun run cpu-profiling-demo.ts",
+    "http2": "bun run http2-upgrade-demo.ts",
+    "proxy": "bun run no-proxy-demo.ts",
+    "performance": "bun run performance-demo.ts"
+  },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
+  "peerDependencies": {
+    "typescript": "^5.0.0"
+  }
+}

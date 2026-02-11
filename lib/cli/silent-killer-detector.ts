@@ -156,13 +156,13 @@ if (import.meta.path !== Bun.main) {
 }
 
 // ✅ SAFE PATTERN 1:
-import { ensureDirectExecution } from './shared/tools/entry-guard';
+import { ensureDirectExecution } from '../shared/tools/entry-guard';
 
 ensureDirectExecution();
 // Your code here...
 
 // ✅ SAFE PATTERN 2 (RECOMMENDED):
-import { runIfMain } from './shared/tools/entry-guard';
+import { runIfMain } from '../shared/tools/entry-guard';
 runIfMain(async () => {
   // Your async code here...
   console.log('Running safely!');
@@ -177,8 +177,8 @@ if (import.meta.main) {
 */
 `;
 
-  await Bun.write('./shared/tools/safe-entry-guard.ts', safeEntryGuardContent);
-  console.log('✅ Created: ./shared/tools/safe-entry-guard.ts');
+  await Bun.write('./lib/shared/tools/safe-entry-guard.ts', safeEntryGuardContent);
+  console.log('✅ Created: ./lib/shared/tools/safe-entry-guard.ts');
 }
 
 // Main execution
@@ -195,7 +195,7 @@ async function main() {
   }
 
   console.log('\n🛡️  SAFE ENTRY GUARD CREATED:');
-  console.log('   Use ./shared/tools/safe-entry-guard.ts for new CLI tools');
+  console.log('   Use ./lib/shared/tools/safe-entry-guard.ts for new CLI tools');
   console.log('   Update existing tools to use safe patterns');
 
   console.log('\n✅ SILENT KILLER ELIMINATION COMPLETE!');

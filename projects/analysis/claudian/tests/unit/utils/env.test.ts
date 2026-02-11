@@ -230,7 +230,7 @@ describe('getEnhancedPath', () => {
 
   describe('CLI path parameter for Node.js detection', () => {
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     function mockNodeExecutable(fakeDir: string) {
@@ -305,7 +305,7 @@ describe('getEnhancedPath', () => {
 
   describe('CLI directory with node executable (nvm/fnm/volta/asdf support)', () => {
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     function mockCliDirWithNode(cliDir: string) {
@@ -442,7 +442,7 @@ describe('getEnhancedPath', () => {
 
 describe('cliPathRequiresNode', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
   });
 
   it('returns true for .js files', () => {
@@ -496,7 +496,7 @@ describe('findNodeDirectory', () => {
   const originalEnv = { ...process.env };
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     Object.keys(process.env).forEach(key => delete process.env[key]);
     Object.assign(process.env, originalEnv);
   });

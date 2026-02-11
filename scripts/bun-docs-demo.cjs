@@ -180,11 +180,12 @@ Shell commands:
     setupDemoSecrets() {
         // Set up demo secrets (in real usage, these would be real credentials)
         if (typeof Bun !== 'undefined') {
-            Bun.secrets.set("R2_ACCOUNT_ID", "demo-account-id");
-            Bun.secrets.set("R2_ACCESS_KEY_ID", "demo-access-key");
-            Bun.secrets.set("R2_SECRET_ACCESS_KEY", "demo-secret-key");
-            Bun.secrets.set("CLOUDFLARE_API_TOKEN", "demo-cf-token");
-            Bun.secrets.set("GITHUB_TOKEN", "demo-github-token");
+            const demoService = "com.factorywager.docs-demo";
+            Bun.secrets.set({ service: demoService, name: "R2_ACCOUNT_ID", value: "demo-account-id" });
+            Bun.secrets.set({ service: demoService, name: "R2_ACCESS_KEY_ID", value: "demo-access-key" });
+            Bun.secrets.set({ service: demoService, name: "R2_SECRET_ACCESS_KEY", value: "demo-secret-key" });
+            Bun.secrets.set({ service: demoService, name: "CLOUDFLARE_API_TOKEN", value: "demo-cf-token" });
+            Bun.secrets.set({ service: demoService, name: "GITHUB_TOKEN", value: "demo-github-token" });
         }
         
         // Also set as environment variables for fallback

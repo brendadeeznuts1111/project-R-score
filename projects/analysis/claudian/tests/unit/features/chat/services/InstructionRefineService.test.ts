@@ -37,7 +37,7 @@ describe('InstructionRefineService', () => {
   let mockPlugin: any;
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
     resetMockMessages();
     mockPlugin = createMockPlugin();
     service = new InstructionRefineService(mockPlugin);

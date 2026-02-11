@@ -41,7 +41,7 @@ export class McpSettingsManager {
   }
 
   private async loadAndRender() {
-    this.servers = await this.plugin.storage.mcp.YAML.parse();
+    this.servers = await this.plugin.storage.mcp['YAML.parse']();
     this.render();
   }
 

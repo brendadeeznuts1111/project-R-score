@@ -26,6 +26,7 @@ out/
 .cache/
 *.js
 !scratch/bun-v1.3.9-examples/playground-web/app.js
+!scratch/bun-v1.3.9-examples/playground-web/url-sharing.js
 *.js.map
 *.tsbuildinfo
 
@@ -59,6 +60,7 @@ yarn-error.log*
 # Environment variables
 .env
 .env.local
+.env.secret.local
 .env.*.local
 .env.*
 .env.production
@@ -112,6 +114,7 @@ coverage/
 # Temporary and example files
 example*-*
 test*-*
+!scripts/test-*.ts
 *.tmp
 *.temp
 
@@ -180,5 +183,15 @@ credentials/
 config/*
 !config/domain-branding.json
 
+# Runtime artifacts
+profiles.db
+metrics/
+plugins/
+wrangler.toml
+lib/ab-testing/bench-results.json
+
 # Clawdbot - temporarily ignored
 clawdbot/
+
+# NPM Cache (should not be committed)
+.npm-cache/

@@ -5,7 +5,14 @@
  * Provides secure storage and retrieval of Cloudflare API credentials.
  */
 
-const CF_SERVICE = 'cloudflare';
+import {
+  deleteSecret as deleteManagedSecret,
+  getSecret as getManagedSecret,
+  setSecret as setManagedSecret,
+} from '../../lib/cloudflare/bun-secrets-adapter';
+
+const CF_SERVICE = 'com.barbershop.cloudflare';
+const LEGACY_CF_SERVICE = 'cloudflare';
 const TOKEN_NAME = 'api_token';
 const ACCOUNT_ID_NAME = 'account_id';
 
@@ -63,53 +70,35 @@ export class CloudflareSecretsBridge {
   /**
    * Store secret using Bun.secrets
    */
-  private async storeSecret(key: string, value: string): Promise<void> {
-    if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
-      try {
-        const secrets = Bun.secrets as unknown as { set: (k: string, v: string) => Promise<void> };
-        await secrets.set(key, value);
-        return;
-      } catch (e) {
-        console.warn(`Failed to store in Bun.secrets: ${(e as Error).message}`);
-      }
+  private async storeSecret(service: string, name: string, value: string): Promise<void> {
+    try {
+      await setManagedSecret({ service, name, value });
+    } catch (e) {
+      const envKey = `${service}_${name}`.toUpperCase().replace(/[^A-Z0-9]+/g, '_');
+      console.warn(`Failed to store in Bun.secrets: ${(e as Error).message}`);
+      console.log(c('  ℹ️  Note: Bun.secrets not available', 'yellow'));
+      console.log(c(`     Set environment variable: ${envKey}`, 'gray'));
+      throw new Error('Bun.secrets not available - use environment variables instead');
     }
-
-    // Fallback: store in .env file or warn user
-    console.log(c('  ℹ️  Note: Bun.secrets not available', 'yellow'));
-    console.log(c(`     Set environment variable: ${key.toUpperCase().replace(':', '_')}`, 'gray'));
-    throw new Error('Bun.secrets not available - use environment variables instead');
   }
 
   /**
    * Retrieve secret from Bun.secrets or environment
    */
-  private async retrieveSecret(key: string): Promise<string | undefined> {
-    // Try Bun.secrets first
-    if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
-      try {
-        const secrets = Bun.secrets as unknown as {
-          get: (k: string) => Promise<string | undefined>;
-        };
-        const value = await secrets.get(key);
-        if (value) return value;
-      } catch {
-        // Fall through to environment
-      }
-    }
-
-    // Fallback to environment
-    const envMap: Record<string, string> = {
-      'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
-      'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
-    };
-    return Bun.env[envMap[key] || key.toUpperCase().replace(':', '_')];
+  private async retrieveSecret(service: string, name: string): Promise<string | undefined> {
+    const value = await getManagedSecret({
+      service,
+      name,
+      legacyServices: [LEGACY_CF_SERVICE],
+    });
+    return value ?? undefined;
   }
 
   /**
    * Store Cloudflare API token
    */
   async setToken(token: string, user: string = 'cli'): Promise<void> {
-    await this.storeSecret(`${CF_SERVICE}:${TOKEN_NAME}`, token);
+    await this.storeSecret(CF_SERVICE, TOKEN_NAME, token);
 
     // Also store in integrated manager if available
     if (this.useAdvancedFeatures && this.integratedSecretManager) {
@@ -128,7 +117,7 @@ export class CloudflareSecretsBridge {
    * Store Cloudflare Account ID
    */
   async setAccountId(accountId: string, user: string = 'cli'): Promise<void> {
-    await this.storeSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`, accountId);
+    await this.storeSecret(CF_SERVICE, ACCOUNT_ID_NAME, accountId);
 
     if (this.useAdvancedFeatures && this.integratedSecretManager) {
       try {
@@ -147,8 +136,8 @@ export class CloudflareSecretsBridge {
    */
   async getCredentials(): Promise<CloudflareCredentials | null> {
     const [apiToken, accountId] = await Promise.all([
-      this.retrieveSecret(`${CF_SERVICE}:${TOKEN_NAME}`),
-      this.retrieveSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`),
+      this.retrieveSecret(CF_SERVICE, TOKEN_NAME),
+      this.retrieveSecret(CF_SERVICE, ACCOUNT_ID_NAME),
     ]);
 
     if (!apiToken) {
@@ -162,14 +151,14 @@ export class CloudflareSecretsBridge {
    * Get just the API token
    */
   async getToken(): Promise<string | undefined> {
-    return await this.retrieveSecret(`${CF_SERVICE}:${TOKEN_NAME}`);
+    return await this.retrieveSecret(CF_SERVICE, TOKEN_NAME);
   }
 
   /**
    * Get just the Account ID
    */
   async getAccountId(): Promise<string | undefined> {
-    return await this.retrieveSecret(`${CF_SERVICE}:${ACCOUNT_ID_NAME}`);
+    return await this.retrieveSecret(CF_SERVICE, ACCOUNT_ID_NAME);
   }
 
   /**
@@ -184,9 +173,11 @@ export class CloudflareSecretsBridge {
    * Delete all Cloudflare credentials
    */
   async deleteCredentials(user: string = 'cli'): Promise<void> {
-    // Bun.secrets doesn't support delete yet, so we just log
-    console.log(c('  Note: Credentials deleted from memory', 'yellow'));
-    console.log(c('  To permanently remove, unset environment variables', 'gray'));
+    await Promise.all([
+      deleteManagedSecret({ service: CF_SERVICE, name: TOKEN_NAME }),
+      deleteManagedSecret({ service: CF_SERVICE, name: ACCOUNT_ID_NAME }),
+    ]);
+    void user;
   }
 
   /**

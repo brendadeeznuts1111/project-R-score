@@ -1,0 +1,10 @@
+{
+  "name": "esm-bytecode-demo",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "bun run cli.ts",
+    "build": "mkdir -p dist && bun build --compile --bytecode --format=esm ./cli.ts --outfile ./dist/cli-esm && ls -lh dist/",
+    "test": "./dist/cli-esm greet 'Bun' && ./dist/cli-esm info"
+  }
+}

@@ -1,11 +1,15 @@
 import { test, expect, describe } from 'bun:test';
-import { BunWikiIntegration } from './bun-wiki-integration.ts';
+
 import { CacheManager } from '../core/cache-manager.ts';
+
+import { BunWikiIntegration } from './bun-wiki-integration.ts';
 
 // Minimal mock for BunDocumentationIntegration
 const mockDocIntegration = {
-  initialize: async () => {},
-  getDocumentationIndex: async () => ({
+  initialize: async () => {
+    await Promise.resolve();
+  },
+  getDocumentationIndex: () => ({
     categories: [
       {
         name: 'Runtime',

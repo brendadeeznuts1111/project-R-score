@@ -25,7 +25,7 @@
  *   bun utils/guide-cli.ts jest --coverage
  */
 
-import { ensureDirectExecution } from "../shared/tools/entry-guard.ts";
+import { ensureDirectExecution } from "../lib/shared/tools/entry-guard.ts";
 ensureDirectExecution();
 
 import { which, spawn } from "bun";

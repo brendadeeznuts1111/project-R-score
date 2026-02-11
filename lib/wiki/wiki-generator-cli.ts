@@ -1,30 +1,32 @@
 // lib/wiki/wiki-generator-cli.ts — Enhanced wiki generator CLI with R2 integration
 
-import { r2MCPIntegration } from '../mcp/r2-integration';
-import { withCircuitBreaker } from '../core/circuit-breaker';
-import { ConcurrencyManagers } from '../core/safe-concurrency';
+import { getCookieCRC32WikiPages } from '../../examples/cookie-crc32/cookie-crc32-integrator';
+import { docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
+import { EnhancedDocumentationURLValidator } from '../../packages/docs-tools/src/builders/validator';
 import { AtomicFileOperations } from '../core/atomic-file-operations';
+import { withCircuitBreaker } from '../core/circuit-breaker';
 import { crc32 } from '../core/crc32';
-
+import { ConcurrencyManagers } from '../core/safe-concurrency';
+import { CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
+import { QUICK_REFERENCE_URLS } from '../docs/constants/domains';
 import { UtilsCategory, BUN_UTILS_URLS, BUN_UTILS_EXAMPLES } from '../docs/constants/utils';
 
 // Step 1: Centralized URL construction
-import { docsURLBuilder } from '../../packages/docs-tools/src/builders/url-builder';
 
 // Step 2: Related documentation patterns
 import { DOC_PATTERNS } from '../docs/patterns';
 
 // Step 3: CLI reference data
-import { CLICategory, CLI_DOCUMENTATION_URLS, CLI_COMMAND_EXAMPLES } from '../docs/constants/cli';
+import { r2MCPIntegration } from '../mcp/r2-integration';
+
+import type { CLICategory} from '../docs/constants/cli';
+
 
 // Step 4: URL validation
-import { EnhancedDocumentationURLValidator } from '../../packages/docs-tools/src/builders/validator';
 
 // Step 5: Quick reference collections
-import { QUICK_REFERENCE_URLS } from '../docs/constants/domains';
 
 // Step 6: Cookie CRC32 integration
-import { getCookieCRC32WikiPages } from '../../examples/cookie-crc32/cookie-crc32-integrator';
 
 interface WikiConfig {
   baseUrl: string;
@@ -53,13 +55,13 @@ interface WikiAnalytics {
 }
 
 interface SearchIndex {
-  utilities: Array<{
+  utilities: {
     name: string;
     category: string;
     description: string;
     keywords: string[];
     url: string;
-  }>;
+  }[];
   categories: Record<string, string[]>;
 }
 
@@ -502,7 +504,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
     console.log(`   ✅ ${cp.title}: ${cp.url}`);
   }
   if (cookieCategoryPages.length > 0) {
-    categories['cookie_crc32'] = {
+    categories.cookie_crc32 = {
       count: cookieCategoryPages.length,
       pages: cookieCategoryPages,
     };
@@ -587,8 +589,8 @@ Use these keywords to quickly find utilities:
     );
 
     for (const [category, data] of sortedCategories) {
-      const percentage = (((data as WikiCategoryData).count / wikiData.total) * 100).toFixed(1);
-      content += `- **${category.replace('_', ' ')}**: ${(data as WikiCategoryData).count} utilities (${percentage}%)\n`;
+      const percentage = (((data).count / wikiData.total) * 100).toFixed(1);
+      content += `- **${category.replace('_', ' ')}**: ${(data).count} utilities (${percentage}%)\n`;
     }
     content += `\n`;
   }
@@ -599,7 +601,7 @@ Use these keywords to quickly find utilities:
 `;
 
   for (const [category, data] of Object.entries(wikiData.categories)) {
-    const categoryData = data as WikiCategoryData;
+    const categoryData = data;
     const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     content += `### ${category.replace('_', ' ').toUpperCase()} {#${categorySlug}}
@@ -623,7 +625,7 @@ Use these keywords to quickly find utilities:
       content += `\n**Related Documentation:**\n`;
       for (const page of pagesWithRelated) {
         const utilName = page.title.split(':')[1]?.trim() || page.title;
-        content += `- ${utilName}: ${page.relatedDocs!.map(url => `[${url.split('/').pop()}](${url})`).join(', ')}\n`;
+        content += `- ${utilName}: ${page.relatedDocs.map(url => `[${url.split('/').pop()}](${url})`).join(', ')}\n`;
       }
     }
 
@@ -1048,7 +1050,7 @@ function generateHTMLWiki(
 
   // Generate category sections
   for (const [category, data] of Object.entries(wikiData.categories)) {
-    const categoryData = data as WikiCategoryData;
+    const categoryData = data;
     const categorySlug = category.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
     content += `        <div class="category" id="${categorySlug}">
@@ -1266,7 +1268,7 @@ function generateJSONWiki(
       coverage: analytics.coverage,
       mostUsedCategory: analytics.mostUsedCategory,
     },
-    analytics: analytics,
+    analytics,
     search: searchIndex,
     categories: wikiData.categories,
     pages: wikiData.wikiPages,
@@ -1340,17 +1342,17 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
 
     // Load all R2 data concurrently with circuit breaker + semaphore
     const [dashboardMetrics, aiData, domainData, advancedMetrics] = await Promise.all([
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-read', () => r2.getJSON('dashboard/metrics.json'))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('dashboard/metrics.json'))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-read', () => r2.getJSON('integrations/ai/configuration.json'))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/ai/configuration.json'))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-read', () => r2.getJSON('integrations/domain-intelligence/status.json'))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/domain-intelligence/status.json'))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-read', () => r2.getJSON('integrations/advanced-metrics/latest.json'))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/advanced-metrics/latest.json'))
       ),
     ]);
 
@@ -1561,7 +1563,7 @@ function generateHTMLWikiWithR2(
 `;
 
     // Insert R2 section before the footer
-    html = html.replace('<div class="footer">', r2Section + '\n        <div class="footer">');
+    html = html.replace('<div class="footer">', `${r2Section}\n        <div class="footer">`);
   }
 
   return html;
@@ -1625,24 +1627,24 @@ async function storeWikiInR2(
 
     // Store all wiki data with circuit breaker + semaphore
     await Promise.all([
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-write', () => r2.putJSON('wiki/metadata.json', {
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/metadata.json', {
           timestamp: new Date().toISOString(),
-          config: config,
-          analytics: analytics,
+          config,
+          analytics,
           totalUtilities: wikiData.total,
           categories: Object.keys(wikiData.categories).length,
           pagesChecksum: pagesChecksum.hex,
         }))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-write', () => r2.putJSON('wiki/search-index.json', searchIndex))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/search-index.json', searchIndex))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-write', () => r2.putJSON('wiki/pages.json', wikiData.wikiPages))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/pages.json', wikiData.wikiPages))
       ),
-      ConcurrencyManagers.networkRequests.withPermit(() =>
-        withCircuitBreaker('wiki-r2-write', () => r2.putJSON('wiki/categories.json', wikiData.categories))
+      ConcurrencyManagers.networkRequests.withPermit(async () =>
+        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/categories.json', wikiData.categories))
       ),
     ]);
 
@@ -1721,7 +1723,7 @@ function parseCLIArgs(): CLIOptions {
 
     switch (arg) {
       case '--format':
-        options.format = args[++i] as any;
+        options.format = args[++i] as unknown;
         break;
       case '--base-url':
         options.baseUrl = args[++i];
@@ -1751,7 +1753,7 @@ function parseCLIArgs(): CLIOptions {
         options.toc = false;
         break;
       case '--theme':
-        options.theme = args[++i] as any;
+        options.theme = args[++i] as unknown;
         break;
       case '--custom-template':
         options.customTemplate = args[++i];

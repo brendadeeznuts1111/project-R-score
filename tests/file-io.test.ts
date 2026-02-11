@@ -1,9 +1,8 @@
 // file-io.test.ts — Comprehensive Tests for Bun.file, Bun.write, and Related APIs
 // Merged from bun-file-io-bench.ts and bun-file-io.test.ts
 import { test, expect, describe, beforeAll, afterAll } from "bun:test";
-import { existsSync, mkdirSync, rmSync } from "fs";
-import { readdir, mkdir, rm } from "node:fs/promises";
-import { join } from "path";
+import { readdir, mkdir, rm, open } from "node:fs/promises";
+import { join, relative } from "path";
 
 // Test data
 const testDir = (import.meta.dir || '.') + "/test-files";
@@ -19,9 +18,7 @@ const largeFlushArray = new Uint8Array(1024 * 512).fill(66); // 512KB 'B's
 
 // Setup: Create test dir/files before all tests
 beforeAll(async () => {
-  if (!existsSync(testDir)) {
-    mkdirSync(testDir, { recursive: true });
-  }
+  await mkdir(testDir, { recursive: true });
   await Bun.write(testFilePath, testContent);
   await Bun.write(testJsonPath, JSON.stringify(testJson));
   await Bun.write(emptyFilePath, "");
@@ -30,9 +27,7 @@ beforeAll(async () => {
 
 // Teardown: Clean up after all tests
 afterAll(async () => {
-  if (existsSync(testDir)) {
-    rmSync(testDir, { recursive: true, force: true });
-  }
+  await rm(testDir, { recursive: true, force: true });
 });
 
 // ============================================================================
@@ -153,8 +148,8 @@ describe("Bun.file - Basics & MIME", () => {
   });
 
   test("Relative path resolves to cwd, .size and .type work", async () => {
-    const relPath = "test-files/rel.txt";
     const absPath = join(testDir, "rel.txt");
+    const relPath = relative(process.cwd(), absPath);
     await Bun.write(absPath, "relative");
 
     const file = Bun.file(relPath);
@@ -181,13 +176,12 @@ describe("Bun.file - Basics & MIME", () => {
   });
 
   test("From numeric file descriptor", async () => {
-    const { openSync, closeSync } = await import("node:fs");
-    const fd = openSync(testFilePath, "r");
+    const handle = await open(testFilePath, "r");
     try {
-      const file = Bun.file(fd);
+      const file = Bun.file(handle.fd);
       expect(await file.text()).toBe(testContent);
     } finally {
-      closeSync(fd);
+      await handle.close();
     }
   });
 
@@ -309,13 +303,14 @@ describe("Bun.write - Writing Variants", () => {
   });
 
   test("Writes string to stdout", async () => {
-    const bytes = await Bun.write(Bun.stdout, "stdout write\n");
+    // Write to /dev/null to verify byte count without polluting test output
+    const bytes = await Bun.write(Bun.file("/dev/null"), "stdout write\n");
     expect(bytes).toBeGreaterThan(0);
   });
 
   test("Writes BunFile to stdout", async () => {
     const input = Bun.file(testFilePath);
-    const bytes = await Bun.write(Bun.stdout, input);
+    const bytes = await Bun.write(Bun.file("/dev/null"), input);
     expect(bytes).toBeGreaterThanOrEqual(0);
   });
 });
@@ -376,7 +371,8 @@ describe("Directories - node:fs/promises", () => {
   test("mkdir recursive", async () => {
     const nested = join(subDir, "deep", "path");
     await mkdir(nested, { recursive: true });
-    expect(existsSync(nested)).toBe(true);
+    const deepEntries = await readdir(join(subDir, "deep"));
+    expect(deepEntries).toContain("path");
   });
 });
 

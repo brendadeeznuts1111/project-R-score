@@ -3,8 +3,8 @@
 import type { CookieInit } from 'bun';
 
 export class ABTestManager {
-  private cookies: Bun.CookieMap;
-  private tests = new Map<
+  private _cookies: Bun.CookieMap;
+  private _tests = new Map<
     string,
     {
       id: string;
@@ -19,7 +19,7 @@ export class ABTestManager {
   >();
 
   constructor(cookieHeader: string | null = null) {
-    this.cookies = new Bun.CookieMap(cookieHeader ?? '');
+    this._cookies = new Bun.CookieMap(cookieHeader ?? '');
   }
 
   registerTest(config: {
@@ -31,11 +31,11 @@ export class ABTestManager {
     secure?: boolean;
     sameSite?: 'strict' | 'lax' | 'none';
     httpOnly?: boolean;
-  }) {
+  }): void {
     const {
       id,
       variants,
-      weights = Array(variants.length).fill(100 / variants.length),
+      weights = Array.from({ length: variants.length }, () => 100 / variants.length),
       cookieName = `ab_${id.replace(/[^a-z0-9]/gi, '_')}`,
       maxAgeDays = 30,
       secure = Bun.env.NODE_ENV === 'production',
@@ -44,12 +44,12 @@ export class ABTestManager {
     } = config;
 
     // Validate weights sum to 100
-    const sum = weights.reduce((a, b) => a + b, 0);
+    const sum = weights.reduce((acc: number, value: number) => acc + value, 0);
     if (Math.abs(sum - 100) > 0.01) {
       throw new Error(`Weights for test ${id} must sum to 100 (got ${sum})`);
     }
 
-    this.tests.set(id, {
+    this._tests.set(id, {
       id,
       variants,
       weights,
@@ -62,17 +62,17 @@ export class ABTestManager {
   }
 
   getVariant(testId: string): string {
-    const test = this.tests.get(testId);
+    const test = this._tests.get(testId);
     if (!test) throw new Error(`Test ${testId} not registered`);
 
     // Check existing assignment
-    let variant = this.cookies.get(test.cookieName);
-    if (variant && test.variants.includes(variant)) {
-      return variant;
+    const existingVariant = this._cookies.get(test.cookieName);
+    if (typeof existingVariant === 'string' && test.variants.includes(existingVariant)) {
+      return existingVariant;
     }
 
     // Weighted random assignment
-    variant = this.weightedRandom(test.variants, test.weights);
+    const variant = this._weightedRandom(test.variants, test.weights);
 
     // Set persistent cookie
     const init: CookieInit = {
@@ -86,12 +86,12 @@ export class ABTestManager {
       partitioned: false,
     };
 
-    this.cookies.set(init);
+    this._cookies.set(init);
 
     return variant;
   }
 
-  private weightedRandom<T>(items: T[], weights: number[]): T {
+  private _weightedRandom(items: string[], weights: number[]): string {
     let sum = 0;
     const cumulative: number[] = [];
 
@@ -102,23 +102,30 @@ export class ABTestManager {
 
     const r = Math.random() * sum;
     for (let i = 0; i < cumulative.length; i++) {
-      if (r <= cumulative[i]) return items[i];
+      if (r <= cumulative[i]) {
+        const item = items[i];
+        if (item !== undefined) return item;
+      }
     }
 
-    return items[0]; // fallback (should never happen)
+    const fallback = items[0];
+    if (fallback === undefined) {
+      throw new Error('Cannot select weighted random item from empty collection');
+    }
+    return fallback;
   }
 
   getAllAssignments(): Record<string, string> {
     const assignments: Record<string, string> = {};
-    for (const [id, test] of this.tests) {
-      const v = this.cookies.get(test.cookieName);
-      if (v) assignments[id] = v;
+    for (const [id, test] of this._tests) {
+      const value = this._cookies.get(test.cookieName);
+      if (typeof value === 'string') assignments[id] = value;
     }
     return assignments;
   }
 
   forceAssign(testId: string, variant: string): void {
-    const test = this.tests.get(testId);
+    const test = this._tests.get(testId);
     if (!test) throw new Error(`Test ${testId} not registered`);
     if (!test.variants.includes(variant)) {
       throw new Error(`Invalid variant ${variant} for test ${testId}`);
@@ -134,22 +141,22 @@ export class ABTestManager {
       httpOnly: test.httpOnly,
     };
 
-    this.cookies.set(init);
+    this._cookies.set(init);
   }
 
   clear(testId?: string): void {
     if (testId) {
-      const test = this.tests.get(testId);
-      if (test) this.cookies.delete(test.cookieName);
+      const test = this._tests.get(testId);
+      if (test) this._cookies.delete(test.cookieName);
     } else {
       // Clear all A/B cookies
-      for (const test of this.tests.values()) {
-        this.cookies.delete(test.cookieName);
+      for (const test of this._tests.values()) {
+        this._cookies.delete(test.cookieName);
       }
     }
   }
 
   getSetCookieHeaders(): string[] {
-    return this.cookies.toSetCookieHeaders();
+    return this._cookies.toSetCookieHeaders();
   }
 }

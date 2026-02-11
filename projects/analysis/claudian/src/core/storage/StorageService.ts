@@ -140,8 +140,8 @@ export class StorageService {
     await this.runMigrations();
 
     // Load both settings
-    const cc = await this.ccSettings.YAML.parse();
-    const claudian = await this.claudianSettings.YAML.parse();
+    const cc = await this.ccSettings['YAML.parse']();
+    const claudian = await this.claudianSettings['YAML.parse']();
 
     return { cc, claudian };
   }
@@ -264,7 +264,7 @@ export class StorageService {
     await this.claudianSettings.save(claudianFields as StoredClaudianSettings);
 
     // Verify Claudian settings were saved
-    const savedClaudian = await this.claudianSettings.YAML.parse();
+    const savedClaudian = await this.claudianSettings['YAML.parse']();
     if (!savedClaudian || savedClaudian.userName === undefined) {
       throw new Error('Failed to verify claudian-settings.json was saved correctly');
     }
@@ -301,7 +301,7 @@ export class StorageService {
    * Migrate state from data.json to claudian-settings.json.
    */
   private async migrateFromDataJson(dataJson: LegacyDataJson): Promise<void> {
-    const claudian = await this.claudianSettings.YAML.parse();
+    const claudian = await this.claudianSettings['YAML.parse']();
 
     // Only migrate if not already set (claudian-settings.json takes precedence)
     if (dataJson.lastEnvHash !== undefined && !claudian.lastEnvHash) {
@@ -467,7 +467,7 @@ export class StorageService {
    * Load Claudian settings.
    */
   async loadClaudianSettings(): Promise<StoredClaudianSettings> {
-    return this.claudianSettings.YAML.parse();
+    return this.claudianSettings['YAML.parse']();
   }
 
   /**

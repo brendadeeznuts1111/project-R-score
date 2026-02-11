@@ -6,7 +6,7 @@ import { extractLastTodosFromMessages, parseTodoInput } from '@/features/chat/re
 
 describe('TodoListRenderer', () => {
   beforeEach(() => {
-    jest.clearAllMocks();
+    (globalThis as any).jest?.clearAllMocks?.();
   });
 
   describe('parseTodoInput', () => {

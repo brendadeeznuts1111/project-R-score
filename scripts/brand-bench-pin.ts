@@ -2,6 +2,7 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import type { BrandBenchPinnedBaseline, BrandBenchReport } from './lib/brand-bench-types';
+import { createShutdown } from './lib/graceful-shutdown';
 
 type Options = {
   fromPath: string;
@@ -49,5 +50,7 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
+  const shutdown = createShutdown({ name: 'brand-bench-pin', autoExit: true });
   await main();
+  shutdown.dispose();
 }

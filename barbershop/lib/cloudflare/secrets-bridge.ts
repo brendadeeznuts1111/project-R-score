@@ -5,6 +5,7 @@
  * The full version with CLI commands is in scripts/domain/cf-secrets-bridge.ts
  */
 
+import { getSecret as getManagedSecret } from './bun-secrets-adapter';
 const CF_SERVICE = 'cloudflare';
 const TOKEN_NAME = 'api_token';
 const ACCOUNT_ID_NAME = 'account_id';
@@ -18,26 +19,12 @@ export interface CloudflareCredentials {
  * Get secret from Bun.secrets or environment
  */
 async function getSecret(service: string, name: string): Promise<string | undefined> {
-  const key = `${service}:${name}`;
-
-  // Try Bun.secrets first (Bun v1.3.7+)
-  if (typeof Bun !== 'undefined' && 'secrets' in Bun) {
-    try {
-      const secrets = Bun.secrets as unknown as { get: (k: string) => Promise<string | undefined> };
-      const value = await secrets.get(key);
-      if (value) return value;
-    } catch {
-      // Fall through to environment
-    }
-  }
-
-  // Fallback to environment variables
-  const envVarMap: Record<string, string> = {
-    'cloudflare:api_token': 'CLOUDFLARE_API_TOKEN',
-    'cloudflare:account_id': 'CLOUDFLARE_ACCOUNT_ID',
-  };
-
-  return Bun.env[envVarMap[key] || key.toUpperCase().replace(':', '_')];
+  const value = await getManagedSecret({
+    service,
+    name,
+    legacyServices: service === 'com.barbershop.vectorize' ? ['cloudflare'] : [],
+  });
+  return value ?? undefined;
 }
 
 /**

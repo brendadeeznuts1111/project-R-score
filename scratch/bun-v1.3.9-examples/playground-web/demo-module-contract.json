@@ -1,0 +1,1418 @@
+{
+  "version": 1,
+  "total": 57,
+  "generatedAt": "2026-02-10T16:55:21.363Z",
+  "modules": {
+    "governance-status": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=governance-status",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=governance-status",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "decision-defense": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=decision-defense",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=decision-defense",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "evidence-dashboard": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=evidence-dashboard",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=evidence-dashboard",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "protocol-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-matrix",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "protocol-scorecard": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-scorecard",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-scorecard",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "protocol-router-tier1380": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=protocol-router-tier1380",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=protocol-router-tier1380",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "multipart-progress": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=multipart-progress",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=multipart-progress",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "s3-content-type": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=s3-content-type",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=s3-content-type",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "control-plane": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=control-plane",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=control-plane",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "resilience-governance": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=resilience-governance",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=resilience-governance",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "brand-bench-gate": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=brand-bench-gate",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=brand-bench-gate",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "historical-sqlite-trends": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=historical-sqlite-trends",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=historical-sqlite-trends",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "parallel": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=parallel",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=parallel",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_parallel",
+          "bun_docs_test_cli",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "workspace-runner-panel": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=workspace-runner-panel",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=workspace-runner-panel",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_parallel",
+          "bun_docs_test_cli",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "script-orchestration-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=script-orchestration-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=script-orchestration-control",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_parallel",
+          "bun_docs_test_cli",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "feature-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "scriptMode": "parallel",
+        "workspaceFilter": "*"
+      },
+      "flags": [
+        "--parallel",
+        "--sequential",
+        "--no-exit-on-error",
+        "--filter"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=feature-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=feature-matrix",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "component-status-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=component-status-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=component-status-matrix",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "deployment-readiness-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=deployment-readiness-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=deployment-readiness-matrix",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "performance-impact-matrix": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=performance-impact-matrix",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=performance-impact-matrix",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "security-posture-report": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=security-posture-report",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=security-posture-report",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "domain-topology": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=domain-topology",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=domain-topology",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "http2": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=http2",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=http2",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_http2",
+          "bun_release_v139",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "http2-runtime-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=http2-runtime-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=http2-runtime-control",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_http2",
+          "bun_release_v139",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "mocks": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=mocks",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=mocks",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_symbol_dispose",
+          "bun_docs_test_writing",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "proxy": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=proxy",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=proxy",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_no_proxy",
+          "bun_release_v139",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "no-proxy-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "host": "localhost",
+        "timeoutMs": 5000
+      },
+      "flags": [
+        "--network",
+        "--proxy-aware"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=no-proxy-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=no-proxy-explicit",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_no_proxy",
+          "bun_release_v139",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "profiling": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=profiling",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=profiling",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "cpu-prof-interval-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=cpu-prof-interval-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=cpu-prof-interval-explicit",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "bytecode": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "format": "esm",
+        "bytecode": true
+      },
+      "flags": [
+        "--compile",
+        "--bytecode",
+        "--format=esm"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bytecode",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bytecode",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "esm-bytecode-explicit": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "format": "esm",
+        "bytecode": true
+      },
+      "flags": [
+        "--compile",
+        "--bytecode",
+        "--format=esm"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=esm-bytecode-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=esm-bytecode-explicit",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "performance": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=performance",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=performance",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "markdown-simd": {
+      "language": "typescript",
+      "defaults": {
+        "simd": true,
+        "escapeChars": [
+          "&",
+          "<",
+          ">",
+          "\""
+        ]
+      },
+      "flags": [
+        "--simd",
+        "--no-simd"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=markdown-simd",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=markdown-simd",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "react-markdown-cache": {
+      "language": "typescript",
+      "defaults": {
+        "cacheTags": [
+          "div",
+          "p",
+          "h1",
+          "h2",
+          "h3",
+          "h4",
+          "h5",
+          "h6"
+        ]
+      },
+      "flags": [
+        "--cache-tags"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=react-markdown-cache",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=react-markdown-cache",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "abort-signal-optimize": {
+      "language": "typescript",
+      "defaults": {
+        "skipEventCreation": true
+      },
+      "flags": [
+        "--no-listeners"
+      ],
+      "benchCommand": "bun run bench/performance-trilogy.ts -- --focus=abort-signal-optimize",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=abort-signal-optimize",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "bugfixes": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "compatTarget": "bun-v1.3.9"
+      },
+      "flags": [
+        "--compat-check",
+        "--stability"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bugfixes",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bugfixes",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "bun-apis-stringwidth": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "compatTarget": "bun-v1.3.9"
+      },
+      "flags": [
+        "--compat-check",
+        "--stability"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=bun-apis-stringwidth",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=bun-apis-stringwidth",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "markdown-advanced": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=markdown-advanced",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=markdown-advanced",
+      "benchmarkBaseline": {
+        "mode": "string",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "symbol-dispose": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=symbol-dispose",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=symbol-dispose",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_symbol_dispose",
+          "bun_docs_test_writing",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "symbol-dispose-explicit": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=symbol-dispose-explicit",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=symbol-dispose-explicit",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_blog_symbol_dispose",
+          "bun_docs_test_writing",
+          "bun_release_v139"
+        ]
+      }
+    },
+    "ipc-communication": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=ipc-communication",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=ipc-communication",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "brand-bench-results": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 10000,
+        "sampleIntervalUs": 1000
+      },
+      "flags": [
+        "--cpu-prof",
+        "--cpu-prof-interval"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=brand-bench-results",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=brand-bench-results",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "inspect-table": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--feature-demo"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=inspect-table",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=inspect-table",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "process-basics": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=process-basics",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=process-basics",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "linux_kernel_signal_api",
+          "bun_release_v139",
+          "bun_docs_test_cli"
+        ]
+      }
+    },
+    "stdin-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=stdin-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=stdin-demo",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "argv-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=argv-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=argv-demo",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "ctrl-c-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=ctrl-c-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=ctrl-c-demo",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "signals-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=signals-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=signals-demo",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "linux_kernel_signal_api",
+          "bun_release_v139",
+          "bun_docs_test_cli"
+        ]
+      }
+    },
+    "spawn-demo": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "runtime": "bun"
+      },
+      "flags": [
+        "--process",
+        "--signals"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=spawn-demo",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=spawn-demo",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "test-timeouts": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-timeouts",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-timeouts",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "test-config": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-config",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-config",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "test-lifecycle": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-lifecycle",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-lifecycle",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "test-filtering": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-filtering",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-filtering",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "test-exec-control": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "testRunner": "bun:test"
+      },
+      "flags": [
+        "--bail=1",
+        "--timeout=5000"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=test-exec-control",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=test-exec-control",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "build-metafile": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "entry": "scratch/bun-v1.3.9-examples/playground-web/server.ts",
+        "maxKb": 5120
+      },
+      "flags": [
+        "--entry",
+        "--output",
+        "--max-kb"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=build-metafile",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=build-metafile",
+      "benchmarkBaseline": {
+        "mode": "hash",
+        "iterations": 200000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "project-health-metrics": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=project-health-metrics",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=project-health-metrics",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "registry-integration": {
+      "language": "bash",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "windowMinutes": 60,
+        "limit": 120
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=registry-integration",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=registry-integration",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    },
+    "resilient-fetch-ultra": {
+      "language": "typescript",
+      "defaults": {
+        "port": 3011,
+        "timeoutMs": 5000,
+        "retries": 3,
+        "circuitBreakerEnabled": true,
+        "predictiveEnabled": true
+      },
+      "flags": [
+        "--json",
+        "--governance"
+      ],
+      "benchCommand": "bun run scripts/demo-module-bench.ts --id=resilient-fetch-ultra",
+      "testCommand": "bun run scripts/demo-module-test.ts --id=resilient-fetch-ultra",
+      "benchmarkBaseline": {
+        "mode": "map-size",
+        "iterations": 2000000,
+        "minOpsPerSec": 50000,
+        "sourceIds": [
+          "bun_release_v139",
+          "bun_docs_test_writing",
+          "mdn_keep_alive"
+        ]
+      }
+    }
+  }
+}

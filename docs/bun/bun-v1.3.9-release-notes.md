@@ -482,3 +482,22 @@ Tested: both `.cpuprofile` (JSON) and `.md` outputs generated correctly.
 - **Shell: prevent double-free during GC finalization** — stability fix
 - **WebSocket: fix missing `incPendingActivityCount()` in blob binaryType**
 - **fs: handle `.` path normalization on Windows**
+
+## Project CI Policy (2026-02-10)
+
+Required lane policy in this repository:
+
+- Runtime baseline: **stable Bun >= 1.3.9**
+- Required command: `bun run ci:parallel`
+- Required scope: root-only gate (`build + test:ci:root + lint:ci:root`)
+- Default behavior: **fail-fast** parallel (`--parallel`)
+
+Diagnostic lanes:
+
+- `bun run ci:parallel:all` uses `--no-exit-on-error` to collect all failures.
+- `bun run ci:parallel:full` keeps broad legacy scope visible while non-blocking.
+
+Fail-fast semantics reminder:
+
+- In `--parallel`, a failing child exits the group and sibling processes are signaled (`SIGINT`), which is expected behavior.
+- Use `--no-exit-on-error` only when failure aggregation is desired.

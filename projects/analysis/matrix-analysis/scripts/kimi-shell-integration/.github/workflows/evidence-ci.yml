@@ -1,0 +1,42 @@
+# Evidence Framework CI
+# Validates T3 benchmarks on every PR
+
+name: Evidence Validation
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - '**.bench.ts'
+      - 'council-benchmarks.sh'
+  pull_request:
+    branches: [main]
+    paths:
+      - '**.bench.ts'
+      - 'council-benchmarks.sh'
+
+jobs:
+  validate-evidence:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+        bun-version: ['1.3.9']
+    
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v1
+        with:
+          bun-version: ${{ matrix.bun-version }}
+      
+      - name: Run All Benchmarks
+        run: bash council-benchmarks.sh
+        timeout-minutes: 15
+      
+      - name: Upload Evidence
+        uses: actions/upload-artifact@v3
+        with:
+          name: evidence-${{ matrix.os }}
+          path: reports/

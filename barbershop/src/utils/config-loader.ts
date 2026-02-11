@@ -19,14 +19,20 @@ import { readFile } from 'node:fs/promises';
 // CONFIG TYPES
 // ═══════════════════════════════════════════════════════════════════════════════
 
-type ConfigValue = string | number | boolean | null | ConfigValue[] | { [key: string]: ConfigValue };
+export type ConfigValue =
+  | string
+  | number
+  | boolean
+  | null
+  | ConfigValue[]
+  | { [key: string]: ConfigValue };
 
-interface ConfigSchema<T> {
+export interface ConfigSchema<T> {
   parse: (value: unknown) => T;
   default?: T;
 }
 
-interface ConfigOptions {
+export interface ConfigOptions {
   path?: string;
   envPrefix?: string;
   allowHotReload?: boolean;
@@ -126,6 +132,9 @@ export const s = {
     });
   },
 };
+
+// Backward-compatible alias used by older imports.
+export const schema = s;
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // ELITE CONFIG MANAGER
@@ -424,5 +433,4 @@ if (import.meta.main) {
   config.destroy();
 }
 
-export { s as schema };
 export { EliteConfigManager as default };

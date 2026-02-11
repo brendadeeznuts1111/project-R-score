@@ -549,7 +549,7 @@ describe('utils.ts', () => {
     });
 
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
       Object.defineProperty(process, 'platform', { value: originalPlatform });
       process.env = originalEnv;
     });
@@ -709,7 +709,7 @@ describe('utils.ts', () => {
 
   describe('isPathInAllowedExportPaths', () => {
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     it('should return false when allowed export paths is empty', () => {
@@ -736,7 +736,7 @@ describe('utils.ts', () => {
 
   describe('getPathAccessType', () => {
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     const stubRealpath = () => {
@@ -804,7 +804,7 @@ describe('utils.ts', () => {
 
   describe('isPathWithinVault', () => {
     afterEach(() => {
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     it('should allow relative paths within vault', () => {
@@ -882,7 +882,7 @@ describe('utils.ts', () => {
     afterEach(() => {
       Object.defineProperty(process, 'platform', { value: originalPlatform });
       Object.defineProperty(path, 'sep', { value: originalSep, writable: true });
-      jest.restoreAllMocks();
+      ((globalThis as any).jest?.restoreAllMocks?.() ?? (globalThis as any).mock?.restore?.());
     });
 
     it('allows vault paths after slash normalization', () => {

@@ -182,7 +182,7 @@ describe('externalContext utilities', () => {
 
   describe('isValidDirectoryPath', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
     });
 
     it('should return true for existing directory', () => {
@@ -206,7 +206,7 @@ describe('externalContext utilities', () => {
 
   describe('filterValidPaths', () => {
     beforeEach(() => {
-      jest.clearAllMocks();
+      (globalThis as any).jest?.clearAllMocks?.();
     });
 
     it('should filter out non-existent paths', () => {

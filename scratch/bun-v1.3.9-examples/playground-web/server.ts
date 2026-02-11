@@ -6,18 +6,46 @@
  */
 
 import { serve } from "bun";
-import { readFile } from "node:fs/promises";
-import { createServer } from "node:net";
-import { join } from "node:path";
-import { getBuildMetadata, getGitCommitHash } from "./build-metadata" with { type: "macro" };
+import { Database } from "bun:sqlite";
+import { mkdir, readFile, readdir, writeFile } from "node:fs/promises";
+import { readFileSync } from "node:fs";
+import { createServer, isIP, type Server as NetServer } from "node:net";
+import { connect as connectHttp2, createSecureServer, type Http2SecureServer } from "node:http2";
+import { extname, join, normalize, resolve as resolvePath, sep } from "node:path";
+import { setEnvironmentData } from "worker_threads";
+import { resolvePlaygroundPortPolicy } from "../../../scripts/lib/dashboard-env";
+import { RuntimeEnv } from "../../../lib/env/runtime";
+import { getBuildMetadata } from "./build-metadata" with { type: "macro" };
+import { getGitCommitHash } from "./getGitCommitHash.ts" with { type: "macro" };
+import { getResilienceConfig } from "../../../config/resilience-chain";
+import { summarizeDeploymentReadiness } from "../../../deployment/readiness-matrix";
+import { summarizePerformanceImpact } from "../../../analysis/performance-impact";
+import { summarizeSecurityPosture } from "../../../security/posture-report";
+import { listDomains, renderDomainGraph, renderFullHierarchy } from "../../../docs/domain-renderer";
+import { UltraWorkerPool } from "../../../workers/ultra-pool";
+import { resilientFetchBun } from "../../../src/fetch/resilient-bun";
+import { UltraResilientFetch } from "../../../src/fetch/resilient-ultra";
+import { getSecretsRuntimeInfo } from "../../../lib/security/bun-secrets-adapter";
+import {
+  ExecutiveVerdict,
+  ProjectRecommendations,
+  SuccessMetrics,
+  calculateSuccessHealth,
+} from "../../../dashboard/project-health";
+import { MulticastAddressSelector } from "../../../lib/udp/multicast-selector";
+import {
+  decodePacketHeader,
+  encodePacketHeader,
+  PACKET_HEADER_SIZE,
+} from "../../../lib/udp/packet-id";
 
 const BASE_STANDARD = Object.freeze({
   dedicatedPort: 3011,
-  portRange: "3011-3020",
+  portRange: "3011-3031",
   maxConcurrentRequests: 200,
   maxCommandWorkers: 2,
-  prefetchEnabled: false,
-  preconnectEnabled: false,
+  prefetchEnabled: true,
+  preconnectEnabled: true,
   smokeTimeoutMs: 2000,
   fetchTimeoutMs: 30000,
   maxBodySizeMb: 10,
@@ -27,20 +55,52 @@ const BASE_STANDARD = Object.freeze({
   fetchVerbose: "off",
 });
 
-const DEDICATED_PORT = parseFirstNumberEnv(["PLAYGROUND_PORT", "PORT"], BASE_STANDARD.dedicatedPort, { min: 1, max: 65535 });
-const PORT_RANGE = process.env.PLAYGROUND_PORT_RANGE || BASE_STANDARD.portRange;
+const RUNTIME_ENV = RuntimeEnv.read();
+const PORT_POLICY = resolvePlaygroundPortPolicy(BASE_STANDARD.dedicatedPort);
+const DEDICATED_PORT = RUNTIME_ENV.port || PORT_POLICY.requestedPort;
+const PLAYGROUND_HOST = RUNTIME_ENV.host || PORT_POLICY.host || "127.0.0.1";
+const ALLOW_PORT_FALLBACK = PORT_POLICY.allowFallback;
+const PORT_RANGE = PORT_POLICY.portRange;
 const MAX_CONCURRENT_REQUESTS = parseNumberEnv("PLAYGROUND_MAX_CONCURRENT_REQUESTS", BASE_STANDARD.maxConcurrentRequests, { min: 1, max: 100000 });
 const MAX_COMMAND_WORKERS = parseNumberEnv("PLAYGROUND_MAX_COMMAND_WORKERS", BASE_STANDARD.maxCommandWorkers, { min: 1, max: 64 });
+const WORKER_POOL_MIN = parseNumberEnv("PLAYGROUND_WORKER_POOL_MIN", 1, { min: 1, max: 64 });
+const WORKER_POOL_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_MAX", MAX_COMMAND_WORKERS, { min: 1, max: 64 });
+const WORKER_POOL_QUEUE_MAX = parseNumberEnv("PLAYGROUND_WORKER_POOL_QUEUE_MAX", 200, { min: 1, max: 10000 });
+const WORKER_POOL_TASK_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_WORKER_POOL_TASK_TIMEOUT_MS", 15000, {
+  min: 100,
+  max: 300000,
+});
 const PREFETCH_ENABLED = parseBool(process.env.PLAYGROUND_PREFETCH_ENABLED, BASE_STANDARD.prefetchEnabled);
 const PRECONNECT_ENABLED = parseBool(process.env.PLAYGROUND_PRECONNECT_ENABLED, BASE_STANDARD.preconnectEnabled);
-const PREFETCH_HOSTS = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
-const PRECONNECT_URLS = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
+const DEFAULT_PREFETCH_HOSTS = ["registry.factory-wager.com", "docs.factory-wager.com"];
+const DEFAULT_PRECONNECT_URLS = [`http://${PLAYGROUND_HOST}:${DEDICATED_PORT}`];
+const PREFETCH_HOSTS = (() => {
+  const configured = parseList(process.env.PLAYGROUND_PREFETCH_HOSTS);
+  return configured.length > 0 ? configured : (PREFETCH_ENABLED ? DEFAULT_PREFETCH_HOSTS : []);
+})();
+const PRECONNECT_URLS = (() => {
+  const configured = parseList(process.env.PLAYGROUND_PRECONNECT_URLS);
+  return configured.length > 0 ? configured : (PRECONNECT_ENABLED ? DEFAULT_PRECONNECT_URLS : []);
+})();
 const SMOKE_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SMOKE_TIMEOUT_MS", BASE_STANDARD.smokeTimeoutMs, { min: 100, max: 120000 });
 const SMOKE_URLS = parseList(process.env.PLAYGROUND_SMOKE_URLS);
 const FETCH_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_FETCH_TIMEOUT_MS", BASE_STANDARD.fetchTimeoutMs, { min: 100, max: 300000 });
 const MAX_BODY_SIZE_MB = parseNumberEnv("PLAYGROUND_MAX_BODY_SIZE_MB", BASE_STANDARD.maxBodySizeMb, { min: 1, max: 1024, integer: false });
 const MAX_BODY_SIZE_BYTES = Math.max(1, Math.floor(MAX_BODY_SIZE_MB * 1024 * 1024));
 const PROXY_AUTH_TOKEN = process.env.PLAYGROUND_PROXY_AUTH_TOKEN || "";
+const REGISTRY_HEALTH_URL = process.env.PLAYGROUND_REGISTRY_HEALTH_URL || "https://registry.factory-wager.com/health";
+const REGISTRY_DOCS_URL = process.env.PLAYGROUND_REGISTRY_DOCS_URL || "https://docs.factory-wager.com";
+const REGISTRY_REQUEST_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_REGISTRY_TIMEOUT_MS", 2500, {
+  min: 250,
+  max: 20000,
+});
+const REGISTRY_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_REGISTRY_CACHE_TTL_MS", 15000, {
+  min: 1000,
+  max: 300000,
+});
+const PLAYGROUND_SECRETS_SERVICE =
+  process.env.PLAYGROUND_SECRETS_SERVICE || "com.factorywager.playground.dashboard";
+const PLAYGROUND_SECRETS_LEGACY_SERVICES = parseList(process.env.PLAYGROUND_SECRETS_LEGACY_SERVICES);
 const STREAM_CHUNK_SIZE = parseNumberEnv("PLAYGROUND_STREAM_CHUNK_SIZE", BASE_STANDARD.streamChunkSize, { min: 256, max: 1048576 });
 const SEARCH_GOVERNANCE_FETCH_DEPTH = parseNumberEnv(
   "SEARCH_GOVERNANCE_FETCH_DEPTH",
@@ -51,19 +111,292 @@ const FETCH_DECOMPRESS = parseBool(process.env.PLAYGROUND_FETCH_DECOMPRESS, BASE
 const FETCH_VERBOSE = parseFetchVerbose(process.env.PLAYGROUND_FETCH_VERBOSE, BASE_STANDARD.fetchVerbose);
 const S3_DEFAULT_CONTENT_TYPE = process.env.PLAYGROUND_S3_DEFAULT_CONTENT_TYPE || "application/octet-stream";
 const BRAND_STATUS_STRICT_PROBE = parseBool(process.env.PLAYGROUND_BRAND_STATUS_STRICT_PROBE, false);
+const IGNORE_SIGHUP = parseBool(process.env.PLAYGROUND_IGNORE_SIGHUP, true);
+const EXIT_ON_UNHANDLED_REJECTION = parseBool(process.env.PLAYGROUND_EXIT_ON_UNHANDLED_REJECTION, false);
+const EXIT_ON_UNCAUGHT_EXCEPTION = parseBool(process.env.PLAYGROUND_EXIT_ON_UNCAUGHT_EXCEPTION, true);
 const MACRO_GIT_COMMIT_HASH = getGitCommitHash();
 const GIT_COMMIT_HASH = (process.env.GIT_COMMIT_HASH || "").trim() || MACRO_GIT_COMMIT_HASH || "unset";
 const GIT_COMMIT_HASH_SOURCE = (process.env.GIT_COMMIT_HASH || "").trim() ? "env" : "macro";
 const BUILD_METADATA = await getBuildMetadata();
+const BUILD_SHA = String((BUILD_METADATA as Record<string, unknown> | null)?.gitCommitHash || GIT_COMMIT_HASH || "unknown");
 const BUN_REVISION = Bun.revision || "unknown";
+const ACTIVE_RESILIENCE = getResilienceConfig();
+const SERVER_STARTED_AT = new Date().toISOString();
 const PROJECT_ROOT = join(import.meta.dir, "..", "..", "..");
 const BRAND_REPORTS_DIR = join(PROJECT_ROOT, "reports", "brand-bench");
 const BRAND_GOVERNANCE_PATH = join(BRAND_REPORTS_DIR, "governance.json");
 const DECISIONS_ROOT = join(PROJECT_ROOT, "docs", "decisions");
 const DECISIONS_INDEX_PATH = join(DECISIONS_ROOT, "index.json");
+const DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT = join(import.meta.dir, "server.ts");
+const DEMO_BENCH_LATEST_PATH = join(PROJECT_ROOT, "reports", "demo-bench", "latest.json");
+const WORKER_POOL_BENCH_DIR = join(PROJECT_ROOT, "reports", "worker-pool-bench");
+const WORKER_POOL_BENCH_LATEST_PATH = join(WORKER_POOL_BENCH_DIR, "latest.json");
+const WORKER_POOL_BENCH_MAX_P95_MS = parseNumberEnv("PLAYGROUND_WORKER_BENCH_MAX_P95_MS", 40, {
+  min: 1,
+  max: 10_000,
+  integer: false,
+});
+const WORKER_POOL_BENCH_MAX_REGRESSION_PCT = parseNumberEnv(
+  "PLAYGROUND_WORKER_BENCH_MAX_REGRESSION_PCT",
+  20,
+  { min: 0, max: 500, integer: false }
+);
+const DASHBOARD_METRICS_DB_PATH =
+  process.env.PLAYGROUND_METRICS_DB_PATH ||
+  join(PROJECT_ROOT, ".cache", "playground-dashboard-metrics.sqlite");
+const DEMO_MODULE_CONTRACT_PATH = join(import.meta.dir, "demo-module-contract.json");
+const DASHBOARD_METRICS_RETENTION_ROWS = parseNumberEnv("PLAYGROUND_METRICS_RETENTION_ROWS", 5000, {
+  min: 100,
+  max: 1000000,
+});
+const DASHBOARD_METRICS_INTERVAL_MS = parseNumberEnv("PLAYGROUND_METRICS_INTERVAL_MS", 1000, {
+  min: 250,
+  max: 60000,
+});
 let inFlightRequests = 0;
-let activeCommands = 0;
-const commandWaiters: Array<() => void> = [];
+const serverStartTime = Date.now();
+const multicastAddressSelector = new MulticastAddressSelector();
+const commandWorkerPool = new UltraWorkerPool<
+  { type: "run-command"; cmd: string[]; cwd: string; env?: Record<string, string> },
+  { output: string; error: string; exitCode: number }
+>({
+  workerUrl: new URL("./command-worker.ts", import.meta.url),
+  minWorkers: Math.max(1, Math.min(WORKER_POOL_MIN, WORKER_POOL_MAX)),
+  maxWorkers: Math.max(1, WORKER_POOL_MAX),
+  fastPath: true,
+  maxQueueSize: WORKER_POOL_QUEUE_MAX,
+  taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
+});
+const WORKER_DEFAULT_ENV: Record<string, string> = {
+  NO_PROXY: (process.env.NO_PROXY || process.env.no_proxy || "localhost,127.0.0.1").trim(),
+};
+setEnvironmentData("playground.workerDefaultEnv", WORKER_DEFAULT_ENV);
+
+function getCommandWorkerStats() {
+  const stats = commandWorkerPool.getStats();
+  const provisionedWorkers = Number(stats.workers || 0);
+  const busyWorkers = Number(stats.busyWorkers || 0);
+  const configuredMax = Number(WORKER_POOL_MAX || 1);
+  const configuredMin = Number(WORKER_POOL_MIN || 1);
+  return {
+    active: busyWorkers, // backwards compatible alias: active = busy workers
+    busy: busyWorkers,
+    max: configuredMax, // backwards compatible alias: max = configured cap
+    provisioned: provisionedWorkers,
+    configuredMin,
+    configuredMax,
+    provisionedAvailable: Math.max(0, provisionedWorkers - busyWorkers),
+    scalableHeadroom: Math.max(0, configuredMax - provisionedWorkers),
+    available: Math.max(0, configuredMax - busyWorkers),
+    queued: stats.queuedTasks,
+    inFlight: stats.inFlightTasks,
+    createdWorkers: stats.createdWorkers,
+    replacedWorkers: stats.replacedWorkers,
+    timedOutTasks: stats.timedOutTasks,
+    rejectedTasks: stats.rejectedTasks,
+    lastErrors: stats.lastErrors,
+  };
+}
+
+// Cache expensive computations
+let cachedBenchmarkResult: { name: string; result: number; threshold: number }[] | null = null;
+let cachedRuntimeSnapshot: Record<string, unknown> | null = null;
+let cachedGitCommit: string | null = null;
+let cachedRepoGitHead: string | null = null;
+let cachedRepoGitHeadAt = 0;
+let cachedProfileSnapshot: Record<string, unknown> | null = null;
+let cachedHeapSnapshot: Record<string, unknown> | null = null;
+let cachedBundleSnapshot: Record<string, unknown> | null = null;
+let cachedBundleAnalysisByEntrypoint = new Map<string, { at: number; payload: Record<string, unknown> }>();
+let cachedOrchestrationLoop: Record<string, unknown> | null = null;
+let cachedOrchestrationLoopAt = 0;
+let cacheTimestamp = 0;
+let cachedRegistryStatus: { at: number; payload: Record<string, unknown> } | null = null;
+let capacityMetricsDb: Database | null = null;
+let capacityInsertStmt: ReturnType<Database["prepare"]> | null = null;
+let capacityPruneStmt: ReturnType<Database["prepare"]> | null = null;
+let capacitySelectStmt: ReturnType<Database["prepare"]> | null = null;
+let capacityMetricsLastPersistMs = 0;
+let capacityMetricsPersistedCount = 0;
+const REQUEST_TRACE_BUFFER_SIZE = parseNumberEnv("PLAYGROUND_TRACE_BUFFER_SIZE", 300, {
+  min: 50,
+  max: 5000,
+});
+type RequestTrace = {
+  id: string;
+  at: string;
+  method: string;
+  path: string;
+  status: number;
+  durationMs: number;
+  inFlightAtStart: number;
+  activeCommandsAtStart: number;
+  error?: string;
+};
+const requestTraces: RequestTrace[] = [];
+const commandExecutionState = {
+  started: 0,
+  completed: 0,
+  failed: 0,
+  lastStartedAt: null as string | null,
+  lastCompletedAt: null as string | null,
+  lastFailure: null as string | null,
+  lastExitCode: null as number | null,
+  recent: [] as Array<{
+    at: string;
+    cmd: string;
+    cwd: string;
+    childPid: number | null;
+    durationMs: number;
+    exitCode: number;
+  }>,
+};
+const CACHE_TTL_MS = 30000; // 30 second cache for volatile data
+const ORCHESTRATION_CACHE_TTL_MS = parseNumberEnv("PLAYGROUND_ORCHESTRATION_CACHE_TTL_MS", 15000, { min: 1000, max: 300000 });
+const HTTP2_UPGRADE_PORT = parseNumberEnv("PLAYGROUND_HTTP2_UPGRADE_PORT", 8443, { min: 1, max: 65535 });
+const HTTP2_UPGRADE_HOST = process.env.PLAYGROUND_HTTP2_UPGRADE_HOST || "127.0.0.1";
+
+const HTTP2_DEMO_KEY_PEM = `-----BEGIN PRIVATE KEY-----
+MIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDU0Lso+DrQvIhm
+5rHv81E6zb8PcpSD6msrwXTiq8yahVliDGsjgMJzXHaQgltxJmiCVqAiZ3sccEJm
+IQ/CT65NCDY+Hy2u7cTuBiRx/sPZ86EtoGQ3ZNBwpgjPiogfyLm0dxUr/qGfTFBO
+oKKqCo0Zn337C1baEqDFDBoBjDVvKnTGK4W8O4IVOQKJiTgX10kw4T0ffU0B9J5s
+ewQMmc8eziaC3jsLZDeFanSTSfQXFjMpBYVNtPYvcTkSgtNjSgkYvl1gDjTBU+3Y
+kBKlCIHuzkr6W+MVRKhki7yLR3w8z4Rx9Dc7s8WRJ4maDBe8aaxlNxopH86Kn3gX
+Y0g2ys3tAgMBAAECggEBAKDl8ysFigo5EHOkJZHCB38LAVHfkjOuLzrUt9eMhlOp
+UCvWMcaU2e84UBfvxszkeg1ZCxcX37dflIP8qRqC/cgV1lTfY72m3MYM9M8PC+oj
+zY9efYZ3/TO+BFlNZp+JNgYgJmytxmpW2zynLHSdJ5Lgx/He39peTRjNjnfvFpMl
+RujceJqiJ9OISDlSFzVUhjtnDcsAazgPE0oZo9Styu93t+GUusn3b5FX01KSE6/f
+92cXxAJaeHY8Hqu2OUackxKAF7+V0H+UAxIs1qWbPf+NGDZMPD4Ji4cMQRfK5AZR
+kiqnZer2gHT+y7IXpxORFYnpfbXuIILwLWOeleTnvoECgYEA/1E3d/q9YaFz8bgR
+vszojqzdYgDPsEozDundpBaDcPTdhKkpLXss+FNaDH9YHunO6oQMWdYDJ6t/6w+M
+aa6Bmdu8KlQl2FX+pehHZ/Bh/HlmFtu9QndUZPHXOh1xrGBi1J6tAdAFNDU9Ajql
+ouDl+W/DWmRW46Ohn/s4lk47Pg0CgYEA1WJrNBoQo4/BuBAutbVy10NWio6EvkMX
+ujYWXzM8bqOHBRgZ5JAQl73v/4jqG3lSgmV65cJW0uNLXpOaJdVX+Yb3uGH4U0xW
+Bt1BdyqgEKsrlHQ8/xo07gvVggKjfCqJDIieKjEV1fAeayiOEBJI5w8QFlfg/IvB
+kvYVeRqxt2ECgYBlufZf14edXrbTmIN5gismrbmHUsttciLlzkiBGHdGikm4ka3W
+cT15s7wtPo/dwUqwJezF3n9jTvGotok7kkwRAXv3YY+yopDTibjpsN1ZuwTyFptR
+4Dm//pvCi/i+tairDo3gKwHny06DlNpqCzGWMPGlElWMXaYIGBBz0rfIAQKBgQCi
+OvtKV27DC666ZAM/Pz6ajqWjHguqI5RMjIahxnBxpX4nz1UQQr96vntTCiMC1FB4
+tvKi8AfWudw5gXq2vObv3T9FPabwnZ7iBSGamhur0JeHfIBLav9G5FRlTeBBrI0Z
+rFyjs0Hor3BRBDpN2bj3gqo2coWpPA/lzZYxxqvKwQKBgQC1MpVaOOCn72iS6uuR
+MOR/SLspGp/CDpVO+yVCi4L8bcDUEkcWJgXtuOfeAKqqff/58uDiXrMlOFOCkKVV
++0zEUS4wnJ5KtXRikDFG/2VYFrNwAneJCXKFQuZZBVaRHXBktl3orVAVxQb6z2tY
+B0okCR0tXKmnsXbuGKFmWW+yQQ==
+-----END PRIVATE KEY-----`;
+
+const HTTP2_DEMO_CERT_PEM = `-----BEGIN CERTIFICATE-----
+MIICpDCCAYwCCQCaWBvqXw6dJDANBgkqhkiG9w0BAQsFADAUMRIwEAYDVQQDDAls
+b2NhbGhvc3QwHhcNMjYwMjA5MDI1ODA1WhcNMzYwMjA3MDI1ODA1WjAUMRIwEAYD
+VQQDDAlsb2NhbGhvc3QwggEiMA0GCSqGSIb3DQEBAQUAA4IBDwAwggEKAoIBAQDU
+0Lso+DrQvIhm5rHv81E6zb8PcpSD6msrwXTiq8yahVliDGsjgMJzXHaQgltxJmiC
+VqAiZ3sccEJmIQ/CT65NCDY+Hy2u7cTuBiRx/sPZ86EtoGQ3ZNBwpgjPiogfyLm0
+dxUr/qGfTFBOoKKqCo0Zn337C1baEqDFDBoBjDVvKnTGK4W8O4IVOQKJiTgX10kw
+4T0ffU0B9J5sewQMmc8eziaC3jsLZDeFanSTSfQXFjMpBYVNtPYvcTkSgtNjSgkY
+vl1gDjTBU+3YkBKlCIHuzkr6W+MVRKhki7yLR3w8z4Rx9Dc7s8WRJ4maDBe8aaxl
+NxopH86Kn3gXY0g2ys3tAgMBAAEwDQYJKoZIhvcNAQELBQADggEBALye19/ULIk+
+LKghle8OaZadqCKfx49TKZ/G1BBPSTAEf0zr4ZpzhHe50BFbgbA957bHDoAcoEfB
+7FA+MDaffe03l/2aCYZquZN2XeS5BJi+4UUi7oS+3mmEMzrwfDpSxbUgnwgXOqEV
+oiqr77RwaY3eDDeavFheWptteI3LF5ykGnkqKwyH+FZf7K4Q4qi1uu6hwNuS/R2R
+DYnN+DYkxX4ERkYMpHSqLR3xFjdqXLVRbl6mc8F8d/IcBMGm3J+2QJByJ4w6kMnX
+53wVlWTGQ6oRn6XyhihKY1AoFvS3eEc1C6VT5kIINYPScT3HJILwNE4a3VH7F9gB
+ps+U6tk6uHk=
+-----END CERTIFICATE-----`;
+
+type Http2UpgradeRuntimeState = {
+  status: "stopped" | "starting" | "running" | "error";
+  host: string;
+  port: number;
+  startedAt?: string;
+  lastError?: string;
+  streamCount: number;
+  lastProbeAt?: string;
+  lastProbeOk?: boolean;
+  lastProbeLatencyMs?: number;
+  lastProbeError?: string;
+};
+
+let http2UpgradeRuntime: Http2UpgradeRuntimeState = {
+  status: "stopped",
+  host: HTTP2_UPGRADE_HOST,
+  port: HTTP2_UPGRADE_PORT,
+  streamCount: 0,
+};
+let http2SecureRuntimeServer: Http2SecureServer | null = null;
+let http2NetRuntimeServer: NetServer | null = null;
+
+async function initCapacityMetricsStore() {
+  const dbDir = normalize(join(DASHBOARD_METRICS_DB_PATH, ".."));
+  await mkdir(dbDir, { recursive: true });
+
+  const db = new Database(DASHBOARD_METRICS_DB_PATH);
+  db.run("PRAGMA journal_mode = WAL");
+  db.run("PRAGMA synchronous = NORMAL");
+  db.run("PRAGMA temp_store = MEMORY");
+  db.run(`
+    CREATE TABLE IF NOT EXISTS capacity_snapshots (
+      ts_ms INTEGER PRIMARY KEY,
+      created_at TEXT NOT NULL,
+      port INTEGER NOT NULL,
+      bottleneck TEXT NOT NULL,
+      bottleneck_severity TEXT NOT NULL,
+      load_connection_pct INTEGER NOT NULL,
+      load_worker_pct INTEGER NOT NULL,
+      load_max_pct INTEGER NOT NULL,
+      capacity_connections_pct INTEGER NOT NULL,
+      capacity_workers_pct INTEGER NOT NULL,
+      capacity_summary TEXT NOT NULL,
+      capacity_severity TEXT NOT NULL,
+      headroom_connections INTEGER NOT NULL,
+      headroom_connections_pct INTEGER NOT NULL,
+      headroom_connections_severity TEXT NOT NULL,
+      headroom_workers INTEGER NOT NULL,
+      headroom_workers_pct INTEGER NOT NULL,
+      headroom_workers_severity TEXT NOT NULL
+    )
+  `);
+  db.run("CREATE INDEX IF NOT EXISTS idx_capacity_snapshots_ts ON capacity_snapshots (ts_ms DESC)");
+
+  capacityMetricsDb = db;
+  capacityInsertStmt = db.prepare(`
+    INSERT OR REPLACE INTO capacity_snapshots (
+      ts_ms,
+      created_at,
+      port,
+      bottleneck,
+      bottleneck_severity,
+      load_connection_pct,
+      load_worker_pct,
+      load_max_pct,
+      capacity_connections_pct,
+      capacity_workers_pct,
+      capacity_summary,
+      capacity_severity,
+      headroom_connections,
+      headroom_connections_pct,
+      headroom_connections_severity,
+      headroom_workers,
+      headroom_workers_pct,
+      headroom_workers_severity
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+  capacityPruneStmt = db.prepare(`
+    DELETE FROM capacity_snapshots
+    WHERE ts_ms IN (
+      SELECT ts_ms
+      FROM capacity_snapshots
+      ORDER BY ts_ms DESC
+      LIMIT -1 OFFSET ?
+    )
+  `);
+  capacitySelectStmt = db.prepare(`
+    SELECT *
+    FROM capacity_snapshots
+    WHERE ts_ms >= ?
+    ORDER BY ts_ms DESC
+    LIMIT ?
+  `);
+}
 
 const EVIDENCE_DASHBOARD = {
   "bun-v1.3.9-upgrade": {
@@ -104,6 +437,680 @@ type FeatureDefinition<T> = {
   parse: (val: string) => T;
   default: T | ((req?: FeatureRequest) => T);
 };
+type AuthMethod =
+  | "none"
+  | "basic"
+  | "bearer"
+  | "tls"
+  | "mtls"
+  | "oauth2"
+  | "aws-sigv4"
+  | "iam-role"
+  | "presigned-url"
+  | "posix-acl"
+  | "filesystem"
+  | "inline"
+  | "object-url";
+type BodyType =
+  | "string"
+  | "json"
+  | "form"
+  | "blob"
+  | "arrayBuffer"
+  | "uint8array"
+  | "stream"
+  | "file"
+  | "formdata"
+  | "urlsearchparams"
+  | "inline";
+type CORSPolicy = "same-origin" | "cors-enabled" | "bucket-policy" | "n/a";
+type ProtocolSecurityProfile = {
+  encrypted: boolean;
+  mitmVulnerable: boolean;
+  certValidation: boolean;
+  recommended: boolean;
+  pathTraversal?: "protected";
+  xssRisk?: "sanitize";
+  memoryBacked?: boolean;
+  localOnly?: boolean;
+};
+type ProtocolHandlerContext = {
+  req: Request;
+  method: string;
+  headers: Record<string, string>;
+  body?: BodyInit | null;
+};
+type ProtocolHandler = (url: string, ctx: ProtocolHandlerContext) => Promise<Response>;
+type ProtocolConfig = {
+  scheme: string;
+  defaultPort: number | null;
+  authMethods: AuthMethod[];
+  bodyTypes: BodyType[];
+  streaming: boolean;
+  cacheable: boolean;
+  corsPolicy: CORSPolicy;
+  securityProfile: ProtocolSecurityProfile;
+  maxSize: number | null;
+  handler: ProtocolHandler;
+};
+
+type BunV139FeatureMatrixRow = {
+  feature: string;
+  cliOrApi: string;
+  defaultBehavior: string;
+  environmentOverride: string;
+  integration: string;
+  performanceImpact: string;
+  memoryImpact: string;
+  productionReady: string;
+};
+
+type ComponentStatusRow = {
+  component: string;
+  file: string;
+  status: string;
+  owner: string;
+  lastCommit: string;
+  testCoverage: string;
+  performanceBudget: string;
+  dependencies: string;
+  securityReview: string;
+  documentation: string;
+  production: string;
+};
+
+type DemoModuleContract = {
+  language: string;
+  defaults: Record<string, unknown>;
+  flags: string[];
+  benchCommand: string;
+  testCommand: string;
+};
+
+type DemoModuleContractFile = {
+  version: number;
+  total: number;
+  generatedAt: string;
+  modules: Record<string, DemoModuleContract>;
+};
+
+const BUN_V139_FEATURE_MATRIX: BunV139FeatureMatrixRow[] = [
+  {
+    feature: "Parallel Scripts",
+    cliOrApi: "bun run --parallel",
+    defaultBehavior: "Sequential",
+    environmentOverride: "PLAYGROUND_SCRIPT_MODE=parallel",
+    integration: "ScriptRunner.execute('parallel')",
+    performanceImpact: "95ms for 500 scripts",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "Sequential Scripts",
+    cliOrApi: "bun run --sequential",
+    defaultBehavior: "—",
+    environmentOverride: "PLAYGROUND_SCRIPT_MODE=sequential",
+    integration: "ScriptRunner.execute('sequential')",
+    performanceImpact: "Memory-constrained builds",
+    memoryImpact: "lower peak usage",
+    productionReady: "yes",
+  },
+  {
+    feature: "No-Exit-On-Error",
+    cliOrApi: "--no-exit-on-error",
+    defaultBehavior: "false (fail-fast)",
+    environmentOverride: "PLAYGROUND_NO_EXIT_ON_ERROR=true",
+    integration: "CI/CD resilience",
+    performanceImpact: "All scripts complete",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "Pre/Post Grouping",
+    cliOrApi: "Auto",
+    defaultBehavior: "Enabled",
+    environmentOverride: "—",
+    integration: "Bun run groups pre<name>/<name>/post<name> automatically",
+    performanceImpact: "Correct dep order",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "vs --filter",
+    cliOrApi: "--filter=\"pkg\"",
+    defaultBehavior: "Dep-order respect",
+    environmentOverride: "—",
+    integration: "Use --parallel for watch scripts",
+    performanceImpact: "No blocking on deps",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "HTTP/2 Upgrade",
+    cliOrApi: "net.Server -> Http2SecureServer",
+    defaultBehavior: "Disabled",
+    environmentOverride: "PLAYGROUND_HTTP2_UPGRADE=true",
+    integration: "createServer({ allowHTTP1: true })",
+    performanceImpact: "30-40% throughput",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "Symbol.dispose Mocks",
+    cliOrApi: "using spy = spyOn()",
+    defaultBehavior: "Manual cleanup",
+    environmentOverride: "—",
+    integration: "All test suites refactored",
+    performanceImpact: "Zero manual cleanup",
+    memoryImpact: "small reduction in retained mocks",
+    productionReady: "yes",
+  },
+  {
+    feature: "NO_PROXY Fix",
+    cliOrApi: "fetch()/WebSocket()",
+    defaultBehavior: "Ignored (v1.3.8)",
+    environmentOverride: "NO_PROXY=localhost,*.internal",
+    integration: "SecureFetch layer",
+    performanceImpact: "Bypass validation",
+    memoryImpact: "n/a",
+    productionReady: "yes",
+  },
+  {
+    feature: "CPU Prof Interval",
+    cliOrApi: "--cpu-prof-interval <us>",
+    defaultBehavior: "1000",
+    environmentOverride: "PLAYGROUND_CPU_PROF_INTERVAL=500",
+    integration: "batch-profiler.ts",
+    performanceImpact: "4x resolution",
+    memoryImpact: "+2% overhead",
+    productionReady: "yes (ARM64/x64)",
+  },
+  {
+    feature: "ESM Bytecode",
+    cliOrApi: "--compile --bytecode --format=esm",
+    defaultBehavior: "CJS",
+    environmentOverride: "PLAYGROUND_COMPILE_FORMAT=esm",
+    integration: "fw-cli binary",
+    performanceImpact: "50% faster cold start",
+    memoryImpact: "-20% heap",
+    productionReady: "yes (v1.3.9+)",
+  },
+  {
+    feature: "ARMv8.0 Fix",
+    cliOrApi: "Runtime dispatch",
+    defaultBehavior: "SIGILL risk (v1.3.8)",
+    environmentOverride: "—",
+    integration: "AWS Graviton/RPi production",
+    performanceImpact: "Stable",
+    memoryImpact: "None",
+    productionReady: "yes (Cortex-A53+)",
+  },
+  {
+    feature: "RegExp SIMD Prefix Search",
+    cliOrApi: "JavaScriptCore RegExp engine",
+    defaultBehavior: "Enabled (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Regex-heavy parsers and validators",
+    performanceImpact: "Faster alternative-prefix scans",
+    memoryImpact: "None",
+    productionReady: "yes (ARM64/x64)",
+  },
+  {
+    feature: "RegExp Fixed-Count Parentheses JIT",
+    cliOrApi: "JavaScriptCore RegExp JIT",
+    defaultBehavior: "Enabled (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Patterns like (?:abc){3} and (a+){2}b",
+    performanceImpact: "~3.9x on affected patterns",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.startsWith Intrinsic",
+    cliOrApi: "String.prototype.startsWith",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Routing, guards, URL normalization",
+    performanceImpact: "1.22x-5.76x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Set/Map.size Intrinsic",
+    cliOrApi: "Set#size / Map#size",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Hot-path metrics and collection checks",
+    performanceImpact: "2.24x-2.74x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.trim Intrinsic",
+    cliOrApi: "trim / trimStart / trimEnd",
+    defaultBehavior: "Optimized (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Input sanitation and CLI parsing",
+    performanceImpact: "1.10x-1.42x faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Object.defineProperty Intrinsic",
+    cliOrApi: "Object.defineProperty",
+    defaultBehavior: "Optimized path (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Dynamic descriptors and framework internals",
+    performanceImpact: "Groundwork for descriptor specialization",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "String.replace Rope Return",
+    cliOrApi: "String.prototype.replace",
+    defaultBehavior: "Rope result (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Short-lived transformed strings",
+    performanceImpact: "Lower copy overhead on string replacement",
+    memoryImpact: "Lower transient allocation pressure",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Markdown SIMD",
+    cliOrApi: "Bun.Markdown",
+    defaultBehavior: "Baseline",
+    environmentOverride: "—",
+    integration: "Documentation pipeline",
+    performanceImpact: "3-15% faster",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "Bun.markdown API",
+    cliOrApi: "Bun.markdown.html/render/react",
+    defaultBehavior: "Built-in parser (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Custom markdown rendering, ANSI output, React SSR",
+    performanceImpact: "Fast CommonMark-compliant parser (md4c Zig port)",
+    memoryImpact: "None",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "React Markdown",
+    cliOrApi: "Bun.markdown.react()",
+    defaultBehavior: "Baseline",
+    environmentOverride: "—",
+    integration: "Dashboard SSR",
+    performanceImpact: "28% faster small docs",
+    memoryImpact: "-6% heap, -40% objects",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "AbortSignal Optimize",
+    cliOrApi: "AbortSignal.abort()",
+    defaultBehavior: "Event dispatch",
+    environmentOverride: "—",
+    integration: "Request cancellation",
+    performanceImpact: "~6% micro-bench",
+    memoryImpact: "-16ms/1M calls",
+    productionReady: "yes (all platforms)",
+  },
+  {
+    feature: "metafile markdown output",
+    cliOrApi: "bun build --metafile-md",
+    defaultBehavior: "Off unless flag is set",
+    environmentOverride: "—",
+    integration: "LLM-friendly bundle graph markdown reports",
+    performanceImpact: "Faster triage of module bloat via markdown summaries",
+    memoryImpact: "Small report-generation overhead",
+    productionReady: "yes",
+  },
+  {
+    feature: "Node fs '.' Windows Fix",
+    cliOrApi: "node:fs existsSync/statSync",
+    defaultBehavior: "Fixed (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Cross-platform filesystem checks",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Function.toString Compatibility",
+    cliOrApi: "Function.prototype.toString",
+    defaultBehavior: "V8-compatible whitespace (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Tooling and snapshot parity",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "mimalloc update",
+    cliOrApi: "runtime allocator",
+    defaultBehavior: "Updated (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "General runtime stability",
+    performanceImpact: "Stability and allocator correctness improvements",
+    memoryImpact: "Allocator-level optimizations",
+    productionReady: "yes",
+  },
+  {
+    feature: "N-API typeof AsyncContextFrame fix",
+    cliOrApi: "napi_typeof",
+    defaultBehavior: "Fixed callback typing (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Native addons with AsyncLocalStorage",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "heap snapshot crash fix",
+    cliOrApi: "heap snapshot generation",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Production debugging and profiling",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "node:vm SyntheticModule async_hooks fix",
+    cliOrApi: "node:vm + node:async_hooks",
+    defaultBehavior: "Crash fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "React Email preview and vm-heavy workloads",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "node:http2 Rare Crash Fixes",
+    cliOrApi: "node:http2",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "HTTP/2 upgrade runtimes and proxies",
+    performanceImpact: "Stability under long-lived traffic",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "HTTP/2 gRPC stream state fix",
+    cliOrApi: "node:http2 stream state",
+    defaultBehavior: "gRPC stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "gRPC streaming clients (Firestore/@grpc/grpc-js)",
+    performanceImpact: "Prevents DEADLINE_EXCEEDED regressions",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Bun.stringWidth Thai/Lao Fix",
+    cliOrApi: "Bun.stringWidth",
+    defaultBehavior: "Correct width for spacing vowels (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "CLI/table rendering in i18n output",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "WebSocket blob Client Crash Fix",
+    cliOrApi: "WebSocket client (binaryType='blob')",
+    defaultBehavior: "Stability fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Blob-mode socket streams",
+    performanceImpact: "Stability fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Proxy Keep-Alive Absolute-URL Fix",
+    cliOrApi: "HTTP proxy request parsing",
+    defaultBehavior: "Fixed keep-alive sequencing (v1.3.9+)",
+    environmentOverride: "NO_PROXY / proxy options",
+    integration: "Proxy servers and forwarded absolute URLs",
+    performanceImpact: "Fixes 2nd+ request hang",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "HTTP Chunked Parser Smuggling Fix",
+    cliOrApi: "HTTP server parser",
+    defaultBehavior: "Security fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Server-side request parsing",
+    performanceImpact: "Security hardening",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "CompileTarget SIMD Type Fix",
+    cliOrApi: "Bun.Build.CompileTarget",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Cross-compile target selection in TypeScript",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "CompileTarget Baseline/Modern Type Fix",
+    cliOrApi: "Bun.Build.CompileTarget",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "bun-linux-x64-baseline / bun-linux-x64-modern TS support",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "Socket.reload Type Fix",
+    cliOrApi: "Socket.reload()",
+    defaultBehavior: "Type fix (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Requires { socket: handler } TypeScript shape",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+  {
+    feature: "npm i -g bun Windows cmd-shim fix",
+    cliOrApi: "npm global install wrappers",
+    defaultBehavior: "Fixed cmd-shim wrapper generation (v1.3.9+)",
+    environmentOverride: "—",
+    integration: "Windows global Bun install via npm",
+    performanceImpact: "Correctness fix",
+    memoryImpact: "None",
+    productionReady: "yes",
+  },
+];
+
+const COMPONENT_STATUS_MATRIX: ComponentStatusRow[] = [
+  {
+    component: "CPU Profiling",
+    file: "batch-profiler.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "94%",
+    performanceBudget: "<2% overhead",
+    dependencies: "Bun.FFI",
+    securityReview: "Q1-2026",
+    documentation: "./docs/profiler.md",
+    production: "5 regions",
+  },
+  {
+    component: "ESM Bytecode",
+    file: "esm-bytecode/compile.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "89%",
+    performanceBudget: "50ms cold start",
+    dependencies: "Bun.build",
+    securityReview: "Q1-2026",
+    documentation: "./docs/bytecode.md",
+    production: "5 regions",
+  },
+  {
+    component: "ARM Stability",
+    file: "runtime/arm-dispatch.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "100%",
+    performanceBudget: "Zero SIGILL",
+    dependencies: "mimalloc",
+    securityReview: "Q1-2026",
+    documentation: "./docs/arm.md",
+    production: "5 regions",
+  },
+  {
+    component: "Markdown SIMD",
+    file: "docs/pipeline.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "87%",
+    performanceBudget: "3-15% faster",
+    dependencies: "Bun.Markdown",
+    securityReview: "Q1-2026",
+    documentation: "./docs/markdown.md",
+    production: "5 regions",
+  },
+  {
+    component: "React Markdown",
+    file: "dashboard/ssr.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "91%",
+    performanceBudget: "-6% heap",
+    dependencies: "Bun.markdown.react",
+    securityReview: "Q1-2026",
+    documentation: "./docs/react-md.md",
+    production: "5 regions",
+  },
+  {
+    component: "Abort Optimize",
+    file: "fetch/client.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "93%",
+    performanceBudget: "-16ms/1M",
+    dependencies: "AbortController",
+    securityReview: "Q1-2026",
+    documentation: "./docs/abort.md",
+    production: "5 regions",
+  },
+  {
+    component: "Parallel Scripts",
+    file: "parallel-runner/core.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "96%",
+    performanceBudget: "95ms/500 scripts",
+    dependencies: "Bun.spawn",
+    securityReview: "Q1-2026",
+    documentation: "./docs/parallel.md",
+    production: "5 regions",
+  },
+  {
+    component: "Symbol.dispose",
+    file: "mock-dispose/client.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "98%",
+    performanceBudget: "Zero cleanup",
+    dependencies: "bun:test",
+    securityReview: "Q1-2026",
+    documentation: "./docs/mocks.md",
+    production: "5 regions",
+  },
+  {
+    component: "HTTP/2 Upgrade",
+    file: "http-upgrade/orchestrator.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "88%",
+    performanceBudget: "30-40% throughput",
+    dependencies: "node:http2",
+    securityReview: "Q1-2026",
+    documentation: "./docs/http2.md",
+    production: "5 regions",
+  },
+  {
+    component: "NO_PROXY Fix",
+    file: "secure-fetch/index.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "92%",
+    performanceBudget: "Bypass validation",
+    dependencies: "fetch",
+    securityReview: "Q1-2026",
+    documentation: "./docs/noproxy.md",
+    production: "5 regions",
+  },
+  {
+    component: "Protocol Resilience",
+    file: "protocols/resilience-chain.ts",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "90%",
+    performanceBudget: "Auto-failover",
+    dependencies: "Bun.fetch",
+    securityReview: "Q1-2026",
+    documentation: "./docs/resilience.md",
+    production: "5 regions",
+  },
+  {
+    component: "Mini Dashboard",
+    file: "micro-polish.js",
+    status: "stable",
+    owner: "@nolarose",
+    lastCommit: "2f573c69",
+    testCoverage: "85%",
+    performanceBudget: "<16ms render",
+    dependencies: "Bun.serve",
+    securityReview: "Q1-2026",
+    documentation: "./docs/mini-dash.md",
+    production: "5 regions",
+  },
+  {
+    component: "WebSocket Gateway",
+    file: "ws-gateway.ts",
+    status: "beta",
+    owner: "@nolarose",
+    lastCommit: "HEAD",
+    testCoverage: "78%",
+    performanceBudget: "<1ms latency",
+    dependencies: "Bun.serve",
+    securityReview: "Q2-2026",
+    documentation: "./docs/ws.md",
+    production: "staging",
+  },
+  {
+    component: "Predictive Cache",
+    file: "caching/predictive.ts",
+    status: "beta",
+    owner: "@nolarose",
+    lastCommit: "HEAD",
+    testCoverage: "72%",
+    performanceBudget: "90% hit rate",
+    dependencies: "Bun.FFI",
+    securityReview: "Q2-2026",
+    documentation: "./docs/predictive.md",
+    production: "staging",
+  },
+];
 
 const featureDefinitions: Record<string, FeatureDefinition<unknown>> = {
   bodyType: {
@@ -132,6 +1139,618 @@ async function readJsonSafe(path: string): Promise<any | null> {
   } catch {
     return null;
   }
+}
+
+function percentile(values: number[], p: number): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const idx = Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p));
+  return Number(sorted[idx].toFixed(2));
+}
+
+async function runWorkerPoolBench(iterations: number, concurrency: number) {
+  const durations: number[] = [];
+  let success = 0;
+  let failures = 0;
+  let cursor = 0;
+  const startedAt = Date.now();
+
+  const workers = Array.from({ length: Math.max(1, concurrency) }, async () => {
+    while (true) {
+      const current = cursor;
+      cursor += 1;
+      if (current >= iterations) break;
+
+      const begin = performance.now();
+      const result = await runCommand(["bun", "-e", "console.log('worker-bench-ok')"], PROJECT_ROOT);
+      const elapsed = Number((performance.now() - begin).toFixed(2));
+      durations.push(elapsed);
+      if (result.exitCode === 0) {
+        success += 1;
+      } else {
+        failures += 1;
+      }
+    }
+  });
+
+  await Promise.all(workers);
+  const totalMs = Date.now() - startedAt;
+  const avgMs = durations.length
+    ? Number((durations.reduce((sum, n) => sum + n, 0) / durations.length).toFixed(2))
+    : 0;
+  const p50 = percentile(durations, 0.5);
+  const p95 = percentile(durations, 0.95);
+  const min = durations.length ? Math.min(...durations) : 0;
+  const max = durations.length ? Math.max(...durations) : 0;
+  const throughput = totalMs > 0 ? Number(((success / totalMs) * 1000).toFixed(2)) : 0;
+  const errorRate = iterations > 0 ? Number((failures / iterations).toFixed(4)) : 0;
+
+  return {
+    generatedAt: new Date().toISOString(),
+    iterations,
+    concurrency,
+    totals: {
+      success,
+      failures,
+      totalMs,
+    },
+    latencyMs: {
+      min: Number(min.toFixed(2)),
+      p50,
+      p95,
+      max: Number(max.toFixed(2)),
+      avg: avgMs,
+    },
+    throughputPerSec: throughput,
+    errorRate,
+    pool: getCommandWorkerStats(),
+  };
+}
+
+function compareWorkerBenchVsLast(current: any, previous: any | null) {
+  if (!previous) {
+    const pass = current.latencyMs.p95 <= WORKER_POOL_BENCH_MAX_P95_MS && current.errorRate === 0;
+    return {
+      compared: false,
+      pass,
+      failures: pass ? [] : [`p95>${WORKER_POOL_BENCH_MAX_P95_MS}ms or non-zero errorRate`],
+      regressionPct: null,
+    };
+  }
+
+  const prevP95 = Number(previous?.latencyMs?.p95 || 0);
+  const currP95 = Number(current?.latencyMs?.p95 || 0);
+  const regressionPct = prevP95 > 0 ? Number((((currP95 - prevP95) / prevP95) * 100).toFixed(2)) : 0;
+  const failures: string[] = [];
+
+  if (currP95 > WORKER_POOL_BENCH_MAX_P95_MS) {
+    failures.push(`p95 ${currP95}ms exceeds max ${WORKER_POOL_BENCH_MAX_P95_MS}ms`);
+  }
+  if (regressionPct > WORKER_POOL_BENCH_MAX_REGRESSION_PCT) {
+    failures.push(`p95 regression ${regressionPct}% exceeds ${WORKER_POOL_BENCH_MAX_REGRESSION_PCT}%`);
+  }
+  if (Number(current?.errorRate || 0) > 0) {
+    failures.push(`errorRate ${current.errorRate} must be 0`);
+  }
+
+  return {
+    compared: true,
+    pass: failures.length === 0,
+    failures,
+    previousP95Ms: prevP95,
+    currentP95Ms: currP95,
+    regressionPct,
+  };
+}
+
+async function persistWorkerBenchSnapshot(snapshot: any, gate: any) {
+  await mkdir(WORKER_POOL_BENCH_DIR, { recursive: true });
+  const ts = Date.now();
+  const record = {
+    snapshotId: `worker-pool-${ts}`,
+    generatedAt: new Date(ts).toISOString(),
+    thresholds: {
+      maxP95Ms: WORKER_POOL_BENCH_MAX_P95_MS,
+      maxRegressionPct: WORKER_POOL_BENCH_MAX_REGRESSION_PCT,
+    },
+    snapshot,
+    gate,
+  };
+  const snapPath = join(WORKER_POOL_BENCH_DIR, `snapshot-${ts}.json`);
+  await writeFile(snapPath, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  await writeFile(WORKER_POOL_BENCH_LATEST_PATH, `${JSON.stringify(record, null, 2)}\n`, "utf8");
+  return { path: snapPath, latestPath: WORKER_POOL_BENCH_LATEST_PATH, record };
+}
+
+async function probeUrlHealth(url: string, timeoutMs: number): Promise<{
+  ok: boolean;
+  status: number | null;
+  latencyMs: number;
+  error: string | null;
+}> {
+  const start = performance.now();
+  try {
+    const parsed = new URL(url);
+    const path = `${parsed.pathname}${parsed.search}`;
+    const origin = `${parsed.protocol}//${parsed.host}`;
+    const response = await resilientFetchBun(path, {
+      origins: [origin],
+      timeoutMs,
+      retries: 2,
+      backoffMs: 150,
+      method: "GET",
+      redirect: "follow",
+    });
+    return {
+      ok: response.ok,
+      status: response.status,
+      latencyMs: Math.round((performance.now() - start) * 100) / 100,
+      error: null,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      status: null,
+      latencyMs: Math.round((performance.now() - start) * 100) / 100,
+      error: error instanceof Error ? error.message : String(error),
+    };
+  }
+}
+
+async function getRegistryIntegrationStatus(force = false): Promise<Record<string, unknown>> {
+  const now = Date.now();
+  if (!force && cachedRegistryStatus && now - cachedRegistryStatus.at < REGISTRY_CACHE_TTL_MS) {
+    return cachedRegistryStatus.payload;
+  }
+
+  const [healthProbe, docsProbe] = await Promise.all([
+    probeUrlHealth(REGISTRY_HEALTH_URL, REGISTRY_REQUEST_TIMEOUT_MS),
+    probeUrlHealth(REGISTRY_DOCS_URL, REGISTRY_REQUEST_TIMEOUT_MS),
+  ]);
+
+  const payload = {
+    generatedAt: new Date(now).toISOString(),
+    cacheTtlMs: REGISTRY_CACHE_TTL_MS,
+    configured: true,
+    endpoints: {
+      health: {
+        url: REGISTRY_HEALTH_URL,
+        ...healthProbe,
+      },
+      docs: {
+        url: REGISTRY_DOCS_URL,
+        ...docsProbe,
+      },
+    },
+    r2: {
+      bucketName: (process.env.R2_BUCKET_NAME || process.env.S3_BUCKET_NAME || "scanner-cookies").trim(),
+      source: process.env.R2_BUCKET_NAME
+        ? "R2_BUCKET_NAME"
+        : process.env.S3_BUCKET_NAME
+          ? "S3_BUCKET_NAME"
+          : "default",
+    },
+    versioning: {
+      packageVersion: String(BUILD_METADATA?.version || "1.0.0"),
+      gitCommitHash: GIT_COMMIT_HASH,
+      gitCommitHashSource: GIT_COMMIT_HASH_SOURCE,
+    },
+    noProxy: process.env.NO_PROXY || process.env.no_proxy || "",
+    status: healthProbe.ok && docsProbe.ok ? "ok" : "degraded",
+  };
+
+  cachedRegistryStatus = { at: now, payload };
+  return payload;
+}
+
+function getMimeType(path: string): string {
+  const ext = extname(path).toLowerCase();
+  const map: Record<string, string> = {
+    ".html": "text/html; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".mjs": "application/javascript; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".txt": "text/plain; charset=utf-8",
+    ".md": "text/markdown; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".gif": "image/gif",
+    ".webp": "image/webp",
+    ".pdf": "application/pdf",
+    ".wasm": "application/wasm",
+  };
+  return map[ext] || "application/octet-stream";
+}
+
+function resolveProtocolFromUrl(rawUrl: string): string {
+  if (rawUrl.startsWith("http+unix://")) return "http+unix:";
+  return new URL(rawUrl).protocol;
+}
+
+function parseHttpUnixUrl(rawUrl: string): { socketPath: string; targetUrl: string } {
+  const stripped = rawUrl.slice("http+unix://".length);
+  const marker = stripped.indexOf(":/");
+  if (marker < 1) {
+    throw new Error("Invalid http+unix URL. Expected format: http+unix://%2Fpath%2Fsock:/request/path");
+  }
+  const encodedSocket = stripped.slice(0, marker);
+  const requestPath = stripped.slice(marker + 1);
+  const socketPath = decodeURIComponent(encodedSocket);
+  const normalizedPath = requestPath.startsWith("/") ? requestPath : `/${requestPath}`;
+  return { socketPath, targetUrl: `http://localhost${normalizedPath}` };
+}
+
+function isWithinBasePath(candidatePath: string, basePath: string): boolean {
+  if (candidatePath === basePath) return true;
+  return candidatePath.startsWith(basePath.endsWith(sep) ? basePath : `${basePath}${sep}`);
+}
+
+const httpHandler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+  });
+};
+
+const httpsHandler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+  });
+};
+
+const fileHandler: ProtocolHandler = async (url) => {
+  const urlObj = new URL(url);
+  const requestedPath = normalize(decodeURIComponent(urlObj.pathname));
+  const resolvedPath = resolvePath(requestedPath);
+  const allowedBase = resolvePath(process.env.PLAYGROUND_FILE_BASE_PATH || "/tmp");
+  if (!isWithinBasePath(resolvedPath, allowedBase)) {
+    throw new Error(`Path ${resolvedPath} outside allowed base ${allowedBase}`);
+  }
+
+  const file = Bun.file(resolvedPath);
+  if (!(await file.exists())) {
+    return new Response(JSON.stringify({ error: "File not found", path: resolvedPath }), {
+      status: 404,
+      headers: { "Content-Type": "application/json" },
+    });
+  }
+  const stat = await file.stat();
+  return new Response(file, {
+    headers: {
+      "Content-Type": getMimeType(resolvedPath),
+      "Content-Length": String(stat.size),
+      "X-Content-Type-Options": "nosniff",
+      "Cache-Control": "private, no-store",
+    },
+  });
+};
+
+const dataHandler: ProtocolHandler = async (url) => {
+  return await fetch(url);
+};
+
+const blobHandler: ProtocolHandler = async (url) => {
+  return await fetch(url);
+};
+
+const s3Handler: ProtocolHandler = async (url, ctx) => {
+  return await fetch(url, {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+    s3: {
+      accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      region: process.env.AWS_REGION || "us-east-1",
+      endpoint: process.env.S3_ENDPOINT,
+    },
+  } as RequestInit);
+};
+
+const unixSocketHandler: ProtocolHandler = async (url, ctx) => {
+  const parsed = parseHttpUnixUrl(url);
+  const init: RequestInit & { unix?: string } = {
+    method: ctx.method,
+    headers: ctx.headers,
+    body: ctx.body,
+    unix: parsed.socketPath,
+  };
+  return await fetch(parsed.targetUrl, init);
+};
+
+const PROTOCOL_REGISTRY: Record<string, ProtocolConfig> = {
+  "http:": {
+    scheme: "http",
+    defaultPort: 80,
+    authMethods: ["none", "basic", "bearer"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "file", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: false,
+    corsPolicy: "same-origin",
+    securityProfile: { encrypted: false, mitmVulnerable: true, certValidation: false, recommended: false },
+    maxSize: Number.POSITIVE_INFINITY,
+    handler: httpHandler,
+  },
+  "https:": {
+    scheme: "https",
+    defaultPort: 443,
+    authMethods: ["tls", "mtls", "basic", "bearer", "oauth2"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "file", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: true,
+    corsPolicy: "cors-enabled",
+    securityProfile: { encrypted: true, mitmVulnerable: false, certValidation: true, recommended: true },
+    maxSize: Number.POSITIVE_INFINITY,
+    handler: httpsHandler,
+  },
+  "s3:": {
+    scheme: "s3",
+    defaultPort: 443,
+    authMethods: ["aws-sigv4", "iam-role", "presigned-url"],
+    bodyTypes: ["string", "blob", "file", "stream", "arrayBuffer", "uint8array"],
+    streaming: true,
+    cacheable: true,
+    corsPolicy: "bucket-policy",
+    securityProfile: { encrypted: true, mitmVulnerable: false, certValidation: true, recommended: true },
+    maxSize: 5 * 1024 * 1024 * 1024 * 1024,
+    handler: s3Handler,
+  },
+  "file:": {
+    scheme: "file",
+    defaultPort: null,
+    authMethods: ["posix-acl", "filesystem"],
+    bodyTypes: ["file"],
+    streaming: false,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, pathTraversal: "protected" },
+    maxSize: null,
+    handler: fileHandler,
+  },
+  "data:": {
+    scheme: "data",
+    defaultPort: null,
+    authMethods: ["inline"],
+    bodyTypes: ["inline"],
+    streaming: false,
+    cacheable: true,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, xssRisk: "sanitize" },
+    maxSize: 2 * 1024 * 1024,
+    handler: dataHandler,
+  },
+  "blob:": {
+    scheme: "blob",
+    defaultPort: null,
+    authMethods: ["object-url"],
+    bodyTypes: ["blob"],
+    streaming: false,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, memoryBacked: true },
+    maxSize: null,
+    handler: blobHandler,
+  },
+  "http+unix:": {
+    scheme: "http+unix",
+    defaultPort: null,
+    authMethods: ["filesystem"],
+    bodyTypes: ["string", "json", "form", "blob", "arrayBuffer", "uint8array", "stream", "formdata", "urlsearchparams"],
+    streaming: true,
+    cacheable: false,
+    corsPolicy: "n/a",
+    securityProfile: { encrypted: false, mitmVulnerable: false, certValidation: false, recommended: true, localOnly: true },
+    maxSize: null,
+    handler: unixSocketHandler,
+  },
+};
+
+async function getWorkspaceOrchestrationPanel() {
+  const rootPackagePath = join(PROJECT_ROOT, "package.json");
+  const rootPackage = await readJsonSafe(rootPackagePath);
+  const rootScripts = rootPackage?.scripts ?? {};
+  const workspaces = Array.isArray(rootPackage?.workspaces) ? rootPackage.workspaces : [];
+
+  const workspaceDirs: string[] = [];
+  if (workspaces.includes("packages/*")) {
+    try {
+      const entries = await readdir(join(PROJECT_ROOT, "packages"), { withFileTypes: true });
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          workspaceDirs.push(join(PROJECT_ROOT, "packages", entry.name));
+        }
+      }
+    } catch {
+      // Leave workspaceDirs empty if packages/ is unavailable.
+    }
+  }
+
+  const workspacePackages: Array<{
+    name: string;
+    path: string;
+    scripts: string[];
+  }> = [];
+
+  for (const workspaceDir of workspaceDirs) {
+    const packageJsonPath = join(workspaceDir, "package.json");
+    const pkg = await readJsonSafe(packageJsonPath);
+    if (!pkg) continue;
+    const scriptNames = Object.keys(pkg.scripts ?? {});
+    workspacePackages.push({
+      name: String(pkg.name || workspaceDir.split("/").pop() || "unknown"),
+      path: workspaceDir.replace(PROJECT_ROOT + "/", ""),
+      scripts: scriptNames.sort(),
+    });
+  }
+
+  const rootExamples = [
+    "bun run --parallel --if-present workspaces:build workspaces:lint workspaces:test",
+    "bun run --sequential --if-present workspaces:build workspaces:lint workspaces:test",
+    "bun run --parallel --workspaces --if-present build lint test",
+    "bun run --sequential --workspaces --if-present build",
+    "bun run --parallel --no-exit-on-error --workspaces --if-present test",
+  ];
+
+  return {
+    generatedAt: new Date().toISOString(),
+    rootPackage: {
+      name: String(rootPackage?.name || "unknown"),
+      path: "package.json",
+      workspacePatterns: workspaces,
+      scriptCount: Object.keys(rootScripts).length,
+      keyScripts: Object.keys(rootScripts)
+        .filter((name) => /workspaces:|build|lint|test|dev/.test(name))
+        .slice(0, 24),
+    },
+    workspacePackages: workspacePackages.slice(0, 40),
+    recommendedCommands: rootExamples,
+    notes: [
+      "--parallel and --sequential start scripts directly; they do not enforce workspace dependency order.",
+      "Use --workspaces --if-present in this repo because workspace packages may not all define build/lint/test scripts.",
+      "Use bun --filter when dependency-order execution is required for build pipelines.",
+      "Use --if-present to skip packages that do not define a script.",
+    ],
+  };
+}
+
+function buildOrchestrationSimulation(mode: "parallel" | "sequential" | "parallel-no-exit" | "filter") {
+  const now = new Date().toISOString();
+  const prefixRows = {
+    build: "build | compiling...",
+    lint: "lint  | checking files...",
+    test: "test  | running suite...",
+  };
+
+  if (mode === "sequential") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Runs scripts one-by-one in listed order with prefixed output.",
+      lines: [
+        prefixRows.build,
+        "build | Done in 391ms",
+        prefixRows.test,
+        "test  | 42 passed",
+        prefixRows.lint,
+        "lint  | 0 errors",
+      ],
+      exitCode: 0,
+      behavior: "No sibling interruption because scripts are serial.",
+    };
+  }
+
+  if (mode === "parallel-no-exit") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Runs all scripts concurrently and keeps siblings alive when one fails.",
+      lines: [
+        prefixRows.build,
+        prefixRows.test,
+        prefixRows.lint,
+        "lint  | Oops! Something went wrong! :(  (exit 2)",
+        "build | Done in 391ms",
+        "test  | completed remaining tests",
+      ],
+      exitCode: 2,
+      behavior: "--no-exit-on-error allows full failure visibility.",
+    };
+  }
+
+  if (mode === "filter") {
+    return {
+      mode,
+      generatedAt: now,
+      semantics: "Dependency-ordered package execution with bun --filter.",
+      lines: [
+        "pkg-core:build | compiling...",
+        "pkg-app:build  | waiting for pkg-core dependency",
+        "pkg-core:build | done",
+        "pkg-app:build  | compiling...",
+      ],
+      exitCode: 0,
+      behavior: "Unlike --parallel/--sequential, --filter can wait on dependency order.",
+    };
+  }
+
+  return {
+    mode: "parallel",
+    generatedAt: now,
+    semantics: "Runs scripts concurrently; default fail-fast kills siblings after first failure.",
+    lines: [
+      prefixRows.build,
+      prefixRows.test,
+      prefixRows.lint,
+      "lint  | Oops! Something went wrong! :(  (exit 2)",
+      "build | Exited by signal SIGINT (fail-fast sibling shutdown)",
+      "test  | Exited by signal SIGINT (fail-fast sibling shutdown)",
+    ],
+    exitCode: 2,
+    behavior: "Default --parallel behavior in Bun v1.3.9.",
+  };
+}
+
+async function runScriptOrchestrationFullLoop() {
+  const panel = await getWorkspaceOrchestrationPanel();
+  const parallel = buildOrchestrationSimulation("parallel");
+  const parallelNoExit = buildOrchestrationSimulation("parallel-no-exit");
+  const sequential = buildOrchestrationSimulation("sequential");
+  const filterOrdered = buildOrchestrationSimulation("filter");
+
+  const report = {
+    generatedAt: new Date().toISOString(),
+    source: "https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential",
+    panel,
+    simulations: {
+      parallel,
+      parallelNoExit,
+      sequential,
+      filterOrdered,
+    },
+    summary: {
+      failFast: parallel.exitCode !== 0,
+      noExitKeepsRunning: parallelNoExit.exitCode !== 0,
+      sequentialOrdered: sequential.exitCode === 0,
+      filterDependencyAware: filterOrdered.exitCode === 0,
+    },
+  };
+  cachedOrchestrationLoop = report;
+  cachedOrchestrationLoopAt = Date.now();
+  return report;
+}
+
+async function getScriptOrchestrationStatus() {
+  const now = Date.now();
+  const ageMs = now - cachedOrchestrationLoopAt;
+  if (!cachedOrchestrationLoop || ageMs > ORCHESTRATION_CACHE_TTL_MS) {
+    await runScriptOrchestrationFullLoop();
+  }
+  const loop = cachedOrchestrationLoop as any;
+  const summary = loop?.summary || null;
+  const pass = Boolean(
+    summary?.failFast &&
+    summary?.noExitKeepsRunning &&
+    summary?.sequentialOrdered &&
+    summary?.filterDependencyAware
+  );
+  return {
+    generatedAt: new Date().toISOString(),
+    cache: {
+      ttlMs: ORCHESTRATION_CACHE_TTL_MS,
+      ageMs: Math.max(0, Date.now() - cachedOrchestrationLoopAt),
+      cachedAt: cachedOrchestrationLoopAt ? new Date(cachedOrchestrationLoopAt).toISOString() : null,
+      fresh: cachedOrchestrationLoopAt > 0 && Date.now() - cachedOrchestrationLoopAt <= ORCHESTRATION_CACHE_TTL_MS,
+    },
+    source: loop?.source || "https://bun.com/blog/bun-v1.3.9#bun-run-parallel-and-bun-run-sequential",
+    summary,
+    pass,
+  };
 }
 
 function impactFromGates(input: { warn?: string; strict?: string }): "Low" | "Medium" | "High" {
@@ -189,8 +1808,58 @@ async function readDecisionGovernanceSnapshot(): Promise<{
   };
 }
 
+async function loadDemoModuleContracts(): Promise<Record<string, DemoModuleContract>> {
+  const fallback: Record<string, DemoModuleContract> = {};
+  try {
+    const raw = await readFile(DEMO_MODULE_CONTRACT_PATH, "utf8");
+    const parsed = JSON.parse(raw) as DemoModuleContractFile;
+    if (!parsed || typeof parsed !== "object" || !parsed.modules || typeof parsed.modules !== "object") {
+      throw new Error("Invalid demo-module-contract.json shape");
+    }
+    return parsed.modules;
+  } catch (error) {
+    console.warn("[playground] demo module contract load failed:", error instanceof Error ? error.message : String(error));
+    return fallback;
+  }
+}
+
+const DEMO_MODULE_CONTRACTS = await loadDemoModuleContracts();
+const DEMO_CONTRACT_REQUIRED_KEYS = ["language", "defaults", "flags", "benchCommand", "testCommand"] as const;
+
+function buildDemoRegistry<T extends { id: string }>(demos: T[]): Array<T & DemoModuleContract> {
+  const missing: string[] = [];
+  const registry = demos.map((demo) => {
+    const contract = DEMO_MODULE_CONTRACTS[demo.id];
+    if (!contract) {
+      missing.push(`${demo.id} (missing contract entry)`);
+      return null;
+    }
+
+    for (const key of DEMO_CONTRACT_REQUIRED_KEYS) {
+      const value = (contract as any)[key];
+      const emptyArray = Array.isArray(value) && value.length === 0;
+      const emptyString = typeof value === "string" && value.trim() === "";
+      const missingValue = value === null || value === undefined || emptyArray || emptyString;
+      if (missingValue) {
+        missing.push(`${demo.id}.${key}`);
+      }
+    }
+
+    return {
+      ...demo,
+      ...contract,
+    };
+  }).filter(Boolean) as Array<T & DemoModuleContract>;
+
+  if (missing.length > 0) {
+    throw new Error(`Demo contract missing required fields: ${missing.join(", ")}`);
+  }
+
+  return registry;
+}
+
 // Demo configurations
-const DEMOS = [
+const DEMOS_BASE = [
   {
     id: "governance-status",
     name: "Governance Status (Canonical)",
@@ -237,6 +1906,22 @@ curl -s http://localhost:<port>/api/control/protocol-scorecard
 `,
   },
   {
+    id: "protocol-router-tier1380",
+    name: "Protocol Router (Tier-1380)",
+    description: "Hardened protocol registry and secure routing contract for /api/fetch/protocol-router",
+    category: "Governance",
+    code: `# Inspect protocol registry contract (dry run)
+curl -s -X POST http://localhost:<port>/api/fetch/protocol-router \\
+  -H "content-type: application/json" \\
+  -d '{"url":"https://example.com","dryRun":true}'
+
+# Execute request through hardened protocol router
+curl -s -X POST http://localhost:<port>/api/fetch/protocol-router \\
+  -H "content-type: application/json" \\
+  -d '{"url":"https://example.com","method":"GET"}'
+`,
+  },
+  {
     id: "multipart-progress",
     name: "Multipart Progress Tracking",
     description: "Simulate upload progress events for multipart/file body types",
@@ -277,6 +1962,18 @@ curl -s http://localhost:<port>/api/control/network-smoke
 `,
   },
   {
+    id: "resilience-governance",
+    name: "Resilience Governance Profile",
+    description: "Active environment profile alignment for retries, circuit breaker, pooling, and DNS toggles",
+    category: "Governance",
+    code: `# Resolve active resilience profile and alignment
+curl -s http://localhost:<port>/api/control/resilience/status | jq .
+
+# Override profile explicitly
+PLAYGROUND_RESILIENCE_PROFILE=staging bun run start:dashboard:playground
+PLAYGROUND_RESILIENCE_PROFILE=production bun run start:dashboard:playground`,
+  },
+  {
     id: "brand-bench-gate",
     name: "Brand Bench Gate (Canonical)",
     description: "Run and inspect canonical branding benchmark + gate status",
@@ -292,6 +1989,48 @@ bun run scripts/brand-bench-evaluate.ts --json --strict
 
 # Optional baseline promotion (manual)
 bun run brand:bench:pin --from=reports/brand-bench/latest.json --rationale="..."
+`,
+  },
+  {
+    id: "historical-sqlite-trends",
+    name: "Historical SQLite Trends",
+    description: "Persisted mini-dash capacity snapshots with trend summary and timeline API",
+    category: "Governance",
+    code: `# Read persisted trend summary (SQLite-backed)
+curl -s "http://localhost:<port>/api/dashboard/trends?minutes=60&limit=120" | jq '.summary'
+
+# Read trend points for charting and deltas
+curl -s "http://localhost:<port>/api/dashboard/trends?minutes=15&limit=30" | jq '.points'
+
+# Summary-only convenience endpoint
+curl -s "http://localhost:<port>/api/dashboard/trends/summary?minutes=60&limit=120" | jq .
+`,
+  },
+  {
+    id: "registry-integration",
+    name: "Registry Integration",
+    description: "Live registry/docs health + R2 bucket/versioning details wired into dashboard APIs",
+    category: "Governance",
+    code: `# Registry integration status
+curl -s http://localhost:<port>/api/control/registry-integration | jq .
+
+# api/info now includes a registry block
+curl -s http://localhost:<port>/api/info | jq '.registry'
+
+# feature matrix summary includes registry state
+curl -s http://localhost:<port>/api/control/feature-matrix | jq '.registry'
+`,
+  },
+  {
+    id: "resilient-fetch-ultra",
+    name: "Resilient Fetch Ultra",
+    description: "Circuit-breaker + predictive + health-aware failover fetch client (Tier-1380)",
+    category: "Governance",
+    code: `# Run resilient fetch ultra demo payload
+curl -s http://localhost:<port>/api/run/resilient-fetch-ultra | jq .
+
+# Inspect health endpoint used by failover
+curl -s http://localhost:<port>/api/health | jq '{status, runtime: {port: .runtime.port}}'
 `,
   },
   {
@@ -319,6 +2058,122 @@ bun run --parallel --no-exit-on-error --filter '*' test
 // Use --filter for dependency-aware execution`,
   },
   {
+    id: "workspace-runner-panel",
+    name: "Workspace Runner Panel",
+    description: "Live workspace-aware --parallel/--sequential commands from root package.json",
+    category: "Script Orchestration",
+    code: `# Read real workspace scripts + recommended commands
+curl -s http://localhost:<port>/api/control/script-orchestration-panel | jq .
+
+# Root-level orchestration (repo-canonical)
+bun run --parallel --if-present workspaces:build workspaces:lint workspaces:test
+bun run --sequential --if-present workspaces:build workspaces:lint workspaces:test
+
+# Direct workspace scripts (skip missing scripts)
+bun run --parallel --workspaces --if-present build lint test
+bun run --sequential --workspaces --if-present build`,
+  },
+  {
+    id: "script-orchestration-control",
+    name: "Script Orchestration Control",
+    description: "Interactive fail-fast vs no-exit vs sequential simulation with prefixed output",
+    category: "Script Orchestration",
+    code: `# Panel data from root package.json
+curl -s http://localhost:<port>/api/control/script-orchestration-panel | jq .
+
+# Simulations (Bun v1.3.9 semantics)
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=parallel" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=parallel-no-exit" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=sequential" | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration-simulate?mode=filter" | jq .
+curl -s http://localhost:<port>/api/control/script-orchestration/status | jq .
+curl -s -X POST "http://localhost:<port>/api/control/script-orchestration/full-loop" | jq .`,
+  },
+  {
+    id: "feature-matrix",
+    name: "Bun v1.3.9 Feature Matrix",
+    description: "CLI/API defaults, env overrides, integration points, and performance notes",
+    category: "Script Orchestration",
+    code: `# Inspect Bun v1.3.9 feature matrix used by playground integration
+curl -s http://localhost:<port>/api/control/feature-matrix | jq .
+
+# Focus only environment overrides
+curl -s http://localhost:<port>/api/control/feature-matrix | jq '.rows[] | {feature, environmentOverride}'
+`,
+  },
+  {
+    id: "component-status-matrix",
+    name: "Component Status Matrix",
+    description: "Operational status, ownership, test coverage, and production posture by component",
+    category: "Governance",
+    code: `# Inspect component readiness matrix
+curl -s http://localhost:<port>/api/control/component-status | jq .
+
+# Show unstable components only
+curl -s http://localhost:<port>/api/control/component-status | jq '.rows[] | select(.status != "stable")'
+`,
+  },
+  {
+    id: "project-health-metrics",
+    name: "Project Health Metrics",
+    description: "Success metrics, weighted health score, risk indicators, and roadmap targets",
+    category: "Governance",
+    code: `# Inspect current success metrics + computed health/risk posture
+curl -s http://localhost:<port>/api/control/project-health | jq .
+
+# Focus on risk deltas only
+curl -s http://localhost:<port>/api/control/project-health | jq '.health.risks'
+`,
+  },
+  {
+    id: "deployment-readiness-matrix",
+    name: "Deployment Readiness Matrix",
+    description: "Production-ready vs beta-staging deployment plans and blockers",
+    category: "Governance",
+    code: `# Inspect deployment readiness matrix
+curl -s http://localhost:<port>/api/control/deployment-readiness | jq .
+
+# Focus on beta blockers
+curl -s http://localhost:<port>/api/control/deployment-readiness | jq '.matrix.betaStaging[] | {component, blockers, actionPlan}'
+`,
+  },
+  {
+    id: "performance-impact-matrix",
+    name: "Performance Impact Matrix",
+    description: "Before/after metrics and operational impact for Bun v1.3.9 optimizations",
+    category: "Governance",
+    code: `# Inspect performance impact matrix
+curl -s http://localhost:<port>/api/control/performance-impact | jq .
+
+# Focus on top-gain components
+curl -s http://localhost:<port>/api/control/performance-impact | jq '.components[] | {name, metric, gain, impact}'
+`,
+  },
+  {
+    id: "security-posture-report",
+    name: "Security Posture Report",
+    description: "Component-level review status, findings, blockers, and compliance posture",
+    category: "Governance",
+    code: `# Inspect security posture report
+curl -s http://localhost:<port>/api/control/security-posture | jq .
+
+# Focus on unresolved/pending review areas
+curl -s http://localhost:<port>/api/control/security-posture | jq '.components[] | {file, reviewDate, riskAssessment, blockers, findings}'
+`,
+  },
+  {
+    id: "domain-topology",
+    name: "Domain Topology",
+    description: "Domain-scoped Mermaid hierarchy and per-domain graph rendering",
+    category: "Governance",
+    code: `# Full hierarchy graph
+curl -s "http://localhost:<port>/api/control/domain-graph?domain=full" | jq .
+
+# Domain-scoped graph
+curl -s "http://localhost:<port>/api/control/domain-graph?domain=orchestration" | jq .
+`,
+  },
+  {
     id: "http2",
     name: "HTTP/2 Connection Upgrades",
     description: "net.Server → Http2SecureServer connection upgrade",
@@ -335,6 +2190,26 @@ h2Server.on("stream", (stream, headers) => {
 const netServer = createServer((rawSocket) => {
   h2Server.emit("connection", rawSocket);
 });`,
+  },
+  {
+    id: "http2-runtime-control",
+    name: "HTTP/2 Upgrade Runtime Control",
+    description: "Start, inspect, and stop live net.Server -> Http2SecureServer forwarding runtime",
+    category: "Networking",
+    code: `# Start runtime control plane
+curl -s -X POST http://localhost:<port>/api/control/http2-upgrade/start | jq .
+
+# Check status
+curl -s http://localhost:<port>/api/control/http2-upgrade/status | jq .
+
+# Probe live stream response through the forwarded socket
+curl -s http://localhost:<port>/api/control/http2-upgrade/probe | jq .
+
+# Full loop: start -> probe x3 -> stop
+curl -s -X POST "http://localhost:<port>/api/control/http2-upgrade/full-loop?iterations=3&delayMs=120" | jq .
+
+# Stop runtime
+curl -s -X POST http://localhost:<port>/api/control/http2-upgrade/stop | jq .`,
   },
   {
     id: "mocks",
@@ -380,6 +2255,20 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 });`,
   },
   {
+    id: "no-proxy-explicit",
+    name: "NO_PROXY + Explicit Proxy",
+    description: "Explicit proxy option now honors NO_PROXY for fetch/WebSocket",
+    category: "Networking",
+    code: `# Works with explicit proxy option now
+NO_PROXY=localhost bun -e '
+const res = await fetch("http://localhost:3000/api", { proxy: "http://my-proxy:8080" });
+console.log(res.status);
+'
+
+// WebSocket also honors NO_PROXY
+const ws = new WebSocket("ws://localhost:3000/ws", { proxy: "http://my-proxy:8080" });`,
+  },
+  {
     id: "profiling",
     name: "CPU Profiling Interval",
     description: "Configurable CPU profiler sampling interval",
@@ -392,6 +2281,40 @@ bun --cpu-prof --cpu-prof-interval 500 index.js
 
 // Very high resolution (250μs)
 bun --cpu-prof --cpu-prof-interval 250 index.js`,
+  },
+  {
+    id: "cpu-prof-interval-explicit",
+    name: "--cpu-prof-interval (Explicit)",
+    description: "Node-compatible CPU sampling interval flag in microseconds",
+    category: "Performance",
+    code: `# Default 1000us
+bun --cpu-prof index.js
+
+# Higher resolution sampling
+bun --cpu-prof --cpu-prof-interval 500 index.js
+
+# If used without --cpu-prof or --cpu-prof-md, Bun warns
+bun --cpu-prof-interval 500 index.js`,
+  },
+  {
+    id: "build-metafile",
+    name: "Build Metafile Analysis",
+    description: "CLI + API bundle metafile analysis with size, largest files, and externals",
+    category: "Build",
+    code: `# API summary (dashboard route)
+curl -s "http://localhost:<port>/api/control/bundle/analyze" | jq .
+
+# Analyze a specific entry (workspace-relative path)
+curl -s "http://localhost:<port>/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js" | jq .
+
+# Bun CLI metafile markdown output
+bun build entry.js --metafile-md --outdir=dist
+bun build entry.js --metafile=meta.json --metafile-md=meta.md --outdir=dist
+
+# Local CLI scripts
+bun run analyze:bundle -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts
+bun run validate:budget -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts --max-kb=5120
+bun run report:bundle -- --entry=scratch/bun-v1.3.9-examples/playground-web/server.ts --output=reports/bundle-analysis.md`,
   },
   {
     id: "bytecode",
@@ -408,6 +2331,19 @@ bun build --compile --bytecode --format=cjs ./cli.ts
 bun build --compile --bytecode ./cli.ts`,
   },
   {
+    id: "esm-bytecode-explicit",
+    name: "ESM Bytecode Compile (Explicit)",
+    description: "--compile + --bytecode now supports --format=esm",
+    category: "Build",
+    code: `# ESM bytecode (supported)
+bun build --compile --bytecode --format=esm ./cli.ts
+
+# CJS bytecode remains supported
+bun build --compile --bytecode --format=cjs ./cli.ts
+
+# Without explicit format, bytecode still defaults to cjs`,
+  },
+  {
     id: "performance",
     name: "Performance Optimizations",
     description: "RegExp JIT, Markdown, String optimizations",
@@ -417,7 +2353,7 @@ bun build --compile --bytecode ./cli.ts`,
 /(?:abc)+/        // Variable count → interpreter
 
 // Markdown (3-15% faster)
-Bun.Markdown.toHTML(markdown);
+Bun.markdown.html(markdown);
 Bun.markdown.react(markdown);
 
 // String optimizations (automatic)
@@ -430,6 +2366,35 @@ map.size;   // 2.74x faster
 
 // AbortSignal (faster with no listeners)
 signal.abort();  // Optimized in Bun v1.3.9`,
+  },
+  {
+    id: "markdown-simd",
+    name: "Markdown SIMD Rendering",
+    description: "SIMD-accelerated markdown escaping path for HTML entities in Bun v1.3.9",
+    category: "Performance",
+    code: `// Markdown SIMD path in Bun v1.3.9
+const markdown = "# Hello\\n\\nWorld & <script>";
+const html = Bun.markdown.html(markdown);
+console.log(html);`,
+  },
+  {
+    id: "react-markdown-cache",
+    name: "React Markdown Tag Cache",
+    description: "Bun.markdown.react() tag string cache optimization in v1.3.9",
+    category: "Performance",
+    code: `// React markdown renderer cache path
+const element = Bun.markdown.react("# Title\\n\\nParagraph");
+console.log(typeof element); // object`,
+  },
+  {
+    id: "abort-signal-optimize",
+    name: "AbortSignal No-Listener Optimize",
+    description: "AbortSignal.abort() fast-path when no listeners are registered",
+    category: "Performance",
+    code: `// No-listener abort fast-path
+const controller = new AbortController();
+controller.abort();
+console.log(controller.signal.aborted); // true`,
   },
   {
     id: "bugfixes",
@@ -455,37 +2420,721 @@ await fetch(url2);  // ✅ No longer hangs
 // Fixed: ARMv8.0 aarch64 CPU crashes
 // ✅ Bun now works on older ARM processors`,
   },
+  {
+    id: "bun-apis-stringwidth",
+    name: "Bun APIs: stringWidth Thai/Lao Fix",
+    description: "Bun.stringWidth now correctly counts Thai/Lao spacing vowels in v1.3.9",
+    category: "Bugfixes",
+    code: `// Bun v1.3.9 Bun APIs fix:
+// Thai/Lao spacing vowels are width 1 (not zero-width)
+
+const thai = "คำ"; // Thai word using SARA AM
+const lao = "ຄຳ"; // Lao equivalent pattern
+
+console.log(Bun.stringWidth(thai)); // ✅ Correct width (2)
+console.log(Bun.stringWidth(lao));  // ✅ Correct width (2)
+
+// Source: https://bun.com/blog/bun-v1.3.9`,
+  },
+  {
+    id: "markdown-advanced",
+    name: "Advanced Markdown (v1.3.8)",
+    description: "Bun.markdown.html(), .render(), .react() with GFM extensions",
+    category: "Features",
+    code: `// Basic HTML rendering
+Bun.markdown.html("# Hello **world**");
+
+// GFM Extensions (tables, strikethrough, task lists)
+const gfm = \`
+| Name | Value |
+|------|-------|
+| Bun  | Fast  |
+
+- [x] Done
+- [ ] Pending
+
+~~deleted~~ text
+\`;
+Bun.markdown.html(gfm);
+
+// Custom render with callbacks
+Bun.markdown.render("# Title", {
+  heading: (children, { level }) => 
+    \`<h\${level} class="title">\${children}</h\${level}>\`,
+});
+
+// React elements (React 19 by default)
+const element = Bun.markdown.react("# Hello **world**");`,
+  },
+  {
+    id: "symbol-dispose",
+    name: "Symbol.dispose for Mocks (v1.3.9)",
+    description: "Automatic mock cleanup with 'using' keyword",
+    category: "Testing",
+    code: `import { spyOn, mock, test } from "bun:test";
+
+test("auto-restores spy", () => {
+  const obj = { method: () => "original" };
+  
+  {
+    using spy = spyOn(obj, "method").mockReturnValue("mocked");
+    expect(obj.method()).toBe("mocked");
+  }
+  
+  // Automatically restored when spy leaves scope
+  expect(obj.method()).toBe("original");
+});
+
+// Manual dispose also works
+const fn = mock(() => "value");
+fn();
+fn[Symbol.dispose](); // Same as fn.mockRestore()
+expect(fn).toHaveBeenCalledTimes(0);`,
+  },
+  {
+    id: "symbol-dispose-explicit",
+    name: "Symbol.dispose with mock()/spyOn()",
+    description: "Disposable test doubles with using and direct Symbol.dispose",
+    category: "Testing",
+    code: `import { test, expect, spyOn, mock } from "bun:test";
+
+test("spy restores automatically", () => {
+  const obj = { method: () => "original" };
+  {
+    using spy = spyOn(obj, "method").mockReturnValue("mocked");
+    expect(obj.method()).toBe("mocked");
+  }
+  expect(obj.method()).toBe("original");
+});
+
+const fn = mock(() => "value");
+fn();
+fn[Symbol.dispose](); // alias of mockRestore()
+expect(fn).toHaveBeenCalledTimes(0);`,
+  },
+  {
+    id: "ipc-communication",
+    name: "IPC Communication",
+    description: "Spawn child processes and communicate via Bun.spawn() IPC",
+    category: "Features",
+    code: `// Spawn child process with IPC
+const child = Bun.spawn({
+  cmd: [process.execPath, "child.ts"],
+  ipc(message) {
+    console.log("Parent received:", message);
+  },
+});
+
+// Send messages to child
+child.send("Hello from parent!");
+child.send({ type: "command", data: [1, 2, 3] });
+
+// In child.ts:
+process.send({ type: "ready", pid: process.pid });
+process.on("message", (msg) => {
+  console.log("Child received:", msg);
+  process.send({ echo: msg });
+});`,
+  },
+  {
+    id: "brand-bench-results",
+    name: "Brand Benchmark Results",
+    description: "Run brand benchmarks and display results with Bun.inspect.table() formatting",
+    category: "Performance",
+    code: `// Run brand benchmarks with table output
+bun run scripts/brand-bench.ts
+
+// Sample output with Bun.inspect.table():
+// 📊 Benchmark Results:
+// ┌───┬───────────────────────────┬─────────┬───────────┬─────────────┐
+// │   │ operation                 │ ops/sec │ time (ms) │ performance │
+// ├───┼───────────────────────────┼─────────┼───────────┼─────────────┤
+// │ 0 │ brand.generatePalette     │ 146147  │ 1368.48   │ ✅ OK       │
+// │ 1 │ brand.Bun.color(hex)      │ 3054848 │ 130.94    │ 🔥 Fast     │
+// │ 2 │ brand.Bun.color(ansi)     │ 3513039 │ 113.86    │ 🔥 Fast     │
+// │ 3 │ brand.Bun.markdown.render │ 1287645 │ 93.19     │ 🔥 Fast     │
+// │ 4 │ brand.Bun.markdown.react  │ 762851  │ 157.30    │ ⚡ Good      │
+// └───┴───────────────────────────┴─────────┴───────────┴─────────────┘
+// 🏆 Best: brand.Bun.color(ansi)`,
+  },
+  {
+    id: "inspect-table",
+    name: "Bun.inspect.table()",
+    description: "Formatted table output for benchmarks, config diffs, and data comparison",
+    category: "Features",
+    code: `// Formatted table output with Bun.inspect.table()
+const results = [
+  { operation: "generatePalette", opsPerSec: 146147, ms: 1368.5 },
+  { operation: "Bun.color(hex)", opsPerSec: 3054848, ms: 130.9 },
+  { operation: "Bun.color(ansi)", opsPerSec: 3513039, ms: 113.9 },
 ];
 
-async function runCommand(cmd: string[], cwd: string): Promise<{ output: string; error: string; exitCode: number }> {
-  return withCommandWorker(async () => {
-    const proc = Bun.spawn({
-      cmd,
-      stdout: "pipe",
-      stderr: "pipe",
-      cwd,
-    });
+console.log(Bun.inspect.table(
+  results,
+  ["operation", "opsPerSec", "ms"],
+  { colors: true }
+));
 
-    const [output, error] = await Promise.all([
-      new Response(proc.stdout).text(),
-      new Response(proc.stderr).text(),
-    ]);
-    const exitCode = await proc.exited;
-    return { output, error, exitCode };
-  });
+// With ratings
+const rated = results.map(r => ({
+  ...r,
+  rating: r.opsPerSec > 3_000_000 ? "🔥 Fast" : "⚡ Good"
+}));
+
+console.log(Bun.inspect.table(
+  rated,
+  ["operation", "opsPerSec", "ms", "rating"],
+  { colors: true }
+));`,
+  },
+  {
+    id: "process-basics",
+    name: "Process Basics",
+    description: "Command-line args, env vars, stdout/stderr, uptime, timezone",
+    category: "Process",
+    code: `// Command-line arguments
+console.log("Arguments:", Bun.argv.slice(2));
+
+// Environment variables
+console.log("PATH:", process.env.PATH);
+process.env.MY_VAR = "value";
+
+// Process info
+console.log("PID:", process.pid);
+console.log("Uptime:", process.uptime());
+console.log("Platform:", process.platform);
+
+// Timezone
+console.log("Timezone:", Intl.DateTimeFormat().resolvedOptions().timeZone);
+process.env.TZ = "America/New_York";
+
+// Spawn with stdout/stderr
+const proc = Bun.spawn(["echo", "hello"]);
+const output = await proc.stdout.text();
+const stderr = await proc.stderr.text();`,
+  },
+  {
+    id: "stdin-demo",
+    name: "Stdin Input",
+    description: "Reading user input from standard input",
+    category: "Process",
+    code: `// Check stdin status
+console.log("Is TTY:", process.stdin.isTTY);
+
+// Read from stdin using async iterator
+let input = '';
+for await (const chunk of process.stdin) {
+  input += chunk;
+}
+const trimmed = input.trim();
+console.log("Input:", trimmed);`,
+  },
+  {
+    id: "argv-demo",
+    name: "Command-Line Arguments (argv)",
+    description: "Parse command-line arguments with Bun.argv",
+    category: "Process",
+    code: `// Bun.argv contains full command-line
+console.log("Bun.argv:", Bun.argv);
+console.log("Script:", Bun.argv[1]);
+console.log("Arguments:", Bun.argv.slice(2));
+
+// Parse flags and values
+const args = Bun.argv.slice(2);
+const flags = args.filter(arg => arg.startsWith('--'));
+const values = args.filter(arg => !arg.startsWith('--'));
+
+// Parse key=value pairs
+const parsed: Record<string, string> = {};
+for (const arg of args) {
+  if (arg.includes('=')) {
+    const [key, value] = arg.split('=');
+    parsed[key.replace(/^--/, '')] = value;
+  }
 }
 
-async function withCommandWorker<T>(fn: () => Promise<T>): Promise<T> {
-  if (activeCommands >= MAX_COMMAND_WORKERS) {
-    await new Promise<void>(resolve => commandWaiters.push(resolve));
+// Using Bun.parseArgs()
+const { values } = Bun.parseArgs({
+  args: args,
+  options: {
+    port: { type: 'string', default: '3000' },
+    verbose: { type: 'boolean', default: false },
+  },
+});`,
+  },
+  {
+    id: "ctrl-c-demo",
+    name: "Handling CTRL+C",
+    description: "Two-step SIGINT confirm with deterministic cleanup ordering",
+    category: "Process",
+    code: `const resources = [];
+let shuttingDown = false;
+let interruptCount = 0;
+
+async function gracefulShutdown(reason) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  for (const r of resources.slice().reverse()) await r.close();
+  process.exit(0);
+}
+
+process.on("SIGINT", () => {
+  interruptCount += 1;
+  if (interruptCount >= 2) return void gracefulShutdown("SIGINT");
+  console.log("send SIGINT again to confirm shutdown");
+});
+
+process.on("beforeExit", (code) => console.log("beforeExit", code));
+process.on("exit", (code) => console.log("exit", code));`,
+  },
+  {
+    id: "signals-demo",
+    name: "OS Signals",
+    description: "Deterministic shutdown ordering with child signal forwarding",
+    category: "Process",
+    code: `const children = new Set();
+let shuttingDown = false;
+
+function register(child) {
+  children.add(child);
+  child.exited.finally(() => children.delete(child));
+}
+
+async function gracefulShutdown(signal) {
+  if (shuttingDown) return;
+  shuttingDown = true;
+  console.log("freeze intake");
+  for (const child of children) child.kill("SIGTERM");
+  const started = Date.now();
+  while (children.size > 0 && Date.now() - started < 800) {
+    await Bun.sleep(25);
   }
-  activeCommands++;
+  if (children.size > 0) {
+    for (const child of children) child.kill("SIGKILL");
+  }
+  process.exit(0);
+}
+
+process.on("SIGINT", () => void gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => void gracefulShutdown("SIGTERM"));
+process.on("SIGHUP", () => void gracefulShutdown("SIGHUP"));`,
+  },
+  {
+    id: "spawn-demo",
+    name: "Spawn Child Processes",
+    description: "Spawn processes with timeout control, signal forwarding, and cleanup",
+    category: "Process",
+    code: `const children = new Set();
+
+function register(child) {
+  children.add(child);
+  child.exited.finally(() => children.delete(child));
+}
+
+function terminateChildren(signal = "SIGTERM") {
+  for (const child of children) child.kill(signal);
+}
+
+process.on("SIGINT", () => terminateChildren("SIGTERM"));
+process.on("SIGTERM", () => terminateChildren("SIGTERM"));
+
+async function spawnManaged(cmd, timeoutMs = 1000) {
+  const child = Bun.spawn({ cmd, stdout: "pipe", stderr: "pipe" });
+  register(child);
+  const timer = setTimeout(() => child.kill("SIGTERM"), timeoutMs);
+  const [stdout, stderr, exitCode] = await Promise.all([
+    child.stdout.text(),
+    child.stderr.text(),
+    child.exited,
+  ]);
+  clearTimeout(timer);
+  return { stdout, stderr, exitCode };
+}
+
+const result = await spawnManaged([process.execPath, "-e", "console.log('ok')"], 800);
+console.log(result);`,
+  },
+  {
+    id: "test-timeouts",
+    name: "Test Timeouts",
+    description: "Per-test timeout configuration for bun:test",
+    category: "Testing",
+    code: `import { test, expect } from "bun:test";
+
+// Fast test with 1 second timeout
+test("fast test", () => {
+  expect(1 + 1).toBe(2);
+}, 1000);
+
+// Slow test with 10 second timeout
+test("slow test", async () => {
+  await new Promise(resolve => setTimeout(resolve, 8000));
+}, 10000);
+
+// Default timeout is 5000ms (5 seconds)
+// Set to 0 to disable timeout`,
+  },
+  {
+    id: "test-config",
+    name: "Test Configuration",
+    description: "bunfig.toml and package.json test configuration options",
+    category: "Testing",
+    code: `// bunfig.toml
+[test]
+preload = ["./setup.ts"]
+coverage = true
+coverageThreshold = 0.8
+timeout = 10000
+environment = "node"
+
+// OR package.json
+{
+  "bun": {
+    "test": {
+      "preload": ["./setup.ts"],
+      "coverage": true,
+      "timeout": 10000
+    }
+  }
+}`,
+  },
+  {
+    id: "test-lifecycle",
+    name: "Test Lifecycle Hooks",
+    description: "beforeAll, afterAll, beforeEach, afterEach setup and cleanup",
+    category: "Testing",
+    code: `import { test, beforeAll, afterAll, beforeEach, afterEach } from "bun:test";
+
+let database: Database;
+
+beforeAll(() => {
+  database = new Database();  // Runs once
+});
+
+afterAll(() => {
+  database.close();  // Cleanup once
+});
+
+beforeEach(() => {
+  // Runs before each test
+});
+
+afterEach(() => {
+  // Runs after each test
+});`,
+  },
+  {
+    id: "test-filtering",
+    name: "Test Filtering",
+    description: "CLI patterns, test.only, test.skip for selective test execution",
+    category: "Testing",
+    code: `// CLI filtering
+bun test --test-name-pattern="auth"
+bun test -t "API"
+
+// Code-level filtering
+test.only("focus", () => {});   // Only run this
+test.skip("skip", () => {});     // Skip this
+test.todo("todo", () => {});     // Pending
+
+// Describe-level
+describe.only("module", () => {});
+describe.skip("legacy", () => {});`,
+  },
+  {
+    id: "test-exec-control",
+    name: "Test Execution Control",
+    description: "Concurrent tests, randomization, reruns, bail, watch mode",
+    category: "Testing",
+    code: `// Concurrent execution
+bun test --concurrent
+bun test --concurrent --max-concurrency 4
+
+// Randomize & rerun
+test.concurrent("parallel 1", async () => {});
+test.serial("sequential 1", () => {});
+bun test --randomize --seed 12345
+bun test --rerun-each 100
+
+// Bail & watch
+bun test --bail
+bun test --watch`,
+  },
+];
+
+const DEMOS = buildDemoRegistry(DEMOS_BASE);
+
+function runPerformanceTrilogyMicroBench() {
+  const markdownInput = `# Hello\n\nWorld & <script>${"x".repeat(1024)}`;
+
+  const run = (name: string, iterations: number, fn: () => void) => {
+    const start = performance.now();
+    for (let i = 0; i < iterations; i++) fn();
+    const elapsedMs = Math.max(0.001, performance.now() - start);
+    const opsPerSec = Math.round((iterations / elapsedMs) * 1000);
+    return { name, iterations, elapsedMs: Number(elapsedMs.toFixed(3)), opsPerSec };
+  };
+
+  const markdown = run("markdown-simd", 50_000, () => {
+    Bun.markdown.html(markdownInput);
+  });
+  const reactMarkdown = run("react-markdown-cache", 50_000, () => {
+    Bun.markdown.react(markdownInput);
+  });
+  const abortFastPath = run("abort-signal-optimize", 1_000_000, () => {
+    const controller = new AbortController();
+    controller.abort();
+  });
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "bun-v1.3.9-performance-trilogy",
+    results: [markdown, reactMarkdown, abortFastPath],
+  };
+}
+
+async function analyzeBundleMetafile(entrypoint: string) {
+  const now = Date.now();
+  const cached = cachedBundleAnalysisByEntrypoint.get(entrypoint);
+  if (cached && now - cached.at < CACHE_TTL_MS) {
+    return cached.payload;
+  }
+
+  const buildResult = await Bun.build({
+    entrypoints: [entrypoint],
+    target: "bun",
+    format: "esm",
+    splitting: false,
+    metafile: true,
+    write: false,
+    throw: false,
+  });
+
+  if (!buildResult.metafile) {
+    const payload = {
+      ok: false,
+      generatedAt: new Date().toISOString(),
+      source: "Bun.build({ metafile: true })",
+      entrypoint,
+      error: "Metafile was not generated",
+      logs: (buildResult.logs || []).map((log) => String(log?.message || "")).filter(Boolean),
+    };
+    cachedBundleAnalysisByEntrypoint.set(entrypoint, { at: now, payload });
+    return payload;
+  }
+
+  const inputEntries = Object.entries(buildResult.metafile.inputs || {});
+  const outputEntries = Object.entries(buildResult.metafile.outputs || {});
+  const inputBytes = inputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
+  const outputBytes = outputEntries.reduce((sum, [, meta]: any) => sum + Number(meta?.bytes || 0), 0);
+  const ratio = inputBytes > 0 ? Number((outputBytes / inputBytes).toFixed(4)) : 0;
+  const externalDependencies = new Set<string>();
+
+  for (const [, meta] of inputEntries as any[]) {
+    const imports = Array.isArray(meta?.imports) ? meta.imports : [];
+    for (const imp of imports) {
+      if (imp?.external) externalDependencies.add(String(imp.path));
+    }
+  }
+
+  const payload = {
+    ok: true,
+    generatedAt: new Date().toISOString(),
+    source: "Bun.build({ metafile: true })",
+    entrypoint,
+    summary: {
+      inputCount: inputEntries.length,
+      outputCount: outputEntries.length,
+      inputBytes,
+      outputBytes,
+      compressionRatio: ratio,
+      externalDependencyCount: externalDependencies.size,
+    },
+    largestInputs: inputEntries
+      .sort(([, a]: any, [, b]: any) => Number(b?.bytes || 0) - Number(a?.bytes || 0))
+      .slice(0, 10)
+      .map(([path, meta]: any) => ({ path, bytes: Number(meta?.bytes || 0) })),
+    largestOutputs: outputEntries
+      .sort(([, a]: any, [, b]: any) => Number(b?.bytes || 0) - Number(a?.bytes || 0))
+      .slice(0, 10)
+      .map(([path, meta]: any) => ({ path, bytes: Number(meta?.bytes || 0) })),
+    externalDependencies: Array.from(externalDependencies).sort(),
+  };
+
+  cachedBundleAnalysisByEntrypoint.set(entrypoint, { at: now, payload });
+  return payload;
+}
+
+function nextTraceId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function recordRequestTrace(trace: RequestTrace) {
+  requestTraces.push(trace);
+  if (requestTraces.length > REQUEST_TRACE_BUFFER_SIZE) {
+    requestTraces.shift();
+  }
+}
+
+function summarizeRequestTraces(limit: number) {
+  const safeLimit = Number.isFinite(limit)
+    ? Math.max(1, Math.min(REQUEST_TRACE_BUFFER_SIZE, Math.floor(limit)))
+    : 50;
+  const traces = requestTraces.slice(-safeLimit).reverse();
+  const statusBuckets = { ok2xx: 0, warn4xx: 0, fail5xx: 0, other: 0 };
+  let slowOver250ms = 0;
+  let slowOver1000ms = 0;
+
+  for (const trace of traces) {
+    if (trace.status >= 200 && trace.status < 300) statusBuckets.ok2xx++;
+    else if (trace.status >= 400 && trace.status < 500) statusBuckets.warn4xx++;
+    else if (trace.status >= 500) statusBuckets.fail5xx++;
+    else statusBuckets.other++;
+    if (trace.durationMs > 250) slowOver250ms++;
+    if (trace.durationMs > 1000) slowOver1000ms++;
+  }
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "in-memory-request-traces",
+    limit: safeLimit,
+    bufferSize: requestTraces.length,
+    capacity: REQUEST_TRACE_BUFFER_SIZE,
+    summary: {
+      statusBuckets,
+      slowOver250ms,
+      slowOver1000ms,
+    },
+    traces,
+  };
+}
+
+function readDemoBenchStatus() {
+  type DemoBenchSnapshot = {
+    generatedAt?: string;
+    summary?: {
+      total?: number;
+      pass?: number;
+      fail?: number;
+      compareLast?: boolean;
+      regressionFailures?: number;
+    };
+    gate?: {
+      compared?: boolean;
+      pass?: boolean;
+      failures?: number;
+    };
+  };
+
+  let snapshot: DemoBenchSnapshot | null = null;
   try {
-    return await fn();
-  } finally {
-    activeCommands--;
-    const next = commandWaiters.shift();
-    if (next) next();
+    snapshot = JSON.parse(readFileSync(DEMO_BENCH_LATEST_PATH, "utf8")) as DemoBenchSnapshot;
+  } catch {
+    snapshot = null;
+  }
+
+  if (!snapshot) {
+    return {
+      available: false,
+      path: DEMO_BENCH_LATEST_PATH,
+      status: "warn",
+      summary: {
+        total: 0,
+        pass: 0,
+        fail: 0,
+      },
+      gate: {
+        compared: false,
+        pass: true,
+        failures: 0,
+      },
+      message: "No persisted demo benchmark snapshot yet.",
+    };
+  }
+
+  const fail = Number(snapshot.summary?.fail || 0);
+  const compared = Boolean(snapshot.gate?.compared);
+  const gatePass = Boolean(snapshot.gate?.pass ?? true);
+  const gateFailures = Number(snapshot.gate?.failures || snapshot.summary?.regressionFailures || 0);
+  const status = fail > 0 || gateFailures > 0 || !gatePass ? "fail" : compared ? "ok" : "warn";
+
+  return {
+    available: true,
+    path: DEMO_BENCH_LATEST_PATH,
+    generatedAt: snapshot.generatedAt || null,
+    status,
+    summary: {
+      total: Number(snapshot.summary?.total || 0),
+      pass: Number(snapshot.summary?.pass || 0),
+      fail,
+    },
+    gate: {
+      compared,
+      pass: gatePass,
+      failures: gateFailures,
+    },
+    message:
+      status === "fail"
+        ? "Benchmark gate failing or regressions detected."
+        : status === "warn"
+          ? "Benchmark snapshot exists without compare-last gate."
+          : "Benchmark gate passing against last snapshot.",
+  };
+}
+
+async function runCommand(
+  cmd: string[],
+  cwd: string,
+  env?: Record<string, string>
+): Promise<{ output: string; error: string; exitCode: number; childPid: number | null }> {
+  const startedAt = Date.now();
+  commandExecutionState.started += 1;
+  commandExecutionState.lastStartedAt = new Date(startedAt).toISOString();
+  const cmdLabel = cmd.join(" ");
+  try {
+    const result = await commandWorkerPool.execute({
+      type: "run-command",
+      cmd,
+      cwd,
+      env: {
+        ...WORKER_DEFAULT_ENV,
+        ...(env || {}),
+      },
+    });
+    commandExecutionState.completed += 1;
+    commandExecutionState.lastCompletedAt = new Date().toISOString();
+    commandExecutionState.lastExitCode = Number(result.exitCode ?? -1);
+    if (result.exitCode !== 0) {
+      commandExecutionState.failed += 1;
+      commandExecutionState.lastFailure = result.error || `exitCode=${result.exitCode}`;
+    }
+    commandExecutionState.recent.push({
+      at: new Date().toISOString(),
+      cmd: cmdLabel,
+      cwd,
+      childPid: result.childPid ?? null,
+      durationMs: Date.now() - startedAt,
+      exitCode: Number(result.exitCode ?? -1),
+    });
+    if (commandExecutionState.recent.length > 25) {
+      commandExecutionState.recent.shift();
+    }
+    return result;
+  } catch (error) {
+    commandExecutionState.failed += 1;
+    commandExecutionState.lastFailure = error instanceof Error ? error.message : String(error);
+    commandExecutionState.recent.push({
+      at: new Date().toISOString(),
+      cmd: cmdLabel,
+      cwd,
+      childPid: null,
+      durationMs: Date.now() - startedAt,
+      exitCode: -1,
+    });
+    if (commandExecutionState.recent.length > 25) {
+      commandExecutionState.recent.shift();
+    }
+    throw error;
   }
 }
 
@@ -618,11 +3267,196 @@ function contentTypeFromS3Key(key: string): string {
   return map[ext] || S3_DEFAULT_CONTENT_TYPE;
 }
 
-async function parseJsonBody(req: Request): Promise<any> {
+class ApiHttpError extends Error {
+  status: number;
+  code: string;
+  hint: string;
+
+  constructor(status: number, message: string, code: string, hint: string) {
+    super(message);
+    this.status = status;
+    this.code = code;
+    this.hint = hint;
+  }
+}
+
+function isApiHttpError(error: unknown): error is ApiHttpError {
+  return error instanceof ApiHttpError;
+}
+
+function parseJsonBody(req: Request): Promise<any> {
+  return (async () => {
+    const raw = await req.text();
+    const trimmed = raw.trim();
+    if (!trimmed) return {};
+    try {
+      return JSON.parse(trimmed);
+    } catch {
+      throw new ApiHttpError(
+        400,
+        "Invalid JSON request body",
+        "INVALID_JSON_BODY",
+        "Send valid JSON payload (Content-Type: application/json)."
+      );
+    }
+  })();
+}
+
+function sanitizeHeaders(input: unknown): Record<string, string> {
+  if (!input || typeof input !== "object") return {};
+  const result: Record<string, string> = {};
+  for (const [key, value] of Object.entries(input as Record<string, unknown>)) {
+    if (!key) continue;
+    if (typeof value !== "string") continue;
+    const normalizedKey = key.trim();
+    const normalizedValue = value.trim();
+    if (!normalizedKey || !normalizedValue) continue;
+    result[normalizedKey] = normalizedValue;
+  }
+  return result;
+}
+
+function parseProtocolBody(bodyType: string, body: unknown): BodyInit | null {
+  if (body === undefined || body === null) return null;
+  switch (bodyType) {
+    case "json":
+      return typeof body === "string" ? body : JSON.stringify(body);
+    case "string":
+    case "form":
+    case "inline":
+      return String(body);
+    case "urlsearchparams":
+      if (typeof body === "object" && body !== null) {
+        return new URLSearchParams(body as Record<string, string>).toString();
+      }
+      return String(body);
+    case "uint8array":
+      return body instanceof Uint8Array ? body : new Uint8Array(Array.isArray(body) ? body : []);
+    default:
+      return body as BodyInit;
+  }
+}
+
+function classifyExternalError(error: unknown): "CREDENTIALS" | "NETWORK" | "TIMEOUT" | "NOT_FOUND" | "UNKNOWN" {
+  const message = String(error instanceof Error ? error.message : error || "").toLowerCase();
+  if (
+    message.includes("credential") ||
+    message.includes("access key") ||
+    message.includes("secretaccesskey") ||
+    message.includes("signature")
+  ) {
+    return "CREDENTIALS";
+  }
+  if (message.includes("timeout") || message.includes("timed out") || message.includes("abort")) {
+    return "TIMEOUT";
+  }
+  if (message.includes("not found") || message.includes("404") || message.includes("no such key")) {
+    return "NOT_FOUND";
+  }
+  if (
+    message.includes("network") ||
+    message.includes("econn") ||
+    message.includes("enotfound") ||
+    message.includes("refused")
+  ) {
+    return "NETWORK";
+  }
+  return "UNKNOWN";
+}
+
+async function runProtocolRouter(req: Request) {
+  const payload = await parseJsonBody(req);
+  const url = String(payload.url || "");
+  if (!url) {
+    return {
+      ok: false,
+      error: "Missing required field: url",
+      usage: { method: "POST", path: "/api/fetch/protocol-router", body: { url: "https://example.com", method: "GET", dryRun: true } },
+    };
+  }
+
+  let protocol: string;
   try {
-    return await req.json();
+    protocol = resolveProtocolFromUrl(url);
   } catch {
-    return {};
+    return { ok: false, error: `Invalid URL: ${url}` };
+  }
+
+  const config = PROTOCOL_REGISTRY[protocol];
+  if (!config) {
+    return {
+      ok: false,
+      error: `Unsupported protocol: ${protocol}`,
+      supportedProtocols: Object.keys(PROTOCOL_REGISTRY),
+    };
+  }
+
+  const method = String(payload.method || req.method || "GET").toUpperCase();
+  const requestedBodyType = String(payload.bodyType || "string").toLowerCase();
+  const dryRun = payload.dryRun !== false;
+
+  if (!config.bodyTypes.includes(requestedBodyType as BodyType)) {
+    return {
+      ok: false,
+      error: `Unsupported bodyType '${requestedBodyType}' for protocol '${protocol}'`,
+      allowedBodyTypes: config.bodyTypes,
+    };
+  }
+
+  const headers = sanitizeHeaders(payload.headers);
+  const metadata = {
+    protocol,
+    scheme: config.scheme,
+    defaultPort: config.defaultPort,
+    authMethods: config.authMethods,
+    bodyTypes: config.bodyTypes,
+    streaming: config.streaming,
+    cacheable: config.cacheable,
+    corsPolicy: config.corsPolicy,
+    securityProfile: config.securityProfile,
+    maxSize: config.maxSize,
+  };
+
+  if (dryRun) {
+    return { ok: true, dryRun: true, metadata };
+  }
+
+  try {
+    const response = await config.handler(url, {
+      req,
+      method,
+      headers,
+      body: parseProtocolBody(requestedBodyType, payload.body),
+    });
+
+    let responseBody = "";
+    try {
+      responseBody = await response.text();
+      if (responseBody.length > MAX_BODY_SIZE_BYTES) {
+        responseBody = `${responseBody.slice(0, MAX_BODY_SIZE_BYTES)}\n...truncated`;
+      }
+    } catch {
+      responseBody = "";
+    }
+
+    return {
+      ok: response.ok,
+      dryRun: false,
+      metadata,
+      status: response.status,
+      statusText: response.statusText,
+      headers: Object.fromEntries(response.headers.entries()),
+      bodyPreview: responseBody,
+    };
+  } catch (error) {
+    const errorType = classifyExternalError(error);
+    return {
+      ok: false,
+      dryRun: false,
+      metadata,
+      errorType,
+      error: error instanceof Error ? error.message : String(error),
+    };
   }
 }
 
@@ -662,9 +3496,14 @@ async function buildUploadProgress(req: Request): Promise<{
 }
 
 function getProtocolMatrix() {
+  const snapshot = buildLivePoolSnapshot();
+
   return {
     generatedAt: new Date().toISOString(),
     source: "bun-runtime-playground",
+    pooling: {
+      live: snapshot,
+    },
     protocols: [
       {
         protocol: "HTTP",
@@ -767,7 +3606,383 @@ function getProtocolMatrix() {
   };
 }
 
-function getProtocolScorecard() {
+type SeverityLevel = "ok" | "warn" | "fail";
+
+function severityByUtilization(loadPct: number): SeverityLevel {
+  if (loadPct > 80) return "fail";
+  if (loadPct >= 50) return "warn";
+  return "ok";
+}
+
+function severityByCapacityAvailable(availablePct: number): SeverityLevel {
+  if (availablePct < 20) return "fail";
+  if (availablePct <= 50) return "warn";
+  return "ok";
+}
+
+function severityByHeadroom(availablePct: number): SeverityLevel {
+  if (availablePct < 10) return "fail";
+  if (availablePct <= 30) return "warn";
+  return "ok";
+}
+
+function severityByWorkerPoolSignals(
+  stats: {
+    queued: number;
+    max: number;
+    timedOutTasks?: number;
+    rejectedTasks?: number;
+  }
+): SeverityLevel {
+  const timedOutTasks = Number(stats.timedOutTasks || 0);
+  const rejectedTasks = Number(stats.rejectedTasks || 0);
+  if (stats.queued > stats.max * 2 || timedOutTasks > 0) return "fail";
+  if (stats.queued > 0 || rejectedTasks > 0) return "warn";
+  return "ok";
+}
+
+function buildLivePoolSnapshot() {
+  const workerStats = getCommandWorkerStats();
+  const connectionUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
+  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.configuredMax)).toFixed(3));
+  const availableConnections = Math.max(0, MAX_CONCURRENT_REQUESTS - inFlightRequests);
+  const availableWorkers = Math.max(0, workerStats.available);
+  const perWorkerConnectionLoad = Number((inFlightRequests / Math.max(1, workerStats.active || 1)).toFixed(2));
+  const perConnectionWorkerLoad = Number((workerStats.active / Math.max(1, inFlightRequests || 1)).toFixed(2));
+  const bottleneck =
+    connectionUtilization >= workerUtilization
+      ? "connection-pool"
+      : "worker-pool";
+
+  return {
+    connections: {
+      inFlight: inFlightRequests,
+      max: MAX_CONCURRENT_REQUESTS,
+      available: availableConnections,
+      utilization: connectionUtilization,
+      loadPerWorker: perWorkerConnectionLoad,
+      status: connectionUtilization >= 1 ? "saturated" : connectionUtilization >= 0.75 ? "high" : "healthy",
+    },
+    workers: {
+      active: workerStats.active,
+      busy: workerStats.busy,
+      max: workerStats.max,
+      maxConfigured: workerStats.configuredMax,
+      minConfigured: workerStats.configuredMin,
+      provisioned: workerStats.provisioned,
+      available: availableWorkers,
+      provisionedAvailable: workerStats.provisionedAvailable,
+      scalableHeadroom: workerStats.scalableHeadroom,
+      utilization: workerUtilization,
+      loadPerConnection: perConnectionWorkerLoad,
+      queuedTasks: workerStats.queued,
+      inFlightTasks: workerStats.inFlight,
+      timedOutTasks: workerStats.timedOutTasks,
+      rejectedTasks: workerStats.rejectedTasks,
+      status: workerUtilization >= 1 ? "saturated" : workerUtilization >= 0.75 ? "high" : "healthy",
+    },
+    capacity: {
+      bottleneck,
+      headroom: {
+        connections: availableConnections,
+        workers: availableWorkers,
+      },
+    },
+  };
+}
+
+function buildMiniDashboardSnapshot() {
+  const live = buildLivePoolSnapshot();
+  const connectionUsedPct = Math.round(live.connections.utilization * 100);
+  const workerUsedPct = Math.round(live.workers.utilization * 100);
+  const maxLoadPct = Math.max(connectionUsedPct, workerUsedPct);
+  const capacityConnectionsPct = Math.max(0, 100 - connectionUsedPct);
+  const capacityWorkersPct = Math.max(0, 100 - workerUsedPct);
+  const headroomConnectionsPct = Math.round((live.connections.available / Math.max(1, live.connections.max)) * 100);
+  const headroomWorkersPct = Math.round((live.workers.available / Math.max(1, live.workers.max)) * 100);
+  const workerQueueDepth = Number(live.workers.queuedTasks || 0);
+  const workerTimedOutTasks = Number(live.workers.timedOutTasks || 0);
+  const workerRejectedTasks = Number(live.workers.rejectedTasks || 0);
+  const workerQueueSeverity = severityByWorkerPoolSignals({
+    queued: workerQueueDepth,
+    max: Number(live.workers.max || 1),
+    timedOutTasks: workerTimedOutTasks,
+    rejectedTasks: workerRejectedTasks,
+  });
+  const workerTimedOutSeverity = workerTimedOutTasks > 0 ? "fail" : "ok";
+  const workerRejectedSeverity = workerRejectedTasks > 0 ? "warn" : "ok";
+
+  const snapshot = {
+    generatedAt: new Date().toISOString(),
+    port: ACTIVE_PORT,
+    bottleneck: {
+      kind: live.capacity.bottleneck,
+      severity: severityByUtilization(maxLoadPct),
+    },
+    load: {
+      connectionUsedPct,
+      workerUsedPct,
+      maxUsedPct: maxLoadPct,
+      severity: severityByUtilization(maxLoadPct),
+    },
+    capacity: {
+      connectionsPct: capacityConnectionsPct,
+      workersPct: capacityWorkersPct,
+      summary: `C${capacityConnectionsPct}% W${capacityWorkersPct}%`,
+      severity: severityByCapacityAvailable(Math.min(capacityConnectionsPct, capacityWorkersPct)),
+    },
+    headroom: {
+      connections: {
+        available: live.connections.available,
+        max: live.connections.max,
+        pct: headroomConnectionsPct,
+        severity: severityByHeadroom(headroomConnectionsPct),
+      },
+      workers: {
+        available: live.workers.available,
+        max: live.workers.max,
+        pct: headroomWorkersPct,
+        severity: severityByHeadroom(headroomWorkersPct),
+      },
+    },
+    workerQueue: {
+      queuedTasks: workerQueueDepth,
+      inFlightTasks: Number(live.workers.inFlightTasks || 0),
+      severity: workerQueueSeverity,
+    },
+    workerHardening: {
+      timedOutTasks: workerTimedOutTasks,
+      rejectedTasks: workerRejectedTasks,
+      timedOutSeverity: workerTimedOutSeverity,
+      rejectedSeverity: workerRejectedSeverity,
+    },
+    process: {
+      pid: process.pid,
+      signalCount,
+      shuttingDown,
+      shutdownReason,
+    },
+    sockets: {
+      connectedClients: wsClientCount,
+      totalMessages: wsTotalMessages,
+      broadcastCount: wsBroadcastCount,
+      severity: wsClientCount > 0 ? "ok" : wsLastError ? "warn" : "ok",
+    },
+    pooling: {
+      live,
+    },
+  };
+  persistCapacitySnapshot(snapshot);
+  return snapshot;
+}
+
+function persistCapacitySnapshot(snapshot: ReturnType<typeof buildMiniDashboardSnapshot>) {
+  if (!capacityInsertStmt || !capacityPruneStmt) return;
+
+  const tsMs = Date.now();
+  if (tsMs - capacityMetricsLastPersistMs < DASHBOARD_METRICS_INTERVAL_MS) {
+    return;
+  }
+
+  capacityMetricsLastPersistMs = tsMs;
+  capacityInsertStmt.run(
+    tsMs,
+    snapshot.generatedAt,
+    snapshot.port,
+    snapshot.bottleneck.kind,
+    snapshot.bottleneck.severity,
+    snapshot.load.connectionUsedPct,
+    snapshot.load.workerUsedPct,
+    snapshot.load.maxUsedPct,
+    snapshot.capacity.connectionsPct,
+    snapshot.capacity.workersPct,
+    snapshot.capacity.summary,
+    snapshot.capacity.severity,
+    snapshot.headroom.connections.available,
+    snapshot.headroom.connections.pct,
+    snapshot.headroom.connections.severity,
+    snapshot.headroom.workers.available,
+    snapshot.headroom.workers.pct,
+    snapshot.headroom.workers.severity
+  );
+
+  capacityMetricsPersistedCount += 1;
+  if (capacityMetricsPersistedCount % 50 === 0) {
+    capacityPruneStmt.run(DASHBOARD_METRICS_RETENTION_ROWS);
+  }
+}
+
+function getCapacityTrend(minutesRaw: number, limitRaw: number) {
+  if (!capacitySelectStmt) {
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "sqlite",
+      dbPath: DASHBOARD_METRICS_DB_PATH,
+      initialized: false,
+      window: { minutes: 0, limit: 0, sinceMs: 0 },
+      summary: { count: 0 },
+      points: [],
+    };
+  }
+
+  const minutes = Math.max(1, Math.min(24 * 60, Math.floor(minutesRaw || 60)));
+  const limit = Math.max(1, Math.min(10000, Math.floor(limitRaw || 120)));
+  const sinceMs = Date.now() - minutes * 60_000;
+  const rows = capacitySelectStmt.all(sinceMs, limit) as Array<Record<string, unknown>>;
+  const points = rows.map((row) => ({
+    tsMs: Number(row.ts_ms || 0),
+    createdAt: String(row.created_at || ""),
+    loadMaxPct: Number(row.load_max_pct || 0),
+    connectionUsedPct: Number(row.load_connection_pct || 0),
+    workerUsedPct: Number(row.load_worker_pct || 0),
+    capacitySummary: String(row.capacity_summary || ""),
+    capacitySeverity: String(row.capacity_severity || ""),
+    connectionHeadroomPct: Number(row.headroom_connections_pct || 0),
+    workerHeadroomPct: Number(row.headroom_workers_pct || 0),
+    bottleneck: String(row.bottleneck || ""),
+    bottleneckSeverity: String(row.bottleneck_severity || ""),
+  }));
+
+  const latest = points[0] || null;
+  const oldest = points[points.length - 1] || null;
+  const sparkBars = "▁▂▃▄▅▆▇█";
+  const toSparkChar = (valuePct: number) => {
+    const pct = Math.max(0, Math.min(100, Number(valuePct || 0)));
+    const index = Math.min(sparkBars.length - 1, Math.floor((pct / 100) * (sparkBars.length - 1)));
+    return sparkBars[index];
+  };
+  const avgLoadMaxPct = points.length
+    ? Number((points.reduce((sum, p) => sum + p.loadMaxPct, 0) / points.length).toFixed(2))
+    : 0;
+  const avgCapacityPct = points.length
+    ? Number(
+        (
+          points.reduce((sum, p) => {
+            const summary = String(p.capacitySummary || "");
+            const match = /C(\d+)%\s+W(\d+)%/.exec(summary);
+            const c = match ? Number(match[1]) : 0;
+            const w = match ? Number(match[2]) : 0;
+            return sum + Math.min(c, w);
+          }, 0) / points.length
+        ).toFixed(2)
+      )
+    : 0;
+  const latestCapacityPct = latest
+    ? Math.min(
+        Number(/C(\d+)%/.exec(String(latest.capacitySummary || ""))?.[1] || 0),
+        Number(/W(\d+)%/.exec(String(latest.capacitySummary || ""))?.[1] || 0)
+      )
+    : 0;
+  const oldestCapacityPct = oldest
+    ? Math.min(
+        Number(/C(\d+)%/.exec(String(oldest.capacitySummary || ""))?.[1] || 0),
+        Number(/W(\d+)%/.exec(String(oldest.capacitySummary || ""))?.[1] || 0)
+      )
+    : 0;
+  const deltaLoadMaxPct = latest && oldest ? Number((latest.loadMaxPct - oldest.loadMaxPct).toFixed(2)) : 0;
+  const deltaCapacityPct = latest && oldest ? Number((latestCapacityPct - oldestCapacityPct).toFixed(2)) : 0;
+  const severityCounts = points.reduce(
+    (acc, p) => {
+      const key = String(p.capacitySeverity || "unknown");
+      if (key === "ok" || key === "warn" || key === "fail") {
+        acc[key] += 1;
+      } else {
+        acc.unknown += 1;
+      }
+      return acc;
+    },
+    { ok: 0, warn: 0, fail: 0, unknown: 0 }
+  );
+  const bottleneckChanges = points.reduce((count, point, index) => {
+    if (index === 0) return 0;
+    const prev = String(points[index - 1]?.bottleneck || "");
+    const curr = String(point?.bottleneck || "");
+    return prev && curr && prev !== curr ? count + 1 : count;
+  }, 0);
+  const firstTsMs = points.length > 0 ? Number(points[points.length - 1].tsMs || 0) : 0;
+  const lastTsMs = points.length > 0 ? Number(points[0].tsMs || 0) : 0;
+  const observedWindowMs = Math.max(0, lastTsMs - firstTsMs);
+  const requestedWindowMs = minutes * 60_000;
+  const windowCoveragePct = requestedWindowMs > 0 ? Number(((observedWindowMs / requestedWindowMs) * 100).toFixed(2)) : 0;
+  const sparklinePoints = points
+    .slice(0, 20)
+    .reverse()
+    .map((point) => {
+      const match = /C(\d+)%\s+W(\d+)%/.exec(String(point.capacitySummary || ""));
+      const c = match ? Number(match[1]) : 0;
+      const w = match ? Number(match[2]) : 0;
+      return {
+        loadMaxPct: Number(point.loadMaxPct || 0),
+        capacityPct: Math.min(c, w),
+      };
+    });
+  const sparklineLoad = sparklinePoints.map((p) => toSparkChar(p.loadMaxPct)).join("");
+  const sparklineCapacity = sparklinePoints.map((p) => toSparkChar(p.capacityPct)).join("");
+
+  return {
+    generatedAt: new Date().toISOString(),
+    source: "sqlite",
+    dbPath: DASHBOARD_METRICS_DB_PATH,
+    initialized: true,
+    window: {
+      minutes,
+      limit,
+      sinceMs,
+    },
+    summary: {
+      count: points.length,
+      avgLoadMaxPct,
+      avgCapacityPct,
+      deltaLoadMaxPct,
+      deltaCapacityPct,
+      severityCounts,
+      bottleneckChanges,
+      firstTsMs,
+      lastTsMs,
+      observedWindowMs,
+      requestedWindowMs,
+      windowCoveragePct,
+      sparklineLoad,
+      sparklineCapacity,
+      latest,
+      oldest,
+    },
+    points,
+  };
+}
+
+function buildSeverityTestSnapshot(loadPctInput: number) {
+  const loadPct = Math.max(0, Math.min(100, Math.round(loadPctInput)));
+  const availablePct = Math.max(0, 100 - loadPct);
+
+  return {
+    input: {
+      loadPct,
+      availablePct,
+    },
+    thresholds: {
+      utilization: { ok: "<50", warn: "50-80", fail: ">80" },
+      capacity: { ok: ">50", warn: "20-50", fail: "<20" },
+      headroom: { ok: ">30", warn: "10-30", fail: "<10" },
+    },
+    severity: {
+      utilization: severityByUtilization(loadPct),
+      capacity: severityByCapacityAvailable(availablePct),
+      headroom: severityByHeadroom(availablePct),
+    },
+  };
+}
+
+async function getProtocolScorecard(params?: { use?: string; size?: number }) {
+  // Dynamic recommendation based on context
+  const recommend = (() => {
+    if (params?.use === 'external') return 'HTTPS';
+    if ((params?.size || 0) > 100_000_000) return 'S3';
+    if (params?.use === 'internal_ipc') return 'Unix';
+    if (params?.use === 'ephemeral') return 'Data';
+    return 'HTTPS'; // default
+  })();
+  
   return {
     generatedAt: new Date().toISOString(),
     version: "team-v1",
@@ -875,6 +4090,11 @@ function getProtocolScorecard() {
       sub1kbHttps: "HTTP/2 multiplexing reduces per-request overhead for tiny HTTPS payloads by reusing a single encrypted connection.",
       governance: "Capturing the why alongside scorecard values reduces ambiguity and helps teams align on tradeoffs during reviews.",
     },
+    recommend,
+    monitoring: {
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
+      successMetricsCurrent: SuccessMetrics.current,
+    },
     evidenceGovernance: {
       fields: [
         "Tier",
@@ -915,6 +4135,160 @@ function getProtocolScorecard() {
         },
       ],
     },
+    evidence_sources: await (async () => {
+      const sources: DecisionSource[] = [
+        { tier: "T1", reference: "35f815431 (release commit)", verified: true },
+        { tier: "T2", reference: "ac63cc259d74 (RegExp JIT)", verified: true },
+        { tier: "T2", reference: "1f7d7d5a8c23 (String.startsWith)", verified: true },
+        { tier: "T3", reference: "2e2c23521a24 (Map/Set.size)", verified: true },
+      ];
+      // Compute benchmarks once and cache
+      if (!cachedBenchmarkResult) {
+        const map = new Map(); for (let i = 0; i < 1000; i++) map.set("k" + i, i);
+        const set = new Set(); for (let i = 0; i < 1000; i++) set.add(i);
+        const WARMUP = 5_000, ITERS = 1_000_000;
+        let sink = 0;
+        for (let i = 0; i < WARMUP; i++) { sink += map.size; sink += set.size; }
+        const t0 = Bun.nanoseconds();
+        for (let i = 0; i < ITERS; i++) sink += map.size;
+        const mapNsPerOp = (Bun.nanoseconds() - t0) / ITERS;
+        const t1 = Bun.nanoseconds();
+        for (let i = 0; i < ITERS; i++) sink += set.size;
+        const setNsPerOp = (Bun.nanoseconds() - t1) / ITERS;
+        void sink;
+        cachedBenchmarkResult = [
+          { name: "Map.size ns/op (isolated)", result: Number(mapNsPerOp.toFixed(2)), threshold: 10 },
+          { name: "Set.size ns/op (isolated)", result: Number(setNsPerOp.toFixed(2)), threshold: 10 },
+        ];
+      }
+      const { score, defensible, gaps } = DecisionDefender.validateDecision({
+        id: "BUN-UPGRADE-2024-003",
+        claim: "Bun v1.3.9 verified commits provide targeted runtime optimizations",
+        sources,
+        benchmarks: cachedBenchmarkResult,
+      });
+      return {
+        bun_v1_3_9: {
+          release_notes_url: "https://bun.com/blog/bun-v1.3.9",
+          verified_commits: ["35f815431", "ac63cc259d74", "1f7d7d5a8c23", "2e2c23521a24"],
+          evidence_package: "BUN-UPGRADE-2024-003",
+          runtime: (() => {
+            if (cachedRuntimeSnapshot) return cachedRuntimeSnapshot;
+            const os = require("node:os");
+            // Cache git commit to avoid spawnSync on every request
+            if (!cachedGitCommit) {
+              try {
+                cachedGitCommit = Bun.spawnSync(["git", "rev-parse", "HEAD"]).stdout.toString().trim();
+              } catch {
+                cachedGitCommit = "unknown";
+              }
+            }
+            cachedRuntimeSnapshot = {
+              runtime: "Bun",
+              bunVersion: Bun.version,
+              bunRevision: Bun.revision,
+              gitCommit: cachedGitCommit,
+              platform: process.platform,
+              arch: process.arch,
+              osRelease: os.release(),
+              cpuModel: os.cpus()[0]?.model ?? "unknown",
+              cpuCores: os.cpus().length,
+              totalMemoryMB: Math.round(os.totalmem() / 1024 / 1024),
+              pid: process.pid,
+            };
+            return cachedRuntimeSnapshot;
+          })(),
+          profile: (() => {
+            // Use cached profile data if fresh
+            if (cachedProfileSnapshot && (Date.now() - cacheTimestamp) < CACHE_TTL_MS) {
+              return cachedProfileSnapshot;
+            }
+            const { existsSync, readdirSync } = require("node:fs");
+            const { join } = require("node:path");
+            const profileDir = "reports/brand-bench/profiles";
+            const baselinePath = "reports/brand-bench/pinned-baseline.json";
+            const profiles: string[] = [];
+            if (existsSync(profileDir)) {
+              for (const f of readdirSync(profileDir)) {
+                if (f.endsWith(".cpuprofile")) profiles.push(join(profileDir, f));
+              }
+            }
+            let pinnedRunId: string | null = null;
+            if (existsSync(baselinePath)) {
+              try {
+                const pinned = JSON.parse(require("node:fs").readFileSync(baselinePath, "utf8"));
+                pinnedRunId = pinned.baselineRunId ?? null;
+              } catch {}
+            }
+            cachedProfileSnapshot = {
+              pinnedBaselineRunId: pinnedRunId,
+              profileDir,
+              profileFiles: profiles,
+              count: profiles.length,
+            };
+            return cachedProfileSnapshot;
+          })(),
+          snapshot: await (async () => {
+            // Return cached snapshot if fresh
+            if (cachedHeapSnapshot && (Date.now() - cacheTimestamp) < CACHE_TTL_MS) {
+              return cachedHeapSnapshot;
+            }
+            const mem = process.memoryUsage();
+            const heap = Bun.generateHeapSnapshot();
+            let bundleSnapshot: Record<string, unknown> | null = null;
+            // Only compute bundle snapshot once (it's expensive)
+            if (!cachedBundleSnapshot) {
+              try {
+                const result = await Bun.build({
+                  entrypoints: [import.meta.path],
+                  metafile: true,
+                  target: "bun",
+                  splitting: false,
+                  throw: false,
+                });
+                if (result.metafile) {
+                  const inputs = Object.entries(result.metafile.inputs);
+                  const outputs = Object.entries(result.metafile.outputs);
+                  cachedBundleSnapshot = {
+                    source: "Bun.build({ metafile: true })",
+                    inputCount: inputs.length,
+                    outputCount: outputs.length,
+                    totalInputBytes: inputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                    totalOutputBytes: outputs.reduce((s: number, [, m]: any) => s + (m.bytes || 0), 0),
+                    largestInputs: inputs
+                      .sort(([, a]: any, [, b]: any) => (b.bytes || 0) - (a.bytes || 0))
+                      .slice(0, 5)
+                      .map(([p, m]: any) => ({ path: p, bytes: m.bytes })),
+                  };
+                }
+              } catch {}
+            }
+            cachedHeapSnapshot = {
+              takenAt: new Date().toISOString(),
+              memory: {
+                heapUsedMB: Math.round(mem.heapUsed / 1024 / 1024 * 100) / 100,
+                heapTotalMB: Math.round(mem.heapTotal / 1024 / 1024 * 100) / 100,
+                rssMB: Math.round(mem.rss / 1024 / 1024 * 100) / 100,
+                externalMB: Math.round(mem.external / 1024 / 1024 * 100) / 100,
+              },
+              heap: {
+                version: heap.version,
+                type: heap.type,
+                nodeCount: heap.nodes?.length ?? 0,
+                edgeCount: heap.edges?.length ?? 0,
+                classCount: heap.nodeClassNames?.length ?? 0,
+              },
+              bundle: cachedBundleSnapshot,
+            };
+            cacheTimestamp = Date.now();
+            return cachedHeapSnapshot;
+          })(),
+          score,
+          defensible,
+          gaps,
+        },
+      };
+    })(),
     evidenceTracking: EVIDENCE_DASHBOARD["protocol-scorecard"],
   };
 }
@@ -1187,6 +4561,245 @@ async function runNetworkSmoke(baseUrl: string): Promise<{
   };
 }
 
+function closeNetServer(server: NetServer): Promise<void> {
+  return new Promise((resolve) => {
+    server.close(() => resolve());
+  });
+}
+
+function closeH2Server(server: Http2SecureServer): Promise<void> {
+  return new Promise((resolve) => {
+    server.close(() => resolve());
+  });
+}
+
+async function startHttp2UpgradeRuntime(): Promise<Http2UpgradeRuntimeState> {
+  if (http2UpgradeRuntime.status === "running") {
+    return http2UpgradeRuntime;
+  }
+
+  http2UpgradeRuntime = {
+    ...http2UpgradeRuntime,
+    status: "starting",
+    lastError: undefined,
+  };
+
+  try {
+    const h2Server = createSecureServer({
+      key: HTTP2_DEMO_KEY_PEM,
+      cert: HTTP2_DEMO_CERT_PEM,
+      allowHTTP1: true,
+    });
+    h2Server.on("stream", (stream, headers) => {
+      http2UpgradeRuntime.streamCount += 1;
+      stream.respond({
+        ":status": 200,
+        "content-type": "application/json",
+      });
+      stream.end(
+        JSON.stringify({
+          ok: true,
+          message: "Hello over HTTP/2!",
+          method: headers[":method"] || "GET",
+          path: headers[":path"] || "/",
+          streamCount: http2UpgradeRuntime.streamCount,
+        })
+      );
+    });
+
+    const netServer = createServer({ pauseOnConnect: true }, (rawSocket) => {
+      h2Server.emit("connection", rawSocket);
+      rawSocket.resume();
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      netServer.once("error", reject);
+      netServer.listen(HTTP2_UPGRADE_PORT, HTTP2_UPGRADE_HOST, () => resolve());
+    });
+
+    http2SecureRuntimeServer = h2Server;
+    http2NetRuntimeServer = netServer;
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      status: "running",
+      startedAt: new Date().toISOString(),
+      lastError: undefined,
+    };
+    return http2UpgradeRuntime;
+  } catch (error) {
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      status: "error",
+      lastError: error instanceof Error ? error.message : String(error),
+    };
+    return http2UpgradeRuntime;
+  }
+}
+
+async function stopHttp2UpgradeRuntime(): Promise<Http2UpgradeRuntimeState> {
+  const netServer = http2NetRuntimeServer;
+  const h2Server = http2SecureRuntimeServer;
+  http2NetRuntimeServer = null;
+  http2SecureRuntimeServer = null;
+
+  if (netServer) {
+    await closeNetServer(netServer);
+  }
+  if (h2Server) {
+    await closeH2Server(h2Server);
+  }
+
+  http2UpgradeRuntime = {
+    ...http2UpgradeRuntime,
+    status: "stopped",
+    startedAt: undefined,
+  };
+  return http2UpgradeRuntime;
+}
+
+async function probeHttp2UpgradeRuntime(): Promise<{
+  ok: boolean;
+  status?: number;
+  body?: string;
+  latencyMs: number;
+  error?: string;
+}> {
+  const start = performance.now();
+  if (http2UpgradeRuntime.status !== "running") {
+    return {
+      ok: false,
+      latencyMs: Number((performance.now() - start).toFixed(2)),
+      error: "HTTP/2 upgrade runtime is not running",
+    };
+  }
+
+  const target = `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`;
+  const client = connectHttp2(target, { rejectUnauthorized: false });
+
+  try {
+    await new Promise<void>((resolve, reject) => {
+      client.once("connect", () => resolve());
+      client.once("error", reject);
+    });
+
+    const result = await new Promise<{ status?: number; body: string }>((resolve, reject) => {
+      const req = client.request({ ":path": "/" });
+      let status: number | undefined;
+      const chunks: Uint8Array[] = [];
+      req.on("response", (headers) => {
+        const s = headers[":status"];
+        status = typeof s === "number" ? s : Number(s);
+      });
+      req.on("data", (chunk: Buffer) => chunks.push(new Uint8Array(chunk)));
+      req.on("error", reject);
+      req.on("end", () => {
+        const body = Buffer.concat(chunks.map((c) => Buffer.from(c))).toString("utf8");
+        resolve({ status, body });
+      });
+      req.end();
+    });
+
+    const latencyMs = Number((performance.now() - start).toFixed(2));
+    const ok = result.status === 200;
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      lastProbeAt: new Date().toISOString(),
+      lastProbeOk: ok,
+      lastProbeLatencyMs: latencyMs,
+      lastProbeError: ok ? undefined : `Unexpected status ${result.status}`,
+    };
+    return {
+      ok,
+      status: result.status,
+      body: result.body,
+      latencyMs,
+      error: ok ? undefined : `Unexpected status ${result.status}`,
+    };
+  } catch (error) {
+    const latencyMs = Number((performance.now() - start).toFixed(2));
+    const message = error instanceof Error ? error.message : String(error);
+    http2UpgradeRuntime = {
+      ...http2UpgradeRuntime,
+      lastProbeAt: new Date().toISOString(),
+      lastProbeOk: false,
+      lastProbeLatencyMs: latencyMs,
+      lastProbeError: message,
+    };
+    return {
+      ok: false,
+      latencyMs,
+      error: message,
+    };
+  } finally {
+    client.close();
+  }
+}
+
+function getHttp2UpgradeStatusSnapshot() {
+  return {
+    ...http2UpgradeRuntime,
+    endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+    note: "Self-signed cert for local demo; use rejectUnauthorized=false in test clients.",
+    uptimeSec: http2UpgradeRuntime.startedAt
+      ? Number(((Date.now() - new Date(http2UpgradeRuntime.startedAt).getTime()) / 1000).toFixed(2))
+      : 0,
+  };
+}
+
+async function runHttp2UpgradeFullLoop(iterations = 3, delayMs = 120) {
+  const loops = Math.max(1, Math.min(20, Math.floor(iterations)));
+  const delay = Math.max(0, Math.min(5000, Math.floor(delayMs)));
+
+  const started = await startHttp2UpgradeRuntime();
+  if (started.status !== "running") {
+    return {
+      ok: false,
+      loops,
+      delayMs: delay,
+      started,
+      error: started.lastError || "Failed to start HTTP/2 runtime",
+    };
+  }
+
+  const probes: Array<{
+    idx: number;
+    ok: boolean;
+    status?: number;
+    latencyMs: number;
+    error?: string;
+  }> = [];
+
+  for (let i = 0; i < loops; i += 1) {
+    const probe = await probeHttp2UpgradeRuntime();
+    probes.push({
+      idx: i + 1,
+      ok: probe.ok,
+      status: probe.status,
+      latencyMs: probe.latencyMs,
+      error: probe.error,
+    });
+    if (i < loops - 1 && delay > 0) {
+      await Bun.sleep(delay);
+    }
+  }
+
+  const beforeStop = getHttp2UpgradeStatusSnapshot();
+  const stopped = await stopHttp2UpgradeRuntime();
+  const afterStop = getHttp2UpgradeStatusSnapshot();
+  const probesOk = probes.every((p) => p.ok);
+
+  return {
+    ok: probesOk && stopped.status === "stopped",
+    loops,
+    delayMs: delay,
+    started,
+    probes,
+    beforeStop,
+    stopped,
+    afterStop,
+  };
+}
+
 function parsePortRange(range: string): { start: number; end: number } {
   const match = range.trim().match(/^(\d+)-(\d+)$/);
   if (!match) return { start: DEDICATED_PORT, end: DEDICATED_PORT };
@@ -1202,12 +4815,23 @@ async function isPortAvailable(port: number): Promise<boolean> {
     probe.once("listening", () => {
       probe.close(() => resolve(true));
     });
-    probe.listen(port);
+    probe.listen({ port, host: PLAYGROUND_HOST });
   });
 }
 
 async function resolvePort(): Promise<number> {
   if (await isPortAvailable(DEDICATED_PORT)) return DEDICATED_PORT;
+  const owner = detectPortOwner(DEDICATED_PORT);
+  if (!ALLOW_PORT_FALLBACK) {
+    const ownerDetail = owner.available
+      ? "unknown owner"
+      : `pid=${owner.ownerPid ?? "unknown"} cmd=${owner.ownerCommand ?? "unknown"}`;
+    throw new Error(
+      `Playground host/port ${PLAYGROUND_HOST}:${DEDICATED_PORT} is already in use (${ownerDetail}). ` +
+        `Run "lsof -nP -iTCP:${DEDICATED_PORT} -sTCP:LISTEN" and stop that process, ` +
+        "or set PLAYGROUND_ALLOW_PORT_FALLBACK=true to allow deterministic remapping."
+    );
+  }
   const { start, end } = parsePortRange(PORT_RANGE);
   for (let port = start; port <= end; port++) {
     if (await isPortAvailable(port)) return port;
@@ -1217,9 +4841,712 @@ async function resolvePort(): Promise<number> {
   );
 }
 
+function buildRuntimeMetadata() {
+  const version = getRuntimeVersionState();
+  return {
+    bunVersion: Bun.version || "unknown",
+    bunRevision: BUN_REVISION,
+    platform: process.platform,
+    arch: process.arch,
+    pid: process.pid,
+    ppid: process.ppid,
+    host: PLAYGROUND_HOST,
+    requestedPort: DEDICATED_PORT,
+    boundPort: ACTIVE_PORT,
+    status: shuttingDown ? "shutting_down" : "running",
+    runtimeNonce: `${process.pid}-${serverStartTime}`,
+    gitSha: GIT_COMMIT_HASH,
+    buildSha: BUILD_SHA,
+    lastSyncAt: new Date().toISOString(),
+    cwd: process.cwd(),
+    execPath: process.execPath,
+    port: ACTIVE_PORT,
+    portPolicy: {
+      requested: DEDICATED_PORT,
+      fallbackAllowed: ALLOW_PORT_FALLBACK,
+      remapped: ACTIVE_PORT !== DEDICATED_PORT,
+      range: PORT_RANGE,
+    },
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    runtimeStaleMs: RUNTIME_STALE_MS,
+    runtimeOrigins: buildRuntimeOrigins(),
+    metricsStore: {
+      type: "sqlite",
+      path: DASHBOARD_METRICS_DB_PATH,
+      retentionRows: DASHBOARD_METRICS_RETENTION_ROWS,
+      snapshotIntervalMs: DASHBOARD_METRICS_INTERVAL_MS,
+    },
+    process: buildProcessRuntimeSnapshot(),
+    sockets: buildSocketRuntimeSnapshot(),
+    versioning: version,
+  };
+}
+
+function readRepoGitHead(maxAgeMs = 5000): string {
+  const now = Date.now();
+  if (cachedRepoGitHead && now - cachedRepoGitHeadAt <= maxAgeMs) {
+    return cachedRepoGitHead;
+  }
+  try {
+    const out = Bun.spawnSync({
+      cmd: ["git", "rev-parse", "HEAD"],
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const value = out.stdout.toString().trim();
+    cachedRepoGitHead = value || "unknown";
+  } catch {
+    cachedRepoGitHead = "unknown";
+  }
+  cachedRepoGitHeadAt = now;
+  return cachedRepoGitHead;
+}
+
+function getRuntimeVersionState() {
+  const runtimeGitCommit = String(GIT_COMMIT_HASH || "unknown");
+  const repoHeadGitCommit = String(readRepoGitHead());
+  return {
+    runtimeGitCommit,
+    repoHeadGitCommit,
+    hasDrift:
+      runtimeGitCommit !== "unknown" &&
+      repoHeadGitCommit !== "unknown" &&
+      runtimeGitCommit !== repoHeadGitCommit,
+  };
+}
+
+function buildRuntimePortStatus() {
+  const requestedOwner = detectPortOwner(DEDICATED_PORT);
+  const activeOwner = detectPortOwner(ACTIVE_PORT);
+  return {
+    generatedAt: new Date().toISOString(),
+    host: PLAYGROUND_HOST,
+    requestedPort: DEDICATED_PORT,
+    activePort: ACTIVE_PORT,
+    portRange: PORT_RANGE,
+    fallbackAllowed: ALLOW_PORT_FALLBACK,
+    remapped: ACTIVE_PORT !== DEDICATED_PORT,
+    requestedPortOwner: requestedOwner,
+    activePortOwner: activeOwner,
+    process: {
+      pid: process.pid,
+      ppid: process.ppid,
+      signalCount,
+      shuttingDown,
+    },
+  };
+}
+
+function buildRuntimeOrigins() {
+  const candidateOrigins = [
+    ...RUNTIME_ENV.runtimeOrigins,
+    `http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`,
+    `http://127.0.0.1:${ACTIVE_PORT}`,
+    `http://localhost:${ACTIVE_PORT}`,
+  ];
+  return Array.from(new Set(candidateOrigins.filter((origin) => /^https?:\/\//.test(origin))));
+}
+
+function detectPortOwner(port: number) {
+  try {
+    const out = Bun.spawnSync({
+      cmd: ["lsof", "-nP", `-iTCP:${port}`, "-sTCP:LISTEN"],
+      cwd: PROJECT_ROOT,
+      stdout: "pipe",
+      stderr: "pipe",
+    });
+    const text = out.stdout.toString().trim();
+    const lines = text.split("\n").map((line) => line.trim()).filter(Boolean);
+    if (lines.length < 2) {
+      return {
+        available: true,
+        ownerPid: null,
+        ownerCommand: null,
+      };
+    }
+    const parts = lines[1].split(/\s+/);
+    return {
+      available: false,
+      ownerCommand: parts[0] || null,
+      ownerPid: Number.parseInt(parts[1] || "", 10) || null,
+    };
+  } catch {
+    return {
+      available: null,
+      ownerPid: null,
+      ownerCommand: null,
+    };
+  }
+}
+
+function buildSocketRuntimeSnapshot() {
+  return {
+    path: CAPACITY_WS_PATH,
+    topic: CAPACITY_WS_TOPIC,
+    broadcastEveryMs: CAPACITY_WS_BROADCAST_MS,
+    connectedClients: wsClientCount,
+    totalConnections: wsTotalConnections,
+    totalMessages: wsTotalMessages,
+    pingMessages: wsPingMessages,
+    broadcastCount: wsBroadcastCount,
+    lastMessageAt: wsLastMessageAt,
+    lastBroadcastAt: wsLastBroadcastAt,
+    lastError: wsLastError,
+  };
+}
+
+const udpRuntimeState = {
+  totalRuns: 0,
+  totalFailures: 0,
+  lastRunAt: null as string | null,
+  lastDurationMs: null as number | null,
+  lastOk: null as boolean | null,
+  lastError: null as string | null,
+  lastPayload: null as string | null,
+  lastReceivedFrom: null as string | null,
+  lastServerPort: null as number | null,
+};
+
+let udpControlSocket: any = null;
+const udpControlState = {
+  isOpen: false,
+  boundHost: "0.0.0.0",
+  boundPort: null as number | null,
+  connectedPeer: null as { hostname: string; port: number } | null,
+  options: {
+    broadcast: null as boolean | null,
+    ttl: null as number | null,
+    multicastTTL: null as number | null,
+    multicastLoopback: null as boolean | null,
+    multicastInterface: null as string | null,
+  },
+  multicastMemberships: [] as Array<{ group: string; interfaceAddress: string | null }>,
+  sourceSpecificMemberships: [] as Array<{ source: string; group: string }>,
+  lastControlError: null as string | null,
+  messagesReceived: 0,
+  bytesReceived: 0,
+  lastMessageAt: null as string | null,
+  lastMessageFrom: null as string | null,
+  drainEvents: 0,
+  sendsAttempted: 0,
+  sendsSucceeded: 0,
+  sendManyAttempted: 0,
+  sendManyPacketsRequested: 0,
+  sendManyPacketsSent: 0,
+  backpressureEvents: 0,
+  lastOperationAt: null as string | null,
+  lastSendTo: null as string | null,
+  lastSendPayloadPreview: null as string | null,
+  packetTracking: parseBool(process.env.PLAYGROUND_UDP_PACKET_TRACKING, true),
+  packetSourceId: Math.floor(Math.random() * 0x10000),
+  nextSequenceId: 0,
+  lastTxHeader: null as null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  },
+  lastRxHeader: null as null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  },
+};
+
+function normalizeInterfaceAddress(value: unknown): string | null {
+  const str = String(value || "").trim();
+  return str ? str : null;
+}
+
+function normalizeUdpAddress(value: unknown): string | null {
+  const str = String(value || "").trim();
+  return str ? str : null;
+}
+
+function parseUdpPort(value: unknown): number | null {
+  const raw = Number.parseInt(String(value ?? ""), 10);
+  if (!Number.isFinite(raw)) return null;
+  if (raw < 1 || raw > 65535) return null;
+  return raw;
+}
+
+function isMulticastAddress(address: string): boolean {
+  const family = isIP(address);
+  if (family === 4) {
+    const first = Number.parseInt(address.split(".")[0] || "0", 10);
+    return first >= 224 && first <= 239;
+  }
+  if (family === 6) {
+    return address.toLowerCase().startsWith("ff");
+  }
+  return false;
+}
+
+function isValidBindAddress(address: string): boolean {
+  const family = isIP(address);
+  if (family === 4 || family === 6) return true;
+  return address === "localhost";
+}
+
+function formatPayloadPreview(value: unknown, max = 120): string {
+  const str = typeof value === "string" ? value : JSON.stringify(value);
+  return str.length > max ? `${str.slice(0, max)}…` : str;
+}
+
+function buildUdpWirePayload(
+  payload: string | Buffer,
+  scope: "link-local" | "site-local" | "global" | "admin" = "site-local",
+  flags = 0
+): {
+  data: string | Buffer;
+  header: null | {
+    sequenceId: number;
+    sourceId: number;
+    scope: string;
+    flags: number;
+    timestampUs: string;
+    payloadBytes: number;
+    wireBytes: number;
+  };
+} {
+  const payloadBuffer = Buffer.isBuffer(payload) ? payload : Buffer.from(payload);
+  if (!udpControlState.packetTracking) {
+    return { data: payloadBuffer, header: null };
+  }
+  const sequenceId = udpControlState.nextSequenceId >>> 0;
+  udpControlState.nextSequenceId = (udpControlState.nextSequenceId + 1) >>> 0;
+  const header = encodePacketHeader({
+    scope,
+    flags,
+    sourceId: udpControlState.packetSourceId,
+    sequenceId,
+  });
+  const wire = Buffer.concat([header, payloadBuffer]);
+  const decoded = decodePacketHeader(wire);
+  return {
+    data: wire,
+    header: decoded
+      ? {
+          sequenceId: decoded.sequenceId,
+          sourceId: decoded.sourceId,
+          scope: decoded.scope,
+          flags: decoded.flags,
+          timestampUs: decoded.timestampUs.toString(),
+          payloadBytes: payloadBuffer.byteLength,
+          wireBytes: wire.byteLength,
+        }
+      : null,
+  };
+}
+
+function isValidMulticastScope(value: unknown): value is "link-local" | "site-local" | "global" | "admin" {
+  return value === "link-local" || value === "site-local" || value === "global" || value === "admin";
+}
+
+function isValidReliability(value: unknown): value is "best-effort" | "reliable" {
+  return value === "best-effort" || value === "reliable";
+}
+
+function isValidSecurity(value: unknown): value is "none" | "auth" | "encrypt" {
+  return value === "none" || value === "auth" || value === "encrypt";
+}
+
+function isValidScale(value: unknown): value is "small" | "medium" | "large" {
+  return value === "small" || value === "medium" || value === "large";
+}
+
+function isValidIpFamily(value: unknown): value is "ipv4" | "ipv6" {
+  return value === "ipv4" || value === "ipv6";
+}
+
+async function ensureUdpControlSocket() {
+  if (udpControlSocket) return udpControlSocket;
+  const socket = await Bun.udpSocket({
+    hostname: udpControlState.boundHost,
+    port: udpControlState.boundPort ?? 0,
+    socket: {
+      data(_socket, buf, port, addr) {
+        udpControlState.messagesReceived += 1;
+        udpControlState.bytesReceived += buf.byteLength;
+        udpControlState.lastMessageAt = new Date().toISOString();
+        udpControlState.lastMessageFrom = `${addr}:${port}`;
+        udpControlState.lastOperationAt = udpControlState.lastMessageAt;
+        const decoded = decodePacketHeader(buf);
+        if (decoded) {
+          udpControlState.lastRxHeader = {
+            sequenceId: decoded.sequenceId,
+            sourceId: decoded.sourceId,
+            scope: decoded.scope,
+            flags: decoded.flags,
+            timestampUs: decoded.timestampUs.toString(),
+            payloadBytes: Math.max(0, buf.byteLength - PACKET_HEADER_SIZE),
+            wireBytes: buf.byteLength,
+          };
+        } else {
+          udpControlState.lastRxHeader = null;
+        }
+      },
+      drain() {
+        udpControlState.drainEvents += 1;
+        udpControlState.backpressureEvents += 1;
+        udpControlState.lastOperationAt = new Date().toISOString();
+      },
+      error(_socket, err) {
+        udpControlState.lastControlError = err instanceof Error ? err.message : String(err);
+        udpControlState.lastOperationAt = new Date().toISOString();
+      },
+    },
+  });
+  udpControlSocket = socket;
+  udpControlState.isOpen = true;
+  udpControlState.boundPort = socket.port;
+  udpControlState.lastControlError = null;
+  return udpControlSocket;
+}
+
+function closeUdpControlSocket() {
+  if (!udpControlSocket) return;
+  try {
+    udpControlSocket.close?.();
+  } catch {}
+  udpControlSocket = null;
+  udpControlState.isOpen = false;
+  udpControlState.boundPort = null;
+  udpControlState.connectedPeer = null;
+  udpControlState.multicastMemberships = [];
+  udpControlState.sourceSpecificMemberships = [];
+  udpControlState.drainEvents = 0;
+  udpControlState.sendsAttempted = 0;
+  udpControlState.sendsSucceeded = 0;
+  udpControlState.sendManyAttempted = 0;
+  udpControlState.sendManyPacketsRequested = 0;
+  udpControlState.sendManyPacketsSent = 0;
+  udpControlState.backpressureEvents = 0;
+  udpControlState.lastOperationAt = null;
+  udpControlState.lastSendTo = null;
+  udpControlState.lastSendPayloadPreview = null;
+  udpControlState.nextSequenceId = 0;
+  udpControlState.lastTxHeader = null;
+  udpControlState.lastRxHeader = null;
+}
+
+function buildUdpRuntimeSnapshot() {
+  return {
+    supported: typeof Bun.udpSocket === "function",
+    timeoutMs: UDP_SELF_TEST_TIMEOUT_MS,
+    control: {
+      ...udpControlState,
+    },
+    state: { ...udpRuntimeState },
+  };
+}
+
+async function runUdpSelfTest() {
+  udpRuntimeState.totalRuns += 1;
+  udpRuntimeState.lastRunAt = new Date().toISOString();
+
+  if (typeof Bun.udpSocket !== "function") {
+    const message = "Bun.udpSocket is not available in this runtime";
+    udpRuntimeState.totalFailures += 1;
+    udpRuntimeState.lastOk = false;
+    udpRuntimeState.lastError = message;
+    return {
+      ok: false,
+      message,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  }
+
+  const start = Date.now();
+  const payload = `udp-self-test:${Date.now()}:${Math.random().toString(16).slice(2, 8)}`;
+  let server: any = null;
+  let client: any = null;
+
+  try {
+    let settled = false;
+    let resolvePacket: (value: { message: string; from: string; port: number }) => void = () => {};
+    let rejectPacket: (reason?: unknown) => void = () => {};
+    const packetPromise = new Promise<{ message: string; from: string; port: number }>((resolve, reject) => {
+      resolvePacket = resolve;
+      rejectPacket = reject;
+    });
+
+    server = await Bun.udpSocket({
+      socket: {
+        data(_socket, buf, port, addr) {
+          if (settled) return;
+          settled = true;
+          resolvePacket({ message: buf.toString(), from: addr, port });
+        },
+      },
+    });
+    client = await Bun.udpSocket({});
+
+    const timeout = setTimeout(() => {
+      if (settled) return;
+      settled = true;
+      rejectPacket(new Error(`UDP self-test timed out after ${UDP_SELF_TEST_TIMEOUT_MS}ms`));
+    }, UDP_SELF_TEST_TIMEOUT_MS);
+
+    const sent = client.send(payload, server.port, "127.0.0.1");
+    if (sent === false) {
+      clearTimeout(timeout);
+      throw new Error("UDP self-test backpressure: send returned false");
+    }
+
+    const packet = await packetPromise.finally(() => clearTimeout(timeout));
+    const durationMs = Date.now() - start;
+
+    udpRuntimeState.lastDurationMs = durationMs;
+    udpRuntimeState.lastOk = true;
+    udpRuntimeState.lastError = null;
+    udpRuntimeState.lastPayload = payload;
+    udpRuntimeState.lastReceivedFrom = `${packet.from}:${packet.port}`;
+    udpRuntimeState.lastServerPort = server.port;
+
+    return {
+      ok: packet.message === payload,
+      expectedPayload: payload,
+      receivedPayload: packet.message,
+      from: `${packet.from}:${packet.port}`,
+      serverPort: server.port,
+      durationMs,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  } catch (error) {
+    const durationMs = Date.now() - start;
+    const message = error instanceof Error ? error.message : String(error);
+    udpRuntimeState.totalFailures += 1;
+    udpRuntimeState.lastDurationMs = durationMs;
+    udpRuntimeState.lastOk = false;
+    udpRuntimeState.lastError = message;
+    udpRuntimeState.lastPayload = payload;
+    udpRuntimeState.lastReceivedFrom = null;
+    udpRuntimeState.lastServerPort = server?.port ?? null;
+    return {
+      ok: false,
+      error: message,
+      durationMs,
+      runtime: buildUdpRuntimeSnapshot(),
+    };
+  } finally {
+    try {
+      client?.close?.();
+    } catch {}
+    try {
+      server?.close?.();
+    } catch {}
+  }
+}
+
+function buildProcessRuntimeSnapshot() {
+  const workerStats = getCommandWorkerStats();
+  return {
+    pid: process.pid,
+    ppid: process.ppid,
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    shuttingDown,
+    shutdownReason,
+    shutdownStartedAt,
+    signalCount,
+    inFlightRequests,
+    maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
+    workerPool: {
+      active: workerStats.active,
+      max: workerStats.max,
+      queued: workerStats.queued,
+      inFlight: workerStats.inFlight,
+      timedOutTasks: workerStats.timedOutTasks,
+      rejectedTasks: workerStats.rejectedTasks,
+    },
+    commands: {
+      started: commandExecutionState.started,
+      completed: commandExecutionState.completed,
+      failed: commandExecutionState.failed,
+      lastStartedAt: commandExecutionState.lastStartedAt,
+      lastCompletedAt: commandExecutionState.lastCompletedAt,
+      lastFailure: commandExecutionState.lastFailure,
+      lastExitCode: commandExecutionState.lastExitCode,
+      recent: commandExecutionState.recent.slice(-10),
+    },
+    portOwner: detectPortOwner(ACTIVE_PORT),
+  };
+}
+
+function buildResilienceStatus() {
+  const workerStats = getCommandWorkerStats();
+  const { profile, config } = ACTIVE_RESILIENCE;
+  const requestUtilization = Number((inFlightRequests / Math.max(1, MAX_CONCURRENT_REQUESTS)).toFixed(3));
+  const workerUtilization = Number((workerStats.active / Math.max(1, workerStats.max)).toFixed(3));
+  const poolUtilization = Math.max(requestUtilization, workerUtilization);
+  const dnsAligned =
+    config.enablePrefetch === PREFETCH_ENABLED &&
+    config.enablePreconnect === PRECONNECT_ENABLED;
+
+  const riskLevel =
+    poolUtilization >= 0.9
+      ? "high"
+      : poolUtilization >= 0.65
+        ? "medium"
+        : "low";
+
+  return {
+    profile,
+    config,
+    alignment: {
+      dnsAligned,
+      prefetchExpected: config.enablePrefetch,
+      prefetchActive: PREFETCH_ENABLED,
+      preconnectExpected: config.enablePreconnect,
+      preconnectActive: PRECONNECT_ENABLED,
+    },
+    pooling: {
+      requestUtilization,
+      workerUtilization,
+      poolUtilization,
+      riskLevel,
+    },
+  };
+}
+
+function buildHealthChecks(routeTable?: Record<string, unknown>) {
+  const workerStats = getCommandWorkerStats();
+  const version = getRuntimeVersionState();
+  const checks = [
+    {
+      name: "server",
+      status: "healthy",
+      message: "Playground server is accepting requests",
+      recommendedAction: null,
+    },
+    {
+      name: "request-pool",
+      status: inFlightRequests < MAX_CONCURRENT_REQUESTS ? "healthy" : "warning",
+      message: `${inFlightRequests}/${MAX_CONCURRENT_REQUESTS} requests in-flight`,
+      recommendedAction:
+        inFlightRequests < MAX_CONCURRENT_REQUESTS
+          ? null
+          : "Reduce local load or raise PLAYGROUND_MAX_CONCURRENT_REQUESTS for this host.",
+    },
+    {
+      name: "worker-pool",
+      status: workerStats.active < workerStats.max ? "healthy" : "warning",
+      message: `${workerStats.active}/${workerStats.max} bun worker threads active`,
+      recommendedAction:
+        workerStats.active < workerStats.max
+          ? null
+          : "Increase PLAYGROUND_WORKER_POOL_MAX or reduce long-running tasks.",
+    },
+    {
+      name: "runtime-version",
+      status: version.hasDrift ? "warning" : "healthy",
+      message: version.hasDrift
+        ? `Runtime drift detected: process=${version.runtimeGitCommit.slice(0, 12)} repo=${version.repoHeadGitCommit.slice(0, 12)}`
+        : "Runtime git commit matches repository HEAD",
+      recommendedAction: version.hasDrift ? "Restart with `bun run playground:dev`." : null,
+    },
+  ] as Array<Record<string, unknown>>;
+
+  if (routeTable) {
+    const requiredControlRoutes = [
+      "/api/control/runtime/ports",
+      "/api/control/process/runtime",
+      "/api/control/runtime/drift",
+      "/api/control/worker-pool/diagnostics",
+      "/api/dashboard/trends/summary",
+    ];
+    const missing = requiredControlRoutes.filter((path) => typeof routeTable[path] !== "function");
+    checks.push({
+      name: "route-contract",
+      status: missing.length === 0 ? "healthy" : "warning",
+      message:
+        missing.length === 0
+          ? "All required control routes are registered"
+          : `Missing control routes: ${missing.join(", ")}`,
+      recommendedAction:
+        missing.length === 0 ? null : "Restart playground server from latest source (`bun run playground:dev`).",
+    });
+  }
+  return checks;
+}
+
+function parseBunVersionParts(version: string): [number, number, number] {
+  const base = String(version || "")
+    .split("-")[0]
+    .split("+")[0];
+  const [majorRaw, minorRaw, patchRaw] = base.split(".");
+  const major = Number.parseInt(majorRaw || "0", 10) || 0;
+  const minor = Number.parseInt(minorRaw || "0", 10) || 0;
+  const patch = Number.parseInt(patchRaw || "0", 10) || 0;
+  return [major, minor, patch];
+}
+
+function isBunVersionAtLeast(version: string, target: [number, number, number]): boolean {
+  const current = parseBunVersionParts(version);
+  if (current[0] !== target[0]) return current[0] > target[0];
+  if (current[1] !== target[1]) return current[1] > target[1];
+  return current[2] >= target[2];
+}
+
+async function buildDashboardPayload(req: Request) {
+  const governance = await routes["/api/control/governance-status"]();
+  const runtime = buildRuntimeMetadata();
+  const now = new Date().toISOString();
+  const workerStats = getCommandWorkerStats();
+  const pool = {
+    requests: {
+      inFlight: inFlightRequests,
+      max: MAX_CONCURRENT_REQUESTS,
+    },
+    workers: {
+      active: workerStats.active,
+      max: workerStats.max,
+    },
+  };
+
+  return {
+    status: "healthy",
+    timestamp: now,
+    service: "bun-v1.3.9-playground-dashboard",
+    version: String(BUILD_METADATA?.version || "1.0.0"),
+    runtime,
+    checks: buildHealthChecks(),
+    governance: {
+      decision: governance.decision,
+      benchmarkGate: governance.benchmarkGate,
+    },
+    resilience: buildResilienceStatus(),
+    metrics: {
+      system: {
+        port: ACTIVE_PORT,
+        uptimeSec: runtime.uptimeSec,
+        inFlightRequests: pool.requests.inFlight,
+        maxConcurrentRequests: pool.requests.max,
+        activeWorkers: pool.workers.active,
+        maxWorkers: pool.workers.max,
+      },
+      pool,
+    },
+    request: {
+      method: req.method,
+      path: new URL(req.url).pathname,
+    },
+  };
+}
+
 // API routes
 const routes = {
-  "/api/info": () => ({
+  "/api/info": async () => ({
     bunVersion: Bun.version || "1.3.9+",
     bunRevision: BUN_REVISION,
     gitCommitHash: GIT_COMMIT_HASH,
@@ -1228,6 +5555,7 @@ const routes = {
     platform: process.platform,
     arch: process.arch,
     features: resolveAllFeatures(),
+    registry: await getRegistryIntegrationStatus(),
     controlPlane: {
       prefetchEnabled: PREFETCH_ENABLED,
       preconnectEnabled: PRECONNECT_ENABLED,
@@ -1244,8 +5572,577 @@ const routes = {
       searchGovernanceFetchDepth: SEARCH_GOVERNANCE_FETCH_DEPTH,
       proxyDefaultEnabled: Boolean(resolveFeature<string | null>("proxy")),
       proxyAuthConfigured: Boolean(PROXY_AUTH_TOKEN),
+      resilienceProfile: ACTIVE_RESILIENCE.profile,
+      resilienceConfig: ACTIVE_RESILIENCE.config,
+      sigillCaveat:
+        process.platform === "linux" && process.arch === "arm64"
+          ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 platform."
+          : "SIGILL ARMv8.0 fix applies to Linux aarch64 only (not this host).",
+    },
+    versioning: getRuntimeVersionState(),
+  }),
+
+  "/api/control/resilience/status": () => ({
+    generatedAt: new Date().toISOString(),
+    runtime: buildRuntimeMetadata(),
+    controlPlane: {
+      prefetchEnabled: PREFETCH_ENABLED,
+      preconnectEnabled: PRECONNECT_ENABLED,
+      prefetchHostsCount: PREFETCH_HOSTS.length,
+      preconnectUrlsCount: PRECONNECT_URLS.length,
+    },
+    resilience: buildResilienceStatus(),
+  }),
+
+  "/api/control/process/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    requestedPort: DEDICATED_PORT,
+    boundPort: ACTIVE_PORT,
+    host: PLAYGROUND_HOST,
+    pid: process.pid,
+    ppid: process.ppid,
+    startedAt: SERVER_STARTED_AT,
+    uptimeSec: Number((process.uptime?.() || 0).toFixed(2)),
+    gitSha: GIT_COMMIT_HASH,
+    buildSha: BUILD_SHA,
+    runtimeNonce: `${process.pid}-${serverStartTime}`,
+    status: shuttingDown ? "shutting_down" : "running",
+    runtimeOrigins: buildRuntimeOrigins(),
+    runtimeStaleMs: RUNTIME_STALE_MS,
+    process: buildProcessRuntimeSnapshot(),
+    sockets: buildSocketRuntimeSnapshot(),
+  }),
+
+  "/api/control/runtime/drift": (req: Request) => {
+    const version = getRuntimeVersionState();
+    const reqUrl = new URL(req.url);
+    const clientSha =
+      String(req.headers.get("x-client-git-sha") || reqUrl.searchParams.get("clientSha") || "").trim() ||
+      String(version.repoHeadGitCommit || "unknown");
+    const reasons: string[] = [];
+    const drift = Boolean(version.hasDrift || (clientSha !== "unknown" && clientSha !== version.runtimeGitCommit));
+    if (drift) {
+      reasons.push("runtime-git-sha-mismatch");
+    }
+    if (ACTIVE_PORT !== DEDICATED_PORT) {
+      reasons.push("port-remapped");
+    }
+    return {
+      generatedAt: new Date().toISOString(),
+      drift,
+      stale: false,
+      serverSha: String(version.runtimeGitCommit || "unknown"),
+      clientSha,
+      lastSyncAt: new Date().toISOString(),
+      reasons,
+      status: shuttingDown ? "shutting_down" : "running",
+    };
+  },
+
+  "/api/control/runtime/ports": () => buildRuntimePortStatus(),
+
+  "/api/control/socket/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    sockets: buildSocketRuntimeSnapshot(),
+    process: {
+      pid: process.pid,
+      shuttingDown,
+      signalCount,
     },
   }),
+
+  "/api/control/udp/runtime": () => ({
+    generatedAt: new Date().toISOString(),
+    udp: buildUdpRuntimeSnapshot(),
+    process: {
+      pid: process.pid,
+      shuttingDown,
+      signalCount,
+    },
+  }),
+
+  "/api/control/udp/self-test": async () => ({
+    generatedAt: new Date().toISOString(),
+    ...(await runUdpSelfTest()),
+  }),
+
+  "/api/control/udp/open": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const host = String(body?.hostname || udpControlState.boundHost || "0.0.0.0");
+    const desiredPortRaw = Number.parseInt(String(body?.port ?? "0"), 10);
+    const desiredPort = Number.isFinite(desiredPortRaw) && desiredPortRaw >= 0 ? desiredPortRaw : 0;
+    if (!isValidBindAddress(host)) {
+      return {
+        ok: false,
+        error: `Invalid UDP bind host: ${host}`,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    if (udpControlSocket) {
+      closeUdpControlSocket();
+    }
+    udpControlState.boundHost = host;
+    udpControlState.boundPort = desiredPort || null;
+    try {
+      const socket = await ensureUdpControlSocket();
+      return {
+        ok: true,
+        host,
+        port: socket.port,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return {
+        ok: false,
+        error: message,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+  },
+
+  "/api/control/udp/close": async () => {
+    closeUdpControlSocket();
+    return {
+      ok: true,
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/options": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    try {
+      const socket = await ensureUdpControlSocket();
+      if (typeof body?.broadcast === "boolean") {
+        socket.setBroadcast(body.broadcast);
+        udpControlState.options.broadcast = body.broadcast;
+      }
+      if (body?.ttl !== undefined) {
+        const ttl = Number.parseInt(String(body.ttl), 10);
+        if (Number.isFinite(ttl) && ttl > 0) {
+          socket.setTTL(ttl);
+          udpControlState.options.ttl = ttl;
+        }
+      }
+      if (body?.multicastTTL !== undefined) {
+        const multicastTTL = Number.parseInt(String(body.multicastTTL), 10);
+        if (Number.isFinite(multicastTTL) && multicastTTL > 0) {
+          socket.setMulticastTTL(multicastTTL);
+          udpControlState.options.multicastTTL = multicastTTL;
+        }
+      }
+      if (typeof body?.multicastLoopback === "boolean") {
+        socket.setMulticastLoopback(body.multicastLoopback);
+        udpControlState.options.multicastLoopback = body.multicastLoopback;
+      }
+      if (body?.multicastInterface !== undefined) {
+        const iface = String(body.multicastInterface || "").trim();
+        if (iface) {
+          socket.setMulticastInterface(iface);
+          udpControlState.options.multicastInterface = iface;
+        }
+      }
+      return {
+        ok: true,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return {
+        ok: false,
+        error: message,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+  },
+
+  "/api/control/udp/peer": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const hostname = normalizeUdpAddress(body?.hostname);
+    const port = parseUdpPort(body?.port);
+    if (!hostname || !port || isIP(hostname) === 0) {
+      return {
+        ok: false,
+        error: "Invalid UDP peer; expected { hostname: <ip>, port: <1-65535> }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    await ensureUdpControlSocket();
+    udpControlState.connectedPeer = { hostname, port };
+    udpControlState.lastOperationAt = new Date().toISOString();
+    return {
+      ok: true,
+      peer: udpControlState.connectedPeer,
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/send": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const payload = String(body?.payload ?? "playground-udp-ping");
+    const hostname = normalizeUdpAddress(body?.hostname) || udpControlState.connectedPeer?.hostname || null;
+    const port = parseUdpPort(body?.port) || udpControlState.connectedPeer?.port || null;
+    if (!hostname || !port || isIP(hostname) === 0) {
+      return {
+        ok: false,
+        error: "Invalid destination; set peer via /api/control/udp/peer or pass { hostname, port }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      udpControlState.sendsAttempted += 1;
+      const tracked = buildUdpWirePayload(payload, "site-local", 0);
+      const ok = socket.send(tracked.data, port, hostname);
+      if (ok) {
+        udpControlState.sendsSucceeded += 1;
+      } else {
+        udpControlState.backpressureEvents += 1;
+      }
+      udpControlState.lastOperationAt = new Date().toISOString();
+      udpControlState.lastSendTo = `${hostname}:${port}`;
+      udpControlState.lastSendPayloadPreview = formatPayloadPreview(payload);
+      udpControlState.lastTxHeader = tracked.header;
+      return {
+        ok,
+        sent: ok === true ? 1 : 0,
+        to: `${hostname}:${port}`,
+        packet: {
+          tracked: udpControlState.packetTracking,
+          header: tracked.header,
+        },
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/send-many": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const packets = Array.isArray(body?.packets) ? body.packets : [];
+    if (packets.length === 0) {
+      return {
+        ok: false,
+        error: "Missing packets; expected non-empty packets[]",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    if (packets.length > 128) {
+      return {
+        ok: false,
+        error: "Too many packets; max 128 per send-many call",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    const flat: Array<string | number> = [];
+    const packetHeaders: Array<{
+      index: number;
+      header: null | {
+        sequenceId: number;
+        sourceId: number;
+        scope: string;
+        flags: number;
+        timestampUs: string;
+        payloadBytes: number;
+        wireBytes: number;
+      };
+      to: string;
+    }> = [];
+    for (const packet of packets) {
+      const payload = String(packet?.payload ?? "");
+      const hostname = normalizeUdpAddress(packet?.hostname) || udpControlState.connectedPeer?.hostname || null;
+      const port = parseUdpPort(packet?.port) || udpControlState.connectedPeer?.port || null;
+      if (!payload || !hostname || !port || isIP(hostname) === 0) {
+        return {
+          ok: false,
+          error: "Invalid packet entry; each packet requires payload + destination IP + port",
+          udp: buildUdpRuntimeSnapshot(),
+        };
+      }
+      const tracked = buildUdpWirePayload(payload, "site-local", 0);
+      flat.push(tracked.data as string | Buffer, port, hostname);
+      packetHeaders.push({
+        index: packetHeaders.length,
+        header: tracked.header,
+        to: `${hostname}:${port}`,
+      });
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      udpControlState.sendManyAttempted += 1;
+      udpControlState.sendManyPacketsRequested += packets.length;
+      const sent = socket.sendMany(flat);
+      udpControlState.sendManyPacketsSent += sent;
+      if (sent < packets.length) {
+        udpControlState.backpressureEvents += 1;
+      }
+      udpControlState.lastOperationAt = new Date().toISOString();
+      const last = packets[packets.length - 1];
+      udpControlState.lastSendTo = `${last.hostname ?? udpControlState.connectedPeer?.hostname}:${last.port ?? udpControlState.connectedPeer?.port}`;
+      udpControlState.lastSendPayloadPreview = formatPayloadPreview(last.payload ?? "");
+      udpControlState.lastTxHeader = packetHeaders.length > 0 ? packetHeaders[packetHeaders.length - 1].header : null;
+      return {
+        ok: sent === packets.length,
+        sent,
+        requested: packets.length,
+        packets: packetHeaders,
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/profile/select": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const scope = body?.scope;
+    const reliability = body?.reliability;
+    const security = body?.security;
+    const scale = body?.scale;
+    const ipFamily = body?.ipFamily;
+    if (
+      !isValidMulticastScope(scope) ||
+      !isValidReliability(reliability) ||
+      !isValidSecurity(security) ||
+      !isValidScale(scale) ||
+      !isValidIpFamily(ipFamily)
+    ) {
+      return {
+        ok: false,
+        error:
+          "Invalid profile; expected { scope: link-local|site-local|global|admin, reliability: best-effort|reliable, security: none|auth|encrypt, scale: small|medium|large, ipFamily: ipv4|ipv6 }",
+        udp: buildUdpRuntimeSnapshot(),
+      };
+    }
+    const selected = multicastAddressSelector.select({
+      scope,
+      reliability,
+      security,
+      scale,
+      ipFamily,
+    });
+    return {
+      ok: true,
+      profile: { scope, reliability, security, scale, ipFamily },
+      selection: {
+        address: selected.address,
+        ttl: selected.ttl,
+        isMulticast: isMulticastAddress(selected.address),
+      },
+      udp: buildUdpRuntimeSnapshot(),
+    };
+  },
+
+  "/api/control/udp/multicast/join": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const group = String(body?.group || "").trim();
+    const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
+    if (!group) {
+      return { ok: false, error: "Missing required field: group", udp: buildUdpRuntimeSnapshot() };
+    }
+    if (!isMulticastAddress(group)) {
+      return { ok: false, error: `Invalid multicast group: ${group}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    if (interfaceAddress && isIP(interfaceAddress) === 0) {
+      return { ok: false, error: `Invalid interfaceAddress: ${interfaceAddress}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const joined = socket.addMembership(group, interfaceAddress ?? undefined);
+      if (joined) {
+        const exists = udpControlState.multicastMemberships.some(
+          (m) => m.group === group && m.interfaceAddress === interfaceAddress
+        );
+        if (!exists) {
+          udpControlState.multicastMemberships.push({ group, interfaceAddress });
+        }
+      }
+      return { ok: joined, group, interfaceAddress, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/multicast/leave": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const group = String(body?.group || "").trim();
+    const interfaceAddress = normalizeInterfaceAddress(body?.interfaceAddress);
+    if (!group) {
+      return { ok: false, error: "Missing required field: group", udp: buildUdpRuntimeSnapshot() };
+    }
+    if (!isMulticastAddress(group)) {
+      return { ok: false, error: `Invalid multicast group: ${group}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    if (interfaceAddress && isIP(interfaceAddress) === 0) {
+      return { ok: false, error: `Invalid interfaceAddress: ${interfaceAddress}`, udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const left = socket.dropMembership(group, interfaceAddress ?? undefined);
+      if (left) {
+        udpControlState.multicastMemberships = udpControlState.multicastMemberships.filter(
+          (m) => !(m.group === group && m.interfaceAddress === interfaceAddress)
+        );
+      }
+      return { ok: left, group, interfaceAddress, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/ssm/join": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const source = String(body?.source || "").trim();
+    const group = String(body?.group || "").trim();
+    if (!source || !group) {
+      return { ok: false, error: "Missing required fields: source, group", udp: buildUdpRuntimeSnapshot() };
+    }
+    const sourceFamily = isIP(source);
+    const groupFamily = isIP(group);
+    if (sourceFamily === 0 || groupFamily === 0 || sourceFamily !== groupFamily || !isMulticastAddress(group)) {
+      return { ok: false, error: "Invalid SSM source/group; both must be same-family IP and group must be multicast", udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const joined = socket.addSourceSpecificMembership(source, group);
+      if (joined) {
+        const exists = udpControlState.sourceSpecificMemberships.some(
+          (m) => m.source === source && m.group === group
+        );
+        if (!exists) {
+          udpControlState.sourceSpecificMemberships.push({ source, group });
+        }
+      }
+      return { ok: joined, source, group, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/udp/ssm/leave": async (req: Request) => {
+    const body = await parseJsonBody(req);
+    const source = String(body?.source || "").trim();
+    const group = String(body?.group || "").trim();
+    if (!source || !group) {
+      return { ok: false, error: "Missing required fields: source, group", udp: buildUdpRuntimeSnapshot() };
+    }
+    const sourceFamily = isIP(source);
+    const groupFamily = isIP(group);
+    if (sourceFamily === 0 || groupFamily === 0 || sourceFamily !== groupFamily || !isMulticastAddress(group)) {
+      return { ok: false, error: "Invalid SSM source/group; both must be same-family IP and group must be multicast", udp: buildUdpRuntimeSnapshot() };
+    }
+    try {
+      const socket = await ensureUdpControlSocket();
+      const left = socket.dropSourceSpecificMembership(source, group);
+      if (left) {
+        udpControlState.sourceSpecificMemberships = udpControlState.sourceSpecificMemberships.filter(
+          (m) => !(m.source === source && m.group === group)
+        );
+      }
+      return { ok: left, source, group, udp: buildUdpRuntimeSnapshot() };
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      udpControlState.lastControlError = message;
+      return { ok: false, error: message, udp: buildUdpRuntimeSnapshot() };
+    }
+  },
+
+  "/api/control/secrets/runtime": () => {
+    const runtime = getSecretsRuntimeInfo();
+    return {
+      timestamp: new Date().toISOString(),
+      runtime,
+      serviceContract: {
+        primaryService: PLAYGROUND_SECRETS_SERVICE,
+        legacyServices: PLAYGROUND_SECRETS_LEGACY_SERVICES,
+        genericFallbackEnabled:
+          String(process.env.FW_ALLOW_GENERIC_SECRET_SERVICE || "").toLowerCase() === "true",
+      },
+      guidance: [
+        "Use Bun.secrets with object options: { service, name }.",
+        "Use reverse-domain service names to avoid cross-tool collisions.",
+        "Avoid generic service names unless FW_ALLOW_GENERIC_SECRET_SERVICE=true is explicitly set.",
+      ],
+    };
+  },
+
+  "/api/health": () => {
+    const checks = buildHealthChecks(routes as Record<string, unknown>);
+    const degraded = checks.some((check) => check.status === "warning" || check.status === "fail");
+    return {
+      status: degraded ? "degraded" : "healthy",
+      timestamp: new Date().toISOString(),
+      service: "bun-v1.3.9-playground-dashboard",
+      version: String(BUILD_METADATA?.version || "1.0.0"),
+      runtime: buildRuntimeMetadata(),
+      checks,
+      recovery: {
+        startup: "bun run playground:dev",
+        staleRuntime:
+          "If runtime-version is warning, restart the playground process so runtime Git SHA matches repository HEAD.",
+        portConflict:
+          "If port conflict occurs, stop the owning process or set PLAYGROUND_PORT to an unused port.",
+      },
+      governance: {
+        successMetrics: {
+          current: SuccessMetrics.current,
+          targets: SuccessMetrics.targets,
+        },
+        health: calculateSuccessHealth(SuccessMetrics),
+        benchmarkStatus: readDemoBenchStatus(),
+        verdict: ExecutiveVerdict,
+      },
+    };
+  },
+
+  "/api/dashboard/runtime": () => buildRuntimeMetadata(),
+  "/api/dashboard/mini": () => buildMiniDashboardSnapshot(),
+  "/api/dashboard/trends": (req: Request) => {
+    const url = new URL(req.url);
+    const minutes = Number.parseInt(url.searchParams.get("minutes") || "60", 10);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "120", 10);
+    return getCapacityTrend(minutes, limit);
+  },
+  "/api/dashboard/trends/summary": (req: Request) => {
+    const url = new URL(req.url);
+    const minutes = Number.parseInt(url.searchParams.get("minutes") || "60", 10);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "120", 10);
+    const trend = getCapacityTrend(minutes, limit);
+    return {
+      generatedAt: trend.generatedAt,
+      source: trend.source,
+      dbPath: trend.dbPath,
+      initialized: trend.initialized,
+      window: trend.window,
+      summary: trend.summary,
+    };
+  },
+  "/api/trends/summary": (req: Request) => routes["/api/dashboard/trends/summary"](req),
+  "/api/trend-summary": (req: Request) => routes["/api/dashboard/trends/summary"](req),
+  "/api/dashboard/severity-test": (req: Request) => {
+    const url = new URL(req.url);
+    const loadPctRaw = Number.parseFloat(url.searchParams.get("load") || "0");
+    const loadPct = Number.isFinite(loadPctRaw) ? loadPctRaw : 0;
+    return buildSeverityTestSnapshot(loadPct);
+  },
+  "/api/dashboard/traces": (req: Request) => {
+    const url = new URL(req.url);
+    const limit = Number.parseInt(url.searchParams.get("limit") || "50", 10);
+    return summarizeRequestTraces(limit);
+  },
   
   "/api/demos": () => ({
     demos: DEMOS,
@@ -1382,18 +6279,651 @@ const routes = {
     };
   },
 
+  "/api/fetch/protocol-router": async (req: Request) => {
+    return await runProtocolRouter(req);
+  },
+
   "/api/control/features": (req: Request) => ({
     features: resolveAllFeatures(req),
+    matrixSummary: {
+      rows: BUN_V139_FEATURE_MATRIX.length,
+      generatedAt: new Date().toISOString(),
+    },
   }),
 
-  "/api/control/network-smoke": async (req: Request) => {
-    const base = new URL(req.url).origin;
+  "/api/control/registry-integration": async () => ({
+    generatedAt: new Date().toISOString(),
+    runtime: buildRuntimeMetadata(),
+    registry: await getRegistryIntegrationStatus(),
+  }),
+
+  "/api/control/feature-matrix": async () => {
+    const scriptMode = (process.env.PLAYGROUND_SCRIPT_MODE || "sequential").toLowerCase();
+    const noExitOnError = parseBool(process.env.PLAYGROUND_NO_EXIT_ON_ERROR, false);
+    const http2Upgrade = parseBool(process.env.PLAYGROUND_HTTP2_UPGRADE, false);
+    const cpuInterval = Number.parseInt(process.env.PLAYGROUND_CPU_PROF_INTERVAL || "1000", 10) || 1000;
+    const compileFormat = (process.env.PLAYGROUND_COMPILE_FORMAT || "cjs").toLowerCase();
+    const noProxy = process.env.NO_PROXY || process.env.no_proxy || "";
+
+    const runtime = {
+      bunVersion: Bun.version,
+      bunRevision: BUN_REVISION,
+      platform: process.platform,
+      arch: process.arch,
+      sigillCaveat:
+        process.platform === "linux" && process.arch === "arm64"
+          ? "SIGILL ARMv8.0 fix applies to this Linux aarch64 host"
+          : "SIGILL ARMv8.0 fix applies to Linux ARMv8.0 only (not this host)",
+    };
+
+    const intrinsicJitFeatures = new Set<string>([
+      "RegExp SIMD Prefix Search",
+      "RegExp Fixed-Count Parentheses JIT",
+      "String.startsWith Intrinsic",
+      "Set/Map.size Intrinsic",
+      "String.trim Intrinsic",
+      "Object.defineProperty Intrinsic",
+      "String.replace Rope Return",
+      "Bun.markdown API",
+      "metafile markdown output",
+      "Node fs '.' Windows Fix",
+      "mimalloc update",
+      "N-API typeof AsyncContextFrame fix",
+      "heap snapshot crash fix",
+      "node:vm SyntheticModule async_hooks fix",
+      "Function.toString Compatibility",
+      "node:http2 Rare Crash Fixes",
+      "HTTP/2 gRPC stream state fix",
+      "Bun.stringWidth Thai/Lao Fix",
+      "WebSocket blob Client Crash Fix",
+      "Proxy Keep-Alive Absolute-URL Fix",
+      "HTTP Chunked Parser Smuggling Fix",
+      "CompileTarget SIMD Type Fix",
+      "CompileTarget Baseline/Modern Type Fix",
+      "Socket.reload Type Fix",
+      "npm i -g bun Windows cmd-shim fix",
+    ]);
+    const bunV139Plus = isBunVersionAtLeast(Bun.version || "0.0.0", [1, 3, 9]);
+
+    const rows = BUN_V139_FEATURE_MATRIX.map((row) => {
+      let appliedValue = row.defaultBehavior;
+      let active = false;
+
+      if (row.feature === "Parallel Scripts") {
+        appliedValue = scriptMode;
+        active = scriptMode === "parallel";
+      } else if (row.feature === "Sequential Scripts") {
+        appliedValue = scriptMode;
+        active = scriptMode === "sequential";
+      } else if (row.feature === "No-Exit-On-Error") {
+        appliedValue = String(noExitOnError);
+        active = noExitOnError;
+      } else if (row.feature === "HTTP/2 Upgrade") {
+        appliedValue = String(http2Upgrade);
+        active = http2Upgrade;
+      } else if (row.feature === "NO_PROXY Fix") {
+        appliedValue = noProxy || "(unset)";
+        active = noProxy.length > 0;
+      } else if (row.feature === "CPU Prof Interval") {
+        appliedValue = String(cpuInterval);
+        active = cpuInterval !== 1000;
+      } else if (row.feature === "ESM Bytecode") {
+        appliedValue = compileFormat;
+        active = compileFormat === "esm";
+      } else if (row.feature === "ARMv8.0 Fix") {
+        appliedValue = `${runtime.platform}/${runtime.arch}`;
+        active = runtime.platform === "linux" && runtime.arch === "arm64";
+      } else if (intrinsicJitFeatures.has(row.feature)) {
+        appliedValue = bunV139Plus ? `enabled (${Bun.version})` : `requires >=1.3.9 (${Bun.version})`;
+        active = bunV139Plus;
+      }
+
+      return {
+        ...row,
+        appliedValue,
+        active,
+      };
+    });
+
+    const registry = await getRegistryIntegrationStatus();
+    return {
+      generatedAt: new Date().toISOString(),
+      version: "bun-v1.3.9",
+      columns: [
+        "feature",
+        "cliOrApi",
+        "defaultBehavior",
+        "environmentOverride",
+        "integration",
+        "performanceImpact",
+        "memoryImpact",
+        "productionReady",
+        "appliedValue",
+        "active",
+      ],
+      runtime,
+      registry,
+      summary: {
+        rowCount: rows.length,
+        activeCount: rows.filter((row) => row.active).length,
+        env: {
+          PLAYGROUND_SCRIPT_MODE: scriptMode,
+          PLAYGROUND_NO_EXIT_ON_ERROR: noExitOnError,
+          PLAYGROUND_HTTP2_UPGRADE: http2Upgrade,
+          PLAYGROUND_CPU_PROF_INTERVAL: cpuInterval,
+          PLAYGROUND_COMPILE_FORMAT: compileFormat,
+          NO_PROXY: noProxy || "",
+        },
+      },
+      rows,
+    };
+  },
+
+  "/api/control/demo-module/validate": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        exitCode: 1,
+        error: "Missing required query parameter: id",
+      };
+    }
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        exitCode: 1,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+    const result = await runCommand(["bun", "run", "validate:demo", "--", `--id=${id}`], PROJECT_ROOT);
+    return {
+      ok: result.exitCode === 0,
+      id,
+      exitCode: result.exitCode,
+      output: result.output,
+      error: result.error,
+    };
+  },
+
+  "/api/control/demo-module/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        exitCode: 1,
+        error: "Missing required query parameter: id",
+      };
+    }
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        exitCode: 1,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+    const result = await runCommand(["bun", "run", "demo:module:bench", "--", `--id=${id}`], PROJECT_ROOT);
+    return {
+      ok: result.exitCode === 0,
+      id,
+      exitCode: result.exitCode,
+      output: result.output,
+      error: result.error,
+    };
+  },
+
+  "/api/control/demo-module/full-loop": async (req: Request) => {
+    const url = new URL(req.url);
+    const id = String(url.searchParams.get("id") || "").trim();
+    if (!id) {
+      return {
+        ok: false,
+        id: "",
+        error: "Missing required query parameter: id",
+      };
+    }
+
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return {
+        ok: false,
+        id,
+        error: `Unknown demo id: ${id}`,
+      };
+    }
+
+    const startedAt = Date.now();
+    const validate = await runCommand(["bun", "run", "validate:demo", "--", `--id=${id}`], PROJECT_ROOT);
+    const bench = validate.exitCode === 0
+      ? await runCommand(["bun", "run", "demo:module:bench", "--", `--id=${id}`], PROJECT_ROOT)
+      : { output: "", error: "skipped: validate failed", exitCode: 1 };
+    const runDemo = bench.exitCode === 0
+      ? await routes["/api/run/:id"](
+          new Request(`http://localhost/api/run/${id}`, {
+            method: "GET",
+          })
+        )
+      : null;
+    let runResult: any = null;
+    if (runDemo) {
+      try {
+        runResult = await runDemo.json();
+      } catch {
+        runResult = { success: false, error: "unable to parse demo run response" };
+      }
+    }
+
+    const ok = validate.exitCode === 0 && bench.exitCode === 0 && Boolean(runResult?.success);
+    return {
+      ok,
+      id,
+      durationMs: Date.now() - startedAt,
+      steps: {
+        validate: {
+          ok: validate.exitCode === 0,
+          exitCode: validate.exitCode,
+          output: validate.output,
+          error: validate.error,
+        },
+        bench: {
+          ok: bench.exitCode === 0,
+          exitCode: bench.exitCode,
+          output: bench.output,
+          error: bench.error,
+        },
+        run: {
+          ok: Boolean(runResult?.success),
+          exitCode: Number(runResult?.exitCode ?? (runResult?.success ? 0 : 1)),
+          output: runResult?.output || "",
+          error: runResult?.error || "",
+        },
+      },
+    };
+  },
+
+  "/api/control/component-status": () => {
+    const rows = COMPONENT_STATUS_MATRIX.map((row) => ({
+      ...row,
+      stable: row.status === "stable",
+    }));
+    const stableCount = rows.filter((row) => row.stable).length;
+    const health = calculateSuccessHealth(SuccessMetrics);
+
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "playground-component-status-matrix",
+      summary: {
+        rowCount: rows.length,
+        stableCount,
+        betaCount: rows.length - stableCount,
+      },
+      governanceHealth: {
+        weightedScore: health.weightedScore,
+        atRisk: health.atRisk,
+        risks: health.risks,
+      },
+      columns: [
+        "component",
+        "file",
+        "status",
+        "owner",
+        "lastCommit",
+        "testCoverage",
+        "performanceBudget",
+        "dependencies",
+        "securityReview",
+        "documentation",
+        "production",
+        "stable",
+      ],
+      rows,
+    };
+  },
+
+  "/api/control/deployment-readiness": () => summarizeDeploymentReadiness(),
+  "/api/control/performance-impact": () => ({
+    ...summarizePerformanceImpact(),
+    governanceHealth: calculateSuccessHealth(SuccessMetrics),
+  }),
+  "/api/control/security-posture": () => summarizeSecurityPosture(),
+  "/api/control/project-health": () => {
+    const workerPool = getCommandWorkerStats();
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "dashboard/project-health.ts",
+      successMetrics: SuccessMetrics,
+      health: calculateSuccessHealth(SuccessMetrics),
+      benchmarkStatus: readDemoBenchStatus(),
+      runtimeWorkerPool: {
+        ...workerPool,
+        severity: severityByWorkerPoolSignals(workerPool),
+        config: {
+          minWorkers: WORKER_POOL_MIN,
+          maxWorkers: WORKER_POOL_MAX,
+          maxQueueSize: WORKER_POOL_QUEUE_MAX,
+          taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
+        },
+      },
+      recommendations: ProjectRecommendations,
+      verdict: ExecutiveVerdict,
+    };
+  },
+  "/api/control/domain-graph": (req: Request) => {
+    const url = new URL(req.url);
+    const domain = (url.searchParams.get("domain") || "full").toLowerCase();
+    const domains = listDomains();
+    const isDomain = domains.includes(domain as (typeof domains)[number]);
+    const mermaid = domain === "full"
+      ? renderFullHierarchy()
+      : isDomain
+        ? renderDomainGraph(domain as (typeof domains)[number])
+        : renderFullHierarchy();
+
+    return {
+      generatedAt: new Date().toISOString(),
+      source: "tier-1380-domain-renderer",
+      domain: domain === "full" || isDomain ? domain : "full",
+      availableDomains: ["full", ...domains],
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
+      mermaid,
+    };
+  },
+
+  "/api/control/bundle/analyze": async (req: Request) => {
+    const url = new URL(req.url);
+    const entryArg = String(url.searchParams.get("entry") || "").trim();
+    const resolved = entryArg
+      ? resolvePath(PROJECT_ROOT, entryArg)
+      : DEFAULT_BUNDLE_ANALYZE_ENTRYPOINT;
+    const normalizedRoot = normalize(PROJECT_ROOT + sep);
+    const normalizedResolved = normalize(resolved);
+
+    if (!normalizedResolved.startsWith(normalizedRoot) && normalizedResolved !== normalize(PROJECT_ROOT)) {
+      return {
+        ok: false,
+        generatedAt: new Date().toISOString(),
+        source: "Bun.build({ metafile: true })",
+        entrypoint: resolved,
+        error: "entry must resolve inside project root",
+      };
+    }
+
+    const exists = await Bun.file(resolved).exists();
+    if (!exists) {
+      return {
+        ok: false,
+        generatedAt: new Date().toISOString(),
+        source: "Bun.build({ metafile: true })",
+        entrypoint: resolved,
+        error: "entrypoint file not found",
+      };
+    }
+
+    return await analyzeBundleMetafile(resolved);
+  },
+
+  "/api/control/network-smoke": async (_req: Request) => {
+    const base = `http://localhost:${ACTIVE_PORT}`;
     const smoke = await runNetworkSmoke(base);
     const failures = smoke.results.filter(r => !r.ok).length;
     return {
       ok: failures === 0,
       failures,
       ...smoke,
+    };
+  },
+
+  "/api/control/http2-upgrade/status": () => getHttp2UpgradeStatusSnapshot(),
+
+  "/api/control/http2-upgrade/start": async () => {
+    const state = await startHttp2UpgradeRuntime();
+    return {
+      ...state,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      started: state.status === "running",
+    };
+  },
+
+  "/api/control/http2-upgrade/stop": async () => {
+    const state = await stopHttp2UpgradeRuntime();
+    return {
+      ...state,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      stopped: state.status === "stopped",
+    };
+  },
+
+  "/api/control/http2-upgrade/probe": async () => {
+    const probe = await probeHttp2UpgradeRuntime();
+    return {
+      ...probe,
+      endpoint: `https://${HTTP2_UPGRADE_HOST}:${HTTP2_UPGRADE_PORT}`,
+      runtime: http2UpgradeRuntime,
+    };
+  },
+
+  "/api/control/http2-upgrade/full-loop": async (req: Request) => {
+    const url = new URL(req.url);
+    const iterations = Number.parseInt(url.searchParams.get("iterations") || "3", 10);
+    const delayMs = Number.parseInt(url.searchParams.get("delayMs") || "120", 10);
+    return await runHttp2UpgradeFullLoop(iterations, delayMs);
+  },
+
+  "/api/control/script-orchestration-panel": async () => {
+    return await getWorkspaceOrchestrationPanel();
+  },
+
+  "/api/control/script-orchestration-simulate": async (req: Request) => {
+    const url = new URL(req.url);
+    const modeParam = (url.searchParams.get("mode") || "parallel").toLowerCase();
+    const mode =
+      modeParam === "sequential" ||
+      modeParam === "parallel-no-exit" ||
+      modeParam === "filter"
+        ? modeParam
+        : "parallel";
+    return buildOrchestrationSimulation(mode);
+  },
+
+  "/api/control/script-orchestration/full-loop": async () => {
+    return await runScriptOrchestrationFullLoop();
+  },
+
+  "/api/control/script-orchestration/status": async () => {
+    return await getScriptOrchestrationStatus();
+  },
+
+  "/api/control/worker-env": async (req: Request) => {
+    const url = new URL(req.url);
+    const key = String(url.searchParams.get("key") || "NO_PROXY").trim();
+    const injected = `probe-${Date.now()}`;
+    const probeScript = `console.log(JSON.stringify({ key: "${key}", value: process.env["${key}"] ?? null, injected: process.env.PLAYGROUND_ENV_PROBE ?? null, pid: process.pid }))`;
+    const result = await runCommand(["bun", "-e", probeScript], PROJECT_ROOT, {
+      PLAYGROUND_ENV_PROBE: injected,
+    });
+    let parsed: Record<string, unknown> | null = null;
+    try {
+      parsed = result.output ? JSON.parse(result.output.trim()) : null;
+    } catch {
+      parsed = null;
+    }
+
+    const available = Boolean(parsed && parsed.value !== null && parsed.value !== undefined && String(parsed.value).length > 0);
+    const mapped = Boolean(parsed && parsed.injected === injected);
+    return {
+      generatedAt: new Date().toISOString(),
+      key,
+      available,
+      mapped,
+      worker: parsed,
+      workerPool: getCommandWorkerStats(),
+      commandExitCode: result.exitCode,
+      commandError: result.error || null,
+    };
+  },
+
+  "/api/control/worker-env/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const key = String(url.searchParams.get("key") || "NO_PROXY").trim();
+    const iterationsRaw = Number.parseInt(url.searchParams.get("iterations") || "10", 10);
+    const iterations = Math.max(1, Math.min(100, Number.isFinite(iterationsRaw) ? iterationsRaw : 10));
+    const samples: number[] = [];
+    let mappedCount = 0;
+    let availableCount = 0;
+
+    for (let i = 0; i < iterations; i += 1) {
+      const probeValue = `probe-${i}-${Date.now()}`;
+      const probeScript = `console.log(JSON.stringify({ key: "${key}", value: process.env["${key}"] ?? null, injected: process.env.PLAYGROUND_ENV_PROBE ?? null }))`;
+      const started = performance.now();
+      const result = await runCommand(["bun", "-e", probeScript], PROJECT_ROOT, {
+        PLAYGROUND_ENV_PROBE: probeValue,
+      });
+      const durationMs = Number((performance.now() - started).toFixed(2));
+      samples.push(durationMs);
+
+      try {
+        const parsed = JSON.parse(result.output.trim());
+        if (parsed?.injected === probeValue) mappedCount += 1;
+        if (parsed?.value !== null && parsed?.value !== undefined && String(parsed.value).length > 0) {
+          availableCount += 1;
+        }
+      } catch {
+        // ignore parse failure, counted by missing mapped/available increments
+      }
+    }
+
+    const sorted = [...samples].sort((a, b) => a - b);
+    const percentile = (p: number) => sorted[Math.min(sorted.length - 1, Math.floor((sorted.length - 1) * p))];
+    const avg = Number((samples.reduce((sum, n) => sum + n, 0) / Math.max(1, samples.length)).toFixed(2));
+
+    return {
+      generatedAt: new Date().toISOString(),
+      key,
+      iterations,
+      workerPool: getCommandWorkerStats(),
+      envMapping: {
+        mapped: mappedCount,
+        available: availableCount,
+      },
+      latencyMs: {
+        min: sorted[0] ?? 0,
+        p50: percentile(0.5),
+        p95: percentile(0.95),
+        max: sorted[sorted.length - 1] ?? 0,
+        avg,
+      },
+    };
+  },
+
+  "/api/control/worker-pool": async () => {
+    const stats = getCommandWorkerStats();
+    const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    const diagnostics = {
+      workers: Number(stats.provisioned || 0),
+      minWorkers: Number(stats.configuredMin || 0),
+      maxWorkers: Number(stats.configuredMax || 0),
+      busy: Number(stats.active || 0),
+      queued: Number(stats.queued || 0),
+      inFlight: Number(stats.inFlight || 0),
+      timedOutTasks: Number(stats.timedOutTasks || 0),
+      rejectedTasks: Number(stats.rejectedTasks || 0),
+      createdWorkers: Number(stats.createdWorkers || 0),
+      replacedWorkers: Number(stats.replacedWorkers || 0),
+      availableWorkers: Number(stats.provisionedAvailable || 0),
+      scalableHeadroom: Number(stats.scalableHeadroom || 0),
+      queuePressurePct: Number(
+        (
+          (Number(stats.queued || 0) / Math.max(1, Number(stats.configuredMax || 1))) * 100
+        ).toFixed(1)
+      ),
+      lastErrors: Array.isArray(stats.lastErrors) ? stats.lastErrors : [],
+    };
+    return {
+      generatedAt: new Date().toISOString(),
+      pool: stats,
+      diagnostics,
+      config: {
+        minWorkers: WORKER_POOL_MIN,
+        maxWorkers: WORKER_POOL_MAX,
+        maxQueueSize: WORKER_POOL_QUEUE_MAX,
+        taskTimeoutMs: WORKER_POOL_TASK_TIMEOUT_MS,
+        defaultEnvKeys: Object.keys(WORKER_DEFAULT_ENV),
+      },
+      queueSeverity: severityByWorkerPoolSignals(stats),
+      latestBench: latest,
+    };
+  },
+
+  "/api/control/worker-pool/diagnostics": async () => {
+    const stats = getCommandWorkerStats();
+    const latest = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    const diagnostics = {
+      workers: Number(stats.provisioned || 0),
+      minWorkers: Number(stats.configuredMin || 0),
+      maxWorkers: Number(stats.configuredMax || 0),
+      busy: Number(stats.active || 0),
+      queued: Number(stats.queued || 0),
+      inFlight: Number(stats.inFlight || 0),
+      "in-flight": Number(stats.inFlight || 0),
+      timedOutTasks: Number(stats.timedOutTasks || 0),
+      rejectedTasks: Number(stats.rejectedTasks || 0),
+      createdWorkers: Number(stats.createdWorkers || 0),
+      replacedWorkers: Number(stats.replacedWorkers || 0),
+      availableWorkers: Number(stats.provisionedAvailable || 0),
+      scalableHeadroom: Number(stats.scalableHeadroom || 0),
+      queuePressurePct: Number(
+        (
+          (Number(stats.queued || 0) / Math.max(1, Number(stats.configuredMax || 1))) * 100
+        ).toFixed(1)
+      ),
+      lastErrors: Array.isArray(stats.lastErrors) ? stats.lastErrors : [],
+    };
+    return {
+      generatedAt: new Date().toISOString(),
+      workers: diagnostics.workers,
+      busy: diagnostics.busy,
+      queued: diagnostics.queued,
+      inFlight: diagnostics.inFlight,
+      timedOutTasks: diagnostics.timedOutTasks,
+      rejectedTasks: diagnostics.rejectedTasks,
+      lastErrors: diagnostics.lastErrors,
+      capacity: {
+        minWorkers: diagnostics.minWorkers,
+        maxWorkers: diagnostics.maxWorkers,
+        availableWorkers: diagnostics.availableWorkers,
+        scalableHeadroom: diagnostics.scalableHeadroom,
+      },
+      diagnostics,
+      queueSeverity: severityByWorkerPoolSignals(stats),
+      latestBench: latest,
+    };
+  },
+
+  "/api/control/worker-pool/bench": async (req: Request) => {
+    const url = new URL(req.url);
+    const iterationsRaw = Number.parseInt(url.searchParams.get("iterations") || "40", 10);
+    const concurrencyRaw = Number.parseInt(url.searchParams.get("concurrency") || "4", 10);
+    const iterations = Math.max(5, Math.min(1000, Number.isFinite(iterationsRaw) ? iterationsRaw : 40));
+    const concurrency = Math.max(1, Math.min(32, Number.isFinite(concurrencyRaw) ? concurrencyRaw : 4));
+    const previous = await readJsonSafe(WORKER_POOL_BENCH_LATEST_PATH);
+    const snapshot = await runWorkerPoolBench(iterations, concurrency);
+    const gate = compareWorkerBenchVsLast(snapshot, previous?.snapshot || null);
+    const persisted = await persistWorkerBenchSnapshot(snapshot, gate);
+    return {
+      generatedAt: new Date().toISOString(),
+      snapshot,
+      gate,
+      persisted: {
+        snapshotPath: persisted.path,
+        latestPath: persisted.latestPath,
+      },
     };
   },
 
@@ -1422,9 +6952,14 @@ const routes = {
     };
   },
 
-  "/api/control/protocol-matrix": () => getProtocolMatrix(),
+  "/api/control/protocol-matrix": () => ({
+    ...getProtocolMatrix(),
+    monitoring: {
+      governanceHealth: calculateSuccessHealth(SuccessMetrics),
+    },
+  }),
 
-  "/api/control/protocol-scorecard": () => getProtocolScorecard(),
+  "/api/control/protocol-scorecard": () => getProtocolScorecard(),  // returns Promise
 
   "/api/control/evidence-dashboard": () => getEvidenceDashboard(),
 
@@ -1433,6 +6968,30 @@ const routes = {
   "/api/run/:id": async (req: Request) => {
     const url = new URL(req.url);
     const id = url.pathname.split("/").pop();
+    if (!id || id === "undefined" || id === "null") {
+      return new Response(JSON.stringify({
+        success: false,
+        error: "Invalid demo id",
+        output: "",
+        exitCode: 1,
+      }), {
+        status: 400,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    const knownDemo = DEMOS.find((demo) => demo.id === id);
+    if (!knownDemo) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Unknown demo id: ${id}`,
+        output: "",
+        exitCode: 1,
+      }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
 
     if (id === "control-plane") {
       const smoke = await routes["/api/control/network-smoke"](req);
@@ -1440,6 +6999,40 @@ const routes = {
         success: smoke.ok,
         output: JSON.stringify(smoke, null, 2),
         exitCode: smoke.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "resilience-governance") {
+      const status = routes["/api/control/resilience/status"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(status, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "workspace-runner-panel") {
+      const panel = await routes["/api/control/script-orchestration-panel"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(panel, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "script-orchestration-control") {
+      const fullLoop = await routes["/api/control/script-orchestration/full-loop"]();
+
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(fullLoop, null, 2),
+        exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -1474,6 +7067,17 @@ const routes = {
       });
     }
 
+    if (id === "ipc-communication") {
+      const udp = await routes["/api/control/udp/self-test"]();
+      return new Response(JSON.stringify({
+        success: Boolean((udp as any)?.ok),
+        output: JSON.stringify(udp, null, 2),
+        exitCode: (udp as any)?.ok ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "protocol-matrix") {
       const matrix = routes["/api/control/protocol-matrix"]();
       return new Response(JSON.stringify({
@@ -1486,10 +7090,163 @@ const routes = {
     }
 
     if (id === "protocol-scorecard") {
-      const scorecard = routes["/api/control/protocol-scorecard"]();
+      const scorecard = await routes["/api/control/protocol-scorecard"]();
       return new Response(JSON.stringify({
         success: true,
         output: JSON.stringify(scorecard, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "component-status-matrix") {
+      const matrix = routes["/api/control/component-status"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "project-health-metrics") {
+      const health = routes["/api/control/project-health"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(health, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "feature-matrix") {
+      const matrix = await routes["/api/control/feature-matrix"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "deployment-readiness-matrix") {
+      const matrix = routes["/api/control/deployment-readiness"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "performance-impact-matrix") {
+      const matrix = routes["/api/control/performance-impact"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(matrix, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "security-posture-report") {
+      const report = routes["/api/control/security-posture"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(report, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "domain-topology") {
+      const graph = routes["/api/control/domain-graph"](
+        new Request("http://localhost/api/control/domain-graph?domain=full")
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(graph, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "historical-sqlite-trends") {
+      const trend = routes["/api/dashboard/trends"](
+        new Request("http://localhost/api/dashboard/trends?minutes=60&limit=120")
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(trend, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "build-metafile") {
+      const bundle = await routes["/api/control/bundle/analyze"](
+        new Request("http://localhost/api/control/bundle/analyze")
+      );
+      return new Response(JSON.stringify({
+        success: bundle?.ok === true,
+        output: JSON.stringify(bundle, null, 2),
+        exitCode: bundle?.ok === true ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "protocol-router-tier1380") {
+      const dryRun = await routes["/api/fetch/protocol-router"](
+        new Request("http://localhost/api/fetch/protocol-router", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            url: "https://example.com",
+            method: "GET",
+            dryRun: true,
+            bodyType: "string",
+          }),
+        })
+      );
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(dryRun, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "http2-runtime-control") {
+      const loop = await runHttp2UpgradeFullLoop(3, 120);
+      return new Response(JSON.stringify({
+        success: loop.ok === true,
+        output: JSON.stringify(loop, null, 2),
+        exitCode: loop.ok === true ? 0 : 1,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "markdown-simd" || id === "react-markdown-cache" || id === "abort-signal-optimize") {
+      const trilogy = runPerformanceTrilogyMicroBench();
+      const focus = trilogy.results.find((r) => r.name === id);
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify({
+          ...focus,
+          trilogy: trilogy.results,
+        }, null, 2),
         exitCode: 0,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -1529,6 +7286,170 @@ const routes = {
       });
     }
 
+    if (id === "registry-integration") {
+      const payload = await routes["/api/control/registry-integration"]();
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(payload, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "resilient-fetch-ultra") {
+      const ultra = new UltraResilientFetch({
+        origins: [
+          { url: "http://localhost:3999", weight: 10, priority: 1, tags: ["fallback"] },
+          { url: `http://localhost:${ACTIVE_PORT}`, weight: 100, priority: 2, tags: ["local-primary"] },
+        ],
+        timeoutMs: 2000,
+        retries: 2,
+        backoffMs: 50,
+        backoffMultiplier: 2,
+        maxBackoffMs: 400,
+        circuitBreaker: {
+          enabled: true,
+          failureThreshold: 2,
+          resetTimeoutMs: 5000,
+          halfOpenMaxCalls: 1,
+        },
+        predictive: {
+          enabled: true,
+          latencyThresholdMs: 250,
+          errorRateThreshold: 0.25,
+        },
+        metrics: {
+          enabled: true,
+        },
+      });
+      try {
+        const response = await ultra.fetch("/api/health");
+        const body = await response.json();
+        return new Response(JSON.stringify({
+          success: true,
+          exitCode: 0,
+          output: JSON.stringify({
+            responseStatus: response.status,
+            service: body?.service ?? null,
+            report: ultra.getMetricsReport(),
+          }, null, 2),
+        }), {
+          headers: { "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        return new Response(JSON.stringify({
+          success: false,
+          exitCode: 1,
+          error: error instanceof Error ? error.message : String(error),
+          output: JSON.stringify({
+            report: ultra.getMetricsReport(),
+          }, null, 2),
+        }), {
+          headers: { "Content-Type": "application/json" },
+          status: 500,
+        });
+      } finally {
+        ultra.close();
+      }
+    }
+
+    if (id === "no-proxy-explicit" || id === "proxy") {
+      const sample = {
+        env: { NO_PROXY: "localhost" },
+        request: {
+          url: "http://localhost:3000/api",
+          proxy: "http://my-proxy:8080",
+        },
+        expected: "Proxy bypassed for localhost due to NO_PROXY",
+        appliesTo: ["fetch", "WebSocket"],
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "symbol-dispose-explicit" || id === "symbol-dispose" || id === "mocks") {
+      const sample = {
+        pattern: "using + Symbol.dispose",
+        behavior: "Auto-restores spy/mock when leaving scope",
+        alias: "fn[Symbol.dispose]() === fn.mockRestore()",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "cpu-prof-interval-explicit" || id === "profiling") {
+      const sample = {
+        defaultIntervalMicros: 1000,
+        commandExamples: [
+          "bun --cpu-prof --cpu-prof-interval 500 index.js",
+          "bun --cpu-prof --cpu-prof-interval 250 index.js",
+        ],
+        note: "--cpu-prof-interval without --cpu-prof emits warning",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "esm-bytecode-explicit" || id === "bytecode") {
+      const sample = {
+        supported: true,
+        commands: [
+          "bun build --compile --bytecode --format=esm ./cli.ts",
+          "bun build --compile --bytecode --format=cjs ./cli.ts",
+        ],
+        defaultWithoutFormat: "cjs",
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
+    if (id === "bun-apis-stringwidth") {
+      const thai = "คำ";
+      const lao = "ຄຳ";
+      const sample = {
+        source: "https://bun.com/blog/bun-v1.3.9#bun-apis",
+        claim: "Bun.stringWidth now counts Thai/Lao spacing vowels as width 1",
+        examples: {
+          thai,
+          thaiWidth: Bun.stringWidth(thai),
+          lao,
+          laoWidth: Bun.stringWidth(lao),
+        },
+        expected: {
+          thaiWidth: 2,
+          laoWidth: 2,
+        },
+      };
+      return new Response(JSON.stringify({
+        success: true,
+        output: JSON.stringify(sample, null, 2),
+        exitCode: 0,
+      }), {
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+
     if (id === "brand-bench-gate") {
       try {
         const result = await runCommand(["bun", "run", "brand:bench:all"], PROJECT_ROOT);
@@ -1562,20 +7483,54 @@ const routes = {
       "bytecode": "esm-bytecode",
       "performance": "performance",
       "bugfixes": "bugfixes",
+      "markdown-advanced": "markdown-advanced",
+      "symbol-dispose": "symbol-dispose",
+      "ipc-communication": "ipc-communication",
+      "process-basics": "process-basics",
+      "stdin-demo": "stdin-demo",
+      "argv-demo": "argv-demo",
+      "ctrl-c-demo": "ctrl-c-demo",
+      "signals-demo": "signals-demo",
+      "spawn-demo": "spawn-demo",
+      "inspect-table": "inspect-table-demo",
+      "brand-bench-results": "brand-bench-results",
+      "test-timeouts": "timeouts-demo",
+      "test-config": "config-demo",
+      "test-lifecycle": "lifecycle-demo",
+      "test-filtering": "filtering-demo",
+      "test-exec-control": "exec-control-demo",
     };
     
     const scriptName = scriptMap[id || ""] || id;
     
     // Run the demo script from the parent demos directory
     const demoScript = join(import.meta.dir, "..", "playground", "demos", `${scriptName}.ts`);
+    const demoScriptFile = Bun.file(demoScript);
+    if (!(await demoScriptFile.exists())) {
+      return new Response(JSON.stringify({
+        success: false,
+        error: `Demo script not mapped or missing: ${scriptName}.ts`,
+        output: "",
+        exitCode: 1,
+        id,
+        scriptName,
+      }), {
+        status: 404,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
     
     try {
       const { output, error, exitCode } = await runCommand(["bun", "run", demoScript], import.meta.dir);
       
+      // Strip ANSI codes for clean JSON output (Bun.stripANSI handles all ANSI escape sequences)
+      const cleanOutput = output ? Bun.stripANSI(output) : (exitCode === 0 ? "Demo completed successfully!" : "");
+      const cleanError = error ? Bun.stripANSI(error) : undefined;
+      
       return new Response(JSON.stringify({
         success: exitCode === 0,
-        output: output || (exitCode === 0 ? "Demo completed successfully!" : ""),
-        error: error || undefined,
+        output: cleanOutput,
+        error: cleanError,
         exitCode,
       }), {
         headers: { "Content-Type": "application/json" },
@@ -1583,7 +7538,7 @@ const routes = {
     } catch (err) {
       return new Response(JSON.stringify({
         success: false,
-        error: err instanceof Error ? err.message : String(err),
+        error: err instanceof Error ? Bun.stripANSI(err.message) : Bun.stripANSI(String(err)),
         output: "",
       }), {
         status: 500,
@@ -1600,6 +7555,28 @@ function jsonResponse(body: unknown, status = 200): Response {
   });
 }
 
+function getCorsHeaders(req: Request): HeadersInit {
+  const origin = req.headers.get("origin");
+  const reqUrl = new URL(req.url);
+  const sameOrigin = origin ? origin === reqUrl.origin : true;
+  const defaults = [`http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`, `http://127.0.0.1:${ACTIVE_PORT}`, `http://localhost:${ACTIVE_PORT}`];
+  const configured = String(process.env.PLAYGROUND_CORS_ORIGINS || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const allowList = new Set([...defaults, ...configured]);
+  const resolvedOrigin = origin && allowList.has(origin) ? origin : (sameOrigin ? reqUrl.origin : null);
+  const headers: Record<string, string> = {
+    "Access-Control-Allow-Methods": "GET,POST,OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Playground-Token",
+  };
+  if (resolvedOrigin) {
+    headers["Access-Control-Allow-Origin"] = resolvedOrigin;
+    headers["Vary"] = "Origin";
+  }
+  return headers;
+}
+
 async function handleRequest(req: Request): Promise<Response> {
   if (inFlightRequests >= MAX_CONCURRENT_REQUESTS) {
     return jsonResponse(
@@ -1613,25 +7590,113 @@ async function handleRequest(req: Request): Promise<Response> {
   inFlightRequests++;
   try {
     const url = new URL(req.url);
+    if (url.pathname.startsWith("/api/") && req.method === "OPTIONS") {
+      return new Response(null, { status: 204, headers: getCorsHeaders(req) });
+    }
+
+    // Canonicalize trailing slashes for deterministic URL handling.
+    if (url.pathname.length > 1 && url.pathname.endsWith("/")) {
+      const normalized = new URL(req.url);
+      normalized.pathname = normalized.pathname.replace(/\/+$/, "");
+      return Response.redirect(normalized.toString(), 307);
+    }
     
     // API routes
     if (url.pathname.startsWith("/api/")) {
       if (url.pathname === "/api/info") {
+        const uptimeMs = Date.now() - serverStartTime;
+        const info = await routes["/api/info"]();
         return jsonResponse({
-          ...routes["/api/info"](),
+          ...info,
           runtime: {
             dedicatedPort: DEDICATED_PORT,
+            requestedPort: DEDICATED_PORT,
+            boundPort: ACTIVE_PORT,
+            host: PLAYGROUND_HOST,
             portRange: PORT_RANGE,
+            allowPortFallback: ALLOW_PORT_FALLBACK,
+            runtimeOrigins: buildRuntimeOrigins(),
+            runtimeStaleMs: RUNTIME_STALE_MS,
             maxConcurrentRequests: MAX_CONCURRENT_REQUESTS,
-            maxCommandWorkers: MAX_COMMAND_WORKERS,
+            maxCommandWorkers: getCommandWorkerStats().configuredMax,
+            minCommandWorkers: getCommandWorkerStats().configuredMin,
+            provisionedWorkers: getCommandWorkerStats().provisioned,
+            busyCommands: getCommandWorkerStats().active,
             inFlightRequests,
-            activeCommands,
+            activeCommands: getCommandWorkerStats().active,
+            pid: process.pid,
+            ppid: process.ppid,
+            signalCount,
+            wsClients: wsClientCount,
+            wsBroadcastCount,
+            uptimeMs,
+            gitSha: GIT_COMMIT_HASH,
+            buildSha: BUILD_SHA,
+            runtimeNonce: `${process.pid}-${serverStartTime}`,
+            status: shuttingDown ? "shutting_down" : "running",
           },
         });
       }
       
       if (url.pathname === "/api/demos") {
         return jsonResponse(routes["/api/demos"]());
+      }
+
+      if (url.pathname === "/api/health") {
+        return jsonResponse(routes["/api/health"]());
+      }
+
+      if (url.pathname === "/api/dashboard/runtime") {
+        return jsonResponse(routes["/api/dashboard/runtime"]());
+      }
+
+      if (url.pathname === "/api/dashboard/mini") {
+        return jsonResponse(routes["/api/dashboard/mini"]());
+      }
+
+      if (url.pathname === "/api/dashboard/trends") {
+        return jsonResponse(routes["/api/dashboard/trends"](req));
+      }
+
+      if (url.pathname === "/api/dashboard/trends/summary") {
+        return jsonResponse(routes["/api/dashboard/trends/summary"](req));
+      }
+
+      if (url.pathname === "/api/trends/summary") {
+        return jsonResponse(routes["/api/trends/summary"](req));
+      }
+
+      if (url.pathname === "/api/trend-summary") {
+        return jsonResponse(routes["/api/trend-summary"](req));
+      }
+
+      if (url.pathname === "/api/dashboard/severity-test") {
+        return jsonResponse(routes["/api/dashboard/severity-test"](req));
+      }
+      if (url.pathname === "/api/dashboard/traces") {
+        return jsonResponse(routes["/api/dashboard/traces"](req));
+      }
+
+      if (url.pathname === "/api/dashboard" || url.pathname === "/api/dashboard/debug") {
+        const body = await buildDashboardPayload(req);
+        if (url.pathname === "/api/dashboard/debug") {
+          return jsonResponse({
+            ...body,
+            debug: {
+              env: {
+                NO_PROXY: process.env.NO_PROXY || process.env.no_proxy || "",
+                HTTP_PROXY: process.env.HTTP_PROXY || process.env.http_proxy || "",
+                HTTPS_PROXY: process.env.HTTPS_PROXY || process.env.https_proxy || "",
+              },
+              paths: {
+                projectRoot: PROJECT_ROOT,
+                playgroundRoot: import.meta.dir,
+                bunMain: Bun.main,
+              },
+            },
+          });
+        }
+        return jsonResponse(body);
       }
 
       if (url.pathname === "/api/brand/status") {
@@ -1642,8 +7707,180 @@ async function handleRequest(req: Request): Promise<Response> {
         return jsonResponse(await routes["/api/control/network-smoke"](req));
       }
 
+      if (url.pathname === "/api/control/process/runtime") {
+        return jsonResponse(routes["/api/control/process/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/runtime/ports") {
+        return jsonResponse(routes["/api/control/runtime/ports"]());
+      }
+      if (url.pathname === "/api/control/runtime/drift") {
+        return jsonResponse(routes["/api/control/runtime/drift"](req));
+      }
+
+      if (url.pathname === "/api/control/socket/runtime") {
+        return jsonResponse(routes["/api/control/socket/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/udp/runtime") {
+        return jsonResponse(routes["/api/control/udp/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/udp/self-test") {
+        return jsonResponse(await routes["/api/control/udp/self-test"]());
+      }
+
+      if (url.pathname === "/api/control/udp/open") {
+        return jsonResponse(await routes["/api/control/udp/open"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/close") {
+        return jsonResponse(await routes["/api/control/udp/close"]());
+      }
+
+      if (url.pathname === "/api/control/udp/options") {
+        return jsonResponse(await routes["/api/control/udp/options"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/peer") {
+        return jsonResponse(await routes["/api/control/udp/peer"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/send") {
+        return jsonResponse(await routes["/api/control/udp/send"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/send-many") {
+        return jsonResponse(await routes["/api/control/udp/send-many"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/profile/select") {
+        return jsonResponse(await routes["/api/control/udp/profile/select"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/multicast/join") {
+        return jsonResponse(await routes["/api/control/udp/multicast/join"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/multicast/leave") {
+        return jsonResponse(await routes["/api/control/udp/multicast/leave"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/ssm/join") {
+        return jsonResponse(await routes["/api/control/udp/ssm/join"](req));
+      }
+
+      if (url.pathname === "/api/control/udp/ssm/leave") {
+        return jsonResponse(await routes["/api/control/udp/ssm/leave"](req));
+      }
+
+      if (url.pathname === "/api/control/secrets/runtime") {
+        return jsonResponse(routes["/api/control/secrets/runtime"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/status") {
+        return jsonResponse(routes["/api/control/http2-upgrade/status"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/start") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/start"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/stop") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/stop"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/probe") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/probe"]());
+      }
+
+      if (url.pathname === "/api/control/http2-upgrade/full-loop") {
+        return jsonResponse(await routes["/api/control/http2-upgrade/full-loop"](req));
+      }
+
+      if (url.pathname === "/api/control/script-orchestration-panel") {
+        return jsonResponse(await routes["/api/control/script-orchestration-panel"]());
+      }
+
+      if (url.pathname === "/api/control/script-orchestration-simulate") {
+        return jsonResponse(await routes["/api/control/script-orchestration-simulate"](req));
+      }
+      if (url.pathname === "/api/control/script-orchestration/full-loop") {
+        return jsonResponse(await routes["/api/control/script-orchestration/full-loop"]());
+      }
+      if (url.pathname === "/api/control/script-orchestration/status") {
+        return jsonResponse(await routes["/api/control/script-orchestration/status"]());
+      }
+
+      if (url.pathname === "/api/control/worker-env") {
+        return jsonResponse(await routes["/api/control/worker-env"](req));
+      }
+
+      if (url.pathname === "/api/control/worker-env/bench") {
+        return jsonResponse(await routes["/api/control/worker-env/bench"](req));
+      }
+
+      if (url.pathname === "/api/control/worker-pool") {
+        return jsonResponse(await routes["/api/control/worker-pool"]());
+      }
+
+      if (url.pathname === "/api/control/worker-pool/diagnostics") {
+        return jsonResponse(await routes["/api/control/worker-pool/diagnostics"]());
+      }
+
+      if (url.pathname === "/api/control/worker-pool/bench") {
+        return jsonResponse(await routes["/api/control/worker-pool/bench"](req));
+      }
+
       if (url.pathname === "/api/control/features") {
         return jsonResponse(routes["/api/control/features"](req));
+      }
+
+      if (url.pathname === "/api/control/feature-matrix") {
+        return jsonResponse(await routes["/api/control/feature-matrix"]());
+      }
+
+      if (url.pathname === "/api/control/registry-integration") {
+        return jsonResponse(await routes["/api/control/registry-integration"]());
+      }
+
+      if (url.pathname === "/api/control/demo-module/validate") {
+        return jsonResponse(await routes["/api/control/demo-module/validate"](req));
+      }
+
+      if (url.pathname === "/api/control/demo-module/bench") {
+        return jsonResponse(await routes["/api/control/demo-module/bench"](req));
+      }
+      if (url.pathname === "/api/control/demo-module/full-loop") {
+        return jsonResponse(await routes["/api/control/demo-module/full-loop"](req));
+      }
+
+      if (url.pathname === "/api/control/component-status") {
+        return jsonResponse(routes["/api/control/component-status"]());
+      }
+
+      if (url.pathname === "/api/control/project-health") {
+        return jsonResponse(routes["/api/control/project-health"]());
+      }
+
+      if (url.pathname === "/api/control/deployment-readiness") {
+        return jsonResponse(routes["/api/control/deployment-readiness"]());
+      }
+
+      if (url.pathname === "/api/control/performance-impact") {
+        return jsonResponse(routes["/api/control/performance-impact"]());
+      }
+
+      if (url.pathname === "/api/control/security-posture") {
+        return jsonResponse(routes["/api/control/security-posture"]());
+      }
+
+      if (url.pathname === "/api/control/domain-graph") {
+        return jsonResponse(routes["/api/control/domain-graph"](req));
+      }
+
+      if (url.pathname === "/api/control/bundle/analyze") {
+        return jsonResponse(await routes["/api/control/bundle/analyze"](req));
       }
 
       if (url.pathname === "/api/control/upload-progress") {
@@ -1663,7 +7900,9 @@ async function handleRequest(req: Request): Promise<Response> {
       }
 
       if (url.pathname === "/api/control/protocol-scorecard") {
-        return jsonResponse(routes["/api/control/protocol-scorecard"]());
+        const use = url.searchParams.get('use') || undefined;
+        const size = parseInt(url.searchParams.get('size') || '0') || undefined;
+        return jsonResponse(await getProtocolScorecard({ use, size }));
       }
 
       if (url.pathname === "/api/control/evidence-dashboard") {
@@ -1676,6 +7915,14 @@ async function handleRequest(req: Request): Promise<Response> {
 
       if (url.pathname === "/api/control/governance-status") {
         return jsonResponse(await routes["/api/control/governance-status"]());
+      }
+
+      if (url.pathname === "/api/control/resilience/status") {
+        return jsonResponse(routes["/api/control/resilience/status"]());
+      }
+
+      if (url.pathname === "/api/fetch/protocol-router") {
+        return jsonResponse(await routes["/api/fetch/protocol-router"](req));
       }
       
       const demoMatch = url.pathname.match(/^\/api\/demo\/(.+)$/);
@@ -1693,8 +7940,14 @@ async function handleRequest(req: Request): Promise<Response> {
     const staticFiles: Record<string, { file: string; contentType: string }> = {
       "/": { file: "index.html", contentType: "text/html" },
       "/index.html": { file: "index.html", contentType: "text/html" },
+      "/enhanced.html": { file: "enhanced.html", contentType: "text/html" },
       "/styles.css": { file: "styles.css", contentType: "text/css" },
+      "/micro-polish.css": { file: "micro-polish.css", contentType: "text/css" },
+      "/command-palette.css": { file: "command-palette.css", contentType: "text/css" },
       "/app.js": { file: "app.js", contentType: "application/javascript" },
+      "/micro-polish.js": { file: "micro-polish.js", contentType: "application/javascript" },
+      "/command-palette.js": { file: "command-palette.js", contentType: "application/javascript" },
+      "/url-sharing.js": { file: "url-sharing.js", contentType: "application/javascript" },
     };
     
     const staticFile = staticFiles[url.pathname];
@@ -1713,21 +7966,359 @@ async function handleRequest(req: Request): Promise<Response> {
   }
 }
 
+await initCapacityMetricsStore();
 const ACTIVE_PORT = await resolvePort();
+if (ACTIVE_PORT !== DEDICATED_PORT) {
+  console.warn(
+    `[startup] requested port ${DEDICATED_PORT} unavailable; remapped to ${ACTIVE_PORT} ` +
+      "(PLAYGROUND_ALLOW_PORT_FALLBACK=true)"
+  );
+}
 const warmupState = await runWarmup();
 
-// Serve the application
-serve({
-  port: ACTIVE_PORT,
-  fetch: handleRequest,
+// Create abort controller for graceful shutdown
+const ac = new AbortController();
+const SHUTDOWN_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_SHUTDOWN_TIMEOUT_MS", 5000, {
+  min: 500,
+  max: 300000,
+});
+const CAPACITY_WS_PATH = "/ws/capacity";
+const CAPACITY_WS_TOPIC = "dashboard-capacity-updates";
+const CAPACITY_WS_BROADCAST_MS = parseNumberEnv(
+  "PLAYGROUND_WS_BROADCAST_MS",
+  Number(RUNTIME_ENV.wsBroadcastMs || 1000),
+  {
+  min: 250,
+  max: 10000,
+}
+);
+const RUNTIME_STALE_MS = parseNumberEnv(
+  "PLAYGROUND_RUNTIME_STALE_MS",
+  Number(RUNTIME_ENV.runtimeStaleMs || 15000),
+  { min: 1000, max: 300000 }
+);
+const UDP_SELF_TEST_TIMEOUT_MS = parseNumberEnv("PLAYGROUND_UDP_SELF_TEST_TIMEOUT_MS", 1500, {
+  min: 100,
+  max: 10000,
+});
+let shuttingDown = false;
+let httpServer: ReturnType<typeof serve> | null = null;
+let capacityBroadcastTimer: ReturnType<typeof setInterval> | null = null;
+let shutdownReason: string | null = null;
+let shutdownStartedAt: string | null = null;
+let signalCount = 0;
+let wsClientCount = 0;
+let wsTotalConnections = 0;
+let wsTotalMessages = 0;
+let wsPingMessages = 0;
+let wsBroadcastCount = 0;
+let wsLastMessageAt: string | null = null;
+let wsLastBroadcastAt: string | null = null;
+let wsLastError: string | null = null;
+
+async function waitForInFlightDrain(timeoutMs: number): Promise<boolean> {
+  const start = Date.now();
+  while (inFlightRequests > 0 && Date.now() - start < timeoutMs) {
+    await Bun.sleep(50);
+  }
+  return inFlightRequests === 0;
+}
+
+async function gracefulShutdown(reason: string, exitCode = 0, error?: unknown) {
+  if (shuttingDown) {
+    return;
+  }
+  shuttingDown = true;
+  shutdownReason = reason;
+  shutdownStartedAt = new Date().toISOString();
+
+  const startedAt = Date.now();
+  const reasonPrefix = `[shutdown] ${reason}`;
+  if (error) {
+    console.error(`${reasonPrefix} error:`, error);
+  } else {
+    console.log(`${reasonPrefix} requested`);
+  }
+
+  const forceExitTimer = setTimeout(() => {
+    console.error(`[shutdown] forced exit after ${SHUTDOWN_TIMEOUT_MS}ms`);
+    process.exit(exitCode === 0 ? 1 : exitCode);
+  }, SHUTDOWN_TIMEOUT_MS);
+
+  try {
+    // Stop accepting new work and ask Bun.serve() to drain inflight fetch handlers.
+    ac.abort();
+    if (capacityBroadcastTimer) {
+      clearInterval(capacityBroadcastTimer);
+      capacityBroadcastTimer = null;
+    }
+    if (httpServer) {
+      httpServer.stop(true);
+    }
+    if (http2UpgradeRuntime.status === "running") {
+      await stopHttp2UpgradeRuntime();
+    }
+    if (capacityMetricsDb) {
+      capacityMetricsDb.close();
+      capacityMetricsDb = null;
+    }
+    closeUdpControlSocket();
+    commandWorkerPool.terminateAll("playground shutdown");
+
+    const drained = await waitForInFlightDrain(Math.max(250, SHUTDOWN_TIMEOUT_MS - 250));
+    if (!drained) {
+      console.warn(`[shutdown] in-flight requests did not drain before timeout (remaining=${inFlightRequests})`);
+    }
+    console.log(`[shutdown] completed in ${Date.now() - startedAt}ms`);
+  } catch (shutdownError) {
+    console.error(`[shutdown] failed:`, shutdownError);
+    exitCode = exitCode === 0 ? 1 : exitCode;
+  } finally {
+    clearTimeout(forceExitTimer);
+    process.exit(exitCode);
+  }
+}
+
+// Default process lifecycle and signal handling.
+process.on("SIGINT", () => {
+  signalCount += 1;
+  void gracefulShutdown("SIGINT", 0);
 });
 
-console.log(`🚀 Bun v1.3.9 Browser Playground`);
-console.log(`📡 Server running at http://localhost:${ACTIVE_PORT}`);
-console.log(`🌐 Open http://localhost:${ACTIVE_PORT} in your browser`);
+process.on("SIGTERM", () => {
+  signalCount += 1;
+  void gracefulShutdown("SIGTERM", 0);
+});
+
+process.on("SIGHUP", () => {
+  signalCount += 1;
+  if (IGNORE_SIGHUP) {
+    console.warn("[signal] SIGHUP ignored (PLAYGROUND_IGNORE_SIGHUP=true)");
+    return;
+  }
+  void gracefulShutdown("SIGHUP", 0);
+});
+
+process.on("unhandledRejection", (error) => {
+  if (EXIT_ON_UNHANDLED_REJECTION) {
+    void gracefulShutdown("unhandledRejection", 1, error);
+    return;
+  }
+  console.error("[runtime] unhandledRejection (non-fatal):", error);
+});
+
+process.on("uncaughtException", (error) => {
+  if (EXIT_ON_UNCAUGHT_EXCEPTION) {
+    void gracefulShutdown("uncaughtException", 1, error);
+    return;
+  }
+  console.error("[runtime] uncaughtException (non-fatal):", error);
+});
+
+// Serve the application
+httpServer = serve({
+  hostname: PLAYGROUND_HOST,
+  port: ACTIVE_PORT,
+  fetch: async (req, server) => {
+    const url = new URL(req.url);
+    const traceId = nextTraceId();
+    const startedAt = performance.now();
+    const inFlightAtStart = inFlightRequests;
+    const activeCommandsAtStart = getCommandWorkerStats().active;
+    if (url.pathname === CAPACITY_WS_PATH) {
+      const origin = req.headers.get("origin");
+      const requestHost = req.headers.get("host") || "";
+      const localHostSet = new Set(["localhost", "127.0.0.1", "::1", PLAYGROUND_HOST]);
+      const hostOnly = requestHost.split(":")[0].toLowerCase();
+      const originHost = origin ? (() => {
+        try { return new URL(origin).hostname.toLowerCase(); } catch { return ""; }
+      })() : "";
+      const originAllowed = !origin || localHostSet.has(originHost);
+      const isLocalHost = localHostSet.has(hostOnly);
+      if (!originAllowed) {
+        return jsonResponse(
+          {
+            error: "WebSocket origin not allowed",
+            code: "WS_ORIGIN_FORBIDDEN",
+            hint: "Use localhost/127.0.0.1 origin for /ws/capacity.",
+          },
+          403
+        );
+      }
+      const wsToken = String(process.env.PLAYGROUND_WS_AUTH_TOKEN || "").trim();
+      if (!isLocalHost && wsToken) {
+        const tokenFromHeader = req.headers.get("x-playground-token") || "";
+        const tokenFromQuery = url.searchParams.get("token") || "";
+        if (tokenFromHeader !== wsToken && tokenFromQuery !== wsToken) {
+          return jsonResponse(
+            {
+              error: "WebSocket auth token required for non-local access",
+              code: "WS_TOKEN_REQUIRED",
+              hint: "Set header x-playground-token or ?token=<PLAYGROUND_WS_AUTH_TOKEN>.",
+            },
+            401
+          );
+        }
+      }
+      const upgraded = server.upgrade(req, {
+        data: {
+          connectedAt: Date.now(),
+          userAgent: req.headers.get("user-agent") || "unknown",
+        },
+      });
+      if (upgraded) {
+        recordRequestTrace({
+          id: traceId,
+          at: new Date().toISOString(),
+          method: req.method,
+          path: url.pathname,
+          status: 101,
+          durationMs: Number((performance.now() - startedAt).toFixed(2)),
+          inFlightAtStart,
+          activeCommandsAtStart,
+        });
+      }
+      return upgraded
+        ? undefined
+        : new Response("WebSocket upgrade failed", { status: 400 });
+    }
+    try {
+      const response = await handleRequest(req);
+      const durationMs = Number((performance.now() - startedAt).toFixed(2));
+      const headers = new Headers(response.headers);
+      headers.set("x-trace-id", traceId);
+      headers.set("x-trace-duration-ms", String(durationMs));
+      if (url.pathname.startsWith("/api/")) {
+        const corsHeaders = getCorsHeaders(req);
+        for (const [key, value] of Object.entries(corsHeaders as Record<string, string>)) {
+          headers.set(key, value);
+        }
+      }
+      recordRequestTrace({
+        id: traceId,
+        at: new Date().toISOString(),
+        method: req.method,
+        path: url.pathname,
+        status: response.status,
+        durationMs,
+        inFlightAtStart,
+        activeCommandsAtStart,
+      });
+      return new Response(response.body, {
+        status: response.status,
+        statusText: response.statusText,
+        headers,
+      });
+    } catch (error) {
+      const durationMs = Number((performance.now() - startedAt).toFixed(2));
+      const detail = error instanceof Error ? error.message : String(error);
+      if (isApiHttpError(error)) {
+        return new Response(
+          JSON.stringify({
+            error: error.message,
+            code: error.code,
+            hint: error.hint,
+            traceId,
+          }),
+          {
+            status: error.status,
+            headers: {
+              "Content-Type": "application/json",
+              "x-trace-id": traceId,
+              "x-trace-duration-ms": String(durationMs),
+              ...(url.pathname.startsWith("/api/") ? (getCorsHeaders(req) as Record<string, string>) : {}),
+            },
+          }
+        );
+      }
+      recordRequestTrace({
+        id: traceId,
+        at: new Date().toISOString(),
+        method: req.method,
+        path: url.pathname,
+        status: 500,
+        durationMs,
+        inFlightAtStart,
+        activeCommandsAtStart,
+        error: detail,
+      });
+      return new Response(
+        JSON.stringify({
+          error: "Unhandled playground request failure",
+          traceId,
+          detail,
+        }),
+        {
+          status: 500,
+          headers: {
+            "Content-Type": "application/json",
+            "x-trace-id": traceId,
+            "x-trace-duration-ms": String(durationMs),
+            ...(url.pathname.startsWith("/api/") ? (getCorsHeaders(req) as Record<string, string>) : {}),
+          },
+        }
+      );
+    }
+  },
+  websocket: {
+    data: {} as { connectedAt: number; userAgent: string },
+    open(ws) {
+      wsClientCount += 1;
+      wsTotalConnections += 1;
+      wsLastMessageAt = new Date().toISOString();
+      ws.subscribe(CAPACITY_WS_TOPIC);
+      ws.send(JSON.stringify(buildMiniDashboardSnapshot()));
+    },
+    message(ws, message) {
+      wsTotalMessages += 1;
+      wsLastMessageAt = new Date().toISOString();
+      const text = typeof message === "string" ? message.toLowerCase() : "";
+      if (text === "ping") {
+        wsPingMessages += 1;
+        ws.send(JSON.stringify({
+          type: "pong",
+          timestamp: new Date().toISOString(),
+          topic: CAPACITY_WS_TOPIC,
+        }));
+      }
+    },
+    close(ws) {
+      wsClientCount = Math.max(0, wsClientCount - 1);
+      wsLastMessageAt = new Date().toISOString();
+      ws.unsubscribe(CAPACITY_WS_TOPIC);
+    },
+    drain(ws) {
+      wsClientCount = Math.max(0, wsClientCount - 1);
+      ws.unsubscribe(CAPACITY_WS_TOPIC);
+    },
+    error(_ws, error) {
+      wsLastError = error instanceof Error ? error.message : String(error);
+    },
+  },
+  signal: ac.signal,
+});
+
+capacityBroadcastTimer = setInterval(() => {
+  if (!httpServer || shuttingDown) return;
+  wsBroadcastCount += 1;
+  wsLastBroadcastAt = new Date().toISOString();
+  httpServer.publish(CAPACITY_WS_TOPIC, JSON.stringify(buildMiniDashboardSnapshot()));
+}, CAPACITY_WS_BROADCAST_MS);
+
+console.log(`Bun v1.3.9 Browser Playground`);
+console.log(`Server running at http://${PLAYGROUND_HOST}:${ACTIVE_PORT}`);
+console.log(`Open http://${PLAYGROUND_HOST}:${ACTIVE_PORT} in your browser`);
 console.log(
-  `🧰 Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
+  `Pooling: maxRequests=${MAX_CONCURRENT_REQUESTS} maxCommandWorkers=${MAX_COMMAND_WORKERS} range=${PORT_RANGE}`
+);
+console.log(`Capacity stream: ws://${PLAYGROUND_HOST}:${ACTIVE_PORT}${CAPACITY_WS_PATH} topic=${CAPACITY_WS_TOPIC} every=${CAPACITY_WS_BROADCAST_MS}ms`);
+console.log(`Runtime API: http://${PLAYGROUND_HOST}:${ACTIVE_PORT}/api/control/process/runtime`);
+console.log(`Drift API: http://${PLAYGROUND_HOST}:${ACTIVE_PORT}/api/control/runtime/drift`);
+console.log(
+  `Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
 );
 console.log(
-  `🛰️ Warmup: prefetch=${warmupState.prefetch.length} preconnect=${warmupState.preconnect.length} enabled=${!warmupState.skipped}`
+  `Runtime guards: ignoreSighup=${IGNORE_SIGHUP} exitOnUnhandledRejection=${EXIT_ON_UNHANDLED_REJECTION} exitOnUncaughtException=${EXIT_ON_UNCAUGHT_EXCEPTION}`
 );
+console.log(`Shutdown timeout: ${SHUTDOWN_TIMEOUT_MS}ms`);
+console.log(`\nPress Ctrl+C to stop gracefully`);
