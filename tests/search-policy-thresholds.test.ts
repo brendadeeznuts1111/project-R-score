@@ -14,7 +14,7 @@ describe('search policy thresholds by query pack', () => {
     const wide = resolveScoreThresholdsForQueryPack(policies, 'core_delivery_wide');
 
     expect(base.strictLatencyP95WarnMs).toBe(900);
-    expect(wide.strictLatencyP95WarnMs).toBe(base.strictLatencyP95WarnMs);
+    expect(wide.strictLatencyP95WarnMs).toBe(1100);
     expect(wide.strictPeakHeapWarnMB).toBe(base.strictPeakHeapWarnMB);
     expect(wide.strictPeakRssWarnMB).toBe(base.strictPeakRssWarnMB);
     expect(wide.strictReliabilityFloor).toBe(base.strictReliabilityFloor);

@@ -59,6 +59,31 @@ const FALLBACK_CORE_QUERIES = [
 
 type QueryPacks = Record<string, string[]>;
 
+const DEFAULT_QUERY_PACKS: QueryPacks = {
+  core_delivery: [...FALLBACK_CORE_QUERIES],
+  core_delivery_wide: [
+    ...FALLBACK_CORE_QUERIES,
+    'canonical family',
+    'score thresholds',
+    'query pack',
+    'strict latency',
+  ],
+  bun_runtime_api: [
+    'Bun.serve',
+    'Bun.file',
+    'Bun.write',
+    'Bun.spawn',
+    'bun test',
+  ],
+  cleanup_noise: [
+    'generated',
+    'docs-noise',
+    'duplicate',
+    'compiled',
+    'ai-slop',
+  ],
+};
+
 function parseArgs(argv: string[]): {
   path: string;
   limit: number;
@@ -127,11 +152,12 @@ function parseArgs(argv: string[]): {
   return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap };
 }
 
-async function loadQueryPacks(): Promise<QueryPacks> {
+async function loadQueryPacks(): Promise<{ packs: QueryPacks; source: 'default' | 'file' }> {
   const path = resolve('.search/benchmark-queries.lib.json');
   if (!existsSync(path)) {
     return {
-      core_delivery: [...FALLBACK_CORE_QUERIES],
+      packs: { ...DEFAULT_QUERY_PACKS },
+      source: 'default',
     };
   }
   try {
@@ -146,13 +172,17 @@ async function loadQueryPacks(): Promise<QueryPacks> {
         }
       }
     }
-    if (!normalized.core_delivery) {
-      normalized.core_delivery = [...FALLBACK_CORE_QUERIES];
-    }
-    return normalized;
+    return {
+      packs: {
+        ...DEFAULT_QUERY_PACKS,
+        ...normalized,
+      },
+      source: 'file',
+    };
   } catch {
     return {
-      core_delivery: [...FALLBACK_CORE_QUERIES],
+      packs: { ...DEFAULT_QUERY_PACKS },
+      source: 'default',
     };
   }
 }
@@ -311,8 +341,15 @@ async function main(): Promise<void> {
   const effectiveConcurrency = !concurrencyExplicit && path.includes(',')
     ? Math.min(concurrency, 2)
     : concurrency;
-  const packs = await loadQueryPacks();
+  const loaded = await loadQueryPacks();
+  const packs = loaded.packs;
   const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
+  if (!overrideQueries && !packs[queryPack]) {
+    console.error(`[search:bench] query pack "${queryPack}" not found; using core_delivery fallback`);
+  }
+  if (loaded.source === 'default') {
+    console.error('[search:bench] .search/benchmark-queries.lib.json not found or invalid; using built-in query packs');
+  }
 
   const profiles: Profile[] = [
     { id: 'mixed', label: 'Mixed Delivery', args: ['--view', 'mixed', '--task', 'delivery'] },

@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "pinnedAt": "2026-02-11T07:35:28.818Z",
+  "source": "/Users/nolarose/Projects/reports/search-benchmark/latest.json",
+  "snapshot": {
+    "id": "2026-02-11T07-35-20-689Z",
+    "createdAt": "2026-02-11T07:35:20.689Z",
+    "queryPack": "core_delivery_wide"
+  },
+  "strict": {
+    "latencyP95Ms": 374.4,
+    "peakHeapUsedMB": 36.18,
+    "peakRssMB": 183.28,
+    "qualityScore": 86.96,
+    "reliabilityPct": 62.74
+  },
+  "coverage": {
+    "files": 345,
+    "lines": 142162,
+    "uniqueFiles": 345,
+    "uniqueLines": 142162
+  }
+}

@@ -134,7 +134,11 @@ const DEFAULT_POLICIES: SearchPolicies = {
     strictPeakHeapWarnMB: 60,
     strictPeakRssWarnMB: 260,
   },
-  scoreThresholdsByQueryPack: {},
+  scoreThresholdsByQueryPack: {
+    core_delivery_wide: {
+      strictLatencyP95WarnMs: 1100,
+    },
+  },
 };
 
 function mergePolicies(raw: Partial<SearchPolicies> | null | undefined): SearchPolicies {

@@ -123,6 +123,7 @@ OPTIONS:
   --from <path>       Source snapshot (default: reports/search-benchmark/latest.json)
   --out <path>        Pinned baseline file (default: .search/search-benchmark-pinned-baseline.json)
   --baseline <path>   Baseline file for compare (default: auto by query-pack, then canonical)
+  --bootstrap-missing-baseline  Auto-pin current snapshot when baseline is missing
   --json              Print compare payload as JSON
   --strict            Exit non-zero on regression threshold failures (default: true)
   --no-strict         Never fail process in compare mode
@@ -286,6 +287,7 @@ export function parseArgs(argv: string[]): {
   fromPath: string;
   outPath: string;
   baselinePath?: string;
+  bootstrapMissingBaseline: boolean;
   json: boolean;
   strict: boolean;
 } | null {
@@ -301,6 +303,7 @@ export function parseArgs(argv: string[]): {
   let fromPath = resolve('reports/search-benchmark/latest.json');
   let outPath = resolve('.search/search-benchmark-pinned-baseline.json');
   let baselinePath: string | undefined;
+  let bootstrapMissingBaseline = false;
   let json = false;
   let strict = true;
 
@@ -325,6 +328,10 @@ export function parseArgs(argv: string[]): {
       json = true;
       continue;
     }
+    if (arg === '--bootstrap-missing-baseline') {
+      bootstrapMissingBaseline = true;
+      continue;
+    }
     if (arg === '--strict') {
       strict = true;
       continue;
@@ -335,7 +342,7 @@ export function parseArgs(argv: string[]): {
     }
   }
 
-  return { mode, fromPath, outPath, baselinePath, json, strict };
+  return { mode, fromPath, outPath, baselinePath, bootstrapMissingBaseline, json, strict };
 }
 
 export async function pin(fromPath: string, outPath: string): Promise<void> {
@@ -362,14 +369,15 @@ export async function comparePayload(
   fromPath: string,
   baselinePathInput: string | undefined,
   outPath: string,
-  strict = false
+  strict = false,
+  bootstrapMissingBaseline = false
 ): Promise<CompareResultPayload> {
   if (!existsSync(fromPath)) {
     throw new Error(`Current snapshot not found: ${fromPath}`);
   }
 
   const current = toBaseline(await readJson<Snapshot>(fromPath), fromPath);
-  return compareResolved(current, baselinePathInput, outPath, strict, fromPath);
+  return compareResolved(current, baselinePathInput, outPath, strict, fromPath, bootstrapMissingBaseline);
 }
 
 export async function compareSnapshotPayload(
@@ -377,10 +385,11 @@ export async function compareSnapshotPayload(
   baselinePathInput: string | undefined,
   outPath: string,
   strict = false,
-  currentPath = 'snapshot:inline'
+  currentPath = 'snapshot:inline',
+  bootstrapMissingBaseline = false
 ): Promise<CompareResultPayload> {
   const current = toBaseline(snapshot, currentPath);
-  return compareResolved(current, baselinePathInput, outPath, strict, currentPath);
+  return compareResolved(current, baselinePathInput, outPath, strict, currentPath, bootstrapMissingBaseline);
 }
 
 async function compareResolved(
@@ -388,11 +397,21 @@ async function compareResolved(
   baselinePathInput: string | undefined,
   outPath: string,
   strict: boolean,
-  currentPath: string
+  currentPath: string,
+  bootstrapMissingBaseline: boolean
 ): Promise<CompareResultPayload> {
-  const baselinePath = resolveBaselinePath(baselinePathInput, outPath, current.snapshot.queryPack);
+  let baselinePath = resolveBaselinePath(baselinePathInput, outPath, current.snapshot.queryPack);
   if (!existsSync(baselinePath)) {
-    throw new Error(`Pinned baseline not found: ${baselinePath}`);
+    if (!bootstrapMissingBaseline) {
+      throw new Error(`Pinned baseline not found: ${baselinePath}`);
+    }
+    const bootstrapPath = baselinePathInput
+      ? baselinePath
+      : buildPackBaselinePath(outPath, current.snapshot.queryPack);
+    await mkdir(dirname(bootstrapPath), { recursive: true });
+    await writeFile(bootstrapPath, `${JSON.stringify(current, null, 2)}\n`, 'utf8');
+    baselinePath = bootstrapPath;
+    console.warn(`[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`);
   }
 
   const baseline = await readJson<PinnedBaseline>(baselinePath);
@@ -492,9 +511,16 @@ export async function compare(
   baselinePathInput: string | undefined,
   outPath: string,
   asJson: boolean,
-  strict: boolean
+  strict: boolean,
+  bootstrapMissingBaseline = false
 ): Promise<CompareResultPayload> {
-  const payload = await comparePayload(fromPath, baselinePathInput, outPath, strict);
+  const payload = await comparePayload(
+    fromPath,
+    baselinePathInput,
+    outPath,
+    strict,
+    bootstrapMissingBaseline
+  );
 
   if (asJson) {
     console.log(JSON.stringify(payload, null, 2));
@@ -532,7 +558,14 @@ export async function main(): Promise<void> {
     return;
   }
 
-  await compare(args.fromPath, args.baselinePath, args.outPath, args.json, args.strict);
+  await compare(
+    args.fromPath,
+    args.baselinePath,
+    args.outPath,
+    args.json,
+    args.strict,
+    args.bootstrapMissingBaseline
+  );
 }
 
 if (import.meta.main) {

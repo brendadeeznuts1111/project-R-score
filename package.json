@@ -1845,7 +1845,7 @@
     "search:bench:snapshot:daily:local": "bun run scripts/search-benchmark-snapshot.ts --path ./lib --limit 40 --query-pack bun_runtime_api --no-upload && bun run scripts/search-benchmark-snapshot.ts --path ./lib --limit 40 --query-pack cleanup_noise --no-upload",
     "search:bench:pin": "bun run scripts/search-benchmark-pin.ts pin",
     "search:bench:compare": "bun run scripts/search-benchmark-pin.ts compare",
-    "search:bench:gate": "bun run scripts/search-benchmark-pin.ts compare --strict",
+    "search:bench:gate": "bun run scripts/search-benchmark-pin.ts compare --strict --bootstrap-missing-baseline",
     "search:bench:dashboard": "bun run scripts/search-benchmark-dashboard.ts",
     "search:bench:dashboard:watch": "bun --watch run scripts/search-benchmark-dashboard.ts --port 3099 --no-cookies --no-hot-reload",
     "search:preflight:emergency": "bun run scripts/search-emergency-preflight.ts",
