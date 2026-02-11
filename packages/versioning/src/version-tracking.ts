@@ -357,7 +357,7 @@ export class VersionTracker {
       };
     }
 
-    const targetVersion = goodVersions[0].version;
+    const targetVersion = goodVersions[0]!.version;
     const result = await this.rollbackToVersion(
       componentUri,
       targetVersion,
