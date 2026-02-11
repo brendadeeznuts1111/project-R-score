@@ -22,6 +22,9 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      - name: Verify TypeScript Check Config
+        run: bun run ts:verify
+
       - name: Run CI Type Check
         run: bun run type-check:ci
 
@@ -39,6 +42,9 @@ jobs:
 
       - name: Install dependencies
         run: bun install --frozen-lockfile
+
+      - name: Verify TypeScript Check Config
+        run: bun run ts:verify
 
       - name: Run Full Type Check
         run: bun run type-check:full
