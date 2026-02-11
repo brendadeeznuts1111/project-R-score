@@ -84,7 +84,7 @@ const DEFAULT_QUERY_PACKS: QueryPacks = {
   ],
 };
 
-function parseArgs(argv: string[]): {
+export function parseArgs(argv: string[]): {
   path: string;
   limit: number;
   queries?: string[];
@@ -152,45 +152,100 @@ function parseArgs(argv: string[]): {
   return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap };
 }
 
-async function loadQueryPacks(): Promise<{ packs: QueryPacks; source: 'default' | 'file' }> {
+export function normalizeQueryPacks(parsed: unknown): QueryPacks {
+  const normalized: QueryPacks = {};
+  for (const [pack, queries] of Object.entries((parsed || {}) as Record<string, unknown>)) {
+    if (Array.isArray(queries)) {
+      const list = queries.map((q) => String(q).trim()).filter(Boolean);
+      if (list.length > 0) {
+        normalized[pack] = list;
+      }
+    }
+  }
+  return {
+    ...DEFAULT_QUERY_PACKS,
+    ...normalized,
+  };
+}
+
+export async function loadQueryPacks(): Promise<{ packs: QueryPacks; source: 'default' | 'file' }> {
   const path = resolve('.search/benchmark-queries.lib.json');
   if (!existsSync(path)) {
     return {
-      packs: { ...DEFAULT_QUERY_PACKS },
+      packs: normalizeQueryPacks({}),
       source: 'default',
     };
   }
   try {
     const raw = await readFile(path, 'utf8');
-    const parsed = JSON.parse(raw) as QueryPacks;
-    const normalized: QueryPacks = {};
-    for (const [pack, queries] of Object.entries(parsed || {})) {
-      if (Array.isArray(queries)) {
-        const list = queries.map((q) => String(q).trim()).filter(Boolean);
-        if (list.length > 0) {
-          normalized[pack] = list;
-        }
-      }
-    }
+    const parsed = JSON.parse(raw) as unknown;
     return {
-      packs: {
-        ...DEFAULT_QUERY_PACKS,
-        ...normalized,
-      },
+      packs: normalizeQueryPacks(parsed),
       source: 'file',
     };
   } catch {
     return {
-      packs: { ...DEFAULT_QUERY_PACKS },
+      packs: normalizeQueryPacks({}),
       source: 'default',
     };
   }
 }
 
-function parseJsonPayload(output: string): any {
-  const idx = output.indexOf('{');
-  if (idx < 0) return { hits: [] };
-  return JSON.parse(output.slice(idx));
+export function extractFirstJsonObject(output: string): string | null {
+  for (let i = 0; i < output.length; i += 1) {
+    if (output[i] !== '{') continue;
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    for (let j = i; j < output.length; j += 1) {
+      const ch = output[j];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+          continue;
+        }
+        if (ch === '\\') {
+          escaped = true;
+          continue;
+        }
+        if (ch === '"') {
+          inString = false;
+        }
+        continue;
+      }
+      if (ch === '"') {
+        inString = true;
+        continue;
+      }
+      if (ch === '{') {
+        depth += 1;
+        continue;
+      }
+      if (ch === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          return output.slice(i, j + 1);
+        }
+      }
+    }
+  }
+  return null;
+}
+
+export function parseJsonPayload(output: string): any {
+  const trimmed = output.trim();
+  if (!trimmed) return { hits: [] };
+  try {
+    return JSON.parse(trimmed);
+  } catch {
+    const extracted = extractFirstJsonObject(output);
+    if (!extracted) return { hits: [] };
+    try {
+      return JSON.parse(extracted);
+    } catch {
+      return { hits: [] };
+    }
+  }
 }
 
 async function runSearch(
@@ -213,8 +268,22 @@ async function runSearch(
     overlap,
     '--json',
     ...args,
-  ].join(' ');
-  const output = await Bun.$`${{ raw: cmd }}`.text();
+  ];
+  const proc = Bun.spawn(cmd, {
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
+  const [output, stderr, exitCode] = await Promise.all([
+    new Response(proc.stdout).text(),
+    new Response(proc.stderr).text(),
+    proc.exited,
+  ]);
+  if (exitCode !== 0) {
+    const reason = (stderr || output).trim();
+    throw new Error(
+      `[search:bench] search:smart failed for query "${query}" (exit ${exitCode})${reason ? `: ${reason}` : ''}`
+    );
+  }
   return parseJsonPayload(output);
 }
 
@@ -336,7 +405,7 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
   };
 }
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const { path, limit, queries: overrideQueries, queryPack, concurrency, concurrencyExplicit, overlap } = parseArgs(process.argv.slice(2));
   const effectiveConcurrency = !concurrencyExplicit && path.includes(',')
     ? Math.min(concurrency, 2)
@@ -385,4 +454,6 @@ async function main(): Promise<void> {
   }, null, 2));
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
