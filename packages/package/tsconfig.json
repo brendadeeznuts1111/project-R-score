@@ -8,15 +8,9 @@
   },
   "include": [
     "src/**/*",
-    "../../lib/**/*",
-    "../../config/**/*",
-    "../../scripts/lib/**/*",
-    "../../scripts/pool-telemetry.ts",
-    "../../utils/**/*",
-    "../../packages/docs-tools/src/**/*",
-    "../../barbershop/lib/secrets/core/**/*",
-    "../../projects/automation/duo-automation/src/ai/**/*",
-    "../../projects/automation/duo-automation/src/native/safeFilename.bun.ts"
+    "../../lib/docs/cache-manager.ts",
+    "../../lib/docs/index-fetcher-enhanced.ts",
+    "../../lib/docs/ripgrep-spawn.ts"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }

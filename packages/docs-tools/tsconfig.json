@@ -8,16 +8,8 @@
   },
   "include": [
     "src/**/*",
-    "../../lib/**/*",
-    "../../config/**/*",
-    "../../scripts/lib/**/*",
-    "../../scripts/pool-telemetry.ts",
-    "../../utils/**/*",
-    "../../barbershop/lib/**/*",
-    "../../barbershop/src/config/**/*",
-    "../../examples/cookie-crc32/**/*",
-    "../../projects/automation/duo-automation/src/ai/**/*",
-    "../../projects/automation/duo-automation/src/native/safeFilename.bun.ts"
+    "../../lib/docs/constants/**/*",
+    "../../lib/docs/stream-search.ts"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }

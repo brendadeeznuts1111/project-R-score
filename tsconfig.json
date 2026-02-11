@@ -8,7 +8,10 @@
   "references": [
     { "path": "./tsconfig.check.json" },
     { "path": "./packages/ab-testing" },
+    { "path": "./packages/business" },
+    { "path": "./packages/docs-tools" },
     { "path": "./packages/guards" },
+    { "path": "./packages/package" },
     { "path": "./packages/p2p" },
     { "path": "./packages/rip" },
     { "path": "./packages/versioning" }

@@ -8,17 +8,7 @@
   },
   "include": [
     "src/**/*",
-    "../../lib/**/*",
-    "../../config/**/*",
-    "../../scripts/lib/**/*",
-    "../../scripts/pool-telemetry.ts",
-    "../../utils/**/*",
-    "../../packages/docs-tools/src/**/*",
-    "../../barbershop/lib/**/*",
-    "../../barbershop/src/config/**/*",
-    "../../examples/cookie-crc32/**/*",
-    "../../projects/automation/duo-automation/src/ai/**/*",
-    "../../projects/automation/duo-automation/src/native/safeFilename.bun.ts"
+    "../../lib/docs/urls.ts"
   ],
   "exclude": ["node_modules", "dist", "build"]
 }
