@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skill Maintenance"
+  short_description: "Create and update Codex skills with aligned metadata"
+  default_prompt: "Use this skill to update an existing Codex skill first, align SKILL.md with agents/openai.yaml, run the skill-update checklist, and report changed files."
