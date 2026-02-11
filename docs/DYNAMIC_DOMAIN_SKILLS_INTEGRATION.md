@@ -15,7 +15,8 @@ Executable domain intelligence layer that bridges Kimi Agent Skills with Dynamic
 │  ├── domain-orchestrator/SKILL.md      (Flow skill)                 │
 │  ├── quantum-domain-ops/SKILL.md       (Standard skill)             │
 │  ├── self-healing-domain/SKILL.md      (Flow skill)                 │
-│  └── bun-v139-playground/SKILL.md      (Standard skill)             │
+│  ├── bun-v139-playground/SKILL.md      (Standard skill)             │
+│  └── project-r-skill-maintenance/SKILL.md (Standard skill)          │
 │                                                                      │
 │  Layer 2: SkillOrchestrator (Bridge)                                │
 │  ├── loadSkill()       → Parse SKILL.md from RECOMMENDED paths      │
@@ -109,6 +110,7 @@ Priority order (first found wins):
 | `.agents/skills/domain-orchestrator/SKILL.md` | Orchestration flow skill |
 | `.agents/skills/quantum-domain-ops/SKILL.md` | Quantum domain procedures |
 | `.agents/skills/self-healing-domain/SKILL.md` | Healing workflow skill |
+| `.agents/skills/project-r-skill-maintenance/SKILL.md` | Skill update and metadata alignment workflow |
 
 ## Integration Points
 
