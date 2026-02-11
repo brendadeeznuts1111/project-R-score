@@ -53,4 +53,35 @@ describe('documentation-validator integration', () => {
     expect(heal.totalFixes).toBeGreaterThanOrEqual(0);
   });
 
+  test('keeps contract shape across platform and fallback modes', async () => {
+    setPlatformValidatorLoaderForTest(async () => ({
+      ConstantValidator: {
+        validateConstant() {
+          return { isValid: true, errors: [] };
+        },
+      },
+      AutoHealer: {
+        async healAll() {
+          return { totalFixes: 1 };
+        },
+      },
+    }));
+    const platformResult = await DocumentationValidator.validateDocumentationConstants();
+    const platformHeal = await runAutoHealForTest();
+    expect(typeof platformResult.total).toBe('number');
+    expect(typeof platformResult.valid).toBe('number');
+    expect(Array.isArray(platformResult.errors)).toBe(true);
+    expect(typeof platformHeal.totalFixes).toBe('number');
+
+    setPlatformValidatorLoaderForTest(async () => {
+      throw new Error('fallback');
+    });
+    const fallbackResult = await DocumentationValidator.validateDocumentationConstants();
+    const fallbackHeal = await runAutoHealForTest();
+    expect(typeof fallbackResult.total).toBe('number');
+    expect(typeof fallbackResult.valid).toBe('number');
+    expect(Array.isArray(fallbackResult.errors)).toBe(true);
+    expect(typeof fallbackHeal.totalFixes).toBe('number');
+  });
+
 });
