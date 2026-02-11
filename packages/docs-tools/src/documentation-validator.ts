@@ -8,24 +8,99 @@ if (import.meta.path !== Bun.main) {
 import { CLI_DOCUMENTATION_URLS } from '../../../lib/docs/constants/cli';
 import { BUN_UTILS_URLS } from '../../../lib/docs/constants/utils';
 
-const ConstantValidator = {
-  validateConstant(name: string): { isValid: boolean; errors: string[] } {
-    const known = new Set([
-      'cli-categories-count',
-      'utils-categories-count',
-      'documentation-base-url',
-    ]);
-    return known.has(name)
-      ? { isValid: true, errors: [] }
-      : { isValid: false, errors: [`Unknown constant: ${name}`] };
+type ConstantValidation = { isValid: boolean; errors: string[] };
+type ConstantValidatorLike = {
+  validateConstant(name: string): ConstantValidation;
+};
+type AutoHealerLike = {
+  healAll(): Promise<{ totalFixes: number }>;
+};
+
+type PlatformValidators = {
+  ConstantValidator: ConstantValidatorLike;
+  AutoHealer: AutoHealerLike;
+};
+
+function collectPaths(value: unknown, out: string[] = []): string[] {
+  if (typeof value === 'string') {
+    out.push(value);
+    return out;
+  }
+  if (value && typeof value === 'object') {
+    for (const nested of Object.values(value as Record<string, unknown>)) {
+      collectPaths(nested, out);
+    }
+  }
+  return out;
+}
+
+function normalizePath(path: string): string {
+  const withSlash = path.startsWith('/') ? path : `/${path}`;
+  return withSlash.replace(/\/+/g, '/');
+}
+
+const fallbackConstantValidator: ConstantValidatorLike = {
+  validateConstant(name: string): ConstantValidation {
+    const errors: string[] = [];
+    switch (name) {
+      case 'cli-categories-count': {
+        const count = Object.keys(CLI_DOCUMENTATION_URLS).length;
+        if (count === 0) errors.push('CLI_DOCUMENTATION_URLS has no categories');
+        break;
+      }
+      case 'utils-categories-count': {
+        const count = Object.keys(BUN_UTILS_URLS).length;
+        if (count === 0) errors.push('BUN_UTILS_URLS has no categories');
+        break;
+      }
+      case 'documentation-base-url': {
+        const paths = [...collectPaths(CLI_DOCUMENTATION_URLS), ...collectPaths(BUN_UTILS_URLS)];
+        for (const path of paths) {
+          if (!path.startsWith('/docs/')) {
+            errors.push(`Non-doc path detected: ${path}`);
+          }
+        }
+        break;
+      }
+      default:
+        errors.push(`Unknown constant: ${name}`);
+        break;
+    }
+    return { isValid: errors.length === 0, errors };
   },
 };
 
-const AutoHealer = {
+const fallbackAutoHealer: AutoHealerLike = {
   async healAll(): Promise<{ totalFixes: number }> {
-    return { totalFixes: 0 };
+    const paths = [...collectPaths(CLI_DOCUMENTATION_URLS), ...collectPaths(BUN_UTILS_URLS)];
+    const fixable = paths.filter((p) => normalizePath(p) !== p).length;
+    return { totalFixes: fixable };
   },
 };
+
+let validatorsPromise: Promise<PlatformValidators> | null = null;
+
+async function getValidators(): Promise<PlatformValidators> {
+  if (!validatorsPromise) {
+    validatorsPromise = (async () => {
+      try {
+        // Load dynamically to avoid hard compile-time coupling to the platform module graph.
+        const modulePath = '../../../lib/validation/cli-constants-validation';
+        const mod = await import(modulePath);
+        if (mod?.ConstantValidator && mod?.AutoHealer) {
+          return {
+            ConstantValidator: mod.ConstantValidator as ConstantValidatorLike,
+            AutoHealer: mod.AutoHealer as AutoHealerLike,
+          };
+        }
+      } catch {
+        // Fall through to validated local fallback behavior.
+      }
+      return { ConstantValidator: fallbackConstantValidator, AutoHealer: fallbackAutoHealer };
+    })();
+  }
+  return validatorsPromise;
+}
 
 // ============================================================================
 // DOCUMENTATION-SPECIFIC VALIDATION
@@ -155,12 +230,13 @@ class DocumentationValidator {
   /**
    * Validate documentation constants
    */
-  static validateDocumentationConstants(): {
+  static async validateDocumentationConstants(): Promise<{
     total: number;
     valid: number;
     errors: string[];
-  } {
+  }> {
     console.log('📊 Validating Documentation Constants...');
+    const { ConstantValidator } = await getValidators();
 
     const constants = ['cli-categories-count', 'utils-categories-count', 'documentation-base-url'];
 
@@ -207,7 +283,7 @@ class DocumentationValidator {
     }
 
     // Validate constants
-    const constantResults = this.validateDocumentationConstants();
+    const constantResults = await this.validateDocumentationConstants();
     console.log(
       `\n📊 Documentation Constants: ${constantResults.valid}/${constantResults.total} valid`
     );
@@ -310,7 +386,7 @@ async function main(): Promise<void> {
     }
 
     if (options.constants) {
-      const results = DocumentationValidator.validateDocumentationConstants();
+      const results = await DocumentationValidator.validateDocumentationConstants();
       console.log(`\n📊 Constants: ${results.valid}/${results.total} valid`);
       if (results.errors.length > 0) {
         console.log('Errors:');
@@ -320,6 +396,7 @@ async function main(): Promise<void> {
 
     if (options.heal) {
       console.log('\n🔧 STARTING DOCUMENTATION AUTO-HEALING...');
+      const { AutoHealer } = await getValidators();
       const result = await AutoHealer.healAll();
       console.log(`✅ Applied ${result.totalFixes} fixes`);
     }

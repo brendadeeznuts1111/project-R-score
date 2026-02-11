@@ -123,11 +123,14 @@ export const BUN_DOCS_EXTENDED = {
 export const getSecretsDocs = (feature?: string, domain: 'sh' | 'com' = 'sh'): string => {
   if (!feature) return BUN_DOCS_EXTENDED.runtime.secrets.overview;
 
-  const docs =
-    domain === 'com'
-      ? BUN_DOCS_EXTENDED.runtime.secrets.com
-      : BUN_DOCS_EXTENDED.runtime.secrets;
-  return docs[feature as keyof typeof docs] || docs.overview;
+  if (domain === 'com') {
+    const docs = BUN_DOCS_EXTENDED.runtime.secrets.com;
+    return docs[feature as keyof typeof docs] || docs.overview;
+  }
+
+  const docs = BUN_DOCS_EXTENDED.runtime.secrets;
+  const candidate = docs[feature as keyof typeof docs];
+  return typeof candidate === 'string' ? candidate : docs.overview;
 };
 
 export const getVersioningDocs = (domain: 'sh' | 'com' = 'com'): string => {
