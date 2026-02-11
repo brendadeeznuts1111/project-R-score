@@ -57,3 +57,6 @@ bun test
 # Build for production
 bun run build
 ```
+
+## Project Policies
+- Import boundaries and allowed package roots: `/Users/nolarose/Projects/docs/IMPORT_BOUNDARIES.md`
