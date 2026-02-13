@@ -79,6 +79,37 @@ type CompareThresholds = {
   };
 };
 
+type TrendGateConfig = {
+  enabled: boolean;
+  strict: boolean;
+  window: number;
+  minSamples: number;
+};
+
+type TrendStrictMetrics = {
+  latencyP95Ms: number;
+  peakHeapUsedMB: number;
+  peakRssMB: number;
+  qualityScore: number;
+  reliabilityPct: number;
+};
+
+type TrendAssessment = {
+  enabled: boolean;
+  strict: boolean;
+  window: number | null;
+  sampleSize: number;
+  note: string;
+  baseline: TrendStrictMetrics | null;
+  delta: {
+    absolute: Record<string, number>;
+    percent: Record<string, number | null>;
+  } | null;
+  severity: Record<string, Severity> | null;
+  failures: string[];
+  warnings: string[];
+};
+
 export type CompareResultPayload = {
   ok: boolean;
   strict: boolean;
@@ -107,11 +138,7 @@ export type CompareResultPayload = {
   thresholds: CompareThresholds;
   failures: string[];
   warnings: string[];
-  trend: {
-    enabled: false;
-    window: null;
-    note: string;
-  };
+  trend: TrendAssessment;
 };
 
 export function usage(): void {
@@ -144,6 +171,12 @@ THRESHOLDS (env):
     SEARCH_BENCH_PIN_WARN_MAX_HEAP_REGRESSION_MB  default 4
     SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA       default -0.5
     SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA   default -0.75
+
+TREND (env):
+  SEARCH_BENCH_PIN_TREND_ENABLED  default 1
+  SEARCH_BENCH_PIN_TREND_STRICT   default 0
+  SEARCH_BENCH_PIN_TREND_WINDOW   default 5
+  SEARCH_BENCH_PIN_TREND_MIN_SAMPLES default 3
 `);
 }
 
@@ -223,6 +256,157 @@ export function thresholds(): CompareThresholds {
       minQualityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_QUALITY_DELTA, -0.5),
       minReliabilityDelta: num(Bun.env.SEARCH_BENCH_PIN_WARN_MIN_RELIABILITY_DELTA, -0.75),
     },
+  };
+}
+
+function parseBoolEnv(name: string, fallback: boolean): boolean {
+  const raw = String(Bun.env[name] || '').trim().toLowerCase();
+  if (!raw) return fallback;
+  return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
+}
+
+function trendConfig(): TrendGateConfig {
+  const window = Math.max(2, Math.min(20, num(Bun.env.SEARCH_BENCH_PIN_TREND_WINDOW, 5)));
+  const minSamples = Math.max(2, Math.min(window, num(Bun.env.SEARCH_BENCH_PIN_TREND_MIN_SAMPLES, 3)));
+  return {
+    enabled: parseBoolEnv('SEARCH_BENCH_PIN_TREND_ENABLED', true),
+    strict: parseBoolEnv('SEARCH_BENCH_PIN_TREND_STRICT', false),
+    window,
+    minSamples,
+  };
+}
+
+function median(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = [...values].sort((a, b) => a - b);
+  const middle = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 0) {
+    return Number(((sorted[middle - 1] + sorted[middle]) / 2).toFixed(4));
+  }
+  return Number(sorted[middle].toFixed(4));
+}
+
+function toTrendStrictMetrics(input: {
+  latencyP95Ms: number;
+  peakHeapUsedMB: number;
+  peakRssMB: number;
+  qualityScore: number;
+  reliabilityPct: number;
+}): TrendStrictMetrics {
+  return {
+    latencyP95Ms: num(input.latencyP95Ms),
+    peakHeapUsedMB: num(input.peakHeapUsedMB),
+    peakRssMB: num(input.peakRssMB),
+    qualityScore: num(input.qualityScore),
+    reliabilityPct: num(input.reliabilityPct),
+  };
+}
+
+export function assessTrend(
+  current: TrendStrictMetrics,
+  samples: TrendStrictMetrics[],
+  gate: CompareThresholds,
+  config: TrendGateConfig
+): TrendAssessment {
+  if (!config.enabled) {
+    return {
+      enabled: false,
+      strict: config.strict,
+      window: null,
+      sampleSize: 0,
+      note: 'trend analysis disabled by configuration',
+      baseline: null,
+      delta: null,
+      severity: null,
+      failures: [],
+      warnings: [],
+    };
+  }
+
+  const trimmedSamples = samples.slice(0, config.window);
+  if (trimmedSamples.length < config.minSamples) {
+    return {
+      enabled: true,
+      strict: config.strict,
+      window: config.window,
+      sampleSize: trimmedSamples.length,
+      note: `insufficient trend samples (need >=${config.minSamples})`,
+      baseline: null,
+      delta: null,
+      severity: null,
+      failures: [],
+      warnings: [],
+    };
+  }
+
+  const baseline = {
+    latencyP95Ms: median(trimmedSamples.map((s) => s.latencyP95Ms)),
+    peakHeapUsedMB: median(trimmedSamples.map((s) => s.peakHeapUsedMB)),
+    peakRssMB: median(trimmedSamples.map((s) => s.peakRssMB)),
+    qualityScore: median(trimmedSamples.map((s) => s.qualityScore)),
+    reliabilityPct: median(trimmedSamples.map((s) => s.reliabilityPct)),
+  };
+
+  const deltaAbsolute = {
+    latencyP95Ms: Number((current.latencyP95Ms - baseline.latencyP95Ms).toFixed(4)),
+    peakHeapUsedMB: Number((current.peakHeapUsedMB - baseline.peakHeapUsedMB).toFixed(4)),
+    peakRssMB: Number((current.peakRssMB - baseline.peakRssMB).toFixed(4)),
+    qualityScore: Number((current.qualityScore - baseline.qualityScore).toFixed(4)),
+    reliabilityPct: Number((current.reliabilityPct - baseline.reliabilityPct).toFixed(4)),
+  };
+
+  const deltaPercent = {
+    latencyP95Ms: safePct(deltaAbsolute.latencyP95Ms, baseline.latencyP95Ms),
+    peakHeapUsedMB: safePct(deltaAbsolute.peakHeapUsedMB, baseline.peakHeapUsedMB),
+    peakRssMB: safePct(deltaAbsolute.peakRssMB, baseline.peakRssMB),
+    qualityScore: safePct(deltaAbsolute.qualityScore, baseline.qualityScore),
+    reliabilityPct: safePct(deltaAbsolute.reliabilityPct, baseline.reliabilityPct),
+  };
+
+  const severity = {
+    latencyP95Ms: severityForHigherIsWorse(
+      deltaAbsolute.latencyP95Ms,
+      gate.warn.maxP95RegressionMs,
+      gate.fail.maxP95RegressionMs
+    ),
+    peakHeapUsedMB: severityForHigherIsWorse(
+      deltaAbsolute.peakHeapUsedMB,
+      gate.warn.maxHeapRegressionMB,
+      gate.fail.maxHeapRegressionMB
+    ),
+    qualityScore: severityForLowerIsWorse(
+      deltaAbsolute.qualityScore,
+      gate.warn.minQualityDelta,
+      gate.fail.minQualityDelta
+    ),
+    reliabilityPct: severityForLowerIsWorse(
+      deltaAbsolute.reliabilityPct,
+      gate.warn.minReliabilityDelta,
+      gate.fail.minReliabilityDelta
+    ),
+  };
+
+  const failures: string[] = [];
+  const warnings: string[] = [];
+  for (const [metric, level] of Object.entries(severity)) {
+    if (level === 'fail') failures.push(metric);
+    if (level === 'warn') warnings.push(metric);
+  }
+
+  return {
+    enabled: true,
+    strict: config.strict,
+    window: config.window,
+    sampleSize: trimmedSamples.length,
+    note: 'trend assessed against same-pack rolling median',
+    baseline,
+    delta: {
+      absolute: deltaAbsolute,
+      percent: deltaPercent,
+    },
+    severity,
+    failures,
+    warnings,
   };
 }
 
@@ -444,6 +628,71 @@ export async function compareSnapshotPayload(
   return compareResolved(current, baselinePathInput, outPath, strict, currentPath, bootstrapMissingBaseline);
 }
 
+type SnapshotIndex = {
+  snapshots?: Array<{
+    id?: string;
+    queryPack?: string;
+    localJson?: string;
+  }>;
+};
+
+async function collectTrendSamples(
+  queryPack: string,
+  currentSnapshotId: string,
+  config: TrendGateConfig
+): Promise<TrendStrictMetrics[]> {
+  if (!config.enabled) {
+    return [];
+  }
+  const root = resolve('reports/search-benchmark');
+  const indexPath = resolve(root, 'index.json');
+  if (!existsSync(indexPath)) {
+    return [];
+  }
+
+  let index: SnapshotIndex;
+  try {
+    index = await readJson<SnapshotIndex>(indexPath);
+  } catch {
+    return [];
+  }
+  const entries = Array.isArray(index.snapshots) ? index.snapshots : [];
+  const filtered = entries.filter((entry) => {
+    const id = String(entry.id || '').trim();
+    if (!id || id === currentSnapshotId) return false;
+    const pack = String(entry.queryPack || '').trim() || 'core_delivery';
+    return pack === (queryPack || 'core_delivery');
+  });
+
+  const samples: TrendStrictMetrics[] = [];
+  for (const entry of filtered) {
+    if (samples.length >= config.window) break;
+    const id = String(entry.id || '').trim();
+    if (!id) continue;
+    const fallbackPath = resolve(root, id, 'snapshot.json');
+    const snapshotPath = existsSync(String(entry.localJson || ''))
+      ? resolve(String(entry.localJson))
+      : fallbackPath;
+    if (!existsSync(snapshotPath)) continue;
+    try {
+      const snap = await readJson<Snapshot>(snapshotPath);
+      const strict = findStrictProfile(snap);
+      samples.push(
+        toTrendStrictMetrics({
+          latencyP95Ms: num(strict.latencyP95Ms),
+          peakHeapUsedMB: num(strict.peakHeapUsedMB),
+          peakRssMB: num(strict.peakRssMB),
+          qualityScore: num(strict.qualityScore),
+          reliabilityPct: num(strict.avgUniqueFamilyPct),
+        })
+      );
+    } catch {
+      continue;
+    }
+  }
+  return samples;
+}
+
 async function compareResolved(
   current: PinnedBaseline,
   baselinePathInput: string | undefined,
@@ -531,6 +780,19 @@ async function compareResolved(
         : 'queryPack mismatch; comparison may be less representative',
   };
 
+  const trendGate = trendConfig();
+  const trendSamples = await collectTrendSamples(
+    current.snapshot.queryPack,
+    current.snapshot.id,
+    trendGate
+  );
+  const trend = assessTrend(
+    toTrendStrictMetrics(current.strict),
+    trendSamples,
+    gate,
+    trendGate
+  );
+
   const payload: CompareResultPayload = {
     ok: failures.length === 0,
     strict,
@@ -554,11 +816,7 @@ async function compareResolved(
     thresholds: gate,
     failures,
     warnings,
-    trend: {
-      enabled: false,
-      window: null,
-      note: 'trend hook reserved for N-run rolling analysis',
-    },
+    trend,
   };
 
   return payload;
@@ -599,9 +857,20 @@ export async function compare(
     if (payload.warnings.length > 0) {
       console.log(`[search:bench:compare] warn metrics: ${payload.warnings.join(', ')}`);
     }
+    if (payload.trend.enabled) {
+      console.log(
+        `[search:bench:compare] trend window=${payload.trend.window ?? 'n/a'} samples=${payload.trend.sampleSize} strict=${payload.trend.strict ? 'on' : 'off'} note=${payload.trend.note}`
+      );
+      if (payload.trend.failures.length > 0) {
+        console.log(`[search:bench:compare] trend fail metrics: ${payload.trend.failures.join(', ')}`);
+      }
+      if (payload.trend.warnings.length > 0) {
+        console.log(`[search:bench:compare] trend warn metrics: ${payload.trend.warnings.join(', ')}`);
+      }
+    }
   }
 
-  if (strict && payload.failures.length > 0) {
+  if (strict && (payload.failures.length > 0 || (payload.trend.strict && payload.trend.failures.length > 0))) {
     process.exitCode = 1;
   }
   return payload;

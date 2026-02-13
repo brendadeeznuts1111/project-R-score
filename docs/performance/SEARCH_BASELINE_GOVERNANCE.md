@@ -37,3 +37,14 @@ The Search Governance workflow enforces:
 - baseline governance metadata validity
 - benchmark snapshot generation and regression gate
 - artifact upload for diagnostics
+
+## Trend Gate Controls
+
+The compare gate supports rolling same-pack trend assessment.
+
+- `SEARCH_BENCH_PIN_TREND_ENABLED` (default `1`)
+- `SEARCH_BENCH_PIN_TREND_STRICT` (default `0`)
+- `SEARCH_BENCH_PIN_TREND_WINDOW` (default `5`)
+- `SEARCH_BENCH_PIN_TREND_MIN_SAMPLES` (default `3`)
+
+In CI Search Governance, trend strict mode is enabled so fail-level trend regressions block the gate.

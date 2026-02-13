@@ -14,6 +14,10 @@ jobs:
     env:
       SEARCH_BENCH_QUERY_TIMEOUT_MS: "60000"
       SEARCH_BENCH_QUERY_RETRIES: "1"
+      SEARCH_BENCH_PIN_TREND_ENABLED: "1"
+      SEARCH_BENCH_PIN_TREND_STRICT: "1"
+      SEARCH_BENCH_PIN_TREND_WINDOW: "5"
+      SEARCH_BENCH_PIN_TREND_MIN_SAMPLES: "3"
     steps:
       - name: Checkout
         uses: actions/checkout@v4

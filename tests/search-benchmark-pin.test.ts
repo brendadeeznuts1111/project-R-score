@@ -3,7 +3,7 @@ import { mkdtemp, mkdir, readFile, writeFile } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { tmpdir } from 'node:os';
-import { compareSnapshotPayload, resolveBaselinePath, type Snapshot } from '../scripts/search-benchmark-pin';
+import { assessTrend, compareSnapshotPayload, resolveBaselinePath, thresholds, type Snapshot } from '../scripts/search-benchmark-pin';
 
 describe('search benchmark pin', () => {
   test('resolveBaselinePath prefers pack-specific baseline when present', async () => {
@@ -124,5 +124,56 @@ describe('search benchmark pin', () => {
     expect(pinned.rationale).toBe('refresh-baseline-after-threshold-update');
     expect(pinned.pinnedBy).toBe('ci-bot');
     expect(pinned.previousSnapshotId).toBe(null);
+  });
+
+  test('trend assessment is disabled when insufficient sample window', () => {
+    const gate = thresholds();
+    const trend = assessTrend(
+      {
+        latencyP95Ms: 400,
+        peakHeapUsedMB: 40,
+        peakRssMB: 180,
+        qualityScore: 85,
+        reliabilityPct: 60,
+      },
+      [
+        {
+          latencyP95Ms: 390,
+          peakHeapUsedMB: 39,
+          peakRssMB: 178,
+          qualityScore: 86,
+          reliabilityPct: 61,
+        },
+      ],
+      gate,
+      { enabled: true, strict: false, window: 5, minSamples: 3 }
+    );
+    expect(trend.enabled).toBe(true);
+    expect(trend.sampleSize).toBe(1);
+    expect(trend.delta).toBeNull();
+    expect(trend.failures.length).toBe(0);
+  });
+
+  test('trend assessment flags quality and reliability regressions', () => {
+    const gate = thresholds();
+    const trend = assessTrend(
+      {
+        latencyP95Ms: 420,
+        peakHeapUsedMB: 40,
+        peakRssMB: 180,
+        qualityScore: 80,
+        reliabilityPct: 50,
+      },
+      [
+        { latencyP95Ms: 390, peakHeapUsedMB: 39, peakRssMB: 179, qualityScore: 86, reliabilityPct: 58 },
+        { latencyP95Ms: 395, peakHeapUsedMB: 39, peakRssMB: 179, qualityScore: 85, reliabilityPct: 57 },
+        { latencyP95Ms: 392, peakHeapUsedMB: 39, peakRssMB: 178, qualityScore: 86, reliabilityPct: 58 },
+      ],
+      gate,
+      { enabled: true, strict: true, window: 5, minSamples: 3 }
+    );
+    expect(trend.delta).not.toBeNull();
+    expect(trend.failures).toContain('qualityScore');
+    expect(trend.failures).toContain('reliabilityPct');
   });
 });
