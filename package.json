@@ -1872,7 +1872,7 @@
     "search:loop:runbook": "bun run scripts/search-loop-runbook.ts",
     "search:status:unified": "bun run scripts/search-unified-status.ts --json",
     "search:status:unified:strict": "bun run scripts/search-unified-status.ts --json --strict",
-    "search:loop:check:local": "bun run search:bench:test && bun run search:coverage:loc:wide && bun run search:bench:snapshot:core:wide:local && bun run search:loop:status && bun run search:loop:runbook",
+    "search:loop:check:local": "bun run scripts/search-loop-check-local.ts",
     "search:code": "bun run scripts/codesearch-cli.ts",
     "search:code:symbol": "bun run scripts/codesearch-cli.ts --symbol",
     "search:code:stream": "bun run scripts/codesearch-cli.ts --stream",
