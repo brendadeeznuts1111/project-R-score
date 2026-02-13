@@ -11,6 +11,9 @@ on:
 jobs:
   governance:
     runs-on: ubuntu-latest
+    env:
+      SEARCH_BENCH_QUERY_TIMEOUT_MS: "60000"
+      SEARCH_BENCH_QUERY_RETRIES: "1"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -44,10 +47,31 @@ jobs:
         run: bun run scripts/domain-registry-status.ts --json
 
       - name: Verify Pinned Search Benchmark Baseline
-        run: test -f .search/search-benchmark-pinned-baseline.json
+        run: test -f .search/search-benchmark-pinned-baseline.core_delivery_wide.json || test -f .search/search-benchmark-pinned-baseline.json
 
       - name: Generate Search Benchmark Snapshot (Core Wide, Local)
         run: bun run search:bench:snapshot:core:wide:local
 
       - name: Search Benchmark Regression Gate
-        run: bun run search:bench:gate --json
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p reports/search-benchmark
+          bun run search:bench:gate --json | tee reports/search-benchmark/compare-gate.json
+
+      - name: Upload Search Governance Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: search-governance-artifacts
+          if-no-files-found: warn
+          path: |
+            reports/search-benchmark/latest.json
+            reports/search-benchmark/latest.md
+            reports/search-benchmark/index.json
+            reports/search-benchmark/rss.xml
+            reports/search-benchmark/compare-gate.json
+            reports/search-benchmark/*/snapshot.json
+            reports/search-benchmark/*/summary.md
+            reports/search-benchmark/*/publish-manifest.json
+            .search/search-benchmark-pinned-baseline*.json
