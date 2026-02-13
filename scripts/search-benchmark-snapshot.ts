@@ -35,6 +35,8 @@ type BenchmarkPayload = {
   limit: number;
   queryPack?: string;
   concurrency?: number;
+  queryTimeoutMs?: number;
+  queryRetries?: number;
   overlap?: 'ignore' | 'remove';
   queries: string[];
   rankedProfiles: RankedProfile[];
@@ -96,6 +98,8 @@ type CliOptions = {
   limit: number;
   queryPack?: string;
   concurrency?: number;
+  queryTimeoutMs: number;
+  queryRetries: number;
   overlap: 'ignore' | 'remove';
   queries?: string;
   outputDir: string;
@@ -184,10 +188,21 @@ function buildRssFeed(
   ].join('\n');
 }
 
-function parseArgs(argv: string[]): CliOptions {
+export function parseArgs(argv: string[]): CliOptions {
+  let queryTimeoutMs = Number.parseInt(Bun.env.SEARCH_BENCH_QUERY_TIMEOUT_MS || '45000', 10);
+  if (!Number.isFinite(queryTimeoutMs) || queryTimeoutMs <= 0) {
+    queryTimeoutMs = 45000;
+  }
+  let queryRetries = Number.parseInt(Bun.env.SEARCH_BENCH_QUERY_RETRIES || '0', 10);
+  if (!Number.isFinite(queryRetries) || queryRetries < 0) {
+    queryRetries = 0;
+  }
+
   const out: CliOptions = {
     path: './lib',
     limit: 40,
+    queryTimeoutMs,
+    queryRetries,
     overlap: 'ignore',
     outputDir: './reports/search-benchmark',
     upload: true,
@@ -223,6 +238,18 @@ function parseArgs(argv: string[]): CliOptions {
     if (arg === '--concurrency') {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n > 0) out.concurrency = Math.min(32, n);
+      i += 1;
+      continue;
+    }
+    if (arg === '--query-timeout-ms') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n > 0) out.queryTimeoutMs = n;
+      i += 1;
+      continue;
+    }
+    if (arg === '--query-retries') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n >= 0) out.queryRetries = Math.min(5, n);
       i += 1;
       continue;
     }
@@ -340,7 +367,7 @@ export function parseJsonFromStdout(text: string): BenchmarkPayload {
   }
 }
 
-async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
+export function buildBenchmarkArgs(options: CliOptions): string[] {
   const args = [
     'bun',
     'run',
@@ -359,7 +386,14 @@ async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
   if (options.concurrency && options.concurrency > 0) {
     args.push('--concurrency', String(options.concurrency));
   }
+  args.push('--query-timeout-ms', String(options.queryTimeoutMs));
+  args.push('--query-retries', String(options.queryRetries));
   args.push('--overlap', options.overlap);
+  return args;
+}
+
+async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
+  const args = buildBenchmarkArgs(options);
 
   const proc = Bun.spawn(args, { stdout: 'pipe', stderr: 'pipe' });
   const stdout = await new Response(proc.stdout).text();
@@ -481,6 +515,8 @@ export function renderSummaryMarkdown(
   if (typeof payload.concurrency === 'number') {
     lines.push(`- Concurrency: \`${payload.concurrency}\``);
   }
+  lines.push(`- Query Timeout: \`${payload.queryTimeoutMs ?? 'n/a'}ms\``);
+  lines.push(`- Query Retries: \`${payload.queryRetries ?? 'n/a'}\``);
   if (payload.coverage) {
     lines.push(`- Coverage LOC: \`${payload.coverage.lines}\``);
     lines.push(`- Coverage Files: \`${payload.coverage.files}\``);

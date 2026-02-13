@@ -1,5 +1,10 @@
 import { describe, expect, test } from 'bun:test';
-import { parseJsonFromStdout, renderSummaryMarkdown } from '../scripts/search-benchmark-snapshot';
+import {
+  buildBenchmarkArgs,
+  parseArgs,
+  parseJsonFromStdout,
+  renderSummaryMarkdown,
+} from '../scripts/search-benchmark-snapshot';
 
 describe('search benchmark snapshot core helpers', () => {
   test('parseJsonFromStdout extracts payload from noisy stdout', () => {
@@ -97,5 +102,28 @@ describe('search benchmark snapshot core helpers', () => {
     expect(summary).toContain('Strict p95 Threshold: `1100ms`');
     expect(summary).toContain('- latency_p95_warn');
     expect(summary).toContain('Baseline Snapshot: `snap-0`');
+  });
+
+  test('parseArgs and buildBenchmarkArgs propagate query timeout/retries', () => {
+    const options = parseArgs([
+      '--path',
+      './lib',
+      '--query-pack',
+      'core_delivery_wide',
+      '--query-timeout-ms',
+      '9000',
+      '--query-retries',
+      '2',
+      '--overlap',
+      'remove',
+    ]);
+    expect(options.queryTimeoutMs).toBe(9000);
+    expect(options.queryRetries).toBe(2);
+
+    const args = buildBenchmarkArgs(options);
+    expect(args).toContain('--query-timeout-ms');
+    expect(args).toContain('9000');
+    expect(args).toContain('--query-retries');
+    expect(args).toContain('2');
   });
 });
