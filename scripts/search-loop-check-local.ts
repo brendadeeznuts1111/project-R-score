@@ -11,6 +11,7 @@ type SnapshotMeta = {
 };
 
 type Options = {
+  mode: 'fast' | 'full';
   maxSnapshotAgeMinutes: number;
   forceSnapshot: boolean;
 };
@@ -20,10 +21,19 @@ export function parseArgs(argv: string[]): Options {
   if (!Number.isFinite(maxSnapshotAgeMinutes) || maxSnapshotAgeMinutes < 0) {
     maxSnapshotAgeMinutes = 20;
   }
+  let mode: 'fast' | 'full' = 'fast';
   let forceSnapshot = false;
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
+    if (arg === '--mode') {
+      const value = String(argv[i + 1] || '').trim().toLowerCase();
+      if (value === 'fast' || value === 'full') {
+        mode = value;
+      }
+      i += 1;
+      continue;
+    }
     if (arg === '--max-snapshot-age-minutes') {
       const n = Number.parseInt(argv[i + 1] || '', 10);
       if (Number.isFinite(n) && n >= 0) {
@@ -38,7 +48,7 @@ export function parseArgs(argv: string[]): Options {
     }
   }
 
-  return { maxSnapshotAgeMinutes, forceSnapshot };
+  return { mode, maxSnapshotAgeMinutes, forceSnapshot };
 }
 
 async function readLatestSnapshot(path: string): Promise<SnapshotMeta | null> {
@@ -88,6 +98,7 @@ async function run(cmd: string[]): Promise<void> {
 
 export async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
+  const forceSnapshot = options.forceSnapshot || options.mode === 'full';
 
   await run(['bun', 'run', 'search:bench:test']);
   await run(['bun', 'run', 'search:coverage:loc:wide']);
@@ -96,8 +107,10 @@ export async function main(): Promise<void> {
   const snapshot = await readLatestSnapshot(latestPath);
   const freshness = shouldReuseSnapshot(snapshot, Date.now(), options.maxSnapshotAgeMinutes);
 
-  if (options.forceSnapshot || !freshness.reuse) {
-    if (options.forceSnapshot) {
+  if (forceSnapshot || !freshness.reuse) {
+    if (options.mode === 'full') {
+      console.log('[search:loop:check:local] forcing snapshot refresh (mode=full)');
+    } else if (options.forceSnapshot) {
       console.log('[search:loop:check:local] forcing snapshot refresh (--force-snapshot)');
     } else {
       console.log(`[search:loop:check:local] refreshing snapshot: ${freshness.reason}`);

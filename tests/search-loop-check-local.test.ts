@@ -45,7 +45,14 @@ describe('search loop check local', () => {
 
   test('parseArgs supports force and max age', () => {
     const out = parseArgs(['--max-snapshot-age-minutes', '12', '--force-snapshot']);
+    expect(out.mode).toBe('fast');
     expect(out.maxSnapshotAgeMinutes).toBe(12);
     expect(out.forceSnapshot).toBe(true);
+  });
+
+  test('parseArgs supports explicit full mode', () => {
+    const out = parseArgs(['--mode', 'full']);
+    expect(out.mode).toBe('full');
+    expect(out.forceSnapshot).toBe(false);
   });
 });
