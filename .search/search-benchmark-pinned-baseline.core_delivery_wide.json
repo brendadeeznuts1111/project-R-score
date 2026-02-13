@@ -1,23 +1,23 @@
 {
   "version": 1,
-  "pinnedAt": "2026-02-11T07:35:28.818Z",
+  "pinnedAt": "2026-02-13T04:44:17.945Z",
   "source": "/Users/nolarose/Projects/reports/search-benchmark/latest.json",
   "snapshot": {
-    "id": "2026-02-11T07-35-20-689Z",
-    "createdAt": "2026-02-11T07:35:20.689Z",
+    "id": "2026-02-13T04-43-57-720Z",
+    "createdAt": "2026-02-13T04:43:57.720Z",
     "queryPack": "core_delivery_wide"
   },
   "strict": {
-    "latencyP95Ms": 374.4,
-    "peakHeapUsedMB": 36.18,
-    "peakRssMB": 183.28,
-    "qualityScore": 86.96,
-    "reliabilityPct": 62.74
+    "latencyP95Ms": 421.25,
+    "peakHeapUsedMB": 37.22,
+    "peakRssMB": 179.23,
+    "qualityScore": 77.7,
+    "reliabilityPct": 47.98
   },
   "coverage": {
-    "files": 345,
-    "lines": 142162,
-    "uniqueFiles": 345,
-    "uniqueLines": 142162
+    "files": 363,
+    "lines": 145788,
+    "uniqueFiles": 363,
+    "uniqueLines": 145788
   }
 }

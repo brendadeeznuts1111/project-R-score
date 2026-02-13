@@ -92,6 +92,8 @@ export function parseArgs(argv: string[]): {
   concurrency: number;
   concurrencyExplicit: boolean;
   overlap: 'ignore' | 'remove';
+  queryTimeoutMs: number;
+  queryRetries: number;
 } {
   let path = './lib';
   let limit = 40;
@@ -100,6 +102,14 @@ export function parseArgs(argv: string[]): {
   let concurrency = 4;
   let concurrencyExplicit = false;
   let overlap: 'ignore' | 'remove' = 'ignore';
+  let queryTimeoutMs = Number.parseInt(Bun.env.SEARCH_BENCH_QUERY_TIMEOUT_MS || '45000', 10);
+  if (!Number.isFinite(queryTimeoutMs) || queryTimeoutMs <= 0) {
+    queryTimeoutMs = 45000;
+  }
+  let queryRetries = Number.parseInt(Bun.env.SEARCH_BENCH_QUERY_RETRIES || '0', 10);
+  if (!Number.isFinite(queryRetries) || queryRetries < 0) {
+    queryRetries = 0;
+  }
 
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
@@ -147,9 +157,25 @@ export function parseArgs(argv: string[]): {
       i += 1;
       continue;
     }
+    if (arg === '--query-timeout-ms') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n > 0) {
+        queryTimeoutMs = n;
+      }
+      i += 1;
+      continue;
+    }
+    if (arg === '--query-retries') {
+      const n = Number.parseInt(argv[i + 1] || '', 10);
+      if (Number.isFinite(n) && n >= 0) {
+        queryRetries = Math.min(5, n);
+      }
+      i += 1;
+      continue;
+    }
   }
 
-  return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap };
+  return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap, queryTimeoutMs, queryRetries };
 }
 
 export function normalizeQueryPacks(parsed: unknown): QueryPacks {
@@ -253,7 +279,8 @@ async function runSearch(
   path: string,
   limit: number,
   overlap: 'ignore' | 'remove',
-  args: string[]
+  args: string[],
+  timeoutMs: number
 ): Promise<any> {
   const cmd = [
     'bun',
@@ -273,18 +300,55 @@ async function runSearch(
     stdout: 'pipe',
     stderr: 'pipe',
   });
+  let timedOut = false;
+  const timer = setTimeout(() => {
+    timedOut = true;
+    try {
+      proc.kill();
+    } catch {
+      // no-op; process may already have exited.
+    }
+  }, timeoutMs);
   const [output, stderr, exitCode] = await Promise.all([
     new Response(proc.stdout).text(),
     new Response(proc.stderr).text(),
     proc.exited,
   ]);
+  clearTimeout(timer);
   if (exitCode !== 0) {
     const reason = (stderr || output).trim();
     throw new Error(
-      `[search:bench] search:smart failed for query "${query}" (exit ${exitCode})${reason ? `: ${reason}` : ''}`
+      `[search:bench] search:smart failed for query "${query}" (${timedOut ? `timeout ${timeoutMs}ms` : `exit ${exitCode}`})${reason ? `: ${reason}` : ''}`
     );
   }
   return parseJsonPayload(output);
+}
+
+async function runSearchWithRetry(
+  query: string,
+  path: string,
+  limit: number,
+  overlap: 'ignore' | 'remove',
+  args: string[],
+  timeoutMs: number,
+  retries: number
+): Promise<any> {
+  let lastError: unknown = null;
+  const attempts = Math.max(1, retries + 1);
+  for (let attempt = 1; attempt <= attempts; attempt += 1) {
+    try {
+      return await runSearch(query, path, limit, overlap, args, timeoutMs);
+    } catch (error) {
+      lastError = error;
+      if (attempt >= attempts) {
+        break;
+      }
+      const delayMs = Math.min(2000, 200 * (2 ** (attempt - 1)));
+      await Bun.sleep(delayMs);
+      console.error(`[search:bench] retrying query "${query}" (${attempt}/${attempts - 1} retries used)`);
+    }
+  }
+  throw lastError instanceof Error ? lastError : new Error(`[search:bench] query "${query}" failed`);
 }
 
 async function mapWithConcurrency<T, R>(
@@ -406,7 +470,17 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
 }
 
 export async function main(): Promise<void> {
-  const { path, limit, queries: overrideQueries, queryPack, concurrency, concurrencyExplicit, overlap } = parseArgs(process.argv.slice(2));
+  const {
+    path,
+    limit,
+    queries: overrideQueries,
+    queryPack,
+    concurrency,
+    concurrencyExplicit,
+    overlap,
+    queryTimeoutMs,
+    queryRetries,
+  } = parseArgs(process.argv.slice(2));
   const effectiveConcurrency = !concurrencyExplicit && path.includes(',')
     ? Math.min(concurrency, 2)
     : concurrency;
@@ -432,7 +506,15 @@ export async function main(): Promise<void> {
   const profileSummaries = await mapWithConcurrency(profiles, Math.min(effectiveConcurrency, profiles.length), async (profile) => {
     const querySummaries = await mapWithConcurrency(queries, effectiveConcurrency, async (query) => {
       const started = performance.now();
-      const payload = await runSearch(query, path, limit, overlap, profile.args);
+      const payload = await runSearchWithRetry(
+        query,
+        path,
+        limit,
+        overlap,
+        profile.args,
+        queryTimeoutMs,
+        queryRetries
+      );
       payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
       return summarizeQuery(query, payload);
     });
@@ -448,6 +530,8 @@ export async function main(): Promise<void> {
     limit,
     queryPack,
     concurrency: effectiveConcurrency,
+    queryTimeoutMs,
+    queryRetries,
     overlap,
     queries,
     rankedProfiles: summaries,

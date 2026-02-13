@@ -1846,7 +1846,7 @@
     "search:bench:pin": "bun run scripts/search-benchmark-pin.ts pin",
     "search:bench:compare": "bun run scripts/search-benchmark-pin.ts compare",
     "search:bench:gate": "bun run scripts/search-benchmark-pin.ts compare --strict --bootstrap-missing-baseline",
-    "search:bench:test": "bun test tests/search-benchmark-core.test.ts tests/search-benchmark-pin.test.ts tests/search-benchmark-thresholds.test.ts tests/search-policy-thresholds.test.ts",
+    "search:bench:test": "bun test tests/search-benchmark-core.test.ts tests/search-benchmark-snapshot-core.test.ts tests/search-benchmark-pin.test.ts tests/search-benchmark-thresholds.test.ts tests/search-policy-thresholds.test.ts",
     "search:bench:dashboard": "bun run scripts/search-benchmark-dashboard.ts",
     "search:bench:dashboard:watch": "bun --watch run scripts/search-benchmark-dashboard.ts --port 3099 --no-cookies --no-hot-reload",
     "search:preflight:emergency": "bun run scripts/search-emergency-preflight.ts",

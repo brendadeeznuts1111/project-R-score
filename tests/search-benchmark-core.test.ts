@@ -1,6 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
   extractFirstJsonObject,
+  parseArgs,
   normalizeQueryPacks,
   parseJsonPayload,
 } from '../scripts/search-benchmark';
@@ -32,5 +33,19 @@ describe('search benchmark core helpers', () => {
     expect(packs.core_delivery).toEqual(['custom query']);
     expect(Array.isArray(packs.core_delivery_wide)).toBe(true);
     expect(Array.isArray(packs.cleanup_noise)).toBe(true);
+  });
+
+  test('parseArgs applies query timeout and retry controls', () => {
+    const args = parseArgs([
+      '--query-timeout-ms',
+      '12000',
+      '--query-retries',
+      '3',
+      '--concurrency',
+      '99',
+    ]);
+    expect(args.queryTimeoutMs).toBe(12000);
+    expect(args.queryRetries).toBe(3);
+    expect(args.concurrency).toBe(32);
   });
 });

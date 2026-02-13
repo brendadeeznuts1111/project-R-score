@@ -285,10 +285,59 @@ function timestampId(now = new Date()): string {
   return now.toISOString().replace(/[:.]/g, '-');
 }
 
-function parseJsonFromStdout(text: string): BenchmarkPayload {
-  const idx = text.indexOf('{');
-  if (idx < 0) throw new Error('search benchmark output did not contain JSON payload');
-  return JSON.parse(text.slice(idx));
+export function extractFirstJsonObject(text: string): string | null {
+  for (let i = 0; i < text.length; i += 1) {
+    if (text[i] !== '{') continue;
+    let depth = 0;
+    let inString = false;
+    let escaped = false;
+    for (let j = i; j < text.length; j += 1) {
+      const ch = text[j];
+      if (inString) {
+        if (escaped) {
+          escaped = false;
+          continue;
+        }
+        if (ch === '\\') {
+          escaped = true;
+          continue;
+        }
+        if (ch === '"') {
+          inString = false;
+        }
+        continue;
+      }
+      if (ch === '"') {
+        inString = true;
+        continue;
+      }
+      if (ch === '{') {
+        depth += 1;
+        continue;
+      }
+      if (ch === '}') {
+        depth -= 1;
+        if (depth === 0) {
+          return text.slice(i, j + 1);
+        }
+      }
+    }
+  }
+  return null;
+}
+
+export function parseJsonFromStdout(text: string): BenchmarkPayload {
+  const trimmed = text.trim();
+  if (!trimmed) {
+    throw new Error('search benchmark output was empty');
+  }
+  try {
+    return JSON.parse(trimmed) as BenchmarkPayload;
+  } catch {
+    const extracted = extractFirstJsonObject(text);
+    if (!extracted) throw new Error('search benchmark output did not contain JSON payload');
+    return JSON.parse(extracted) as BenchmarkPayload;
+  }
 }
 
 async function runBenchmark(options: CliOptions): Promise<BenchmarkPayload> {
@@ -404,7 +453,7 @@ function runClassForQueryPack(queryPack: string): 'core-iterative' | 'daily-cove
   return 'ad-hoc';
 }
 
-function renderSummaryMarkdown(
+export function renderSummaryMarkdown(
   id: string,
   createdAt: string,
   payload: BenchmarkPayload,
@@ -572,7 +621,7 @@ async function uploadWithRetry(
   }
 }
 
-async function main(): Promise<void> {
+export async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const id = options.id || timestampId();
   const createdAt = new Date().toISOString();
@@ -1002,4 +1051,6 @@ async function main(): Promise<void> {
   }
 }
 
-await main();
+if (import.meta.main) {
+  await main();
+}
