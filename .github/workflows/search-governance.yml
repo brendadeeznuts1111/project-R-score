@@ -49,6 +49,9 @@ jobs:
       - name: Verify Pinned Search Benchmark Baseline
         run: test -f .search/search-benchmark-pinned-baseline.core_delivery_wide.json || test -f .search/search-benchmark-pinned-baseline.json
 
+      - name: Validate Search Benchmark Baseline Governance Metadata
+        run: bun run search:bench:baseline:verify
+
       - name: Generate Search Benchmark Snapshot (Core Wide, Local)
         run: bun run search:bench:snapshot:core:wide:local
 

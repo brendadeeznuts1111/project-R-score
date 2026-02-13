@@ -41,6 +41,9 @@ type PinnedBaseline = {
   version: 1;
   pinnedAt: string;
   source: string;
+  rationale: string;
+  pinnedBy: string;
+  previousSnapshotId: string | null;
   snapshot: {
     id: string;
     createdAt: string;
@@ -122,6 +125,8 @@ USAGE:
 OPTIONS:
   --from <path>       Source snapshot (default: reports/search-benchmark/latest.json)
   --out <path>        Pinned baseline file (default: .search/search-benchmark-pinned-baseline.json)
+  --rationale <text>  Required rationale for pin mode
+  --pinned-by <id>    Actor id for pin mode (default: env GITHUB_ACTOR/USER)
   --baseline <path>   Baseline file for compare (default: auto by query-pack, then canonical)
   --bootstrap-missing-baseline  Auto-pin current snapshot when baseline is missing
   --json              Print compare payload as JSON
@@ -157,12 +162,27 @@ export function findStrictProfile(snapshot: Snapshot): RankedProfile {
   );
 }
 
-export function toBaseline(snapshot: Snapshot, source: string): PinnedBaseline {
+function defaultPinnedBy(): string {
+  return String(Bun.env.GITHUB_ACTOR || Bun.env.USER || 'unknown').trim() || 'unknown';
+}
+
+export function toBaseline(
+  snapshot: Snapshot,
+  source: string,
+  metadata?: {
+    rationale?: string;
+    pinnedBy?: string;
+    previousSnapshotId?: string | null;
+  }
+): PinnedBaseline {
   const strict = findStrictProfile(snapshot);
   return {
     version: 1,
     pinnedAt: new Date().toISOString(),
     source,
+    rationale: String(metadata?.rationale || 'bootstrap_missing_baseline').trim() || 'bootstrap_missing_baseline',
+    pinnedBy: String(metadata?.pinnedBy || defaultPinnedBy()).trim() || 'unknown',
+    previousSnapshotId: metadata?.previousSnapshotId ?? null,
     snapshot: {
       id: String(snapshot.id || ''),
       createdAt: String(snapshot.createdAt || ''),
@@ -286,6 +306,8 @@ export function parseArgs(argv: string[]): {
   mode: 'pin' | 'compare';
   fromPath: string;
   outPath: string;
+  rationale: string;
+  pinnedBy: string;
   baselinePath?: string;
   bootstrapMissingBaseline: boolean;
   json: boolean;
@@ -302,6 +324,8 @@ export function parseArgs(argv: string[]): {
 
   let fromPath = resolve('reports/search-benchmark/latest.json');
   let outPath = resolve('.search/search-benchmark-pinned-baseline.json');
+  let rationale = '';
+  let pinnedBy = defaultPinnedBy();
   let baselinePath: string | undefined;
   let bootstrapMissingBaseline = false;
   let json = false;
@@ -316,6 +340,16 @@ export function parseArgs(argv: string[]): {
     }
     if (arg === '--out') {
       outPath = resolve(rest[i + 1] || outPath);
+      i += 1;
+      continue;
+    }
+    if (arg === '--rationale') {
+      rationale = String(rest[i + 1] || '').trim();
+      i += 1;
+      continue;
+    }
+    if (arg === '--pinned-by') {
+      pinnedBy = String(rest[i + 1] || '').trim() || pinnedBy;
       i += 1;
       continue;
     }
@@ -342,15 +376,32 @@ export function parseArgs(argv: string[]): {
     }
   }
 
-  return { mode, fromPath, outPath, baselinePath, bootstrapMissingBaseline, json, strict };
+  if (mode === 'pin' && !rationale) {
+    throw new Error('Missing rationale. Pass --rationale "<reason>" when pinning search benchmark baseline.');
+  }
+
+  return { mode, fromPath, outPath, rationale, pinnedBy, baselinePath, bootstrapMissingBaseline, json, strict };
 }
 
-export async function pin(fromPath: string, outPath: string): Promise<void> {
+export async function pin(fromPath: string, outPath: string, rationale: string, pinnedBy: string): Promise<void> {
   if (!existsSync(fromPath)) {
     throw new Error(`Snapshot not found: ${fromPath}`);
   }
   const snapshot = await readJson<Snapshot>(fromPath);
-  const baseline = toBaseline(snapshot, fromPath);
+  let previousSnapshotId: string | null = null;
+  if (existsSync(outPath)) {
+    try {
+      const existing = await readJson<PinnedBaseline>(outPath);
+      previousSnapshotId = existing?.snapshot?.id ? String(existing.snapshot.id) : null;
+    } catch {
+      previousSnapshotId = null;
+    }
+  }
+  const baseline = toBaseline(snapshot, fromPath, {
+    rationale,
+    pinnedBy,
+    previousSnapshotId,
+  });
   if (!baseline.snapshot.id) {
     throw new Error('Snapshot missing id; cannot pin baseline');
   }
@@ -360,6 +411,7 @@ export async function pin(fromPath: string, outPath: string): Promise<void> {
 
   console.log(`[search:bench:pin] baseline saved: ${outPath}`);
   console.log(`[search:bench:pin] snapshot=${baseline.snapshot.id} pack=${baseline.snapshot.queryPack}`);
+  console.log(`[search:bench:pin] rationale="${baseline.rationale}" pinnedBy="${baseline.pinnedBy}" previous=${baseline.previousSnapshotId || 'none'}`);
   console.log(
     `[search:bench:pin] strict p95=${baseline.strict.latencyP95Ms.toFixed(2)}ms heap=${baseline.strict.peakHeapUsedMB.toFixed(2)}MB quality=${baseline.strict.qualityScore.toFixed(2)} reliability=${baseline.strict.reliabilityPct.toFixed(2)}`
   );
@@ -408,8 +460,14 @@ async function compareResolved(
     const bootstrapPath = baselinePathInput
       ? baselinePath
       : buildPackBaselinePath(outPath, current.snapshot.queryPack);
+    const bootstrapped: PinnedBaseline = {
+      ...current,
+      rationale: 'bootstrap_missing_baseline',
+      pinnedBy: defaultPinnedBy(),
+      previousSnapshotId: null,
+    };
     await mkdir(dirname(bootstrapPath), { recursive: true });
-    await writeFile(bootstrapPath, `${JSON.stringify(current, null, 2)}\n`, 'utf8');
+    await writeFile(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`, 'utf8');
     baselinePath = bootstrapPath;
     console.warn(`[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`);
   }
@@ -554,7 +612,7 @@ export async function main(): Promise<void> {
   if (!args) return;
 
   if (args.mode === 'pin') {
-    await pin(args.fromPath, args.outPath);
+    await pin(args.fromPath, args.outPath, args.rationale, args.pinnedBy);
     return;
   }
 

@@ -68,4 +68,61 @@ describe('search benchmark pin', () => {
     const baseline = JSON.parse(baselineRaw) as { snapshot: { queryPack: string } };
     expect(baseline.snapshot.queryPack).toBe('core_delivery_wide');
   });
+
+  test('pin mode requires rationale metadata', async () => {
+    const dir = await mkdtemp(join(tmpdir(), 'search-bench-pin-cli-'));
+    await mkdir(dir, { recursive: true });
+    const from = join(dir, 'latest.json');
+    const out = join(dir, 'search-benchmark-pinned-baseline.core_delivery_wide.json');
+
+    await writeFile(
+      from,
+      JSON.stringify(
+        {
+          id: 'snap-pin-1',
+          createdAt: new Date().toISOString(),
+          queryPack: 'core_delivery_wide',
+          rankedProfiles: [{ profile: 'strict', latencyP95Ms: 123, qualityScore: 90, avgUniqueFamilyPct: 70 }],
+          coverage: { files: 1, lines: 10, uniqueFiles: 1, uniqueLines: 10 },
+        },
+        null,
+        2
+      ),
+      'utf8'
+    );
+
+    const failRun = Bun.spawnSync(
+      ['bun', 'run', 'scripts/search-benchmark-pin.ts', 'pin', '--from', from, '--out', out],
+      { cwd: process.cwd(), stdout: 'pipe', stderr: 'pipe' }
+    );
+    expect(failRun.exitCode).toBeGreaterThan(0);
+
+    const okRun = Bun.spawnSync(
+      [
+        'bun',
+        'run',
+        'scripts/search-benchmark-pin.ts',
+        'pin',
+        '--from',
+        from,
+        '--out',
+        out,
+        '--rationale',
+        'refresh-baseline-after-threshold-update',
+        '--pinned-by',
+        'ci-bot',
+      ],
+      { cwd: process.cwd(), stdout: 'pipe', stderr: 'pipe' }
+    );
+    expect(okRun.exitCode).toBe(0);
+
+    const pinned = JSON.parse(await readFile(out, 'utf8')) as {
+      rationale: string;
+      pinnedBy: string;
+      previousSnapshotId: string | null;
+    };
+    expect(pinned.rationale).toBe('refresh-baseline-after-threshold-update');
+    expect(pinned.pinnedBy).toBe('ci-bot');
+    expect(pinned.previousSnapshotId).toBe(null);
+  });
 });

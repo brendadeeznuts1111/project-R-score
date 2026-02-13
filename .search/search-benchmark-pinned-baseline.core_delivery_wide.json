@@ -1,18 +1,21 @@
 {
   "version": 1,
-  "pinnedAt": "2026-02-13T04:44:17.945Z",
+  "pinnedAt": "2026-02-13T05:10:16.567Z",
   "source": "/Users/nolarose/Projects/reports/search-benchmark/latest.json",
+  "rationale": "promote-core-wide-baseline-after-governance-hardening",
+  "pinnedBy": "nolarose",
+  "previousSnapshotId": "2026-02-13T04-43-57-720Z",
   "snapshot": {
-    "id": "2026-02-13T04-43-57-720Z",
-    "createdAt": "2026-02-13T04:43:57.720Z",
+    "id": "2026-02-13T05-02-38-113Z",
+    "createdAt": "2026-02-13T05:02:38.113Z",
     "queryPack": "core_delivery_wide"
   },
   "strict": {
-    "latencyP95Ms": 421.25,
-    "peakHeapUsedMB": 37.22,
-    "peakRssMB": 179.23,
-    "qualityScore": 77.7,
-    "reliabilityPct": 47.98
+    "latencyP95Ms": 394.23,
+    "peakHeapUsedMB": 38.64,
+    "peakRssMB": 179.92,
+    "qualityScore": 83.76,
+    "reliabilityPct": 53.59
   },
   "coverage": {
     "files": 363,
