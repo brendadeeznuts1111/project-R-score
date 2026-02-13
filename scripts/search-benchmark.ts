@@ -59,6 +59,41 @@ const FALLBACK_CORE_QUERIES = [
 
 type QueryPacks = Record<string, string[]>;
 
+export const QUALITY_SCORE_WEIGHTS = Object.freeze({
+  signalPct: 0.45,
+  uniqueFamilyPct: 0.35,
+  slopPenalty: 0.15,
+  duplicatePenalty: 0.05,
+});
+
+export type QualityScoreInputs = {
+  avgSignalPct: number;
+  avgUniqueFamilyPct: number;
+  avgSlopPct: number;
+  avgDuplicatePct: number;
+};
+
+function boundedPct(input: number): number {
+  if (!Number.isFinite(input)) return 0;
+  return Math.max(0, Math.min(100, input));
+}
+
+export function computeQualityScore(inputs: QualityScoreInputs): number {
+  const avgSignalPct = boundedPct(inputs.avgSignalPct);
+  const avgUniqueFamilyPct = boundedPct(inputs.avgUniqueFamilyPct);
+  const avgSlopPct = boundedPct(inputs.avgSlopPct);
+  const avgDuplicatePct = boundedPct(inputs.avgDuplicatePct);
+
+  // Higher is better.
+  const qualityScoreRaw =
+    avgSignalPct * QUALITY_SCORE_WEIGHTS.signalPct +
+    avgUniqueFamilyPct * QUALITY_SCORE_WEIGHTS.uniqueFamilyPct +
+    (100 - avgSlopPct) * QUALITY_SCORE_WEIGHTS.slopPenalty +
+    (100 - avgDuplicatePct) * QUALITY_SCORE_WEIGHTS.duplicatePenalty;
+
+  return Number(Math.max(0, Math.min(100, qualityScoreRaw)).toFixed(2));
+}
+
 const DEFAULT_QUERY_PACKS: QueryPacks = {
   core_delivery: [...FALLBACK_CORE_QUERIES],
   core_delivery_wide: [
@@ -441,13 +476,12 @@ function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]
   const avgUniqueFamilyPct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.uniqueFamilies / q.total) * 100 : 0), 0) / n).toFixed(2));
   const avgMirrorsPerHit = Number((querySummaries.reduce((a, q) => a + q.avgMirrors, 0) / n).toFixed(2));
 
-  // Higher is better.
-  const qualityScoreRaw =
-    avgSignalPct * 0.45 +
-    avgUniqueFamilyPct * 0.35 +
-    (100 - avgSlopPct) * 0.15 +
-    (100 - avgDuplicatePct) * 0.05;
-  const qualityScore = Number(qualityScoreRaw.toFixed(2));
+  const qualityScore = computeQualityScore({
+    avgSignalPct,
+    avgUniqueFamilyPct,
+    avgSlopPct,
+    avgDuplicatePct,
+  });
 
   return {
     profile: profile.id,

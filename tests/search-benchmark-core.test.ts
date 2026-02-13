@@ -1,5 +1,7 @@
 import { describe, expect, test } from 'bun:test';
 import {
+  QUALITY_SCORE_WEIGHTS,
+  computeQualityScore,
   extractFirstJsonObject,
   parseArgs,
   normalizeQueryPacks,
@@ -47,5 +49,62 @@ describe('search benchmark core helpers', () => {
     expect(args.queryTimeoutMs).toBe(12000);
     expect(args.queryRetries).toBe(3);
     expect(args.concurrency).toBe(32);
+  });
+
+  test('quality score weights sum to 1.0', () => {
+    const sum = QUALITY_SCORE_WEIGHTS.signalPct +
+      QUALITY_SCORE_WEIGHTS.uniqueFamilyPct +
+      QUALITY_SCORE_WEIGHTS.slopPenalty +
+      QUALITY_SCORE_WEIGHTS.duplicatePenalty;
+    expect(sum).toBe(1);
+  });
+
+  test('quality score increases with stronger signal and family coverage', () => {
+    const low = computeQualityScore({
+      avgSignalPct: 70,
+      avgUniqueFamilyPct: 40,
+      avgSlopPct: 10,
+      avgDuplicatePct: 5,
+    });
+    const high = computeQualityScore({
+      avgSignalPct: 85,
+      avgUniqueFamilyPct: 55,
+      avgSlopPct: 10,
+      avgDuplicatePct: 5,
+    });
+    expect(high).toBeGreaterThan(low);
+  });
+
+  test('quality score decreases with higher slop and duplicates', () => {
+    const clean = computeQualityScore({
+      avgSignalPct: 85,
+      avgUniqueFamilyPct: 55,
+      avgSlopPct: 5,
+      avgDuplicatePct: 2,
+    });
+    const noisy = computeQualityScore({
+      avgSignalPct: 85,
+      avgUniqueFamilyPct: 55,
+      avgSlopPct: 20,
+      avgDuplicatePct: 10,
+    });
+    expect(noisy).toBeLessThan(clean);
+  });
+
+  test('quality score is clamped to 0..100 for invalid metric inputs', () => {
+    const low = computeQualityScore({
+      avgSignalPct: -10,
+      avgUniqueFamilyPct: -10,
+      avgSlopPct: 500,
+      avgDuplicatePct: 500,
+    });
+    const high = computeQualityScore({
+      avgSignalPct: 300,
+      avgUniqueFamilyPct: 300,
+      avgSlopPct: -200,
+      avgDuplicatePct: -200,
+    });
+    expect(low).toBeGreaterThanOrEqual(0);
+    expect(high).toBeLessThanOrEqual(100);
   });
 });
