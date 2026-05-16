@@ -2,9 +2,30 @@
   "name": "factorywager-enterprise",
   "version": "5.1.2",
   "description": "🚀 FactoryWager Enterprise Platform - Bun Native High-Performance Applications",
-  "workspaces": [
-    "packages/*"
-  ],
+  "workspaces": {
+    "packages": [
+      "packages/*",
+
+      // Pilot categories (expand gradually)
+      "projects/games/*",
+      "projects/tools/*",
+
+      // Large apps - their internal packages
+      "kimiremote/packages/*",
+      "factorywager/registry/packages/*",
+
+      // Explicit exclusions
+      "!scratch/**",
+      "!archive/**"
+    ]
+  },
+
+  // Bun Catalogs - centralized dependency versions (pilot)
+  "catalog": {
+    "typescript": "^5.6.3",
+    "@types/bun": "^1.2.0",
+    "zod": "^3.23.0"
+  },
   "homepage": "https://factory-wager.com",
   "repository": {
     "type": "git",
@@ -1570,6 +1591,47 @@
   "status": "active",
   "type": "module",
   "scripts": {
+    // ============================================
+    // Monorepo / Workspace Commands
+    // Uses Bun's --filter for powerful glob + exclusion patterns
+    // See: https://bun.sh/docs/install/workspaces#filter
+    // ============================================
+
+    // Full install for everything in the workspace
+    "install:all": "bun install",
+
+    // Install by category using globs
+    "install:packages": "bun install --filter './packages/*'",
+    "install:projects": "bun install --filter './projects/*'",
+
+    // Install projects while excluding certain categories (example of negation)
+    // Equivalent pattern: bun install --filter "./projects/*" --filter "!./projects/experimental/*"
+    "install:projects:except:experimental": "bun install --filter './projects/*' --filter '!./projects/experimental/*'",
+
+    // Install internal packages of large apps
+    "install:kimiremote": "bun install --filter './kimiremote/packages/*'",
+    "install:factorywager": "bun install --filter './factorywager/registry/packages/*'",
+
+    // Run tasks across all workspace packages
+    "build:all": "bun run --filter '*' build",
+    "test:workspaces": "bun run --filter '*' test",
+    "lint:all": "bun run --filter '*' lint",
+
+    // Run tasks only on packages that changed since last commit (very useful in CI)
+    "build:affected": "bun run --filter '...' build",
+    "test:affected": "bun run --filter '...' test",
+    "lint:affected": "bun run --filter '...' lint",
+
+    // Development helpers
+    "dev:projects": "bun run --filter './projects/*' dev",
+
+    // Workspace validation
+    "validate:workspaces": "bun scripts/validate-workspaces.ts",
+    "check:workspaces": "bun scripts/validate-workspaces.ts",  // deprecated (use validate:workspaces instead)
+
+    // ============================================
+    // Existing Scripts
+    // ============================================
     "bun-docs": "bun run projects/experimental/bun-docs/generate.ts",
     "dev": "bun run --watch server/server-enhanced.ts",
     "start": "bun run server/server-enhanced.ts",
@@ -2157,6 +2219,8 @@
     "eslint-plugin-import": "^2.32.0",
     "eslint-plugin-security": "^3.0.1",
     "jiti": "^2.6.1",
+    "micromatch": "^4.0.8",
+    "picocolors": "^1.1.1",
     "typescript-eslint": "^8.55.0"
   },
   "private": "false",

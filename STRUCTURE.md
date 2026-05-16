@@ -35,17 +35,17 @@ Projects/
 │   ├── dashboards/          # 20+ monitoring & registry dashboards
 │   ├── registry/            # projects.html + projects-registry.json (moved Phase 3)
 │   └── badges/              # Status badge gallery + generated SVGs (moved Phase 3)
-├── scratch/                 # Experimental / throwaway work (Bun v1.3.9 playgrounds; old experiments archived to archive/scratch/)
+├── scratch/                 # Experimental / throwaway work (Bun v1.3.9 playgrounds; heavily curated in Phase 4 — many subfolders archived)
 ├── scripts/                 # 200+ automation, CI, generation, and analysis scripts (heart of ops)
 ├── server/                  # Platform server implementations (p2p-proxy, payment webhooks, etc.)
 ├── services/                # Core services (fetch, monitoring, ab-testing, rss)
 ├── src/                     # Core platform source (build tools, protocol, fetch wrappers, etc.)
 ├── tests/                   # Top-level test suites
-├── tools/                   # 70+ developer tools (cli/, bin/, benchmarks/, validators, profilers, scanners — Phase 4 consolidation)
+├── tools/                   # 70+ developer tools (cli/, bin/, benchmarks/ now consolidated here — Phase 4)
 ├── utils/                   # Shared utilities
 ├── workers/                 # Cloudflare / background workers
 ├── bunfig*.toml             # Bun configuration (multiple for different environments)
-├── package.json             # Root package + 100+ scripts
+├── package.json             # Root package + monorepo scripts (install:*, build:affected, validate:workspaces, etc.)
 ├── tsconfig*.json           # Monorepo TypeScript configs (base, lint, ci, check)
 ├── wrangler.toml            # Cloudflare Workers config
 ├── ROOT_CLEANUP_SUMMARY.md  # History of Phase 1 & 2 organization
@@ -56,7 +56,12 @@ Projects/
 ## Key Navigation Rules
 
 - **Want to run something?** Look in `package.json` scripts first (`bun run <name>`).
-- **Need a CLI?** `tools/cli/` (fw-cli is the main one) or `tools/bin/`.
+- **Monorepo / Workspace commands?** Use:
+  - `bun run validate:workspaces` — Validate workspace coverage (`check:workspaces` is the deprecated alias)
+  - `bun run build:affected` / `test:affected` — Only changed packages (`--filter '...'`)
+  - `bun run install:projects` / `install:packages` — Scoped installs
+  - See root `package.json` scripts for the full list (powered by Bun `--filter`).
+- **Need a CLI?** `tools/cli/` (fw-cli is the main one) or `tools/bin/`. The `codesearch-cli.ts` now supports `--audit-paths --from <old> --to <new>` for safe refactoring.
 - **Looking for demos?** Start in `examples/`. Most live in `examples/demos/`.
 - **Scripts & automation?** `scripts/` is the central nervous system.
 - **Deep Bun internals / experiments?** `scratch/bun-v1.3.9-examples/`.
@@ -69,13 +74,23 @@ Projects/
 - **Phase 1 (Feb 2026)**: 175+ loose files moved into `archive/`, `docs/*`, `examples/demos/`, `public/dashboards/`, `scripts/`, `data/`, etc.
 - **Phase 2 (May 2026)**: `badges/` → `public/badges/`, `build/`+`dist/` cleaned, root `README.md` modernized, `STRUCTURE.md` created.
 - **Phase 3**: `examples/` root cleaned (50+ demos moved into `demos/`), `projects.html` + `projects-registry.json` → `public/registry/`.
-- **Phase 4 (current)**: Consolidated `cli/` + `benchmarks/` + `bin/` under `tools/`, archived remaining `scratch/bun-parallel-test/` and playground-web experiments, removed stale `configs/cookie-crc32/`, `deployment/`, `security/` from root. Root non-dot directory count reduced further.
+- **Phase 4 (current)**: 
+  - Consolidated `cli/`, `bin/`, and `benchmarks/` under `tools/`.
+  - Aggressively curated `scratch/bun-v1.3.9-examples/` (archived `esm-bytecode/`, `playground-web/`, and 10 subfolders from `advanced/`).
+  - Removed `configs/`, `deployment/`, `security/`, `types/` from root.
+  - Expanded root `workspaces` (pilot) + added Bun Catalogs.
+  - Added root monorepo scripts (`install:*`, `build:affected`, `test:affected`, etc.).
+  - Created `validate:workspaces` validator (with `check:workspaces` as deprecated alias) + enhanced `codesearch-cli.ts` with `--audit-paths`.
+  - Root non-dot directories reduced to 26.
 
 ## Future Candidates
 
-- Further curation of `scratch/` (ongoing; bun-parallel-test/ and old playground-web now archived).
-- Evaluate whether large root platforms (`kimiremote/`, `factorywager/`, `barbershop/`, `peer/`) should stay at root or move under `projects/` or a new `platforms/` bucket in a later phase.
-- Cookie-crc32 example + any remaining per-feature configs fully under `examples/` or `config/`.
-- `.github/` and agent skills in `.agents/` are already well placed.
+- Complete aggressive curation of `scratch/bun-v1.3.9-examples/` (remaining: `playground/`, `parallel-scripts/`, `benchmarks/`, `advanced/`).
+- Expand root workspaces pilot (`projects/games/*`, `projects/tools/*`) to more categories in `projects/`.
+- Full Turborepo integration for caching and task orchestration across workspaces.
+- Adopt Bun Catalogs more broadly + Renovate/Dependabot automation.
+- Add `validate:workspaces` (or the alias `check:workspaces`) to CI as a permanent guardrail.
+- Evaluate long-term strategy for `kimiremote/` and `factorywager/` (nested workspaces vs root-managed).
+- Final cleanup of `archive/` (many packages still have `package.json`).
 
 Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.

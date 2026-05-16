@@ -56,6 +56,14 @@ const rssXml = await rssResponse.text();
 ```
 
 ## Key Commands (from package.json)
+
+**Monorepo / Workspace Commands**
+- `bun run validate:workspaces` — Validate that every `package.json` is covered by the root workspace globs (`check:workspaces` is the deprecated alias)
+- `bun run install:projects` — Install only packages under `projects/*`
+- `bun run build:affected` / `test:affected` — Run only on packages changed since last commit (powered by Bun `--filter '...'`)
+- `bun run install:all` / `build:all` / `test:workspaces` — Run across the entire workspace
+
+**Platform Commands**
 - `bun run dev` — Watch server (server/server-enhanced.ts)
 - `bun run start:p2p-proxy` — Various P2P/proxy servers
 - `bun run dashboard` — MCP overview dashboard
@@ -68,4 +76,6 @@ The original documentation portal endpoints (see history in git). For current se
 
 ## Project Policies
 - Import boundaries and allowed package roots: `docs/IMPORT_BOUNDARIES.md`
-- Root organization: see ROOT_CLEANUP_SUMMARY.md (175+ files organized, ongoing enhancements)
+- Root organization: see `STRUCTURE.md` and `ROOT_CLEANUP_SUMMARY.md`
+- Workspace hygiene: `bun run validate:workspaces` (validates all packages are covered by root workspaces; `check:workspaces` is the deprecated alias)
+- Monorepo tooling: Use `--filter` patterns and `build:affected` / `test:affected` for efficient development
