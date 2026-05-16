@@ -46,7 +46,7 @@ const DEFAULT_CONFIG: CookieConfig = {
 async function loadConfig(): Promise<CookieConfig> {
   const env = Bun.env.NODE_ENV || 'development';
   try {
-    const mod = await import(`../../configs/cookie-crc32/${env}.yaml`);
+    const mod = await import(`../../config/cookie-crc32/${env}.yaml`);
     const yaml = mod.default as Partial<CookieConfig>;
     // Deep merge with defaults so missing keys don't break
     return {
@@ -788,7 +788,7 @@ function cmdVerify(cookie: string): void {
 
 async function cmdConfig(config: CookieConfig): Promise<void> {
   const env = Bun.env.NODE_ENV || 'development';
-  const configRelPath = `../../configs/cookie-crc32/${env}.yaml`;
+  const configRelPath = `../../config/cookie-crc32/${env}.yaml`;
   let resolvedConfigPath: string;
   try {
     resolvedConfigPath = Bun.resolveSync(configRelPath, import.meta.dir);
@@ -800,7 +800,7 @@ async function cmdConfig(config: CookieConfig): Promise<void> {
   const { heapStats } = await import("bun:jsc");
   const heap = heapStats();
 
-  print(styled(`Config: ${env}`, 'accent') + ` (configs/cookie-crc32/${env}.yaml)`);
+  print(styled(`Config: ${env}`, 'accent') + ` (config/cookie-crc32/${env}.yaml)`);
   console.log(Bun.inspect.table([
     { Key: 'Bun.version', Value: Bun.version },
     { Key: 'Bun.revision', Value: Bun.revision.slice(0, 12) },

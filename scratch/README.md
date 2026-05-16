@@ -6,30 +6,31 @@ Development playground and experimental code for Bun features and testing.
 
 ```
 scratch/
-├── bun-v1.3.9-examples/         # Comprehensive v1.3.9 examples
-│   ├── README.md                   # Main documentation
-│   ├── COMPREHENSIVE-GUIDE.md      # Detailed feature guide
-│   ├── QUICK-REFERENCE.md          # Quick reference card
-│   ├── benchmarks/                 # Performance benchmarks
-│   ├── advanced/                   # Advanced usage patterns
-│   ├── parallel-scripts/           # Script orchestration demos
-│   ├── esm-bytecode/               # ESM bytecode examples
-│   ├── profiling/                  # CPU profiling demos
-│   ├── http2-proxy/                # HTTP/2 and proxy demos
-│   ├── playground/                 # Interactive playground
-│   └── tests/                      # Test examples
+├── bun-v1.3.9-examples/            # Primary active area for Bun v1.3.9 experimentation
+│   ├── README.md
+│   ├── COMPREHENSIVE-GUIDE.md
+│   ├── QUICK-REFERENCE.md
+│   ├── benchmarks/
+│   ├── advanced/
+│   ├── parallel-scripts/
+│   ├── esm-bytecode/
+│   ├── profiling/
+│   ├── http2-proxy/
+│   ├── playground/
+│   └── tests/
 │
-├── bun-parallel-test/           # Parallel execution testing
-├── bun-playground/              # General playground
-├── bun-browser-playground/      # Browser-specific testing
-└── bun-v1.3.9-*.md             # Release notes and guides
+├── bun-v1.3.9-practical-examples/  # Smaller practical examples
+│
+└── bun-v1.3.9-*.md                 # Release notes and migration guides
 ```
+
+**Archived experiments** live in `archive/scratch/` (e.g. `bun-parallel-test/`, `f402-preview/`).
 
 ## 🎯 Main Directories
 
 ### bun-v1.3.9-examples/
 
-The primary location for Bun v1.3.9 feature demonstrations:
+The **primary active** location for Bun v1.3.9 feature demonstrations and experimentation.
 
 ```bash
 cd scratch/bun-v1.3.9-examples
@@ -37,38 +38,26 @@ cd scratch/bun-v1.3.9-examples
 # Run interactive playground
 bun run playground/playground.ts
 
-# Run benchmarks
+# Run all demos
+bun run playground/playground.ts all
+
+# Run specific benchmark
 bun run benchmarks/regex-jit-benchmark.ts
-
-# Run tests
-bun test tests/mock-auto-cleanup.test.ts
-
-# Build ESM bytecode example
-cd esm-bytecode && bun run build:all
 ```
 
-### bun-parallel-test/
+See `bun-v1.3.9-examples/README.md` and `COMPREHENSIVE-GUIDE.md` for detailed usage.
 
-Testing parallel script execution and related features:
+### Archived Experiments
 
+Old or inactive experiments are moved to `archive/scratch/` to keep the root `scratch/` directory focused.
+
+Current archived items:
+- `bun-parallel-test/` — Parallel execution testing framework
+- `f402-preview/` — Early Fantasy402 local preview
+
+To explore archived work:
 ```bash
-cd scratch/bun-parallel-test
-
-# Run test runner
-bun run test-runner.ts
-
-# Run examples
-bun run examples/abort-signal-perf.ts
-bun run examples/markdown-api.ts
-```
-
-### bun-playground/
-
-General Bun feature experimentation:
-
-```bash
-cd scratch/bun-playground
-bun run playground.ts
+cd archive/scratch
 ```
 
 ## 🚀 Quick Start

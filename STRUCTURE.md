@@ -14,15 +14,10 @@ Projects/
 ├── assets/                  # Logos, charts, static images
 ├── badges/                  # (moved) → now at public/badges/
 ├── barbershop/              # Bun-native barbershop demo app (real-time dashboard, WS, R2)
-├── benchmarks/              # Performance benchmarks (under tools/benchmarks/)
-├── bin/                     # Custom binaries & small CLIs (now under tools/bin/)
-├── cli/                     # High-level CLI tools (now under tools/cli/)
-├── config/                  # Domain branding, shared config
-├── configs/                 # Per-feature config (cookie-crc32, etc.)
+├── config/                  # Domain branding, shared config + per-feature (cookie-crc32, etc.)
 ├── dashboard/               # Various dashboard servers & UIs (MCP overview, p2p, profile, etc.)
 ├── data/                    # Exports, health checks, search results, conditional data
 ├── database/                # SQLite telemetry, sessions, unified DBs
-├── deployment/              # Deploy scripts & readiness matrix (referenced by package.json)
 ├── docs/                    # Massive documentation tree (bun-analysis, wiki, error-handling, etc.)
 ├── examples/                # Runnable demos & Bun feature showcases
 │   ├── demos/               # Bulk of one-off demos (organized Phase 3)
@@ -40,14 +35,13 @@ Projects/
 │   ├── dashboards/          # 20+ monitoring & registry dashboards
 │   ├── registry/            # projects.html + projects-registry.json (moved Phase 3)
 │   └── badges/              # Status badge gallery + generated SVGs (moved Phase 3)
-├── scratch/                 # Experimental / throwaway work (Bun v1.3.9 playgrounds, parallel scripts, etc.)
+├── scratch/                 # Experimental / throwaway work (Bun v1.3.9 playgrounds; old experiments archived to archive/scratch/)
 ├── scripts/                 # 200+ automation, CI, generation, and analysis scripts (heart of ops)
-├── security/                # Security posture data + related scripts
 ├── server/                  # Platform server implementations (p2p-proxy, payment webhooks, etc.)
 ├── services/                # Core services (fetch, monitoring, ab-testing, rss)
 ├── src/                     # Core platform source (build tools, protocol, fetch wrappers, etc.)
 ├── tests/                   # Top-level test suites
-├── tools/                   # 70+ developer tools, validators, profilers, scanners
+├── tools/                   # 70+ developer tools (cli/, bin/, benchmarks/, validators, profilers, scanners — Phase 4 consolidation)
 ├── utils/                   # Shared utilities
 ├── workers/                 # Cloudflare / background workers
 ├── bunfig*.toml             # Bun configuration (multiple for different environments)
@@ -74,13 +68,14 @@ Projects/
 
 - **Phase 1 (Feb 2026)**: 175+ loose files moved into `archive/`, `docs/*`, `examples/demos/`, `public/dashboards/`, `scripts/`, `data/`, etc.
 - **Phase 2 (May 2026)**: `badges/` → `public/badges/`, `build/`+`dist/` cleaned, root `README.md` modernized, `STRUCTURE.md` created.
-- **Phase 3 (current)**: `examples/` root cleaned (50+ demos moved into `demos/`), `projects.html` + `projects-registry.json` → `public/registry/`.
+- **Phase 3**: `examples/` root cleaned (50+ demos moved into `demos/`), `projects.html` + `projects-registry.json` → `public/registry/`.
+- **Phase 4 (current)**: Consolidated `cli/` + `benchmarks/` + `bin/` under `tools/`, archived remaining `scratch/bun-parallel-test/` and playground-web experiments, removed stale `configs/cookie-crc32/`, `deployment/`, `security/` from root. Root non-dot directory count reduced further.
 
 ## Future Candidates
 
-- Further curation of `scratch/` (move very old experiments to `archive/scratch/`).
-- Possible consolidation of cookie-related demos.
-- Deeper `tools/` (incl. `cli/`) vs `scripts/` boundaries.
+- Further curation of `scratch/` (ongoing; bun-parallel-test/ and old playground-web now archived).
+- Evaluate whether large root platforms (`kimiremote/`, `factorywager/`, `barbershop/`, `peer/`) should stay at root or move under `projects/` or a new `platforms/` bucket in a later phase.
+- Cookie-crc32 example + any remaining per-feature configs fully under `examples/` or `config/`.
 - `.github/` and agent skills in `.agents/` are already well placed.
 
 Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.
