@@ -1,0 +1,14 @@
+{
+  "name": "bun-docs",
+  "version": "0.1.0",
+  "description": "Beautiful documentation dashboard for all of Bun, generated with bun build",
+  "type": "module",
+  "scripts": {
+    "generate": "bun run generate.ts",
+    "serve": "bun --hot --watch dist/bun-docs.html",
+    "build": "bun run generate"
+  },
+  "devDependencies": {
+    "bun-types": "latest"
+  }
+}

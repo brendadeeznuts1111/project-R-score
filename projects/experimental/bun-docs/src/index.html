@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bun Docs • Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: Inter, system-ui, sans-serif; }
+    .doc-link { transition: all 0.1s ease; }
+    .doc-link:hover { transform: translateX(3px); background: #1f2533; }
+    .category-header { position: sticky; top: 0; background: #0f1117; z-index: 20; }
+    .toc-item { transition: all 0.1s ease; }
+    .toc-item:hover { background: #1f2533; }
+    .toc-item.active { background: #312e81; color: #c7d2fe; border-left: 3px solid #6366f1; }
+  </style>
+</head>
+<body class="bg-[#0f1117] text-slate-200">
+  <div class="max-w-[1480px] mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-8 pt-8 pb-6 border-b border-slate-800">
+      <div class="flex items-center gap-x-4">
+        <div class="w-11 h-11 bg-yellow-500 rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-book text-black text-3xl"></i>
+        </div>
+        <div>
+          <h1 class="text-3xl font-semibold tracking-tight">Bun Documentation</h1>
+          <p class="text-slate-400 text-sm">Complete index • <span id="total-count">315</span> pages • Powered by <code>bun build</code></p>
+        </div>
+      </div>
+      
+      <div class="flex items-center gap-x-3">
+        <div id="last-updated" class="text-xs text-slate-500 mono px-3 py-1.5 bg-[#161b24] rounded-2xl border border-slate-800"></div>
+        <a href="https://bun.com/docs" target="_blank" 
+           class="inline-flex items-center gap-x-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-2xl text-sm transition-colors">
+          <i class="fa-solid fa-external-link-alt"></i>
+          <span>Official Site</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="flex gap-6 px-8 pt-6">
+      <!-- Sidebar: Table of Contents -->
+      <div class="w-72 flex-shrink-0 hidden lg:block">
+        <div class="sticky top-6">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="font-semibold text-sm tracking-wider text-slate-400">TABLE OF CONTENTS</div>
+          </div>
+          <div id="toc-container" class="bg-[#161b24] border border-slate-800 rounded-2xl p-2 max-h-[calc(100vh-200px)] overflow-auto text-sm">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 min-w-0">
+        <!-- Controls -->
+        <div class="flex flex-col md:flex-row gap-4 mb-6">
+          <!-- Search -->
+          <div class="relative flex-1">
+            <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-500"></i>
+            <input id="search-input" 
+                   type="text" 
+                   placeholder="Search titles, descriptions, or paths... (press / to focus)" 
+                   class="w-full pl-11 pr-4 py-3 bg-[#161b24] border border-slate-700 focus:border-yellow-500 rounded-2xl text-sm outline-none"
+                   oninput="filterAndRender()">
+          </div>
+
+          <!-- Bundler Toggle -->
+          <div class="flex items-center gap-x-2 bg-[#161b24] border border-slate-700 rounded-2xl px-2">
+            <label class="flex items-center gap-x-2 cursor-pointer px-3 py-2">
+              <input type="checkbox" id="bundler-only" class="w-4 h-4 accent-yellow-500" onchange="filterAndRender()">
+              <span class="text-sm font-medium">Only show Bundler docs</span>
+            </label>
+          </div>
+
+          <select id="sort-select" 
+                  class="bg-[#161b24] border border-slate-700 rounded-2xl px-4 py-3 text-sm focus:outline-none"
+                  onchange="filterAndRender()">
+            <option value="size-desc">Size (Largest)</option>
+            <option value="size-asc">Size (Smallest)</option>
+            <option value="name-asc">Name (A-Z)</option>
+            <option value="name-desc">Name (Z-A)</option>
+          </select>
+        </div>
+
+        <!-- Stats Row -->
+        <div class="flex gap-4 mb-6 text-sm">
+          <div class="bg-[#161b24] border border-slate-800 rounded-2xl px-4 py-2">
+            <span class="text-slate-400">Showing</span> 
+            <span id="showing-count" class="font-semibold text-white">315</span> 
+            <span class="text-slate-400">pages</span>
+          </div>
+          <div id="bundler-stats" class="bg-yellow-900/20 border border-yellow-800/50 text-yellow-400 rounded-2xl px-4 py-2 hidden">
+            <i class="fa-solid fa-hammer mr-1"></i>
+            <span id="bundler-count"></span> Bundler pages
+          </div>
+        </div>
+
+        <!-- Results -->
+        <div id="results-container" class="space-y-8">
+          <!-- Populated dynamically by JS -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    // This will be replaced by Bun.build with actual data
+    const REGISTRY = typeof __BUN_DOCS_DATA__ !== 'undefined' 
+      ? __BUN_DOCS_DATA__ 
+      : { pages: [], meta: {} };
+
+    let allPages = REGISTRY.pages || [];
+    let filteredPages = [...allPages];
+    let currentFilter = { search: '', bundlerOnly: false, sort: 'size-desc' };
+
+    function formatDate(iso) {
+      return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    }
+
+    function filterAndRender() {
+      const search = document.getElementById('search-input').value.toLowerCase().trim();
+      const bundlerOnly = document.getElementById('bundler-only').checked;
+      const sortMode = document.getElementById('sort-select').value;
+
+      currentFilter = { search, bundlerOnly, sort: sortMode };
+
+      filteredPages = allPages.filter(p => {
+        const matchesSearch = 
+          p.title.toLowerCase().includes(search) ||
+          (p.description || '').toLowerCase().includes(search) ||
+          p.path.toLowerCase().includes(search);
+
+        const matchesBundler = !bundlerOnly || p.isBundlerRelated;
+        return matchesSearch && matchesBundler;
+      });
+
+      // Sorting
+      if (sortMode === 'size-desc') filteredPages.sort((a,b) => b.size_bytes - a.size_bytes);
+      else if (sortMode === 'size-asc') filteredPages.sort((a,b) => a.size_bytes - b.size_bytes);
+      else if (sortMode === 'name-asc') filteredPages.sort((a,b) => a.title.localeCompare(b.title));
+      else if (sortMode === 'name-desc') filteredPages.sort((a,b) => b.title.localeCompare(a.title));
+
+      renderResults();
+      updateStats();
+    }
+
+    function updateStats() {
+      document.getElementById('showing-count').textContent = filteredPages.length;
+      
+      const bundlerCount = filteredPages.filter(p => p.isBundlerRelated).length;
+      const statsEl = document.getElementById('bundler-stats');
+      if (document.getElementById('bundler-only').checked || bundlerCount > 0) {
+        statsEl.classList.remove('hidden');
+        document.getElementById('bundler-count').textContent = bundlerCount;
+      } else {
+        statsEl.classList.add('hidden');
+      }
+    }
+
+    function renderResults() {
+      const container = document.getElementById('results-container');
+      container.innerHTML = '';
+
+      // Group by category + subcategory for display
+      const groups = {};
+      filteredPages.forEach(p => {
+        const key = p.subcategory ? `${p.category} › ${p.subcategory}` : p.category;
+        if (!groups[key]) groups[key] = [];
+        groups[key].push(p);
+      });
+
+      const sortedKeys = Object.keys(groups).sort();
+
+      if (sortedKeys.length === 0) {
+        container.innerHTML = `
+          <div class="text-center py-12 text-slate-500">
+            <i class="fa-solid fa-search text-4xl mb-4"></i>
+            <p>No pages match your current filters.</p>
+          </div>
+        `;
+        return;
+      }
+
+      sortedKeys.forEach(key => {
+        const pagesInGroup = groups[key];
+        
+        const section = document.createElement('div');
+        section.className = 'mb-8';
+        section.innerHTML = `
+          <div class="category-header flex items-center gap-x-3 mb-3 px-1 border-b border-slate-800 pb-2">
+            <h2 class="text-lg font-semibold text-yellow-400">${key}</h2>
+            <span class="text-xs px-2.5 py-0.5 bg-yellow-900/30 text-yellow-400 rounded-full">${pagesInGroup.length}</span>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+            ${pagesInGroup.map(p => `
+              <a href="${p.url}" target="_blank" 
+                 class="doc-link group flex gap-4 p-4 bg-[#161b24] border border-slate-800 rounded-2xl hover:border-yellow-900">
+                <div class="flex-1 min-w-0">
+                  <div class="font-medium text-white group-hover:text-yellow-300">${p.title}</div>
+                  ${p.description ? `<div class="text-sm text-slate-400 mt-1 line-clamp-2">${p.description}</div>` : ''}
+                  <div class="flex items-center gap-x-2 mt-2 text-[10px] text-slate-500">
+                    <span>${p.size_human || ''}</span>
+                    ${p.isBundlerRelated ? `<span class="px-1.5 py-px bg-yellow-900/40 text-yellow-400 rounded">Bundler</span>` : ''}
+                  </div>
+                </div>
+                <i class="fa-solid fa-arrow-up-right-from-square text-slate-600 group-hover:text-yellow-400 mt-1 flex-shrink-0"></i>
+              </a>
+            `).join('')}
+          </div>
+        `;
+        container.appendChild(section);
+      });
+    }
+
+    // Build hierarchical Table of Contents
+    function buildTableOfContents() {
+      const container = document.getElementById('toc-container');
+      container.innerHTML = '';
+
+      const categoryMap = {};
+      
+      allPages.forEach(p => {
+        if (!categoryMap[p.category]) categoryMap[p.category] = { count: 0, sub: {} };
+        categoryMap[p.category].count++;
+        
+        if (p.subcategory) {
+          if (!categoryMap[p.category].sub[p.subcategory]) categoryMap[p.category].sub[p.subcategory] = 0;
+          categoryMap[p.category].sub[p.subcategory]++;
+        }
+      });
+
+      Object.keys(categoryMap).sort().forEach(cat => {
+        const data = categoryMap[cat];
+        
+        const el = document.createElement('div');
+        el.className = 'mb-1';
+        
+        let html = `
+          <div onclick="filterByCategory('${cat}')" class="toc-item flex justify-between items-center px-3 py-1.5 rounded-xl cursor-pointer text-sm">
+            <div class="font-medium">${cat}</div>
+            <div class="text-xs text-slate-500">${data.count}</div>
+          </div>
+        `;
+
+        const subs = Object.keys(data.sub);
+        if (subs.length > 0) {
+          html += `<div class="ml-4 mt-0.5 space-y-0.5">`;
+          subs.forEach(sub => {
+            html += `
+              <div onclick="filterByCategory('${cat}', '${sub}'); event.stopImmediatePropagation();" 
+                   class="toc-item flex justify-between items-center px-3 py-1 rounded-xl cursor-pointer text-xs text-slate-400 hover:text-slate-200">
+                <div>${sub}</div>
+                <div class="text-[10px]">${data.sub[sub]}</div>
+              </div>`;
+          });
+          html += `</div>`;
+        }
+
+        el.innerHTML = html;
+        container.appendChild(el);
+      });
+    }
+
+    window.filterByCategory = (cat, sub = null) => {
+      document.getElementById('search-input').value = '';
+      document.getElementById('bundler-only').checked = false;
+      
+      // Simple filter implementation
+      filteredPages = allPages.filter(p => {
+        if (p.category !== cat) return false;
+        if (sub && p.subcategory !== sub) return false;
+        return true;
+      });
+      
+      renderResults();
+      updateStats();
+    };
+
+    function init() {
+      if (!allPages.length) {
+        document.body.innerHTML = `<div class="p-8 text-center text-red-400">No documentation data found. Run <code>bun run generate</code> first.</div>`;
+        return;
+      }
+
+      document.getElementById('total-count').textContent = allPages.length;
+      
+      // Set initial last updated
+      const meta = REGISTRY.meta || {};
+      if (meta.generated_at) {
+        document.getElementById('last-updated').textContent = 
+          'Generated ' + new Date(meta.generated_at).toLocaleString();
+      }
+
+      buildTableOfContents();
+      filterAndRender();
+
+      // Keyboard support
+      document.addEventListener('keydown', e => {
+        if (e.key === '/' && document.activeElement.tagName === 'BODY') {
+          e.preventDefault();
+          document.getElementById('search-input').focus();
+        }
+      });
+    }
+
+    window.onload = init;
+  </script>
+</body>
+</html>

@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bun Docs • Dashboard</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  <style>
+    body { font-family: Inter, system_ui, sans-serif; }
+    .doc-link { transition: all 0.1s ease; }
+    .doc-link:hover { transform: translateX(3px); }
+    details summary { list-style: none; }
+    details summary::-webkit-details-marker { display: none; }
+    .toc-item { transition: background-color 0.1s ease; }
+    .toc-item:hover { background-color: #1f2533; }
+    .toc-item.active { background-color: #312e81; color: #c7d2fe; }
+
+    /* Mobile TOC drawer */
+    #toc-drawer {
+      transform: translateX(-100%);
+      transition: transform 0.3s ease;
+    }
+    #toc-drawer.open {
+      transform: translateX(0);
+    }
+  </style>
+</head>
+<body class="bg-[#0f1117] text-slate-200">
+  <div class="max-w-[1480px] mx-auto">
+    <!-- Header -->
+    <div class="flex items-center justify-between px-4 md:px-8 pt-6 pb-5 border-b border-slate-800">
+      <div class="flex items-center gap-x-3">
+        <div class="w-9 h-9 md:w-11 md:h-11 bg-yellow-500 rounded-2xl flex items-center justify-center">
+          <i class="fa-solid fa-book text-black text-2xl"></i>
+        </div>
+        <div>
+          <h1 class="text-2xl md:text-3xl font-semibold tracking-tight">Bun Documentation</h1>
+          <p class="text-slate-400 text-xs md:text-sm hidden sm:block">
+            <span id="total">0</span> pages • 
+            <span onclick="showAboutModal()" class="cursor-pointer hover:text-yellow-300 underline decoration-yellow-500/30 hover:decoration-yellow-400">
+              Generated with <code>bun build</code>
+            </span>
+          </p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-x-2">
+        <div id="last-updated" class="hidden md:block text-xs text-slate-500 mono px-3 py-1.5 bg-[#161b24] rounded-2xl border border-slate-800"></div>
+
+        <!-- About / Built with Bun -->
+        <button onclick="showAboutModal()" 
+                class="flex items-center gap-x-2 px-3 py-2 bg-[#161b24] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-2xl text-sm transition-colors">
+          <i class="fa-solid fa-info-circle text-yellow-400"></i>
+          <span class="hidden sm:inline font-medium">Built with Bun</span>
+        </button>
+        
+        <!-- Mobile TOC Toggle -->
+        <button id="toc-toggle" 
+                class="xl:hidden flex items-center gap-x-2 px-3 py-2 bg-[#161b24] border border-slate-700 rounded-2xl text-sm">
+          <i class="fa-solid fa-list"></i>
+          <span class="hidden sm:inline">TOC</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="flex gap-6 px-4 md:px-8 pt-6">
+      <!-- Desktop Sidebar TOC -->
+      <div class="w-72 flex-shrink-0 hidden xl:block">
+        <div class="sticky top-6">
+          <div class="flex items-center justify-between mb-3 px-1">
+            <div class="font-semibold text-sm tracking-wider text-slate-400">TABLE OF CONTENTS</div>
+            <button onclick="clearFilters()" 
+                    class="text-xs px-2 py-1 text-slate-400 hover:text-white transition-colors">
+              Clear
+            </button>
+          </div>
+          <div id="toc" 
+               class="bg-[#161b24] border border-slate-800 rounded-2xl p-2 max-h-[calc(100vh-220px)] overflow-auto text-sm space-y-0.5">
+            <!-- Populated by JS -->
+          </div>
+        </div>
+      </div>
+
+      <!-- Main Content -->
+      <div class="flex-1 min-w-0">
+        <!-- Controls -->
+        <div class="flex flex-col sm:flex-row gap-3 mb-6">
+          <div class="relative flex-1">
+            <i class="fa-solid fa-search absolute left-4 top-3.5 text-slate-500"></i>
+            <input id="search" 
+                   type="text" 
+                   placeholder="Search titles or descriptions..." 
+                   class="w-full pl-11 pr-4 py-3 bg-[#161b24] border border-slate-700 focus:border-yellow-500 rounded-2xl text-sm outline-none">
+          </div>
+
+          <div class="flex gap-2">
+            <label class="flex items-center gap-x-2 bg-[#161b24] border border-slate-700 rounded-2xl px-4 text-sm cursor-pointer select-none">
+              <input type="checkbox" id="only-bundler" class="accent-yellow-500">
+              <span class="whitespace-nowrap">Only Bundler</span>
+            </label>
+
+            <select id="sort" class="bg-[#161b24] border border-slate-700 rounded-2xl px-4 py-3 text-sm focus:outline-none">
+              <option value="size-desc">Size ↓</option>
+              <option value="size-asc">Size ↑</option>
+              <option value="name-asc">A-Z</option>
+              <option value="name-desc">Z-A</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="flex items-center gap-4 mb-6 text-sm">
+          <div class="bg-[#161b24] border border-slate-800 rounded-2xl px-4 py-2">
+            Showing <span id="showing-count" class="font-semibold">0</span> pages
+          </div>
+        </div>
+
+        <!-- Results Grid -->
+        <div id="results" class="grid grid-cols-1 md:grid-cols-2 gap-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile TOC Drawer -->
+  <div id="toc-drawer" 
+       class="xl:hidden fixed inset-y-0 left-0 w-72 bg-[#161b24] border-r border-slate-800 z-50 p-4 overflow-auto">
+    <div class="flex justify-between items-center mb-4">
+      <div class="font-semibold text-sm text-slate-400">TABLE OF CONTENTS</div>
+      <button id="toc-close" class="text-xl text-slate-400 hover:text-white">×</button>
+    </div>
+    <div id="toc-mobile" class="text-sm space-y-0.5">
+      <!-- Populated by JS (same as desktop TOC) -->
+    </div>
+  </div>
+
+  <!-- About / Built with Bun Modal -->
+  <div id="about-modal" class="hidden fixed inset-0 z-[100] items-center justify-center bg-black/70 p-4" onclick="hideAboutModal()">
+    <div onclick="event.stopImmediatePropagation()" 
+         class="bg-[#161b24] border border-slate-700 rounded-3xl w-full max-w-[820px] p-6 md:p-8 shadow-2xl max-h-[90vh] overflow-auto">
+      
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-x-3">
+          <div class="w-11 h-11 bg-yellow-500 rounded-2xl flex items-center justify-center flex-shrink-0">
+            <i class="fa-solid fa-hammer text-black text-2xl"></i>
+          </div>
+          <div>
+            <h2 class="text-2xl font-semibold tracking-tight">Built with Bun</h2>
+            <p class="text-slate-400 text-sm">This single-file dashboard is a living showcase of <code>Bun.serve</code> + full <code>Server</code> interface (lifecycle, WS, timeouts, metrics)</p>
+          </div>
+        </div>
+        <button onclick="hideAboutModal()" class="text-3xl text-slate-400 hover:text-white leading-none -mt-2">×</button>
+      </div>
+
+      <!-- TL;DR -->
+      <div class="mb-5 rounded-2xl bg-[#0f1117] border border-slate-700 p-3 text-xs text-slate-300">
+        <strong>TL;DR:</strong> This tool demonstrates the full <code>Bun.serve</code> <code>Server</code> interface — including lifecycle (<code>stop</code>, <code>reload</code>, <code>ref</code>/<code>unref</code>), per-request controls (<code>timeout(req, sec)</code>), WebSockets (<code>upgrade</code> + pub/sub), introspection, and graceful shutdown — all while using <code>Bun.build</code> and advanced <code>fetch</code> features.
+      </div>
+
+      <!-- Generation -->
+      <div class="mb-6">
+        <div class="flex items-center gap-x-2 mb-3">
+          <i class="fa-solid fa-cogs text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Generation</span>
+        </div>
+        <div class="pl-6 space-y-2 text-sm">
+          <div class="flex items-start gap-2">
+            <code class="text-xs bg-[#0f1117] px-2 py-0.5 rounded mt-0.5">Bun.build</code>
+            <span class="text-slate-300">Single-file HTML output with inlined data and JavaScript.</span>
+          </div>
+          <div>
+            <button onclick="copyToClipboard('bun run generate --env inline --sourcemap linked')" 
+                    class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i> bun run generate --env inline --sourcemap linked
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Development Server -->
+      <div class="mb-6">
+        <div class="flex items-center gap-x-2 mb-3">
+          <i class="fa-solid fa-server text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Development Server</span>
+        </div>
+        <div class="pl-6 space-y-1.5 text-sm text-slate-300">
+          <div>• <code>Bun.serve({ routes, websocket?, idleTimeout, development })</code> — modern routes + full Server</div>
+          <div>• Hot reloading via <code>server.reload()</code> (<code>--watch</code>) • Console streaming (<code>--console</code>)</div>
+          <div>• SSE/long-poll demo with <code>server.timeout(req, sec)</code> (<code>--idle-timeout-per-request</code> + <code>/api/sse</code>)</div>
+          <div>• WebSocket demo: <code>server.upgrade()</code>, <code>publish()</code>, <code>subscriberCount()</code> (<code>--ws</code>)</div>
+          <div>• Lifecycle: <code>server.stop()</code> (graceful/force), <code>ref()</code>/<code>unref()</code> (<code>--unref</code>)</div>
+          <div>• Introspection: <code>requestIP()</code>, <code>pendingRequests</code> + debug endpoints</div>
+
+          <div class="pt-1">
+            <button onclick="copyToClipboard('bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref')" 
+                    class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i> bun run generate --serve --ws --console --watch --idle-timeout 120 --unref
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bun.serve Server Interface - Full Educational Coverage -->
+      <div class="mb-6">
+        <div class="flex items-center gap-x-2 mb-2">
+          <i class="fa-solid fa-project-diagram text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Bun.serve Server Interface</span>
+        </div>
+        <p class="pl-6 mb-2.5 text-xs text-slate-400">Calling <code>Bun.serve()</code> returns a <code>Server&lt;WebSocketData&gt;</code> instance (see <a href="https://bun.com/reference/bun/Server" target="_blank" class="text-yellow-400 hover:underline">full type</a>). This generator is a live, runnable demo of nearly every method and property.</p>
+
+        <div class="pl-6 space-y-3.5 text-sm">
+          <!-- Introspection -->
+          <div>
+            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+              <i class="fa-solid fa-tachometer-alt w-3"></i>
+              <span>INTROSPECTION &amp; METRICS</span>
+            </div>
+            <div class="pl-4 text-xs text-slate-300 space-y-0.5">
+              <div><code>pendingRequests</code> / <code>pendingWebSockets</code> — real-time counters of active HTTP and WS work (visible via <code>/api/status</code>)</div>
+              <div><code>requestIP(req)</code> → <code>SocketAddress | null</code> (client IP/port; captured into <code>ws.data</code> at upgrade time)</div>
+              <div>Read-only props: <code>url</code> • <code>port</code> • <code>hostname</code> • <code>protocol</code> • <code>id</code> • <code>development</code></div>
+            </div>
+          </div>
+
+          <!-- Lifecycle -->
+          <div>
+            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+              <i class="fa-solid fa-power-off w-3"></i>
+              <span>LIFECYCLE &amp; CONTROL</span>
+            </div>
+            <div class="pl-4 text-xs text-slate-300 space-y-1">
+              <div><strong>stop(closeActiveConnections?)</strong>: Graceful (default — waits for in-flight requests/WS to finish) or forced. The shutdown code here listens for SIGINT (graceful first) and SIGTERM (force), logs the distinction, and supports double-Ctrl+C force. Teaches why <code>server.stop()</code> exists: clean production shutdowns.</div>
+              <div><strong>reload(options)</strong>: Hot-swap the entire server config (routes, websocket handler, etc.) with zero downtime. <code>--watch</code> uses <code>fs.watch</code> + <code>server.reload({ routes: await createRoutes() })</code>.</div>
+              <div><strong>ref()</strong> / <strong>unref()</strong>: Event loop reference semantics. The server is ref'd by default (keeps process running). <code>--unref</code> calls <code>unref()</code> so the process can exit when the server is the only remaining handle — useful for scripts, tests, and background services.</div>
+              <div><strong>timeout(req, seconds)</strong>: Per-connection override of the idle timer. 0 disables timeout for that Request only. Powers the SSE long-poll demo and is the escape hatch when global <code>idleTimeout</code> is too aggressive for WebSockets or streaming.</div>
+            </div>
+          </div>
+
+          <!-- WebSocket -->
+          <div>
+            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+              <i class="fa-solid fa-plug w-3"></i>
+              <span>WEBSOCKET &amp; PUB/SUB + UPGRADE HEADERS</span>
+            </div>
+            <div class="pl-4 text-xs text-slate-300 space-y-0.5">
+              <div><strong>upgrade(req, { data?, headers? })</strong> → <code>boolean</code>. The <code>/ws</code> route demonstrates the full pattern:
+                <div class="pl-2 mt-0.5 text-[11px]">
+                  • Read any header the client sent on the upgrade handshake: <code>req.headers.get('authorization')</code>, <code>req.headers.get('x-client-id')</code>, <code>User-Agent</code>, <code>Cookie</code>, etc. (before calling upgrade).<br>
+                  • Return custom headers in the 101 response: <code>server.upgrade(req, { headers: { 'X-Upgrade-Demo': 'value', 'Set-Cookie': '...' }, data: { receivedUpgradeHeaders: ... } })</code>.<br>
+                  • The <code>headers</code> option is sent back to the client in the upgrade response (visible in server logs / welcome payload / <code>/api/ws-status</code>).
+                </div>
+              </div>
+              <div><strong>Bun client header support</strong>: <code>new WebSocket("ws://host/ws", { headers: { "Authorization": "Bearer jwt...", "X-Client-Id": "demo" } })</code>. These arrive in <code>req.headers</code> on the server. (Browser WebSocket is intentionally limited for security; the modal tester simulates via inputs + query for education.)</div>
+              <div><strong>publish(topic, data, compress?)</strong> → bytes sent. Broadcasts to every WS client subscribed to the topic. Can be called from HTTP handlers or from inside the websocket <code>message</code> callback (our demo does both).</div>
+              <div><code>subscriberCount(topic)</code> (exposed live at <code>/api/ws-status</code>) • <code>ws.subscribe("room")</code> in <code>open</code> • <code>pendingWebSockets</code></div>
+              <div class="text-[10px] text-slate-400">Declare <code>websocket: { open, message, close, ... }</code> in Bun.serve options (or via <code>reload</code>). Full pub/sub rooms, backpressure handling, and per-socket state (including header-derived data) without any extra dependencies. Practical for auth, tracing, and metadata on long-lived connections.</div>
+            </div>
+          </div>
+
+          <!-- Utilities -->
+          <div>
+            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+              <i class="fa-solid fa-wrench w-3"></i>
+              <span>UTILITIES</span>
+            </div>
+            <div class="pl-4 text-xs text-slate-300">
+              <code>server.fetch(req)</code> (call your own route handlers from inside the process) • <code>[Symbol.dispose]()</code> (Disposable support — <code>using s = Bun.serve(...)</code> auto-cleans on scope exit)
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Lifecycle &amp; Configuration Flags -->
+      <div class="mb-6">
+        <div class="flex items-center gap-x-2 mb-2">
+          <i class="fa-solid fa-sliders-h text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Lifecycle &amp; Configuration Flags</span>
+        </div>
+        <div class="pl-6 text-xs text-slate-300 space-y-2">
+          <div>
+            <code class="bg-[#0f1117] px-1 py-px rounded font-medium">--idle-timeout &lt;sec&gt;</code> (default 60 • 0-255 • 0=off)
+            <div class="pl-1 mt-0.5 text-[11px]">Directly maps to <code>Bun.serve({ idleTimeout })</code>. Sets the default idle timeout for all new connections. Combine with the dynamic <code>server.timeout(req, n)</code> method (via <code>--idle-timeout-per-request</code>) when you need different lifetimes for different endpoints (SSE, WS, long-poll).</div>
+          </div>
+          <div>
+            <code class="bg-[#0f1117] px-1 py-px rounded font-medium">--unref</code>
+            <div class="pl-1 mt-0.5 text-[11px]">Calls <code>server.unref()</code> right after startup. Prevents the server from keeping the Bun process alive. You will see an explicit ⚠️ warning in the terminal. Essential for non-daemon usage patterns and graceful process exit in tests/CI/scripts.</div>
+          </div>
+          <div>
+            <code class="bg-[#0f1117] px-1 py-px rounded font-medium">--ws</code> / <code>--websocket</code>
+            <div class="pl-1 mt-0.5 text-[11px]">Activates the <code>websocket</code> handler + <code>/ws</code> (full upgrade with custom <code>req.headers</code> reading + <code>server.upgrade({ headers, data })</code> response headers) and <code>/api/ws-status</code>. Includes interactive header tester in this modal. Demonstrates Bun client <code>new WebSocket(url, { headers })</code> support.</div>
+          </div>
+          <div>
+            <code class="bg-[#0f1117] px-1 py-px rounded font-medium">--idle-timeout-per-request &lt;sec&gt;</code>
+            <div class="pl-1 mt-0.5 text-[11px]">Drives the educational <code>/api/sse</code> endpoint that demonstrates calling <code>server.timeout(req, value)</code> to selectively disable or extend the idle timer on one connection (perfect for EventSource, WebSockets, or chunked responses).</div>
+          </div>
+
+          <div class="pt-1">
+            <button onclick="copyToClipboard('bun run generate --serve --ws --console --watch --idle-timeout 120 --idle-timeout-per-request 0 --unref')" 
+                    class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i> bun run generate --serve --ws --console --watch --idle-timeout 120 --unref
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Networking & Performance -->
+      <div class="mb-6">
+        <div class="flex items-center gap-x-2 mb-3">
+          <i class="fa-solid fa-network-wired text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Networking &amp; Performance</span>
+        </div>
+        <div class="pl-6 space-y-2 text-sm text-slate-300">
+          <div>• Advanced <code>fetch</code> with <code>verbose</code>, <code>preconnect</code>, proxy &amp; TLS support</div>
+          <div>• Native <code>file://</code> support for local documentation indexes</div>
+          <div>• Powerful debugging with <code>--dry-run --verbose</code></div>
+
+          <div class="pt-1">
+            <button onclick="copyToClipboard('bun run generate --preconnect --dry-run --verbose')" 
+                    class="text-xs px-2 py-1 bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 rounded-lg transition-colors">
+              <i class="fa-solid fa-copy mr-1"></i> bun run generate --preconnect --dry-run --verbose
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Console Test -->
+      <div class="mt-6 pt-5 border-t border-slate-700">
+        <div class="flex items-center gap-x-2 mb-3">
+          <i class="fa-solid fa-terminal text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">Try Console Streaming Live</span>
+        </div>
+        <p class="text-xs text-slate-400 mb-3 pl-6">Click any button below — the output will appear in your terminal thanks to <code>--console</code>.</p>
+        
+        <div class="pl-6 flex flex-wrap gap-2">
+          <button onclick="triggerConsoleDemo('log')" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            console.log("Hello Bun")
+          </button>
+          <button onclick="triggerConsoleDemo('warn')" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            console.warn("Warning")
+          </button>
+          <button onclick="triggerConsoleDemo('error')" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            console.error("Something broke")
+          </button>
+          <button onclick="triggerConsoleDemo('object')" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            console.log({ user: "demo", active: true })
+          </button>
+        </div>
+      </div>
+
+      <!-- Live WebSocket Pub/Sub Demo (with custom upgrade headers) -->
+      <div class="mt-6 pt-5 border-t border-slate-700">
+        <div class="flex items-center gap-x-2 mb-3">
+          <i class="fa-solid fa-plug text-yellow-400 w-4"></i>
+          <span class="font-semibold text-yellow-400">WebSocket Pub/Sub + Custom Upgrade Headers Demo</span>
+        </div>
+        <div class="text-xs text-slate-400 mb-3 pl-6 space-y-1">
+          <p>Requires <code>--serve --ws</code>. Demonstrates the full upgrade handshake with headers:</p>
+          <ul class="list-disc pl-4 text-[11px] space-y-0.5">
+            <li>Server reads custom headers from <code>req.headers</code> (or <code>?x-client-id=...</code> query for this browser tester) <strong>before</strong> <code>upgrade()</code>.</li>
+            <li><code>server.upgrade(req, { headers: { 'X-...': 'value' }, data })</code> injects custom response headers into the 101 reply.</li>
+            <li>Bun client: <code>new WebSocket(url, { headers: { 'Authorization': '...' } })</code> — headers arrive on the server.</li>
+          </ul>
+          <p class="text-[11px]">Use cases: JWT auth tokens, client IDs, API keys, cookies on upgrade, protocol metadata. Open multiple tabs with different <code>X-Client-Id</code> values to see them in the logs and <code>/api/ws-status</code>.</p>
+        </div>
+
+        <!-- Header inputs for the demo -->
+        <div class="pl-6 mb-3 grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-lg">
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">X-Client-Id (demo custom header)</label>
+            <input id="ws-x-client-id" type="text" placeholder="user-123 or abc" 
+                   class="w-full text-xs bg-[#0f1117] border border-slate-700 rounded-lg px-2 py-1 focus:border-yellow-600 outline-none">
+          </div>
+          <div>
+            <label class="block text-[10px] text-slate-400 mb-0.5">Authorization (demo)</label>
+            <input id="ws-auth" type="text" placeholder="Bearer my-jwt-token" 
+                   class="w-full text-xs bg-[#0f1117] border border-slate-700 rounded-lg px-2 py-1 focus:border-yellow-600 outline-none">
+          </div>
+        </div>
+        
+        <div class="pl-6 flex flex-wrap gap-2">
+          <button onclick="wsConnect()" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            Connect /ws (with headers)
+          </button>
+          <button onclick="wsSend('Hello Bun WebSocket!')" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            Send Hello
+          </button>
+          <button onclick="wsSend('broadcast test @' + Date.now())" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            Send Timestamp
+          </button>
+          <button onclick="wsStatus()" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
+            Check /api/ws-status
+          </button>
+          <button onclick="wsDisconnect()" 
+                  class="px-3 py-1.5 text-xs bg-red-900/30 hover:bg-red-900/50 border border-red-700/50 rounded-xl transition-colors">
+            Disconnect
+          </button>
+        </div>
+        <!-- Live message log (shows receivedClientHeaders + upgradeResponseHeaders from server welcome) -->
+        <div id="ws-log" class="mt-3 pl-6 text-[10px] font-mono bg-[#0f1117] border border-slate-800 rounded-2xl p-3 max-h-[110px] overflow-auto text-green-400 hidden" style="display:none; white-space:pre-wrap;"></div>
+      </div>
+
+      <div class="mt-6 text-xs text-slate-400 border-t border-slate-700 pt-4">
+        Run <code class="bg-[#0f1117] px-1.5 py-0.5 rounded">bun run generate --help</code> to see every Bun feature this tool supports.
+      </div>
+    </div>
+  </div>
+
+  <script src="./dashboard.js"></script>
+</body>
+</html>
