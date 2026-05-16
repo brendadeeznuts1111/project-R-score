@@ -44,7 +44,7 @@ bun run docs:install
 ### Manual Install
 ```bash
 # Build CLI
-bun build ./cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
+bun build ./tools/cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
 chmod +x ~/.local/bin/bun-docs
 
 # Add to PATH (add to ~/.zshrc or ~/.bashrc)

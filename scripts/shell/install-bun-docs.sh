@@ -3,7 +3,7 @@
 echo "Installing Bun Documentation System..."
 
 # Install CLI globally
-bun build ./cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
+bun build ./tools/cli/docs-cli.ts --outfile ~/.local/bin/bun-docs --target bun
 chmod +x ~/.local/bin/bun-docs
 
 # Create config directory

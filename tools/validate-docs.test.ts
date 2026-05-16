@@ -17,7 +17,7 @@ describe('validate-docs', () => {
       const coreFiles = [
         'lib/docs/constants/domains.ts',
         'lib/docs/constants/categories.ts',
-        'cli/integrated-cli.ts',
+        'tools/cli/integrated-cli.ts',
         'server/base-server.ts',
         'examples/comprehensive-usage.ts',
       ];

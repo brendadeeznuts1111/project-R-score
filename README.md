@@ -7,7 +7,7 @@ This root organizes a large Bun + TypeScript ecosystem including:
 
 - **Core Platforms**: `factorywager/`, `barbershop/`, `kimiremote/`, `peer/`
 - **Categorized Projects**: `projects/` (apps, enterprise, games, experimental, etc.)
-- **Tooling & Scripts**: `scripts/`, `tools/`, `cli/`, `bin/`
+- **Tooling & Scripts**: `scripts/`, `tools/` (now includes `cli/`, `bin/`, `benchmarks/`)
 - **Shared Code**: `lib/`, `src/`, `utils/`, `packages/`
 - **Servers & Services**: `server/`, `services/`, `dashboard/`
 - **Documentation**: `docs/` (extensive), `public/` (dashboards, badges)
@@ -35,7 +35,7 @@ bun run dev
 # Or explore specific areas:
 # bun run start:p2p-proxy
 # bun run dashboard
-# ./cli/fw-cli --help
+# ./tools/cli/fw-cli --help
 ```
 
 ## Fetch Examples (Bun Native Pattern)
@@ -60,7 +60,7 @@ const rssXml = await rssResponse.text();
 - `bun run start:p2p-proxy` — Various P2P/proxy servers
 - `bun run dashboard` — MCP overview dashboard
 - `bun run deployment:readiness` — Readiness matrix
-- `./cli/fw-cli badges generate all` — Generate status badges (now in public/badges/)
+- `./tools/cli/fw-cli badges generate all` — Generate status badges (now in public/badges/)
 - Many more in `package.json` scripts and `scripts/`
 
 ## Legacy TypedArray Endpoints

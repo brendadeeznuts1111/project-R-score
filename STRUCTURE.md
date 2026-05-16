@@ -16,7 +16,7 @@ Projects/
 ├── barbershop/              # Bun-native barbershop demo app (real-time dashboard, WS, R2)
 ├── benchmarks/              # Performance benchmarks (under tools/benchmarks/)
 ├── bin/                     # Custom binaries & small CLIs (now under tools/bin/)
-├── cli/                     # High-level CLI tools (fw-cli, integrated-cli, health-monitor, etc.)
+├── cli/                     # High-level CLI tools (now under tools/cli/)
 ├── config/                  # Domain branding, shared config
 ├── configs/                 # Per-feature config (cookie-crc32, etc.)
 ├── dashboard/               # Various dashboard servers & UIs (MCP overview, p2p, profile, etc.)
@@ -62,7 +62,7 @@ Projects/
 ## Key Navigation Rules
 
 - **Want to run something?** Look in `package.json` scripts first (`bun run <name>`).
-- **Need a CLI?** `cli/` (fw-cli is the main one) or `bin/`.
+- **Need a CLI?** `tools/cli/` (fw-cli is the main one) or `tools/bin/`.
 - **Looking for demos?** Start in `examples/`. Most live in `examples/demos/`.
 - **Scripts & automation?** `scripts/` is the central nervous system.
 - **Deep Bun internals / experiments?** `scratch/bun-v1.3.9-examples/`.
@@ -80,7 +80,7 @@ Projects/
 
 - Further curation of `scratch/` (move very old experiments to `archive/scratch/`).
 - Possible consolidation of cookie-related demos.
-- Deeper `tools/` vs `cli/` vs `scripts/` boundaries.
+- Deeper `tools/` (incl. `cli/`) vs `scripts/` boundaries.
 - `.github/` and agent skills in `.agents/` are already well placed.
 
-Maintained by the platform team. Run `./cli/fw-cli` or `bun run dashboard` for live views.
+Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.

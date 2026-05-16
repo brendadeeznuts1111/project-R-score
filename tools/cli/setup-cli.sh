@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 
 # Get script directory
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_ROOT="$(dirname "$SCRIPT_DIR")"
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
 
 echo -e "${BLUE}📁 Script Directory: $SCRIPT_DIR${NC}"
 echo -e "${BLUE}📁 Project Root: $PROJECT_ROOT${NC}"

@@ -158,8 +158,8 @@ async function demo() {
   console.log('   • Performance monitoring and optimization')
   console.log()
 
-  console.log('💡 Try: bun run cli/docs-cli.ts interactive')
-  console.log('📖 Help: bun run cli/docs-cli.ts help')
+  console.log('💡 Try: bun run tools/cli/docs-cli.ts interactive')
+  console.log('📖 Help: bun run tools/cli/docs-cli.ts help')
 }
 
 demo().catch(console.error)
