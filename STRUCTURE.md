@@ -14,8 +14,8 @@ Projects/
 ├── assets/                  # Logos, charts, static images
 ├── badges/                  # (moved) → now at public/badges/
 ├── barbershop/              # Bun-native barbershop demo app (real-time dashboard, WS, R2)
-├── benchmarks/              # Top-level performance benchmarks
-├── bin/                     # Custom binaries & small CLIs (watch-filter, bun-filter-cli)
+├── benchmarks/              # Performance benchmarks (under tools/benchmarks/)
+├── bin/                     # Custom binaries & small CLIs (now under tools/bin/)
 ├── cli/                     # High-level CLI tools (fw-cli, integrated-cli, health-monitor, etc.)
 ├── config/                  # Domain branding, shared config
 ├── configs/                 # Per-feature config (cookie-crc32, etc.)
