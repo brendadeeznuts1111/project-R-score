@@ -1,0 +1,6 @@
+
+
+Sampling rate: 200.000000 microseconds. Total samples: 2
+Top functions as <numSamples  'functionName#hash:sourceID'>
+     1    'fetch#<nil>:4294967295'
+     1    'workload#<nil>:2'

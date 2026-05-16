@@ -1,0 +1,215 @@
+[
+  {
+    "timestamp": "2026-02-05T20:58:06.709Z",
+    "level": "warn",
+    "test": "logger",
+    "message": "R2 not available, using local logs only"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.710Z",
+    "level": "info",
+    "test": "database",
+    "message": "Initializing test schema"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.710Z",
+    "level": "info",
+    "test": "database",
+    "message": "Schema initialized"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.711Z",
+    "level": "info",
+    "test": "setup",
+    "message": "Starting integration test suite",
+    "data": {
+      "testRunId": "test-1770325086710-qx7bt"
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.712Z",
+    "level": "info",
+    "test": "setup",
+    "message": "Test server started",
+    "data": {
+      "port": 3001
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.713Z",
+    "level": "info",
+    "test": "health_endpoint",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.725Z",
+    "level": "info",
+    "test": "health_endpoint",
+    "message": "Test passed",
+    "data": {
+      "duration": 12
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.725Z",
+    "level": "info",
+    "test": "barbers_endpoint",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.725Z",
+    "level": "info",
+    "test": "barbers_endpoint",
+    "message": "Test passed",
+    "data": {
+      "duration": 0
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.725Z",
+    "level": "info",
+    "test": "ticket_creation",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.726Z",
+    "level": "info",
+    "test": "ticket_creation",
+    "message": "Test passed",
+    "data": {
+      "duration": 0
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.726Z",
+    "level": "info",
+    "test": "redis_connection",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.728Z",
+    "level": "info",
+    "test": "redis_connection",
+    "message": "Test passed",
+    "data": {
+      "duration": 2
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.728Z",
+    "level": "info",
+    "test": "database_operations",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.729Z",
+    "level": "info",
+    "test": "database_operations",
+    "message": "Test passed",
+    "data": {
+      "duration": 0
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.729Z",
+    "level": "info",
+    "test": "secrets_storage",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.782Z",
+    "level": "info",
+    "test": "secrets_storage",
+    "message": "Test passed",
+    "data": {
+      "duration": 54
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.783Z",
+    "level": "info",
+    "test": "r2_storage",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.784Z",
+    "level": "warn",
+    "test": "r2_storage",
+    "message": "R2 not available, test skipped",
+    "data": {
+      "error": "TypeError: r2_upload is not a function. (In 'r2_upload({\n          bucket: \"barbershop-test\",\n          key: `tests/${this.testRunId}/test.json`,\n          body: Buffer.from(testData),\n          contentType: \"application/json\"\n        })', 'r2_upload' is undefined)"
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.784Z",
+    "level": "info",
+    "test": "r2_storage",
+    "message": "Test passed",
+    "data": {
+      "duration": 2
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.784Z",
+    "level": "info",
+    "test": "websocket_connection",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.787Z",
+    "level": "warn",
+    "test": "websocket_connection",
+    "message": "WS not available",
+    "data": {
+      "error": "[object ErrorEvent]"
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.787Z",
+    "level": "info",
+    "test": "websocket_connection",
+    "message": "Test passed",
+    "data": {
+      "duration": 2
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.787Z",
+    "level": "info",
+    "test": "performance_benchmark",
+    "message": "Starting test"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.792Z",
+    "level": "info",
+    "test": "performance_benchmark",
+    "message": "Test passed",
+    "data": {
+      "duration": 5
+    }
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.792Z",
+    "level": "info",
+    "test": "teardown",
+    "message": "Cleaning up test suite"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.792Z",
+    "level": "info",
+    "test": "teardown",
+    "message": "Test server stopped"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.792Z",
+    "level": "info",
+    "test": "database",
+    "message": "Cleaning up test database"
+  },
+  {
+    "timestamp": "2026-02-05T20:58:06.792Z",
+    "level": "warn",
+    "test": "logger",
+    "message": "R2 not available, saving locally"
+  }
+]

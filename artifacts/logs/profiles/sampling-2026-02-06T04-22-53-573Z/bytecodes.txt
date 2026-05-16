@@ -1,0 +1,25 @@
+
+
+Sampling rate: 200.000000 microseconds. Total samples: 6
+
+Tier breakdown:
+-----------------------------------
+LLInt:                     0  (0.000000%)
+Baseline:                  1  (16.666667%)
+DFG:                       0  (0.000000%)
+FTL:                       0  (0.000000%)
+js builtin:                0  (0.000000%)
+IPInt:                     0  (0.000000%)
+BBQ:                       0  (0.000000%)
+OMG:                       0  (0.000000%)
+Wasm:                      0  (0.000000%)
+Host:                      0  (0.000000%)
+RegExp:                    0  (0.000000%)
+C/C++:                     0  (0.000000%)
+Unknown Executable:        5  (83.333333%)
+
+
+Hottest bytecodes as <numSamples   'functionName#hash:JITType:bytecodeIndex'>
+     4    'fetch#<nil>:None:<nil>'
+     1    'workload#AeuThY:Baseline:bc#155'
+     1    'workload#<nil>:None:<nil>'

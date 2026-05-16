@@ -1,0 +1,17 @@
+{
+  "target": "http://localhost:3001/ops/status",
+  "iterations": 5,
+  "sampleIntervalUs": 200,
+  "durationMs": 9.047,
+  "generatedAt": "2026-02-06T03:54:21.393Z",
+  "profileKeys": [
+    "functions",
+    "bytecodes",
+    "stackTraces"
+  ],
+  "files": [
+    "functions.txt",
+    "bytecodes.txt",
+    "stack-traces.txt"
+  ]
+}

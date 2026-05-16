@@ -1,0 +1,178 @@
+{
+  "timestamp": 1770745432418,
+  "system": {
+    "timestamp": 1770745432418,
+    "memory": {
+      "used": 139100160,
+      "free": 0,
+      "total": 278200320,
+      "heapUsed": 26735861,
+      "heapTotal": 16959488
+    },
+    "disk": {
+      "used": 0,
+      "free": 0,
+      "total": 0
+    },
+    "cpu": {
+      "usage": 0,
+      "loadAverage": [
+        0,
+        0,
+        0
+      ]
+    },
+    "operations": [
+      {
+        "timestamp": 1770745432409,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432409,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432410,
+        "operation": "scan",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [],
+        "method": "find"
+      },
+      {
+        "timestamp": 1770745432412,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432412,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432412,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432414,
+        "operation": "scan",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [],
+        "method": "find"
+      },
+      {
+        "timestamp": 1770745432416,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432416,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": false,
+        "errors": [],
+        "method": "readdir"
+      },
+      {
+        "timestamp": 1770745432416,
+        "operation": "delete",
+        "duration": 0,
+        "filesProcessed": 0,
+        "bytesProcessed": 0,
+        "success": true,
+        "errors": [],
+        "method": "readdir"
+      }
+    ],
+    "patterns": [
+      {
+        "pattern": "swap-temp",
+        "count": 26,
+        "totalSize": 43597,
+        "avgSize": 1676.8076923076924,
+        "ageDistribution": {
+          "recent": 26,
+          "medium": 0,
+          "old": 0
+        },
+        "riskDistribution": {
+          "low": 0,
+          "medium": 26,
+          "high": 0
+        },
+        "frequency": 26
+      }
+    ],
+    "performance": {
+      "filesPerSecond": 0,
+      "bytesPerSecond": 0,
+      "averageOperationTime": 0,
+      "errorRate": 0
+    }
+  },
+  "patterns": {
+    "summary": {
+      "totalPatterns": 1,
+      "highRiskPatterns": 0,
+      "mostActivePattern": "swap-temp",
+      "largestPattern": "swap-temp"
+    },
+    "recommendations": [],
+    "trends": {
+      "growing": [
+        "swap-temp"
+      ],
+      "stable": [],
+      "declining": []
+    }
+  },
+  "configuration": {
+    "enableRealTimeCollection": true,
+    "enablePatternAnalysis": true,
+    "enablePerformanceTracking": true,
+    "enableRiskAssessment": true,
+    "retentionDays": 30,
+    "exportFormat": "json",
+    "aggregationInterval": 60000
+  }
+}
