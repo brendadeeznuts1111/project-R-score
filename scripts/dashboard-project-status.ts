@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { buildProjectStatusReport } from "../dashboard/status-monitor";
-import { summarizeDeploymentReadiness } from "../deployment/readiness-matrix";
+import { summarizeDeploymentReadiness } from "./deployment/readiness-matrix";
 import { summarizePerformanceImpact } from "../analysis/performance-impact";
 import { summarizeSecurityPosture } from "../security/posture-report";
 import { ExecutiveVerdict, ProjectRecommendations, SuccessMetrics } from "../dashboard/project-health";

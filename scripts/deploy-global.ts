@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
 import { DeploymentOrchestrator } from "../pipeline/deployment-orchestrator";
-import { summarizeDeploymentReadiness } from "../deployment/readiness-matrix";
+import { summarizeDeploymentReadiness } from "./deployment/readiness-matrix";
 
 const args = process.argv.slice(2);
 

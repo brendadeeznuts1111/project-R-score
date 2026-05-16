@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { summarizeDeploymentReadiness } from "../deployment/readiness-matrix";
+import { summarizeDeploymentReadiness } from "./deployment/readiness-matrix";
 import { ExecutiveVerdict } from "../dashboard/project-health";
 
 const args = process.argv.slice(2);
