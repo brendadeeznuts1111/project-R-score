@@ -1,0 +1,78 @@
+[
+  {
+    "id": 1,
+    "name": "Wageralldays.com",
+    "url": "https://wageralldays.com/",
+    "loginUrl": "https://wageralldays.com/Logins/022/index.aspx",
+    "bestFor": "BEST OVERALL • 10k @ -105",
+    "color": "#10b981",
+    "limits": "Sides: 10k @ -105\nTotals: 10k @ -105\nOpen parlays: -105\nUse this as the broadest first-look out when you need a fast overall answer.",
+    "tips": "Best overall first stop. Strong all-around coverage for core volume, including open parlays and main market decision-making.",
+    "tags": ["nba", "nfl", "mlb", "high-limits", "parlays", "best-overall", "sides"],
+    "pmHint": "wageralldays",
+    "lastUsed": "",
+    "balanceSnapshot": {
+      "amount": 4200,
+      "currency": "USD",
+      "updatedAt": "2026-04-03T13:15:00-05:00",
+      "note": "post-settlement"
+    }
+  },
+  {
+    "id": 2,
+    "name": "Rugbyrex.com",
+    "url": "https://rugbyrex.com/",
+    "loginUrl": "https://rugbyrex.com/",
+    "bestFor": "NBA/NFL SIDES • 10k @ -105",
+    "color": "#22d3ee",
+    "limits": "NBA sides: 10k @ -105\nNFL sides: 10k @ -105\nUse for side shopping before branching elsewhere.",
+    "tips": "Sides-first book for NBA and NFL. Metallic skin note: visually distinct, but best treated as a quick sides destination.",
+    "tags": ["nba", "nfl", "sides", "nba-sides", "high-limits", "metallic-skin"],
+    "pmHint": "rugbyrex",
+    "lastUsed": "",
+    "balanceSnapshot": {
+      "amount": 1850,
+      "currency": "USD",
+      "updatedAt": "2026-04-03T12:40:00-05:00",
+      "note": "midday check"
+    }
+  },
+  {
+    "id": 3,
+    "name": "Betfan88.com",
+    "url": "https://betfan88.com/",
+    "loginUrl": "https://betfan88.com/login",
+    "bestFor": "3k MULTI-CLICK",
+    "color": "#f59e0b",
+    "limits": "Multi-click workflow: 3k\nBest when you need a fast repeatable sequence instead of a deep browse.",
+    "tips": "Use for speed. This is the quick-cycle account when you are moving through multiple entries and want low-friction repetition.",
+    "tags": ["speed", "multi-click", "workflow", "3k"],
+    "pmHint": "betfan88",
+    "lastUsed": "",
+    "balanceSnapshot": {
+      "amount": "",
+      "currency": "USD",
+      "updatedAt": "",
+      "note": ""
+    }
+  },
+  {
+    "id": 4,
+    "name": "Wagerhouse.ag",
+    "url": "https://wagerhouse.ag/",
+    "loginUrl": "https://wagerhouse.ag/",
+    "bestFor": "5k OPEN PARLAYS ONLY",
+    "color": "#fb7185",
+    "limits": "Open parlays only: 5k\nNot the primary destination for straight-bet workflow.",
+    "tips": "Specialty parlay account. Open this only when the parlay angle is the reason you are here, not as a default all-purpose book.",
+    "tags": ["parlays", "open-parlays", "5k", "specialty"],
+    "pmHint": "wagerhouse",
+    "lastUsed": "",
+    "balanceSnapshot": {
+      "amount": "",
+      "currency": "USD",
+      "updatedAt": "",
+      "note": ""
+    }
+  }
+]

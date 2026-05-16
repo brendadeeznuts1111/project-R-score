@@ -1,0 +1,49 @@
+name: Deploy Offshore Books
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - "offshore-books/**"
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: offshore-books
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: Install Wrangler
+        run: npm install -g wrangler
+
+      - name: Deploy Pages
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          PAGES_PROJECT_NAME: ${{ vars.PAGES_PROJECT_NAME || 'offshore-books-web' }}
+          PAGES_BRANCH: ${{ github.ref_name }}
+        run: ./deploy-pages.sh
+
+      - name: Deploy Worker
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        run: wrangler deploy
+
+      - name: Configure Telegram
+        if: ${{ secrets.TELEGRAM_BOT_TOKEN != '' && vars.WORKER_WEBHOOK_URL != '' && vars.MINI_APP_URL != '' }}
+        env:
+          TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+          WORKER_WEBHOOK_URL: ${{ vars.WORKER_WEBHOOK_URL }}
+          MINI_APP_URL: ${{ vars.MINI_APP_URL }}
+        run: ./bootstrap-telegram.sh
