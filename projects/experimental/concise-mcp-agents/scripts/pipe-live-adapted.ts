@@ -1,7 +1,8 @@
 #!/usr/bin/env bun
 
-const cookie = await Bun.secrets.get({ service: "plive", name: "cookie" });
-if (!cookie) throw "Run auth-plive first";
+import { getPliveSession } from "../src/lib/plive-session";
+
+const { cookie, sessionId } = await getPliveSession();
 
 console.log("📡 Connecting to live plive data stream...");
 
@@ -10,7 +11,8 @@ const response = await fetch('https://plive.sportswidgets.pro/live/data?countrie
     'cookie': cookie,
     'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
     'Accept': 'application/json',
-    'Referer': 'https://plive.sportswidgets.pro/manager-tools/'
+    'Referer': 'https://plive.sportswidgets.pro/manager-tools/',
+    ...(sessionId ? { 'x-gs-session': sessionId } : {}),
   },
   timeout: 10000
 });

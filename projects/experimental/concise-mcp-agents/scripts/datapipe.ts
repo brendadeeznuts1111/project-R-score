@@ -5,16 +5,17 @@
 // [DATAPIPE][CORE][DA-CO-F58][v2.6.0][ACTIVE]
 
 import { hash } from "bun";
+import { getPliveSession, storePliveSession } from "../src/lib/plive-session";
 
 const VAULT = process.env.OBSIDIAN_VAULT || process.cwd();
 
 // Helper function to get COOKIE with error handling
 async function getCookie(): Promise<string> {
-  const COOKIE = await Bun.secrets.get({ service: "datapipe", name: "COOKIE" });
-  if (!COOKIE) {
+  const { cookie } = await getPliveSession().catch(() => ({ cookie: "" , sessionId: ""}));
+  if (!cookie) {
     throw new Error('❌ No COOKIE found! Run: bun scripts/datapipe.ts setup-secrets');
   }
-  return COOKIE;
+  return cookie;
 }
 
 
@@ -127,6 +128,15 @@ interface FullBet {
   // Supplements
   supplementalConfirmation: string;
   disclaimer: string;
+
+  // Fantasy402 intelligence
+  description: string;
+  juicePct: string;
+  vigPct: string;
+  buyingPoints: string;
+  movementPts: string;
+  clvPct: string;
+  lastJuiceParse: string;
 }
 
 
@@ -161,6 +171,74 @@ function parseBetDetails(betDetails: string): Pick<FullBet, 'player' | 'marketId
 
   }
 
+}
+
+function extractAmericanOdds(value: string): number | null {
+  const match = value.match(/([+-]\d{3})/);
+  return match ? Number(match[1]) : null;
+}
+
+function impliedProbabilityFromAmerican(americanOdds: number): number {
+  return americanOdds < 0
+    ? Math.abs(americanOdds) / (Math.abs(americanOdds) + 100)
+    : 100 / (americanOdds + 100);
+}
+
+function roundMetric(value: number): string {
+  return (Math.round(value * 100) / 100).toFixed(2);
+}
+
+function toNumber(value: unknown): number | null {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+
+  const normalized = String(value).replace(/[^0-9+-.]/g, '');
+  if (!normalized) {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function buildFantasy402Metrics(bet: any, details: Pick<FullBet, 'player' | 'marketId' | 'odds' | 'skill' | 'class' | 'limit'>) {
+  const description = [
+    bet.description,
+    bet.wager,
+    bet.betType,
+    details.player,
+    bet.team1 && bet.team2 ? `${bet.team1} vs ${bet.team2}` : '',
+    bet.period,
+  ]
+    .filter((value) => typeof value === 'string' && value.trim())
+    .join(' | ');
+
+  const openingOdds = extractAmericanOdds(description) ?? extractAmericanOdds(details.odds);
+  const closingOdds = extractAmericanOdds(String(bet.finalUncorrelatedOdds || ''));
+  const impliedProbability = openingOdds === null ? null : impliedProbabilityFromAmerican(openingOdds);
+  const vigPct = impliedProbability === null ? 0 : Math.max(0, impliedProbability * 2 - 1) * 100;
+  const openingLine = toNumber(bet.fVal);
+  const closingLine = toNumber(bet.fVal_new);
+  const movementPts = openingLine !== null && closingLine !== null
+    ? closingLine - openingLine
+    : openingOdds !== null && closingOdds !== null
+      ? closingOdds - openingOdds
+      : 0;
+  const clvPct = openingOdds !== null && closingOdds !== null
+    ? (impliedProbabilityFromAmerican(closingOdds) - impliedProbabilityFromAmerican(openingOdds)) * 100
+    : movementPts;
+  const buyingPoints = /buy(?:ing)?\s*points?/i.test(description) || vigPct > 4.76;
+
+  return {
+    description: description || `${details.player} | ${bet.marketTypeCategory || 'Market'} | ${bet.period || 'Game'}`,
+    juicePct: roundMetric(vigPct),
+    vigPct: roundMetric(vigPct),
+    buyingPoints: buyingPoints ? '1' : '0',
+    movementPts: roundMetric(movementPts),
+    clvPct: roundMetric(clvPct),
+    lastJuiceParse: new Date().toISOString(),
+  };
 }
 
 
@@ -412,6 +490,7 @@ ${bets.filter(b => (parseInt(b.delay || 0) > 10) || (parseFloat(b.bet || 0) > 20
 
 function parseFullBet(bet: any): FullBet {
   const details = parseBetDetails(bet.betDetails || '{}');
+  const fantasy402Metrics = buildFantasy402Metrics(bet, details);
 
   return {
     // Core identifiers
@@ -506,11 +585,34 @@ function parseFullBet(bet: any): FullBet {
     // Supplements
     supplementalConfirmation: bet.supplementalConfirmation || '',
     disclaimer: bet.disclaimer || '',
+
+    // Fantasy402 intelligence
+    ...fantasy402Metrics,
   };
 }
 
 function parseBets(bets: any[]): FullBet[] {
   return bets.map(parseFullBet);
+}
+
+function ensureFantasy402Columns(db: any): void {
+  const columns = db.query("PRAGMA table_info(bets)").all() as Array<{ name: string }>;
+  const existing = new Set(columns.map((column) => column.name));
+  const requiredColumns = [
+    ["description", "TEXT"],
+    ["juicePct", "TEXT"],
+    ["vigPct", "TEXT"],
+    ["buyingPoints", "TEXT"],
+    ["movementPts", "TEXT"],
+    ["clvPct", "TEXT"],
+    ["lastJuiceParse", "TEXT"],
+  ] as const;
+
+  for (const [name, type] of requiredColumns) {
+    if (!existing.has(name)) {
+      db.run(`ALTER TABLE bets ADD COLUMN ${name} ${type}`);
+    }
+  }
 }
 
 // GREPA-style query functionality
@@ -1119,6 +1221,7 @@ platform: "${user.platform}"
       if (useSql) {
         const { Database } = await import("bun:sqlite");
         const db = new Database("datapipe.db");
+        ensureFantasy402Columns(db);
 
         // Store bets in database
         const bets = (fetchDataResult?.data || []).map((bet: any) => parseFullBet(bet));
@@ -1130,12 +1233,17 @@ platform: "${user.platform}"
             eventStartTime, eventResult, team1, team2, period, marketTypeCategory,
             logTime, acceptTime, calcTime, resultTime, gradeTime, state, accept, type,
             isWin, ipAddress, delay, balanceId, isFreePlay, fVal, fVal_new,
-            finalUncorrelatedOdds, player, marketId, odds, skill, class, limit,
+            finalUncorrelatedOdds, player, marketId, odds, skill, class, "limit",
             currency, exchangeRate, displayExchangeRate, adminUser, reversedCredit,
             reversedCreditTime, manualLogExists, isSuspectedBot, ev, evRisk,
             fixedParlayName, fixedParlayDetails, teaserName, openSpots, openParlay,
             freeBetDetails, ifBet, featuredBetDetails, supplementalConfirmation, disclaimer
           ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        `);
+        const updateFantasy402 = db.prepare(`
+          UPDATE bets
+          SET description = ?, juicePct = ?, vigPct = ?, buyingPoints = ?, movementPts = ?, clvPct = ?, lastJuiceParse = ?
+          WHERE id = ?
         `);
 
         for (const bet of bets) {
@@ -1154,6 +1262,16 @@ platform: "${user.platform}"
             bet.isSuspectedBot, bet.ev, bet.evRisk, bet.fixedParlayName, bet.fixedParlayDetails,
             bet.teaserName, bet.openSpots, bet.openParlay, bet.freeBetDetails, bet.ifBet,
             bet.featuredBetDetails, bet.supplementalConfirmation, bet.disclaimer
+          );
+          updateFantasy402.run(
+            bet.description,
+            bet.juicePct,
+            bet.vigPct,
+            bet.buyingPoints,
+            bet.movementPts,
+            bet.clvPct,
+            bet.lastJuiceParse,
+            bet.id,
           );
         }
 
@@ -1327,7 +1445,8 @@ platform: "${user.platform}"
       console.log('🔐 Setting up Datapipe secrets...');
 
       // Check if already configured
-      const existingCookie = await Bun.secrets.get({ service: "datapipe", name: "COOKIE" });
+      const existingCookie = await Bun.secrets.get({ service: "plive", name: "cookie" }) ||
+        await Bun.secrets.get({ service: "datapipe", name: "COOKIE" });
       if (existingCookie) {
         console.log('✅ COOKIE already configured!');
         break;
@@ -1347,18 +1466,28 @@ platform: "${user.platform}"
         output: process.stdout
       });
 
-      const cookieInput = await new Promise<string>((resolve) => {
-        rl.question('Paste your full COOKIE string: ', (answer) => {
-          rl.close();
+      const ask = (question: string) => new Promise<string>((resolve) => {
+        rl.question(question, (answer) => {
           resolve(answer);
         });
       });
+      const cookieInput = await ask('Paste your full COOKIE string: ');
       if (!cookieInput.trim()) {
+        rl.close();
         throw new Error('❌ No cookie provided!');
       }
 
-      // Store the secret
-      await Bun.secrets.set({ service: "datapipe", name: "COOKIE", value: cookieInput.trim() });
+      const sessionInput = await new Promise<string>((resolve) => {
+        rl.question('Optional x-gs-session token (press Enter to skip): ', (answer) => {
+          resolve(answer);
+        });
+      });
+      rl.close();
+
+      await storePliveSession({
+        cookie: cookieInput.trim(),
+        sessionId: sessionInput.trim(),
+      });
       console.log('✅ COOKIE stored securely in Bun.secrets!');
       console.log('🚀 Ready to run: bun scripts/datapipe.ts raw');
       break;
@@ -1453,7 +1582,7 @@ platform: "${user.platform}"
           odds TEXT,
           skill TEXT,
           class TEXT,
-          limit TEXT,
+          "limit" TEXT,
           currency TEXT,
           exchangeRate TEXT,
           displayExchangeRate TEXT,
@@ -1473,9 +1602,17 @@ platform: "${user.platform}"
           ifBet TEXT,
           featuredBetDetails TEXT,
           supplementalConfirmation TEXT,
-          disclaimer TEXT
+          disclaimer TEXT,
+          description TEXT,
+          juicePct TEXT,
+          vigPct TEXT,
+          buyingPoints TEXT,
+          movementPts TEXT,
+          clvPct TEXT,
+          lastJuiceParse TEXT
         )
       `);
+      ensureFantasy402Columns(db);
 
       // Create indexes for common queries
       db.run(`CREATE INDEX IF NOT EXISTS idx_agent ON bets(agent)`);

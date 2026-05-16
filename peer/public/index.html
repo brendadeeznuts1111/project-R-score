@@ -1,0 +1,339 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peer Enterprise Offramp Operations</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="background-grid" aria-hidden="true"></div>
+    <main class="shell enterprise-shell">
+      <section class="hero-card card">
+        <div>
+          <p class="eyebrow">Peer Operations</p>
+          <h1>Enterprise offramp operations for team-owned payout routes and wallet-owned deposits.</h1>
+          <p class="lede">
+            This surface is for operators. Sign in, verify readiness, create a validated deposit,
+            manage liquidity by division, and review compliance posture without losing auditability.
+          </p>
+        </div>
+        <div class="hero-actions">
+          <label>
+            <span>Effective access</span>
+            <select id="roleSwitcher" aria-describedby="roleSwitcherHint">
+              <option value="Operator">Operator</option>
+              <option value="Admin">Admin</option>
+              <option value="Compliance">Compliance</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+          </label>
+          <p id="roleSwitcherHint" class="helper-copy">Derived from server-issued session claims. The frontend no longer uses this control as an authority source.</p>
+          <div class="actions wrap">
+            <button type="button" id="openCommandPalette" class="secondary">Command palette</button>
+            <button type="button" id="refreshOps" class="secondary">Refresh live data</button>
+            <a class="button-link ghost-link" href="/">Open portal</a>
+          </div>
+          <div class="stat-row" id="heroStats"></div>
+        </div>
+      </section>
+
+      <div id="toastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+      <section class="card panel">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Execution Readiness</p>
+            <h2>Confirm the operator, payout owner, wallet, extension state, and protocol readiness first.</h2>
+          </div>
+          <p class="helper-copy">Keyboard shortcuts: <span class="mono">/</span> opens commands, <span class="mono">g d</span> jumps to deposits, <span class="mono">g c</span> jumps to compliance.</p>
+        </div>
+
+        <div class="enterprise-grid enterprise-grid-3">
+          <form id="signinForm" class="card inset-card stacked-form">
+            <div class="panel-header">
+              <h3>Operator session</h3>
+              <p>Internal app auth decides who may initiate Peer actions.</p>
+            </div>
+            <label><span>Member ID</span><input name="memberId" placeholder="admin-central" required /></label>
+            <label><span>Password</span><input name="password" type="password" placeholder="Your password" required /></label>
+            <div class="actions wrap">
+              <button type="submit">Sign in</button>
+              <button type="button" class="secondary" id="signout">Sign out</button>
+            </div>
+            <div id="sessionSummary" class="summary-list"></div>
+            <details class="debug-block">
+              <summary>View raw session</summary>
+              <pre id="sessionRaw" class="code-block compact">No active session.</pre>
+            </details>
+          </form>
+
+          <section class="card inset-card summary-card">
+            <div class="panel-header">
+              <h3>Wallet and extension</h3>
+              <p>The wallet owns deposits. The Peer extension remains optional buyer-side tooling.</p>
+            </div>
+            <div class="actions wrap">
+              <button type="button" id="connectWallet">Connect wallet</button>
+              <button type="button" class="secondary" id="checkExtension">Check extension</button>
+              <button type="button" class="secondary" id="connectExtension">Connect extension</button>
+              <button type="button" class="secondary" id="installExtension">Install extension</button>
+            </div>
+            <div id="walletSummary" class="summary-list"></div>
+          </section>
+
+          <section class="card inset-card summary-card">
+            <div class="panel-header">
+              <h3>Live operations state</h3>
+              <p>Polling keeps queue and deposit status current. Replace the poller with sockets later.</p>
+            </div>
+            <div id="liveOpsSummary" class="summary-list"></div>
+          </section>
+
+          <section class="card inset-card summary-card span-2">
+            <div class="panel-header">
+              <h3>Execution context</h3>
+              <p>Readable context first: operator identity, payout owner, processor coverage, and wallet ownership rule.</p>
+            </div>
+            <div id="executionSummary" class="summary-list"></div>
+            <details class="debug-block">
+              <summary>View raw execution context</summary>
+              <pre id="executionRaw" class="code-block compact">Select a payout owner to load context.</pre>
+            </details>
+          </section>
+
+          <section class="card inset-card summary-card">
+            <div class="panel-header">
+              <h3>Peer model</h3>
+              <p>The app separates internal auth, wallet-owned deposits, member-owned payout routes, and optional onramp.</p>
+            </div>
+            <div id="peerModelSummary" class="summary-list"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="card panel" id="deposit-workflow">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Create Offramp Deposit</p>
+            <h2>Run a production-style validation, preview, confirmation, and execution flow.</h2>
+          </div>
+          <div class="chip-row" id="workflowBadges"></div>
+        </div>
+
+        <div class="enterprise-grid enterprise-grid-2">
+          <form id="depositForm" class="stacked-form">
+            <div class="split">
+              <label>
+                <span>Payout owner</span>
+                <select name="memberId" id="memberSelect" required></select>
+              </label>
+              <label>
+                <span>Division</span>
+                <select name="division" id="divisionSelect" required></select>
+              </label>
+            </div>
+            <div class="split">
+              <label><span>Token address</span><input name="token" value="0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913" required /></label>
+              <label><span>Fiat currency</span><select name="currency" id="currencySelect"></select></label>
+            </div>
+            <div class="split">
+              <label><span>Deposit amount (base units)</span><input name="amount" value="10000000" required /></label>
+              <label><span>Preferred payment method</span><select name="preferredMethod" id="preferredMethodSelect"></select></label>
+            </div>
+            <div class="split">
+              <label><span>Min intent amount</span><input name="minIntentAmount" value="100000" required /></label>
+              <label><span>Max intent amount</span><input name="maxIntentAmount" value="5000000" required /></label>
+            </div>
+            <label><span>Conversion rate (1e18 scale)</span><input name="conversionRate" value="1020000000000000000" required /></label>
+            <label class="checkbox"><input type="checkbox" name="live" checked /> <span>Track this deposit in the live operations table</span></label>
+            <div class="actions wrap">
+              <button type="button" id="previewDeposit">Preview deposit</button>
+              <button type="button" class="secondary" id="registerPayeeDetails">Register payee details</button>
+              <button type="button" class="secondary" id="prepareDeposit">Prepare transaction</button>
+              <button type="button" id="executeDeposit">Create deposit</button>
+            </div>
+          </form>
+
+          <div class="stack">
+            <section class="card inset-card summary-card">
+              <div class="panel-header">
+                <h3>Payout-ready roster</h3>
+                <p>Only members with supported Peer payout identities are shown.</p>
+              </div>
+              <div id="teamList" class="entity-stack"></div>
+            </section>
+
+            <section class="card inset-card summary-card">
+              <div class="panel-header">
+                <h3>Validation and preview</h3>
+                <p>Use the preview to confirm processor names, deposit data, payee data, and division routing before execution.</p>
+              </div>
+              <div id="depositPreviewSummary" class="summary-list"></div>
+              <details class="debug-block">
+                <summary>View raw deposit payload</summary>
+                <pre id="depositPreviewRaw" class="code-block compact">No deposit preview generated yet.</pre>
+              </details>
+            </section>
+          </div>
+        </div>
+      </section>
+
+      <section class="card panel" id="deposits-section">
+        <div class="section-header">
+          <div>
+            <p class="eyebrow">Manage Deposits</p>
+            <h2>Search, filter, paginate, and bulk-update tracked deposits by status, division, and payment method.</h2>
+          </div>
+          <div class="actions wrap">
+            <button type="button" class="secondary" id="bulkActivate">Mark active</button>
+            <button type="button" class="secondary" id="bulkPause">Pause selected</button>
+            <button type="button" class="danger" id="bulkWithdraw">Mark withdrawn</button>
+            <button type="button" class="secondary" id="exportDeposits">Export CSV</button>
+          </div>
+        </div>
+
+        <div class="filter-grid">
+          <label><span>Search</span><input id="depositSearch" placeholder="Deposit ID, member, wallet, method" /></label>
+          <label><span>Status</span><select id="depositStatusFilter"></select></label>
+          <label><span>Division</span><select id="depositDivisionFilter"></select></label>
+          <label><span>Payment method</span><input id="depositMethodFilter" placeholder="venmo, paypal, cashapp" /></label>
+          <label><span>Date from</span><input id="depositDateFrom" type="date" /></label>
+          <label><span>Date to</span><input id="depositDateTo" type="date" /></label>
+          <label><span>Min amount</span><input id="depositAmountMin" type="number" placeholder="100000" /></label>
+          <label><span>Max amount</span><input id="depositAmountMax" type="number" placeholder="5000000" /></label>
+          <label><span>Page size</span><select id="depositPageSize"><option>5</option><option selected>10</option><option>20</option><option>50</option></select></label>
+        </div>
+
+        <div id="depositTableMeta" class="summary-list compact-summary"></div>
+        <div class="table-shell">
+          <table class="enterprise-table">
+            <thead>
+              <tr>
+                <th scope="col"><input id="selectAllDeposits" type="checkbox" aria-label="Select all deposits on page" /></th>
+                <th scope="col">Deposit</th>
+                <th scope="col">Owner</th>
+                <th scope="col">Division</th>
+                <th scope="col">Method</th>
+                <th scope="col">Status</th>
+                <th scope="col">Risk</th>
+                <th scope="col">Updated</th>
+                <th scope="col">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="depositTable"></tbody>
+          </table>
+        </div>
+        <div id="depositCards" class="deposit-card-list" aria-live="polite"></div>
+        <div class="pagination-bar">
+          <button type="button" class="secondary" id="depositPrevPage">Previous</button>
+          <span id="depositPageSummary" class="pagination-summary">Page 1</span>
+          <button type="button" class="secondary" id="depositNextPage">Next</button>
+        </div>
+      </section>
+
+      <section class="enterprise-grid enterprise-grid-2" id="compliance-section">
+        <section class="card panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Compliance</p>
+              <h2>KYC, AML, proof backlog, and report health.</h2>
+            </div>
+          </div>
+          <div id="complianceSummary" class="metric-grid"></div>
+          <div id="complianceCases" class="entity-stack"></div>
+        </section>
+
+        <section class="card panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Settings</p>
+              <h2>Division ownership, notifications, API keys, and feature flags.</h2>
+            </div>
+          </div>
+          <p class="helper-copy">Settings are now shared server-backed configuration and follow the signed-in session permissions.</p>
+          <form id="settingsForm" class="stacked-form">
+            <div class="split">
+              <label><span>Telegram channel</span><input name="telegramChannel" id="telegramChannel" placeholder="@peer_ops_alerts" /></label>
+              <label><span>Division lead focus</span><select id="settingsDivisionLead"></select></label>
+            </div>
+            <div class="actions wrap">
+              <label class="checkbox"><input type="checkbox" name="telegramEnabled" id="telegramEnabled" /> <span>Telegram alerts</span></label>
+              <label class="checkbox"><input type="checkbox" name="approvals" id="notifyApprovals" /> <span>Approval alerts</span></label>
+              <label class="checkbox"><input type="checkbox" name="depositStatus" id="notifyDeposits" /> <span>Deposit status alerts</span></label>
+              <label class="checkbox"><input type="checkbox" name="complianceAlerts" id="notifyCompliance" /> <span>Compliance alerts</span></label>
+            </div>
+            <div class="actions wrap">
+              <label class="checkbox"><input type="checkbox" id="flagRealtimePolling" /> <span>Realtime polling</span></label>
+              <label class="checkbox"><input type="checkbox" id="flagLiveQuotes" /> <span>Live quotes</span></label>
+              <label class="checkbox"><input type="checkbox" id="flagOnramp" /> <span>Peer extension onramp</span></label>
+              <label class="checkbox"><input type="checkbox" id="flagComplianceExports" /> <span>Compliance exports</span></label>
+            </div>
+            <div class="actions">
+              <button type="submit">Save settings</button>
+            </div>
+          </form>
+          <div id="settingsSummary" class="summary-list"></div>
+        </section>
+      </section>
+
+      <details class="advanced-block">
+        <summary>Advanced Peer tooling</summary>
+        <div class="enterprise-grid enterprise-grid-2">
+          <form id="onrampForm" class="card inset-card stacked-form">
+            <div class="panel-header">
+              <h3>Optional extension onramp</h3>
+              <p>Secondary buyer-side surface. Keep separate from team offramp execution.</p>
+            </div>
+            <div class="split">
+              <label><span>Input currency</span><input name="inputCurrency" value="USD" /></label>
+              <label><span>Input amount</span><input name="inputAmount" value="50" /></label>
+            </div>
+            <div class="split">
+              <label><span>Payment platform</span><input name="paymentPlatform" value="venmo" /></label>
+              <label><span>To token</span><input name="toToken" value="8453:0x0000000000000000000000000000000000000000" /></label>
+            </div>
+            <label><span>Recipient address</span><input name="recipientAddress" placeholder="0x..." /></label>
+            <div class="actions">
+              <button type="button" id="launchOnramp">Launch onramp</button>
+            </div>
+            <div id="onrampSummary" class="summary-list"></div>
+          </form>
+
+          <section class="card inset-card summary-card">
+            <div class="panel-header">
+              <h3>Protocol references</h3>
+              <p>Use these references while wiring real bridge flows, proof handling, and socket subscriptions.</p>
+            </div>
+            <div id="docsList" class="docs-list"></div>
+            <details class="debug-block">
+              <summary>View raw activity log</summary>
+              <pre id="advancedRaw" class="code-block compact">No advanced activity yet.</pre>
+            </details>
+          </section>
+        </div>
+      </details>
+    </main>
+
+    <div id="statusBanner" class="status-banner neutral" role="status" aria-live="polite">Ready.</div>
+
+    <dialog id="commandPalette" class="command-dialog">
+      <form method="dialog" class="command-panel">
+        <div class="command-topline">
+          <h2>Command palette</h2>
+          <button value="cancel" class="secondary" type="submit">Close</button>
+        </div>
+        <label><span>Search commands</span><input id="commandSearch" placeholder="Refresh deposits, open compliance, connect wallet" /></label>
+        <div id="commandResults" class="command-results"></div>
+      </form>
+    </dialog>
+
+    <script type="module" src="/client.js"></script>
+  </body>
+</html>

@@ -60,6 +60,80 @@ class TelegramCommandsHandler {
     });
 
     this.registerCommand({
+      command: '/player',
+      description: 'Player-specific deep dive',
+      handler: async (args) => {
+        if (!args || args.length === 0) {
+          return `❌ *Usage:* /player <name>`;
+        }
+
+        try {
+          const query = args.join(' ').toLowerCase();
+          const data = await fetchData();
+          const bets = (data.data || []).filter((bet: any) =>
+            String(bet.player || '').toLowerCase().includes(query)
+          );
+
+          if (bets.length === 0) {
+            return `🔎 *No player matches found for:* ${args.join(' ')}`;
+          }
+
+          const sample = bets.slice(0, 5);
+          const totalRisk = sample.reduce((sum: number, bet: any) => sum + parseFloat(bet.bet || '0'), 0);
+
+          return `🔎 *Player Tracking: ${args.join(' ')}*\n\n` +
+            sample.map((bet: any, index: number) =>
+              `${index + 1}. *${bet.agent || 'Unknown'}*: $${parseFloat(bet.bet || '0').toLocaleString()} ${bet.wager || bet.bet_type || ''} (${bet.odds || 'n/a'})`
+            ).join('\n') +
+            `\n\n*Matches:* ${bets.length}\n*Sample Risk:* $${totalRisk.toLocaleString()}`;
+        } catch (error) {
+          return `❌ *Player lookup error:* ${error.message}`;
+        }
+      }
+    });
+
+    this.registerCommand({
+      command: '/clv',
+      description: 'CLV parser and line movement review',
+      handler: async (args) => {
+        if (!args || args.length < 2) {
+          return [
+            `📊 *CLV Input Required*`,
+            ``,
+            `Usage: \`/clv <opening> <closing>\``,
+            `Examples:`,
+            `• \`/clv -110 -120\``,
+            `• \`/clv +150 +140\``,
+            `• \`/clv -7 -6.5\``,
+            ``,
+            `This returns both bettor CLV and book impact so the result is explicit.`
+          ].join('\n');
+        }
+
+        const opening = parseLineValue(args[0]);
+        const closing = parseLineValue(args[1]);
+
+        if (opening === null || closing === null) {
+          return `❌ *Invalid CLV input.* Use odds or spreads like \`-110\`, \`+140\`, \`-6.5\`.`;
+        }
+
+        const summary = buildClvSummary(opening, closing);
+        return [
+          `📊 *CLV Review*`,
+          ``,
+          `Opening: \`${args[0]}\``,
+          `Closing: \`${args[1]}\``,
+          `Market: *${summary.marketType}*`,
+          `Bettor CLV: *${summary.bettorOutcome}*`,
+          `Book Impact: *${summary.bookOutcome}*`,
+          `Edge: *${summary.edgeText}*`,
+          ``,
+          summary.explainer
+        ].join('\n');
+      }
+    });
+
+    this.registerCommand({
       command: '/pending',
       description: 'High-vol pending bets',
       handler: async () => {
@@ -352,6 +426,106 @@ EXAMPLES:
 
 // Export for use in other scripts
 export { TelegramCommandsHandler, type TelegramCommand };
+
+function parseLineValue(input: string): number | null {
+  const normalized = input.replace(/[^0-9+-.]/g, '');
+  if (!normalized || normalized === '+' || normalized === '-' || normalized === '.') {
+    return null;
+  }
+
+  const parsed = Number(normalized);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function buildClvSummary(opening: number, closing: number): {
+  marketType: string;
+  bettorOutcome: string;
+  bookOutcome: string;
+  edgeText: string;
+  explainer: string;
+} {
+  if (isAmericanOdds(opening) && isAmericanOdds(closing)) {
+    const openingImplied = americanToImpliedProbability(opening);
+    const closingImplied = americanToImpliedProbability(closing);
+    const bettorEdge = (closingImplied - openingImplied) * 100;
+    const edgeText = `${formatSigned(bettorEdge.toFixed(2))} pts implied probability`;
+
+    if (bettorEdge > 0) {
+      return {
+        marketType: 'American odds',
+        bettorOutcome: 'Beat closing',
+        bookOutcome: 'Line moved against the book',
+        edgeText,
+        explainer: `The closing price implies a stronger probability than the opening number. The bettor got the better ticket and the book gave up value.`
+      };
+    }
+
+    if (bettorEdge < 0) {
+      return {
+        marketType: 'American odds',
+        bettorOutcome: 'Missed closing',
+        bookOutcome: 'Closing improved for the book',
+        edgeText,
+        explainer: `The closing price became more favorable for a later entry. The bettor did not beat the market and the book improved its position.`
+      };
+    }
+
+    return {
+      marketType: 'American odds',
+      bettorOutcome: 'Flat',
+      bookOutcome: 'No line value change',
+      edgeText: '0.00 pts implied probability',
+      explainer: `The market closed at the same implied price. There is no measurable CLV edge either way.`
+    };
+  }
+
+  const bettorEdge = closing - opening;
+  const edgeText = `${formatSigned(bettorEdge.toFixed(2))} points`;
+
+  if (bettorEdge > 0) {
+    return {
+      marketType: 'Spread / total',
+      bettorOutcome: 'Closing improved numerically',
+      bookOutcome: 'Opening number was softer for the book',
+      edgeText,
+      explainer: `The line moved upward from the opening number. Treat this as a numeric move and confirm side context if you need favorite versus underdog interpretation.`
+    };
+  }
+
+  if (bettorEdge < 0) {
+    return {
+      marketType: 'Spread / total',
+      bettorOutcome: 'Closing worsened numerically',
+      bookOutcome: 'Closing hardened versus the opener',
+      edgeText,
+      explainer: `The line moved downward from the opening number. Treat this as a numeric move and confirm side context if you need favorite versus underdog interpretation.`
+    };
+  }
+
+  return {
+    marketType: 'Spread / total',
+    bettorOutcome: 'Flat',
+    bookOutcome: 'No line value change',
+    edgeText: '0.00 points',
+    explainer: `The opening and closing numbers are identical, so there is no CLV movement to score.`
+  };
+}
+
+function isAmericanOdds(value: number): boolean {
+  return Math.abs(value) >= 100;
+}
+
+function americanToImpliedProbability(odds: number): number {
+  if (odds > 0) {
+    return 100 / (odds + 100);
+  }
+
+  return Math.abs(odds) / (Math.abs(odds) + 100);
+}
+
+function formatSigned(value: string): string {
+  return value.startsWith('-') ? value : `+${value}`;
+}
 
 // CLI execution
 if (import.meta.main) {

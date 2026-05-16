@@ -1,11 +1,18 @@
 // src/clients/plive.ts
 
 import type { paths } from '../types/plive';
+import { getPliveSession } from '../lib/plive-session';
 
-type Op<T, P, M> = paths[T][P][M];
+type PathKey = keyof paths;
+type MethodKey<T extends PathKey> = keyof paths[T];
+type Op<
+  T extends PathKey,
+  P extends MethodKey<T>,
+  M extends keyof paths[T][P]
+> = paths[T][P][M];
 
 export const plive = {
-  async getUsers(p: Op<'/manager-tools/usersList/','get','parameters']['query']) {
+  async getUsers(p: Op<'/manager-tools/usersList/','get','parameters'>['query']) {
     const sp = new URLSearchParams(p as any);
     return fetch('https://plive.sportswidgets.pro/manager-tools/usersList/?'+sp, {
       headers: await buildHeaders(),
@@ -86,9 +93,5 @@ async function buildHeaders(contentType: string = 'application/json'): Promise<R
  * TODO: Implement actual session management
  */
 async function getFreshPliveSession(): Promise<{ cookie: string; sessionId: string }> {
-  // TODO: Replace with actual session-keeper integration
-  return {
-    cookie: process.env.PLIVE_COOKIE || 'your-session-cookie',
-    sessionId: process.env.PLIVE_SESSION_TOKEN || 'your-session-token'
-  };
+  return getPliveSession();
 }

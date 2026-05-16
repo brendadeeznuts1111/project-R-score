@@ -56,6 +56,10 @@
     "pipe:watch": "bun --watch pipe:etl",
     "pipe:live": "bun scripts/pipe-live.ts",
     "pipe:working": "bun scripts/pipe-working.ts",
+    "plive:session": "bun scripts/plive-session.ts",
+    "plive:test": "bun scripts/plive-session.ts test",
+    "plive:auth": "bun scripts/auth-plive.ts",
+    "plive:bootstrap": "bun scripts/plive-bootstrap.ts",
     "pipe:watch-prod": "bun scripts/pipe-watch-prod.ts",
     "session:refresh": "bun -e \"import { smartSessionRefresh } from './src/etl/fetch-users'; await smartSessionRefresh(0, false); console.log('Session refreshed');\"",
     "users:list": "bun scripts/datapipe.ts users",
@@ -227,7 +231,9 @@
     "bun": ">=1.3.8",
     "node": ">=18.0.0"
   },
-  "dependencies": {},
+  "dependencies": {
+    "semver": "7.7.4"
+  },
   "devDependencies": {
     "bun-types": "latest"
   },

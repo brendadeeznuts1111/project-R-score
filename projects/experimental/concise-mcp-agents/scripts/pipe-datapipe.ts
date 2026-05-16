@@ -7,6 +7,7 @@
 import { spawn } from "bun";
 import { writeFileSync, existsSync, mkdirSync } from "fs";
 import { join } from "path";
+import { TelegramBot } from "./telegram-bot.ts";
 
 interface PipeETLConfig {
   apiUrl: string;
@@ -20,6 +21,7 @@ interface PipeETLConfig {
 
 class PipeDatapipeETL {
   private config: PipeETLConfig;
+  private telegramBot: TelegramBot | null = null;
 
   constructor(config?: Partial<PipeETLConfig>) {
     this.config = {
@@ -36,6 +38,19 @@ class PipeDatapipeETL {
       timeout: config?.timeout || 10000,
       maxBuffer: config?.maxBuffer || 10 * 1024 * 1024, // 10MB
     };
+  }
+
+  private getTelegramBot(): TelegramBot | null {
+    if (this.telegramBot) {
+      return this.telegramBot;
+    }
+
+    try {
+      this.telegramBot = new TelegramBot();
+      return this.telegramBot;
+    } catch {
+      return null;
+    }
   }
 
   async pipeETL(): Promise<{ processed: number; outputFile: string; duration: number }> {
@@ -186,14 +201,9 @@ class PipeDatapipeETL {
       const message = `🔥 *PIPE ETL Complete*\n\n✅ ${recordCount} high-profit bets appended\n⏱️ ${new Date().toLocaleString()}\n\n_Dashboard updated automatically_`;
 
       // Try to send telegram notification (don't fail if it doesn't work)
-      try {
-        const telegram = spawn(['bun', 'telegram:send', message], {
-          stdio: 'pipe',
-          cwd: process.cwd()
-        });
-        await telegram.exited;
-      } catch {
-        // Silent fail for notifications
+      const telegramBot = this.getTelegramBot();
+      if (telegramBot) {
+        await telegramBot.sendFantasy402AutoMessage(message, 'general-updates');
       }
 
       // Trigger dashboard refresh (if WS server is running)

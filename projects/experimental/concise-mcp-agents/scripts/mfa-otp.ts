@@ -42,7 +42,7 @@ export class MFASystem {
     const user = await this.access.getUser(userId);
     if (user) {
       const message = `🔐 *MFA Code*\n\nAction: ${action}\nCode: \`${code}\`\n\nExpires in 5 minutes.`;
-      await this.telegram.sendMessage(message, userId);
+      await this.telegram.sendMessage(message, { chatId: userId });
     }
 
     return code;

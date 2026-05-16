@@ -64,13 +64,28 @@ This directory contains all projects organized by category and purpose.
 - **windsurf-project/** - Windsurf project
 - **windsurf-project-2/** - Windsurf project v2
 - **working/** - Work in progress
-
-### 🧪 experiments/
-- **chromprofile-testing/** - Chrome profile testing
-- **claude-features-test/** - Claude features testing
+- **bun-cheatsheet-system/** - Bun cheatsheet playgrounds (moved Phase 2)
+- **frontend-spec/** - Quantum/SIMD frontend spec & dashboard (moved Phase 2)
+- **warstrike-refractions/** - Cookie & docs scanning patterns (moved Phase 2)
+- **monorepo-example/** - Sample Bun workspaces monorepo (moved Phase 2)
+- **chromprofile-testing/** - Chrome profile testing (merged from experiments/ Phase 2.5)
+- **claude-features-test/** - Claude features testing (merged from experiments/ Phase 2.5)
+- **clawdbot/** - Large Claude multi-agent desktop platform + 50+ extensions & skills (moved Phase 2.5)
 
 ### 🔧 tools/
 - **zig-self-bun/** - Zig Bun integration
+- **native-addon-tool/** - Native addon build tooling (moved Phase 2)
+- **rust-bun-plugin/** - Rust + Bun/WASM plugin (moved Phase 2)
+
+### 🗄️ archive/
+- **bun-docs-dashboard-prototype/** - Old React Bun docs/wiki dashboard (moved Phase 2)
+- **dotfiles/** - Dotfiles notes
+- **factory-wager-output/**, **factory-wager-pattern-wiki/** - FactoryWager data/wiki outputs
+- **internal-wiki/**, **wiki-output/** - Exported wiki artifacts
+- **kimiremote-refactor/**, **peer-ops-hardened-standalone/** - Legacy parallel/refactor copies
+- **offshore-books/**, **registry-migration/** - Completed migration/deploy work
+- **pipeline/**, **profile-fix/**, **protocols/**, **tier1380/**, **test-project/** - Small one-off scripts & tests
+- **temp-archive-demo/** - Temporary archive tarball
 
 ## 📋 Project Guidelines
 

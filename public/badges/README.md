@@ -45,17 +45,17 @@ Professional status badges for FactoryWager infrastructure monitoring and visual
 
 ### Markdown
 ```markdown
-![Infrastructure](badges/infrastructure.svg)
-![Wiki](badges/wiki.svg)
-![Uptime](badges/perf-uptime.svg)
-![SSL](badges/security-ssl.svg)
-![Version](badges/deploy-version.svg)
+![Infrastructure](public/badges/infrastructure.svg)
+![Wiki](public/badges/wiki.svg)
+![Uptime](public/badges/perf-uptime.svg)
+![SSL](public/badges/security-ssl.svg)
+![Version](public/badges/deploy-version.svg)
 ```
 
 ### HTML
 ```html
-<img src="badges/infrastructure.svg" alt="Infrastructure">
-<img src="badges/wiki.svg" alt="Wiki">
+<img src="public/badges/infrastructure.svg" alt="Infrastructure">
+<img src="public/badges/wiki.svg" alt="Wiki">
 <img src="badges/perf-uptime.svg" alt="Uptime">
 ```
 

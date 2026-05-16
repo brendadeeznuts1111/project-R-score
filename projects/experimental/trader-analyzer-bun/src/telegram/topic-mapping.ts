@@ -13,22 +13,20 @@
  */
 export const TOPIC_MAPPING = {
 	// Logical ID -> Telegram Thread ID
-	general: 89,
-	"live-alerts": 91,
-	arbitrage: 93,
-	analytics: 95,
-	"system-status": 97,
-	changelog: 99,
-	"ci-cd-rss": 101,
+	general: 12,
+	"urgent-alerts": 2,
+	"troublesome-accounts": 4,
+	"daily-pattern-reports": 6,
+	"agent-heatmap": 8,
+	"player-tracking": 10,
 
 	// Also support numeric logical IDs
-	1: 89, // General
-	2: 91, // Live Alerts
-	3: 93, // Arbitrage Opportunities
-	4: 95, // Analytics & Stats
-	5: 97, // System Status
-	6: 99, // Changelog
-	7: 101, // CI/CD & RSS Feed
+	1: 12, // General Updates
+	2: 2, // Urgent Alerts
+	3: 4, // Troublesome Accounts / CLV Beaters
+	4: 6, // Daily Pattern Reports
+	5: 8, // Agent Heatmap
+	6: 10, // Player Tracking
 } as const;
 
 /**
@@ -50,13 +48,13 @@ export function getThreadId(identifier: string | number): number | undefined {
  */
 export function getAllMappings(): Record<string, number> {
 	return {
-		General: TOPIC_MAPPING.general,
-		"Live Alerts": TOPIC_MAPPING["live-alerts"],
-		"Arbitrage Opportunities": TOPIC_MAPPING.arbitrage,
-		"Analytics & Stats": TOPIC_MAPPING.analytics,
-		"System Status": TOPIC_MAPPING["system-status"],
-		Changelog: TOPIC_MAPPING.changelog,
-		"CI/CD & RSS Feed": TOPIC_MAPPING["ci-cd-rss"],
+		"General Updates": TOPIC_MAPPING.general,
+		"Urgent Alerts": TOPIC_MAPPING["urgent-alerts"],
+		"Troublesome Accounts / CLV Beaters":
+			TOPIC_MAPPING["troublesome-accounts"],
+		"Daily Pattern Reports": TOPIC_MAPPING["daily-pattern-reports"],
+		"Agent Heatmap": TOPIC_MAPPING["agent-heatmap"],
+		"Player Tracking": TOPIC_MAPPING["player-tracking"],
 	};
 }
 
@@ -64,11 +62,10 @@ export function getAllMappings(): Record<string, number> {
  * Topic names for reference
  */
 export const TOPIC_NAMES = {
-	89: "General",
-	91: "Live Alerts",
-	93: "Arbitrage Opportunities",
-	95: "Analytics & Stats",
-	97: "System Status",
-	99: "Changelog",
-	101: "CI/CD & RSS Feed",
+	2: "Urgent Alerts",
+	4: "Troublesome Accounts / CLV Beaters",
+	6: "Daily Pattern Reports",
+	8: "Agent Heatmap",
+	10: "Player Tracking",
+	12: "General Updates",
 } as const;

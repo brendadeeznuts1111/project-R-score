@@ -147,7 +147,7 @@ export interface HyperBunUIContext {
 	 * // Result should not contain the admin div element
 	 * ```
 	 */
-	userRole?: "analyst" | "admin" | "guest" | "developer";
+	userRole?: "analyst" | "admin" | "guest" | "developer" | "viewer";
 
 	/**
 	 * 6.1.1.2.2.1.2.4: Enables client-side debug logging and diagnostic panels.

@@ -1,82 +1,91 @@
 #!/usr/bin/env bun
 
-// [AUTH][PLIVE][LOGIN][AUTH-PLIVE-001][v1.0][ACTIVE]
+import { storePliveSession, redactSecret } from "../src/lib/plive-session";
 
-const USERNAME = "NOLAROSE";
-const PASSWORD = "N@LA2030";
+const username = process.env.PLIVE_USERNAME || process.env.FANTASY402_USERNAME || "";
+const password = process.env.PLIVE_PASSWORD || process.env.FANTASY402_PASSWORD || "";
+
+if (!username || !password) {
+	console.error(
+		"Missing PLIVE credentials. Set PLIVE_USERNAME and PLIVE_PASSWORD before running this script.",
+	);
+	process.exit(1);
+}
 
 console.log("🔑 Authenticating with plive.sportswidgets.pro...");
 
-// First, get the login page to extract any CSRF tokens or required headers
-const loginPage = await fetch('https://plive.sportswidgets.pro/manager-tools/#/login');
-const loginHtml = await loginPage.text();
-
-// Extract any form data or tokens if needed
-console.log("📄 Got login page, checking for auth requirements...");
-
-// Attempt login
-const loginResponse = await fetch('https://plive.sportswidgets.pro/api/v3/manager-tools/signin/', {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
-    'Referer': 'https://plive.sportswidgets.pro/manager-tools/#/login'
-  },
-  body: JSON.stringify({
-    username: USERNAME,
-    password: PASSWORD
-  })
-});
+const loginResponse = await fetch(
+	"https://plive.sportswidgets.pro/api/v3/manager-tools/signin/",
+	{
+		method: "POST",
+		headers: {
+			"Content-Type": "application/json",
+			"User-Agent":
+				"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+			Accept: "application/json",
+			Referer: "https://plive.sportswidgets.pro/manager-tools/#/login",
+		},
+		body: JSON.stringify({
+			username,
+			password,
+		}),
+	},
+);
 
 if (!loginResponse.ok) {
-  console.error(`❌ Login failed: ${loginResponse.status} ${loginResponse.statusText}`);
-  const errorText = await loginResponse.text();
-  console.error("Error details:", errorText);
-  process.exit(1);
+	console.error(
+		`❌ Login failed: ${loginResponse.status} ${loginResponse.statusText}`,
+	);
+	console.error(await loginResponse.text());
+	process.exit(1);
 }
 
-console.log("✅ Login successful!");
+const authData = await loginResponse
+	.json()
+	.catch(() => ({} as Record<string, unknown>));
+const cookies = loginResponse.headers.get("set-cookie") || "";
+const sessionId =
+	loginResponse.headers.get("x-gs-session") ||
+	String((authData as any)?.sessionId || (authData as any)?.session || "");
 
-// Extract cookies from response
-const cookies = loginResponse.headers.get('set-cookie');
-if (cookies) {
-  console.log("🍪 Session cookies obtained");
-  
-  // Store in Bun.secrets for the live pipe script
-  await Bun.secrets.set({ service: "plive", name: "cookie", value: cookies });
-  console.log("🔒 Cookies stored securely in Bun.secrets");
-} else {
-  console.warn("⚠️  No cookies in response - checking response body...");
+if (!cookies) {
+	console.error("❌ Login succeeded but no session cookie was returned.");
+	process.exit(1);
 }
 
-// Check if we got a successful auth response
-const authData = await loginResponse.json();
-console.log("📊 Auth response:", JSON.stringify(authData, null, 2));
-
-// Now test the live data endpoint
-console.log("🧪 Testing live data endpoint...");
-const testResponse = await fetch('https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true', {
-  headers: {
-    'cookie': cookies || '',
-    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
-    'Accept': 'application/json',
-    'Referer': 'https://plive.sportswidgets.pro/manager-tools/'
-  }
+await storePliveSession({
+	cookie: cookies,
+	sessionId,
 });
 
-if (testResponse.ok) {
-  console.log("✅ Live data endpoint accessible!");
-  const data = await testResponse.json();
-  console.log(`📊 Got ${Array.isArray(data) ? data.length : 'unknown'} records`);
-  
-  // Store success indicator
-  await Bun.secrets.set({ service: "plive", name: "authenticated", value: "true" });
-  console.log("🎯 Ready to run live data pipeline!");
-  
-} else {
-  console.error(`❌ Live data access failed: ${testResponse.status}`);
-  console.error("Response:", await testResponse.text());
+console.log("✅ Session stored in Bun.secrets");
+console.log(`🍪 Cookie: ${redactSecret(cookies)}`);
+if (sessionId) {
+	console.log(`🪪 x-gs-session: ${redactSecret(sessionId)}`);
 }
 
-console.log("\n🚀 Run: bun run pipe:live");
+console.log("🧪 Testing live data endpoint...");
+const testHeaders: Record<string, string> = {
+	cookie: cookies,
+	"User-Agent":
+		"Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36",
+	Accept: "application/json",
+	Referer: "https://plive.sportswidgets.pro/manager-tools/",
+};
+
+if (sessionId) {
+	testHeaders["x-gs-session"] = sessionId;
+}
+
+const testResponse = await fetch(
+	"https://plive.sportswidgets.pro/live/data?countries=true&leagues=true&sports=true",
+	{ headers: testHeaders },
+);
+
+if (!testResponse.ok) {
+	console.error(`❌ Live data access failed: ${testResponse.status}`);
+	console.error(await testResponse.text());
+	process.exit(1);
+}
+
+console.log("✅ Live data endpoint accessible");

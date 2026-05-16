@@ -35,6 +35,7 @@ import {
 } from '../canonical';
 import { getCache, createNamespacedCache } from '../cache';
 import { DeribitProvider, type DeribitOption, type DeribitOptionTicker } from '../providers/deribit';
+import fantasy402Api from './f402';
 
 const api = new Hono();
 
@@ -56,6 +57,8 @@ api.use('/*', cors());
 api.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
+
+api.route('/f402', fantasy402Api);
 
 // ============ Streams ============
 

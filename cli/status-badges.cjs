@@ -10,7 +10,7 @@ const path = require('path');
 
 class StatusBadgesGenerator {
     constructor() {
-        this.outputDir = path.join(process.cwd(), 'badges');
+        this.outputDir = path.join(process.cwd(), 'public/badges');
         this.ensureOutputDir();
     }
 

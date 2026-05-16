@@ -678,7 +678,11 @@ async function main() {
   console.log(`   Bundled JS: ${(bundledJS.length / 1024).toFixed(1)} KB`);
 
   // 2. Assemble final single-file HTML
-  const shell = await Bun.file(SHELL_PATH).text();
+  let shell = await Bun.file(SHELL_PATH).text();
+
+  // Remove the external dashboard.js script tag (we inline the bundle instead)
+  shell = shell.replace(/<script[^>]*dashboard\.js[^>]*><\/script>/gi, '');
+
   const finalHTML = shell.replace("</body>", `<script>${bundledJS}</script>\n</body>`);
 
   const finalPath = join(OUT_DIR, mergedConfig.outputFilename);
@@ -957,6 +961,45 @@ async function startServer(
       },
 
       // ============================================================
+      // DEMO: Streaming response body (ReadableStream)
+      // ============================================================
+      // This demonstrates modern streaming response consumption:
+      // - `for await (const chunk of response.body)` 
+      // - Or using `response.body.getReader()`
+      //
+      // Try it from the "Built with Bun" modal → "Stream Response Body" button.
+      // With --console, each chunk will appear in your terminal.
+      "/api/stream-demo": async (req) => {
+        logRequest(req);
+
+        const encoder = new TextEncoder();
+        const chunks = [
+          "Chunk 1: Hello from Bun streaming demo\n",
+          "Chunk 2: This response is being streamed in real time...\n",
+          "Chunk 3: No buffering of the entire body in memory.\n",
+          "Chunk 4: Perfect for large files, SSE, or AI token streams.\n",
+          "Chunk 5: Connection will close after this final chunk.\n",
+        ];
+
+        const stream = new ReadableStream({
+          async start(controller) {
+            for (const chunk of chunks) {
+              controller.enqueue(encoder.encode(chunk));
+              await new Promise(r => setTimeout(r, 350)); // simulate slow network
+            }
+            controller.close();
+          },
+        });
+
+        return new Response(stream, {
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+            "Cache-Control": "no-cache",
+          },
+        });
+      },
+
+      // ============================================================
       // WebSocket demo (only enabled with --ws or --websocket)
       // ============================================================
       // Educational showcase of Bun's first-class WebSocket support + **custom headers on upgrade**:
@@ -1090,7 +1133,7 @@ async function startServer(
 
   console.log(`✅ Server running: ${server.url}`);
   console.log(
-    `   Useful: /api/status  | POST /api/echo  | /api/page/bytecode  | GET /api/sse (server.timeout demo)${enableWebSocket ? "  | WS /ws  | GET /api/ws-status (custom upgrade headers + subscriberCount)" : ""}`
+    `   Useful: /api/status  | POST /api/echo  | /api/page/bytecode  | GET /api/sse (server.timeout demo)  | GET /api/stream-demo (streaming response body)${enableWebSocket ? "  | WS /ws  | GET /api/ws-status (custom upgrade headers + subscriberCount)" : ""}`
   );
 
   // === Graceful Shutdown (server.stop) ===

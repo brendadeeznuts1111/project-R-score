@@ -37,6 +37,7 @@
     "dev": "bun --hot run src/index.ts",
     "start": "bun --disable-eval --use-system-ca run src/index.ts",
     "start:secure": "bun --disable-eval --disable-wasm --use-system-ca run src/index.ts",
+    "build:miniapp": "bun build ./src/telegram/mini-app.ts --outdir ./public/mini-app",
     "test": "bun test",
     "bench": "bun run scripts/bench.ts",
     "bench:full": "bun run src/bench/index.ts",

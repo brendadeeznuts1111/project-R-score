@@ -7,6 +7,7 @@
 import { readFileSync, writeFileSync, existsSync, appendFileSync } from "fs";
 import { join } from "path";
 import { YAML } from "bun";
+import { TelegramBot } from "./telegram-bot.ts";
 
 interface BetEvent {
   event: string;
@@ -46,9 +47,23 @@ interface BetsConfig {
 class BetsIntegrationSystem {
   private config: BetsConfig;
   private configFile = 'config/bets-integrate.yaml';
+  private telegramBot: TelegramBot | null = null;
 
   constructor() {
     this.loadConfig();
+  }
+
+  private getTelegramBot(): TelegramBot | null {
+    if (this.telegramBot) {
+      return this.telegramBot;
+    }
+
+    try {
+      this.telegramBot = new TelegramBot();
+      return this.telegramBot;
+    } catch {
+      return null;
+    }
   }
 
   private loadConfig(): void {
@@ -205,14 +220,14 @@ class BetsIntegrationSystem {
         // Log to audit
         await this.logBetAlert(bet, 'VOLUME_SPIKE');
 
-        // Send Telegram alert
-        try {
-          const { spawn } = await import('child_process');
-          spawn('bun', ['telegram:send', alertMessage], {
-            stdio: 'inherit',
-            cwd: process.cwd()
-          });
-        } catch {
+        const telegramBot = this.getTelegramBot();
+        if (!telegramBot) {
+          console.warn(`⚠️  Could not send Telegram alert`);
+          continue;
+        }
+
+        const sent = await telegramBot.sendFantasy402AutoMessage(alertMessage, 'urgent-alerts');
+        if (!sent) {
           console.warn(`⚠️  Could not send Telegram alert`);
         }
       }

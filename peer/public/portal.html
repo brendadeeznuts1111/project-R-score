@@ -1,0 +1,320 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Peer Enterprise Management Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="background-grid" aria-hidden="true"></div>
+    <main class="portal-shell enterprise-portal-shell">
+      <aside class="portal-sidebar card">
+        <div class="portal-brand">
+          <p class="eyebrow">Management Portal</p>
+          <h1>Oversight for approvals, compliance, members, invites, and audit history.</h1>
+          <p class="lede">
+            This surface is for administrators and compliance leads. Review queue health, inspect regional activity, and keep records exportable.
+          </p>
+        </div>
+
+        <label>
+          <span>Effective access</span>
+          <select id="portalRoleSwitcher" aria-describedby="portalRoleHint">
+            <option value="Admin">Admin</option>
+            <option value="Compliance">Compliance</option>
+            <option value="Operator">Operator</option>
+            <option value="Viewer">Viewer</option>
+          </select>
+        </label>
+        <p id="portalRoleHint" class="helper-copy">Derived from server-issued session claims. This control is display-only.</p>
+
+        <nav class="portal-nav">
+          <a href="#overview">Overview</a>
+          <a href="#queue">Queue</a>
+          <a href="#management">Management</a>
+          <a href="#records">Records</a>
+        </nav>
+
+        <div class="actions wrap">
+          <button type="button" class="secondary" id="portalRefresh">Refresh portal</button>
+          <a class="button-link ghost-link" href="/index.html">Open operations</a>
+        </div>
+
+        <div id="portalRailSummary" class="summary-list"></div>
+      </aside>
+
+      <section class="portal-main">
+        <section id="overview" class="card panel">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Overview</p>
+              <h2>See who needs attention, which divisions carry risk, and how much liquidity is tracked.</h2>
+            </div>
+            <p class="helper-copy">The overview stays operational: metrics, filters, and escalations first.</p>
+          </div>
+
+          <div id="overviewStats" class="metric-grid"></div>
+
+          <div class="filter-grid">
+            <label><span>Search members</span><input id="memberSearch" placeholder="Name, email, member ID" /></label>
+            <label><span>Region</span><select id="regionFilter"></select></label>
+            <label><span>Role</span><select id="roleFilter"></select></label>
+            <label><span>Approval status</span><select id="approvalFilter"></select></label>
+          </div>
+
+          <div class="enterprise-grid enterprise-grid-2">
+            <section class="card inset-card summary-card">
+              <div class="panel-header">
+                <h3>Regional coverage</h3>
+                <p>Division ownership, member counts, and tracked balance stay in one board.</p>
+              </div>
+              <div id="regionBoard" class="entity-stack"></div>
+            </section>
+
+            <section class="card inset-card summary-card">
+              <div class="panel-header">
+                <h3>Compliance snapshot</h3>
+                <p>KYC, AML, proofs, and open alerts for the current review window.</p>
+              </div>
+              <div id="portalComplianceSummary" class="metric-grid compact-metric-grid"></div>
+              <div id="portalComplianceCases" class="entity-stack"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="queue" class="enterprise-grid enterprise-grid-2">
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Queue</p>
+                <h2>Approvals and actions</h2>
+              </div>
+              <div class="actions wrap">
+                <button type="button" class="secondary" id="requestFundsApproval">Request funds approval</button>
+                <button type="button" class="secondary" id="requestPeerApproval">Request Peer access approval</button>
+              </div>
+            </div>
+            <div id="approvalFeed" class="entity-stack"></div>
+          </section>
+
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Operator session</p>
+                <h2>Signed-in context</h2>
+              </div>
+            </div>
+            <form id="portalSigninForm" class="compact-form">
+              <div class="split">
+                <label><span>Member ID</span><input name="memberId" placeholder="admin-central" required /></label>
+                <label><span>Password</span><input name="password" type="password" placeholder="Your password" required /></label>
+              </div>
+              <div class="actions wrap">
+                <button type="submit">Sign in</button>
+                <button type="button" class="secondary" id="portalSignout">Sign out</button>
+              </div>
+            </form>
+            <div id="portalSessionSummary" class="summary-list"></div>
+            <details class="debug-block">
+              <summary>View raw session</summary>
+              <pre id="portalSessionRaw" class="code-block compact">No active session.</pre>
+            </details>
+          </section>
+        </section>
+
+        <section id="management" class="enterprise-grid enterprise-grid-2">
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Management</p>
+                <h2>Invites, onboarding, and member administration</h2>
+              </div>
+            </div>
+            <div class="stack">
+              <form id="portalInviteForm" class="card inset-card stacked-form">
+                <div class="panel-header">
+                  <h3>Create invite</h3>
+                  <p>Invite a new teammate with role, region, and execution intent.</p>
+                </div>
+                <div class="split">
+                  <label><span>Email</span><input name="email" type="email" required /></label>
+                  <label><span>Member ID</span><input name="memberId" required /></label>
+                </div>
+                <div class="split">
+                  <label><span>Role</span><select name="role" id="inviteRoleSelect"></select></label>
+                  <label><span>State</span><input name="state" placeholder="TX" required /></label>
+                </div>
+                <div class="actions wrap">
+                  <label class="checkbox"><input type="checkbox" name="leaderForRegion" /> <span>Leader for region</span></label>
+                  <label class="checkbox"><input type="checkbox" name="canExecutePeerTransactions" /> <span>Can initiate Peer actions</span></label>
+                </div>
+                <div class="actions"><button type="submit">Create invite</button></div>
+                <div id="inviteSummary" class="summary-list"></div>
+              </form>
+
+              <form id="portalOnboardingForm" class="card inset-card stacked-form">
+                <div class="panel-header">
+                  <h3>Complete onboarding</h3>
+                  <p>Accept an invite and attach member-owned payout identities.</p>
+                </div>
+                <label><span>Invite token</span><input name="inviteToken" required /></label>
+                <div class="split">
+                  <label><span>Display name</span><input name="displayName" required /></label>
+                  <label><span>Password</span><input name="password" type="password" required /></label>
+                </div>
+                <div class="split">
+                  <label><span>Venmo</span><input name="venmo" placeholder="@handle" /></label>
+                  <label><span>Cash App</span><input name="cashapp" placeholder="$cashtag" /></label>
+                </div>
+                <label><span>PayPal</span><input name="paypal" type="email" placeholder="name@example.com" /></label>
+                <div class="actions"><button type="submit">Complete onboarding</button></div>
+              </form>
+            </div>
+          </section>
+
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Operations Admin</p>
+                <h2>Member changes, funds entries, and notification settings</h2>
+              </div>
+            </div>
+            <div class="stack">
+              <form id="portalMemberForm" class="card inset-card stacked-form">
+                <div class="panel-header">
+                  <h3>Member administration</h3>
+                  <p>Update member profile, payout identities, and app execution permissions.</p>
+                </div>
+                <div class="split">
+                  <label><span>Member ID</span><input name="memberId" required /></label>
+                  <label><span>Display name</span><input name="displayName" required /></label>
+                </div>
+                <div class="split">
+                  <label><span>Email</span><input name="email" type="email" required /></label>
+                  <label><span>State</span><input name="state" required /></label>
+                </div>
+                <div class="split">
+                  <label><span>Role</span><select name="role" id="memberRoleSelect"></select></label>
+                  <label><span>Password</span><input name="password" type="password" placeholder="Optional" /></label>
+                </div>
+                <div class="split">
+                  <label><span>Venmo</span><input name="venmo" placeholder="@handle" /></label>
+                  <label><span>Cash App</span><input name="cashapp" placeholder="$cashtag" /></label>
+                </div>
+                <label><span>PayPal</span><input name="paypal" type="email" placeholder="name@example.com" /></label>
+                <div class="actions wrap">
+                  <label class="checkbox"><input type="checkbox" name="leaderForRegion" /> <span>Leader for region</span></label>
+                  <label class="checkbox"><input type="checkbox" name="canExecutePeerTransactions" /> <span>Peer execution permission</span></label>
+                </div>
+                <div class="actions"><button type="submit">Save member</button></div>
+              </form>
+
+              <form id="portalFundsForm" class="card inset-card stacked-form">
+                <div class="panel-header">
+                  <h3>Funds entry</h3>
+                  <p>Track division liquidity and operator allocations.</p>
+                </div>
+                <div class="split">
+                  <label><span>Member</span><select name="memberId" id="portalFundsMemberSelect"></select></label>
+                  <label><span>Type</span><select name="type"><option value="credit">credit</option><option value="debit">debit</option></select></label>
+                </div>
+                <div class="split">
+                  <label><span>USD cents</span><input name="amountUsdCents" value="10000" required /></label>
+                  <label><span>Note</span><input name="note" placeholder="Regional float allocation" required /></label>
+                </div>
+                <div class="actions"><button type="submit">Add funds entry</button></div>
+              </form>
+            </div>
+          </section>
+        </section>
+
+        <section id="records" class="enterprise-grid enterprise-grid-2">
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Records</p>
+                <h2>Filterable audit trail</h2>
+              </div>
+              <div class="actions wrap">
+                <a id="auditExport" class="button-link slim-link" href="#" download="peer-audit.csv">Export audit CSV</a>
+              </div>
+            </div>
+            <div class="filter-grid">
+              <label><span>Type</span><select id="auditTypeFilter"></select></label>
+              <label><span>Division</span><select id="auditDivisionFilter"></select></label>
+              <label><span>Actor</span><input id="auditActorFilter" placeholder="admin-central" /></label>
+              <label><span>Date from</span><input id="auditDateFrom" type="date" /></label>
+            </div>
+            <div id="auditTimeline" class="entity-stack"></div>
+          </section>
+
+          <section class="card panel">
+            <div class="section-header">
+              <div>
+                <p class="eyebrow">Member Directory</p>
+                <h2>Rich member records with quick actions</h2>
+              </div>
+            </div>
+            <div id="memberDirectory" class="entity-stack"></div>
+            <div class="stack">
+              <div>
+                <h3 class="subheading">Funds ledger</h3>
+                <div id="ledgerFeed" class="entity-stack"></div>
+              </div>
+              <div>
+                <h3 class="subheading">Invites</h3>
+                <div id="inviteFeed" class="entity-stack"></div>
+              </div>
+            </div>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <aside
+      id="memberDrawer"
+      class="member-drawer hidden"
+      aria-hidden="true"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="drawerName"
+      aria-describedby="drawerId"
+      tabindex="-1"
+    >
+      <div class="drawer-card card">
+        <div class="member-topline">
+          <div>
+            <h2 id="drawerName">Member detail</h2>
+            <div id="drawerId" class="member-id"></div>
+          </div>
+          <button type="button" class="secondary" id="closeDrawer">Close</button>
+        </div>
+        <div id="drawerSummary" class="summary-list"></div>
+        <div>
+          <h3 class="subheading">Timeline</h3>
+          <div id="drawerTimeline" class="entity-stack"></div>
+        </div>
+        <div class="actions wrap">
+          <button type="button" id="drawerGrantPeer">Grant Peer access</button>
+          <button type="button" class="secondary" id="drawerRequestReview">Request compliance review</button>
+        </div>
+        <details class="debug-block">
+          <summary>View raw member detail</summary>
+          <pre id="drawerRaw" class="code-block compact">Select a member.</pre>
+        </details>
+      </div>
+    </aside>
+
+    <div id="portalStatus" class="status-banner neutral" role="status" aria-live="polite">Ready.</div>
+    <div id="portalToastRegion" class="toast-region" aria-live="polite" aria-atomic="true"></div>
+
+    <script type="module" src="/portal.js"></script>
+  </body>
+</html>

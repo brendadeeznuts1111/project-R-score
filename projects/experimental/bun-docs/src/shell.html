@@ -158,6 +158,30 @@
         <strong>TL;DR:</strong> This tool demonstrates the full <code>Bun.serve</code> <code>Server</code> interface — including lifecycle (<code>stop</code>, <code>reload</code>, <code>ref</code>/<code>unref</code>), per-request controls (<code>timeout(req, sec)</code>), WebSockets (<code>upgrade</code> + pub/sub), introspection, and graceful shutdown — all while using <code>Bun.build</code> and advanced <code>fetch</code> features.
       </div>
 
+      <!-- Key Capabilities -->
+      <div class="mb-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-2">
+        <div class="flex items-center gap-2 bg-[#0f1117] border border-slate-700 rounded-xl px-3 py-2 text-xs">
+          <i class="fa-solid fa-cogs text-yellow-400"></i>
+          <span><code>Bun.build</code></span>
+        </div>
+        <div class="flex items-center gap-2 bg-[#0f1117] border border-slate-700 rounded-xl px-3 py-2 text-xs">
+          <i class="fa-solid fa-server text-yellow-400"></i>
+          <span><code>Bun.serve</code> + <code>Server</code></span>
+        </div>
+        <div class="flex items-center gap-2 bg-[#0f1117] border border-slate-700 rounded-xl px-3 py-2 text-xs">
+          <i class="fa-solid fa-plug text-yellow-400"></i>
+          <span>WebSockets + Headers</span>
+        </div>
+        <div class="flex items-center gap-2 bg-[#0f1117] border border-slate-700 rounded-xl px-3 py-2 text-xs">
+          <i class="fa-solid fa-power-off text-yellow-400"></i>
+          <span>Lifecycle (<code>stop</code>, <code>ref</code>)</span>
+        </div>
+        <div class="flex items-center gap-2 bg-[#0f1117] border border-slate-700 rounded-xl px-3 py-2 text-xs col-span-2 sm:col-span-1 md:col-span-1">
+          <i class="fa-solid fa-network-wired text-yellow-400"></i>
+          <span>Advanced <code>fetch</code></span>
+        </div>
+      </div>
+
       <!-- Generation -->
       <div class="mb-6">
         <div class="flex items-center gap-x-2 mb-3">
@@ -209,65 +233,62 @@
         </div>
         <p class="pl-6 mb-2.5 text-xs text-slate-400">Calling <code>Bun.serve()</code> returns a <code>Server&lt;WebSocketData&gt;</code> instance (see <a href="https://bun.com/reference/bun/Server" target="_blank" class="text-yellow-400 hover:underline">full type</a>). This generator is a live, runnable demo of nearly every method and property.</p>
 
-        <div class="pl-6 space-y-3.5 text-sm">
+        <div class="pl-6 space-y-1 text-sm">
           <!-- Introspection -->
-          <div>
-            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+          <details class="group">
+            <summary class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs cursor-pointer hover:text-yellow-200 py-1">
               <i class="fa-solid fa-tachometer-alt w-3"></i>
               <span>INTROSPECTION &amp; METRICS</span>
+              <span class="ml-auto text-[10px] text-slate-500 group-open:hidden">click to expand</span>
+            </summary>
+            <div class="pl-4 pt-1 text-xs text-slate-300 space-y-0.5">
+              <div><code>pendingRequests</code> / <code>pendingWebSockets</code> — real-time counters (visible via <code>/api/status</code>)</div>
+              <div><code>requestIP(req)</code> → client IP (also stored in <code>ws.data</code>)</div>
+              <div>Read-only: <code>url</code> • <code>port</code> • <code>hostname</code> • <code>id</code> • <code>development</code></div>
             </div>
-            <div class="pl-4 text-xs text-slate-300 space-y-0.5">
-              <div><code>pendingRequests</code> / <code>pendingWebSockets</code> — real-time counters of active HTTP and WS work (visible via <code>/api/status</code>)</div>
-              <div><code>requestIP(req)</code> → <code>SocketAddress | null</code> (client IP/port; captured into <code>ws.data</code> at upgrade time)</div>
-              <div>Read-only props: <code>url</code> • <code>port</code> • <code>hostname</code> • <code>protocol</code> • <code>id</code> • <code>development</code></div>
-            </div>
-          </div>
+          </details>
 
           <!-- Lifecycle -->
-          <div>
-            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+          <details class="group">
+            <summary class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs cursor-pointer hover:text-yellow-200 py-1">
               <i class="fa-solid fa-power-off w-3"></i>
               <span>LIFECYCLE &amp; CONTROL</span>
+              <span class="ml-auto text-[10px] text-slate-500 group-open:hidden">click to expand</span>
+            </summary>
+            <div class="pl-4 pt-1 text-xs text-slate-300 space-y-1">
+              <div><strong>stop()</strong> — graceful (waits for in-flight) or forced. Handled via SIGINT with double-Ctrl+C force.</div>
+              <div><strong>reload()</strong> — zero-downtime hot-swap of routes/handlers (<code>--watch</code>).</div>
+              <div><strong>ref() / unref()</strong> — control whether server keeps process alive (<code>--unref</code>).</div>
+              <div><strong>timeout(req, sec)</strong> — per-request override (0 = disable for that conn). Powers SSE demo.</div>
             </div>
-            <div class="pl-4 text-xs text-slate-300 space-y-1">
-              <div><strong>stop(closeActiveConnections?)</strong>: Graceful (default — waits for in-flight requests/WS to finish) or forced. The shutdown code here listens for SIGINT (graceful first) and SIGTERM (force), logs the distinction, and supports double-Ctrl+C force. Teaches why <code>server.stop()</code> exists: clean production shutdowns.</div>
-              <div><strong>reload(options)</strong>: Hot-swap the entire server config (routes, websocket handler, etc.) with zero downtime. <code>--watch</code> uses <code>fs.watch</code> + <code>server.reload({ routes: await createRoutes() })</code>.</div>
-              <div><strong>ref()</strong> / <strong>unref()</strong>: Event loop reference semantics. The server is ref'd by default (keeps process running). <code>--unref</code> calls <code>unref()</code> so the process can exit when the server is the only remaining handle — useful for scripts, tests, and background services.</div>
-              <div><strong>timeout(req, seconds)</strong>: Per-connection override of the idle timer. 0 disables timeout for that Request only. Powers the SSE long-poll demo and is the escape hatch when global <code>idleTimeout</code> is too aggressive for WebSockets or streaming.</div>
-            </div>
-          </div>
+          </details>
 
           <!-- WebSocket -->
-          <div>
-            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+          <details class="group">
+            <summary class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs cursor-pointer hover:text-yellow-200 py-1">
               <i class="fa-solid fa-plug w-3"></i>
-              <span>WEBSOCKET &amp; PUB/SUB + UPGRADE HEADERS</span>
+              <span>WEBSOCKET + UPGRADE HEADERS</span>
+              <span class="ml-auto text-[10px] text-slate-500 group-open:hidden">click to expand</span>
+            </summary>
+            <div class="pl-4 pt-1 text-xs text-slate-300 space-y-0.5">
+              <div><strong>upgrade(req, { headers, data })</strong> — full pattern: read <code>req.headers</code>, return custom headers in 101 response.</div>
+              <div><strong>publish() + subscribe()</strong> — topic-based broadcasting (demo room).</div>
+              <div><code>subscriberCount()</code> • <code>ws.data</code> (includes received headers) • <code>pendingWebSockets</code></div>
+              <div class="text-[10px] text-slate-400">Bun client: <code>new WebSocket(url, { headers: {...} })</code></div>
             </div>
-            <div class="pl-4 text-xs text-slate-300 space-y-0.5">
-              <div><strong>upgrade(req, { data?, headers? })</strong> → <code>boolean</code>. The <code>/ws</code> route demonstrates the full pattern:
-                <div class="pl-2 mt-0.5 text-[11px]">
-                  • Read any header the client sent on the upgrade handshake: <code>req.headers.get('authorization')</code>, <code>req.headers.get('x-client-id')</code>, <code>User-Agent</code>, <code>Cookie</code>, etc. (before calling upgrade).<br>
-                  • Return custom headers in the 101 response: <code>server.upgrade(req, { headers: { 'X-Upgrade-Demo': 'value', 'Set-Cookie': '...' }, data: { receivedUpgradeHeaders: ... } })</code>.<br>
-                  • The <code>headers</code> option is sent back to the client in the upgrade response (visible in server logs / welcome payload / <code>/api/ws-status</code>).
-                </div>
-              </div>
-              <div><strong>Bun client header support</strong>: <code>new WebSocket("ws://host/ws", { headers: { "Authorization": "Bearer jwt...", "X-Client-Id": "demo" } })</code>. These arrive in <code>req.headers</code> on the server. (Browser WebSocket is intentionally limited for security; the modal tester simulates via inputs + query for education.)</div>
-              <div><strong>publish(topic, data, compress?)</strong> → bytes sent. Broadcasts to every WS client subscribed to the topic. Can be called from HTTP handlers or from inside the websocket <code>message</code> callback (our demo does both).</div>
-              <div><code>subscriberCount(topic)</code> (exposed live at <code>/api/ws-status</code>) • <code>ws.subscribe("room")</code> in <code>open</code> • <code>pendingWebSockets</code></div>
-              <div class="text-[10px] text-slate-400">Declare <code>websocket: { open, message, close, ... }</code> in Bun.serve options (or via <code>reload</code>). Full pub/sub rooms, backpressure handling, and per-socket state (including header-derived data) without any extra dependencies. Practical for auth, tracing, and metadata on long-lived connections.</div>
-            </div>
-          </div>
+          </details>
 
           <!-- Utilities -->
-          <div>
-            <div class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs mb-0.5">
+          <details class="group">
+            <summary class="flex items-center gap-x-1.5 text-yellow-300 font-medium text-xs cursor-pointer hover:text-yellow-200 py-1">
               <i class="fa-solid fa-wrench w-3"></i>
               <span>UTILITIES</span>
+              <span class="ml-auto text-[10px] text-slate-500 group-open:hidden">click to expand</span>
+            </summary>
+            <div class="pl-4 pt-1 text-xs text-slate-300">
+              <code>server.fetch(req)</code> • <code>[Symbol.dispose]()</code> (Disposable)
             </div>
-            <div class="pl-4 text-xs text-slate-300">
-              <code>server.fetch(req)</code> (call your own route handlers from inside the process) • <code>[Symbol.dispose]()</code> (Disposable support — <code>using s = Bun.serve(...)</code> auto-cleans on scope exit)
-            </div>
-          </div>
+          </details>
         </div>
       </div>
 
@@ -312,6 +333,8 @@
         </div>
         <div class="pl-6 space-y-2 text-sm text-slate-300">
           <div>• Advanced <code>fetch</code> with <code>verbose</code>, <code>preconnect</code>, proxy &amp; TLS support</div>
+          <div>• Streaming responses (<code>for await</code> / <code>getReader()</code>) + streaming request bodies</div>
+          <div>• <code>AbortSignal.timeout(ms)</code> for clean request timeouts</div>
           <div>• Native <code>file://</code> support for local documentation indexes</div>
           <div>• Powerful debugging with <code>--dry-run --verbose</code></div>
 
@@ -324,11 +347,11 @@
         </div>
       </div>
 
-      <!-- Live Console Test -->
-      <div class="mt-6 pt-5 border-t border-slate-700">
-        <div class="flex items-center gap-x-2 mb-3">
+      <!-- Live Console + WebSocket Test -->
+      <div class="mt-6 pt-5 border-t border-slate-700 bg-[#0f1117]/60 rounded-2xl p-4">
+        <div class="flex items-center gap-x-2 mb-2">
           <i class="fa-solid fa-terminal text-yellow-400 w-4"></i>
-          <span class="font-semibold text-yellow-400">Try Console Streaming Live</span>
+          <span class="font-semibold text-yellow-400">Live Demos (try them!)</span>
         </div>
         <p class="text-xs text-slate-400 mb-3 pl-6">Click any button below — the output will appear in your terminal thanks to <code>--console</code>.</p>
         
@@ -348,6 +371,12 @@
           <button onclick="triggerConsoleDemo('object')" 
                   class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/50 rounded-xl transition-colors">
             console.log({ user: "demo", active: true })
+          </button>
+
+          <!-- Streaming fetch demo -->
+          <button onclick="streamResponseDemo()" 
+                  class="px-3 py-1.5 text-xs bg-[#0f1117] hover:bg-[#1f2533] border border-slate-700 hover:border-blue-500/50 rounded-xl transition-colors text-blue-400">
+            <i class="fa-solid fa-stream mr-1"></i> Stream Response Body
           </button>
         </div>
       </div>

@@ -23,7 +23,9 @@ examples/
 ├── native-plugin/          # Native plugin examples
 ├── bun-file/               # Bun.file() API examples
 ├── cookie-crc32/           # Cookie handling demos
-└── *.ts, *.js, *.html      # Various other examples
+└── (root)                  # Only key entrypoints exposed via `bun run <script>` in package.json
+                            # (api-demo.ts, cookie-*-demo.ts, dashboard-demo.ts, rss-demo.ts, etc.)
+                            # All other demos live in demos/, bun-v139-features/, etc.
 ```
 
 ## 🚀 Quick Start

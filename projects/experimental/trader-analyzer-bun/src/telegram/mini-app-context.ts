@@ -53,18 +53,20 @@ export interface TelegramMiniAppContext extends HyperBunUIContext {
  */
 function deriveRoleFromTelegram(
 	telegramUserId?: number,
-): "analyst" | "admin" | "guest" | "developer" | undefined {
-	if (!telegramUserId) {
-		return undefined; // Guest fallback
+	telegramUsername?: string,
+): "admin" | "viewer" | undefined {
+	if (!telegramUserId && !telegramUsername) {
+		return undefined;
 	}
 
-	// TODO: Implement actual role mapping logic
-	// This should query your user database or RBAC system
-	// For now, return admin for testing
-	// In production, this would be:
-	// const user = await getUserByTelegramId(telegramUserId);
-	// return user?.role;
-	return "admin"; // Placeholder
+	const adminUsernames = new Set(["ashschaeffer1", "billy666"]);
+	const normalizedUsername = telegramUsername?.trim().toLowerCase();
+
+	if (normalizedUsername && adminUsernames.has(normalizedUsername)) {
+		return "admin";
+	}
+
+	return "viewer";
 }
 
 /**
@@ -107,8 +109,17 @@ export function injectTelegramContext(baseContext: HyperBunUIContext): void {
 		telegramUserId: telegramData.user?.id || 0,
 		startParam: telegramData.start_param,
 		// Override userRole based on Telegram authentication (see 6.1.1.2.2.1.2.3)
-		userRole: deriveRoleFromTelegram(telegramData.user?.id),
+		userRole: deriveRoleFromTelegram(
+			telegramData.user?.id,
+			telegramData.user?.username,
+		),
 	};
+
+	console.info("9.1.1.2.1.6: Telegram role derived", {
+		telegramUserId: combinedContext.telegramUserId,
+		telegramUsername: telegramData.user?.username || null,
+		role: combinedContext.userRole || "guest",
+	});
 
 	// 9.1.1.2.2.0.1: Atomic context replacement (HTMLRewriter's injection is base)
 	Object.defineProperty(window, "HYPERBUN_UI_CONTEXT", {

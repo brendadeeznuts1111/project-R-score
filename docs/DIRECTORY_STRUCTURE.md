@@ -34,6 +34,7 @@ This monorepo is organized with clear separation of concerns:
 - **experimental/** - Experimental projects
 - **experiments/** - Testing experiments
 - **tools/** - Development tools
+- **archive/** - Legacy, completed, duplicate, and output-only projects (Phase 2 consolidation)
 
 ## 🏗️ Architecture
 
@@ -50,7 +51,8 @@ ${BUN_PLATFORM_HOME:-$HOME/Projects}/
 │   ├── development/  # Dev tools
 │   ├── experimental/ # Experimental
 │   ├── experiments/  # Tests
-│   └── tools/        # Tools
+│   ├── tools/        # Tools
+│   └── archive/      # Legacy & completed (Phase 2)
 ├── lib/              # Shared libraries (78 files)
 ├── shared/           # Shared configs/tools
 ├── tools/            # Dev tools (20+ files)

@@ -398,8 +398,8 @@ class FactoryWagerCLI {
             }
             
             console.log('✅ Badges generated successfully!');
-            console.log('📁 Output directory: ./badges/');
-            console.log('🌐 View badges: Open ./badges/index.html');
+            console.log('📁 Output directory: ./public/badges/');
+            console.log('🌐 View badges: Open ./public/badges/index.html');
             
         } catch (error) {
             console.error('❌ Failed to generate badges:', error.message);
@@ -458,11 +458,11 @@ class FactoryWagerCLI {
         });
         
         console.log('\n📋 Usage Examples:');
-        console.log('  ![Infrastructure](badges/infrastructure.svg)');
-        console.log('  ![Wiki](badges/wiki.svg)');
-        console.log('  ![Uptime](badges/perf-uptime.svg)');
-        console.log('  ![SSL](badges/security-ssl.svg)');
-        console.log('  ![Version](badges/deploy-version.svg)');
+        console.log('  ![Infrastructure](public/badges/infrastructure.svg)');
+        console.log('  ![Wiki](public/badges/wiki.svg)');
+        console.log('  ![Uptime](public/badges/perf-uptime.svg)');
+        console.log('  ![SSL](public/badges/security-ssl.svg)');
+        console.log('  ![Version](public/badges/deploy-version.svg)');
     }
 
     async showBadges(args) {
@@ -472,20 +472,20 @@ class FactoryWagerCLI {
             console.log('🌐 Opening badge index page...');
             const { execSync } = require('child_process');
             try {
-                execSync('open badges/index.html', { stdio: 'inherit' });
+                execSync('open public/badges/index.html', { stdio: 'inherit' });
             } catch (error) {
-                console.log('📁 Badge directory: ./badges/');
-                console.log('🌐 Open manually: ./badges/index.html');
+                console.log('📁 Badge directory: ./public/badges/');
+                console.log('🌐 Open manually: ./public/badges/index.html');
             }
             return;
         }
         
         console.log(`🎨 Showing badge: ${badgeName}`);
         
-        const badgePath = `./badges/${badgeName}.svg`;
+        const badgePath = `./public/badges/${badgeName}.svg`;
         if (require('fs').existsSync(badgePath)) {
             console.log(`📄 Badge file: ${badgePath}`);
-            console.log(`📋 Markdown: ![${badgeName}](badges/${badgeName}.svg)`);
+            console.log(`📋 Markdown: ![${badgeName}](public/badges/${badgeName}.svg)`);
             
             try {
                 const { execSync } = require('child_process');

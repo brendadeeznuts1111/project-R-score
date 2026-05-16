@@ -18,27 +18,54 @@
 </head>
 <body class="bg-[#0f1117] text-slate-200">
   <div class="max-w-[1480px] mx-auto">
-    <!-- Header -->
-    <div class="flex items-center justify-between px-8 pt-8 pb-6 border-b border-slate-800">
-      <div class="flex items-center gap-x-4">
-        <div class="w-11 h-11 bg-yellow-500 rounded-2xl flex items-center justify-center">
-          <i class="fa-solid fa-book text-black text-3xl"></i>
-        </div>
-        <div>
-          <h1 class="text-3xl font-semibold tracking-tight">Bun Documentation</h1>
-          <p class="text-slate-400 text-sm">Complete index • <span id="total-count">315</span> pages • Powered by <code>bun build</code></p>
+    <!-- Compact Sticky Header with Integrated Search -->
+    <header class="sticky top-0 z-40 bg-[#0f1117]/95 backdrop-blur border-b border-slate-800/80">
+      <div class="max-w-[1480px] mx-auto px-4 md:px-8 py-3">
+        <div class="flex items-center gap-x-4">
+
+          <!-- Logo + Title -->
+          <div class="flex items-center gap-x-2.5 flex-shrink-0">
+            <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
+              <i class="fa-solid fa-book text-black text-sm"></i>
+            </div>
+            <div class="hidden md:block">
+              <div class="text-sm font-semibold text-white leading-tight">Bun Docs</div>
+              <div class="text-[10px] text-slate-500 leading-tight">
+                <span id="total-count">0</span> pages
+              </div>
+            </div>
+          </div>
+
+          <!-- Integrated Search (Header) -->
+          <div class="flex-1 max-w-xl">
+            <div class="relative">
+              <i class="fa-solid fa-search absolute left-3.5 top-2.5 text-slate-500 text-sm"></i>
+              <input id="header-search" 
+                     type="text" 
+                     placeholder="Search documentation..." 
+                     class="w-full pl-10 pr-4 py-2 bg-[#161b24] border border-slate-700 focus:border-yellow-500 rounded-xl text-sm outline-none transition-colors"
+                     oninput="filterAndRender()">
+            </div>
+          </div>
+
+          <!-- Right Actions -->
+          <div class="flex items-center gap-x-2 flex-shrink-0">
+            <button onclick="showAboutModal()" 
+                    class="p-2 bg-[#161b24] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/30 rounded-xl transition-colors group" 
+                    title="Built with Bun">
+              <i class="fa-solid fa-bolt text-yellow-400 group-hover:text-yellow-300"></i>
+            </button>
+
+            <a href="https://bun.com/docs" target="_blank" 
+               class="p-2 bg-[#161b24] hover:bg-[#1f2533] border border-slate-700 hover:border-yellow-500/30 rounded-xl transition-colors group" 
+               title="Official Site">
+              <i class="fa-solid fa-external-link-alt text-yellow-400 group-hover:text-yellow-300"></i>
+            </a>
+          </div>
+
         </div>
       </div>
-      
-      <div class="flex items-center gap-x-3">
-        <div id="last-updated" class="text-xs text-slate-500 mono px-3 py-1.5 bg-[#161b24] rounded-2xl border border-slate-800"></div>
-        <a href="https://bun.com/docs" target="_blank" 
-           class="inline-flex items-center gap-x-2 px-4 py-2 bg-yellow-500 hover:bg-yellow-600 text-black font-medium rounded-2xl text-sm transition-colors">
-          <i class="fa-solid fa-external-link-alt"></i>
-          <span>Official Site</span>
-        </a>
-      </div>
-    </div>
+    </header>
 
     <div class="flex gap-6 px-8 pt-6">
       <!-- Sidebar: Table of Contents -->
@@ -105,6 +132,50 @@
       </div>
     </div>
   </div>
+
+  <!-- Footer -->
+  <footer class="mt-12 border-t border-slate-800/80 bg-[#0a0c10]">
+    <div class="max-w-[1480px] mx-auto px-4 md:px-8 py-8">
+      <div class="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+        
+        <!-- Left: Brand -->
+        <div class="flex items-center gap-x-3">
+          <div class="w-8 h-8 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-lg flex items-center justify-center">
+            <i class="fa-solid fa-bolt text-black text-sm"></i>
+          </div>
+          <div>
+            <div class="text-sm font-semibold text-white">Built with Bun</div>
+            <div class="text-xs text-slate-500">
+              Generated <span id="footer-timestamp" class="font-mono text-slate-400">—</span> • 
+              <span id="footer-count" class="font-mono text-yellow-300">0</span> pages
+            </div>
+          </div>
+        </div>
+
+        <!-- Center: Links -->
+        <div class="flex items-center gap-x-1 text-sm">
+          <a href="https://github.com/oven-sh/bun" target="_blank" 
+             class="px-3 py-1.5 text-slate-400 hover:text-white hover:bg-[#161b24] rounded-lg transition-colors">
+            <i class="fa-brands fa-github mr-1.5"></i>GitHub
+          </a>
+          <a href="https://bun.com/docs" target="_blank"
+             class="px-3 py-1.5 text-slate-400 hover:text-white hover:bg-[#161b24] rounded-lg transition-colors">
+            Docs
+          </a>
+          <a href="https://github.com/oven-sh/bun/issues" target="_blank"
+             class="px-3 py-1.5 text-slate-400 hover:text-white hover:bg-[#161b24] rounded-lg transition-colors">
+            <i class="fa-solid fa-bug mr-1.5"></i>Issues
+          </a>
+        </div>
+
+        <!-- Right: Generator -->
+        <div class="flex items-center gap-x-2 text-xs text-slate-600">
+          <span>Dashboard generator:</span>
+          <code class="bg-[#161b24] px-2 py-1 rounded border border-slate-800 font-mono text-slate-500">bun run generate</code>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <script type="module">
     // This will be replaced by Bun.build with actual data
@@ -215,7 +286,7 @@
       });
     }
 
-    // Build hierarchical Table of Contents
+    // Build hierarchical Table of Contents with tags and better headers
     function buildTableOfContents() {
       const container = document.getElementById('toc-container');
       container.innerHTML = '';
@@ -223,37 +294,72 @@
       const categoryMap = {};
       
       allPages.forEach(p => {
-        if (!categoryMap[p.category]) categoryMap[p.category] = { count: 0, sub: {} };
+        if (!categoryMap[p.category]) {
+          categoryMap[p.category] = { 
+            count: 0, 
+            bundlerCount: 0,
+            sub: {} 
+          };
+        }
         categoryMap[p.category].count++;
         
+        if (p.isBundlerRelated) {
+          categoryMap[p.category].bundlerCount++;
+        }
+        
         if (p.subcategory) {
-          if (!categoryMap[p.category].sub[p.subcategory]) categoryMap[p.category].sub[p.subcategory] = 0;
-          categoryMap[p.category].sub[p.subcategory]++;
+          if (!categoryMap[p.category].sub[p.subcategory]) {
+            categoryMap[p.category].sub[p.subcategory] = { count: 0, bundlerCount: 0 };
+          }
+          categoryMap[p.category].sub[p.subcategory].count++;
+          if (p.isBundlerRelated) {
+            categoryMap[p.category].sub[p.subcategory].bundlerCount++;
+          }
         }
       });
 
       Object.keys(categoryMap).sort().forEach(cat => {
         const data = categoryMap[cat];
+        const hasBundler = data.bundlerCount > 0;
         
         const el = document.createElement('div');
         el.className = 'mb-1';
         
+        // Category header row (more prominent)
         let html = `
-          <div onclick="filterByCategory('${cat}')" class="toc-item flex justify-between items-center px-3 py-1.5 rounded-xl cursor-pointer text-sm">
-            <div class="font-medium">${cat}</div>
-            <div class="text-xs text-slate-500">${data.count}</div>
+          <div onclick="filterByCategory('${cat}')" 
+               class="toc-item group flex justify-between items-center px-3 py-2 rounded-xl cursor-pointer text-sm border-l-2 border-transparent hover:border-yellow-500/30 hover:bg-[#1f2533]">
+            <div class="flex items-center gap-x-2 font-semibold text-slate-200">
+              <span>${cat}</span>
+              ${hasBundler ? 
+                `<span class="px-1.5 py-0.5 text-[10px] bg-yellow-900/40 text-yellow-400 rounded font-normal">Bundler</span>` : 
+                ''}
+            </div>
+            <div class="text-xs text-slate-400 font-normal tabular-nums">
+              ${data.count}${hasBundler ? ` <span class="text-yellow-500/70">(${data.bundlerCount})</span>` : ''}
+            </div>
           </div>
         `;
 
         const subs = Object.keys(data.sub);
         if (subs.length > 0) {
-          html += `<div class="ml-4 mt-0.5 space-y-0.5">`;
+          html += `<div class="ml-3 mt-0.5 space-y-0.5 border-l border-slate-800 pl-2">`;
           subs.forEach(sub => {
+            const subData = data.sub[sub];
+            const subHasBundler = subData.bundlerCount > 0;
+            
             html += `
               <div onclick="filterByCategory('${cat}', '${sub}'); event.stopImmediatePropagation();" 
-                   class="toc-item flex justify-between items-center px-3 py-1 rounded-xl cursor-pointer text-xs text-slate-400 hover:text-slate-200">
-                <div>${sub}</div>
-                <div class="text-[10px]">${data.sub[sub]}</div>
+                   class="toc-item group flex justify-between items-center px-2.5 py-1 rounded-lg cursor-pointer text-xs text-slate-400 hover:text-slate-200 hover:bg-[#1f2533]">
+                <div class="flex items-center gap-x-1.5">
+                  <span>${sub}</span>
+                  ${subHasBundler ? 
+                    `<span class="px-1 py-px text-[9px] bg-yellow-900/40 text-yellow-400 rounded">B</span>` : 
+                    ''}
+                </div>
+                <div class="text-[10px] text-slate-500">
+                  ${subData.count}${subHasBundler ? ` <span class="text-yellow-500/70">(${subData.bundlerCount})</span>` : ''}
+                </div>
               </div>`;
           });
           html += `</div>`;
@@ -290,8 +396,19 @@
       // Set initial last updated
       const meta = REGISTRY.meta || {};
       if (meta.generated_at) {
-        document.getElementById('last-updated').textContent = 
-          'Generated ' + new Date(meta.generated_at).toLocaleString();
+        const formatted = new Date(meta.generated_at).toLocaleString();
+        document.getElementById('last-updated').innerHTML = 
+          `<i class="fa-solid fa-clock text-slate-600"></i> <span>${formatted}</span>`;
+        
+        // Also populate footer
+        const footerTs = document.getElementById('footer-timestamp');
+        if (footerTs) footerTs.textContent = formatted;
+      }
+
+      // Populate footer page count
+      const footerCount = document.getElementById('footer-count');
+      if (footerCount && REGISTRY.pages) {
+        footerCount.textContent = REGISTRY.pages.length;
       }
 
       buildTableOfContents();

@@ -2,6 +2,8 @@
 
 Complete index of all Bun examples across the repository.
 
+> **Note**: `examples/` root now contains only a small set of files that are exposed as `bun run <name>` scripts in the top-level `package.json` (for convenience). All other demos and experiments live in the subdirectories below (`demos/`, `bun-v139-features/`, etc.).
+
 ## 📁 Quick Navigation
 
 | Directory | Contents | Entry Point |

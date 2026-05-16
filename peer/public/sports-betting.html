@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Sports Betting Terminal</title>
+    <link rel="stylesheet" href="./sports-betting.css" />
+  </head>
+  <body>
+    <main class="terminal-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Sports Betting Terminal</p>
+          <h1>Odds Board</h1>
+        </div>
+        <div class="clock-stack">
+          <span id="mode-pill" class="pill live">Demo Feed</span>
+          <time id="clock"></time>
+        </div>
+      </header>
+
+      <section class="control-strip" aria-label="Markets">
+        <button class="tab active" data-sport="nfl">NFL</button>
+        <button class="tab" data-sport="ncaaf">NCAAF</button>
+        <button class="tab" data-sport="nba">NBA</button>
+        <button class="tab" data-sport="ncaab">NCAAB</button>
+        <button class="tab" data-sport="mlb">MLB</button>
+        <button class="tab" data-sport="nhl">NHL</button>
+        <button class="tab" data-sport="epl">EPL</button>
+        <button class="tab" data-sport="ucl">UCL</button>
+        <button class="tab" data-sport="tennis">Tennis</button>
+        <button class="tab" data-sport="golf">PGA</button>
+        <button class="tab" data-sport="mma">MMA</button>
+        <button class="tab" data-sport="boxing">Boxing</button>
+        <button class="tab" data-sport="polymarket">Polymarket</button>
+      </section>
+
+      <section class="toolbar" aria-label="Terminal controls">
+        <label class="search-box">
+          <span>Search</span>
+          <input id="search" type="search" placeholder="team, book, market" />
+        </label>
+        <label class="select-box">
+          <span>Sort</span>
+          <select id="sort-mode">
+            <option value="edge">Best edge</option>
+            <option value="start">Start time</option>
+            <option value="hold">Lowest hold</option>
+          </select>
+        </label>
+        <label class="select-box">
+          <span>Market</span>
+          <select id="market-filter">
+            <option value="all">All markets</option>
+            <option value="moneyline">Moneyline</option>
+            <option value="spread">Spread</option>
+            <option value="total">Total</option>
+          </select>
+        </label>
+        <label class="select-box">
+          <span>Book</span>
+          <select id="book-filter">
+            <option value="all">All books</option>
+          </select>
+        </label>
+        <label class="select-box">
+          <span>Auto refresh</span>
+          <select id="refresh-interval">
+            <option value="manual">Manual</option>
+            <option value="30000">30s</option>
+            <option value="60000">60s</option>
+            <option value="300000">5m</option>
+          </select>
+        </label>
+        <label class="select-box">
+          <span>History date</span>
+          <input id="history-date" type="date" />
+        </label>
+        <button id="refresh" class="action-button">Refresh Lines</button>
+        <button id="export" class="action-button secondary">Export CSV</button>
+      </section>
+
+      <section class="market-grid">
+        <div class="board-panel primary-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow" id="board-kicker">NFL</p>
+              <h2 id="board-title">Live Odds Board</h2>
+            </div>
+            <p id="board-count" class="metric">0 markets</p>
+          </div>
+          <div class="table-wrap">
+            <table id="odds-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Start</th>
+                  <th>Matchup</th>
+                  <th>Best Away</th>
+                  <th>Best Home</th>
+                  <th>Spread</th>
+                  <th>Total</th>
+                  <th>Signal</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <aside class="board-panel detail-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Selected Market</p>
+              <h2 id="detail-title">Kansas City @ Philadelphia</h2>
+            </div>
+            <span id="detail-signal" class="pill">Watch</span>
+          </div>
+          <div id="detail-body" class="detail-body"></div>
+        </aside>
+      </section>
+
+      <section class="history-grid">
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Today</p>
+              <h2>Selected Game Line History</h2>
+            </div>
+            <span id="history-count" class="pill">0 moves</span>
+          </div>
+          <div class="table-wrap compact">
+            <table id="history-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>Book</th>
+                  <th>Market</th>
+                  <th>Side</th>
+                  <th>Price</th>
+                  <th>Point</th>
+                  <th>Price Move</th>
+                  <th>Cents</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Daily Review</p>
+              <h2>Pattern Signals</h2>
+            </div>
+          </div>
+          <div id="pattern-list" class="pattern-list"></div>
+        </div>
+      </section>
+
+      <section class="lower-grid">
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Price Dislocation</p>
+              <h2>Arbitrage Scanner</h2>
+            </div>
+          </div>
+          <div class="table-wrap compact">
+            <table id="arb-table">
+              <thead>
+                <tr>
+                  <th>Sport</th>
+                  <th>Market</th>
+                  <th>Away</th>
+                  <th>Home</th>
+                  <th>Edge</th>
+                </tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Prediction Markets</p>
+              <h2>Polymarket Watch</h2>
+            </div>
+          </div>
+          <div id="poly-list" class="poly-list"></div>
+        </div>
+      </section>
+
+      <section class="research-grid">
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Open Source Ecosystem</p>
+              <h2>Data Feeds & Tooling</h2>
+            </div>
+            <span class="pill">v2 Notes</span>
+          </div>
+          <div id="source-grid" class="source-grid"></div>
+        </div>
+
+        <div class="board-panel">
+          <div class="panel-heading">
+            <div>
+              <p class="eyebrow">Production Path</p>
+              <h2>Live Integration Checklist</h2>
+            </div>
+          </div>
+          <div class="checklist">
+            <label><input type="checkbox" checked /> The Odds API live odds adapter</label>
+            <label><input type="checkbox" checked /> Polymarket Gamma market adapter</label>
+            <label><input type="checkbox" /> Historical snapshots for opening vs closing lines</label>
+            <label><input type="checkbox" /> Steam-move alerts and book-disagreement thresholds</label>
+            <label><input type="checkbox" /> Persisted odds lake from OddsHarvester or paid feed</label>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <script type="module" src="./sports-betting.js"></script>
+  </body>
+</html>

@@ -627,3 +627,33 @@ Only essential files remain at root:
 **Date Completed:** 2026-02-08
 **Branch:** feat/bun-docs-mcp
 **Commits:** 4456c1f0, b5f14f6c
+
+---
+
+## Phase 2: Continuation & Enhancements (2026-05)
+
+### Additional Organization & Improvements
+- **Badges consolidation** (enhancement): Moved `badges/` (status badge SVGs, gallery index.html, README) to `public/badges/` to co-locate with `public/dashboards/` and other static web assets. This makes generated badges part of the deployable public site.
+  - Updated `cli/status-badges.cjs` default outputDir → `public/badges`
+  - Updated `cli/factory-wager-cli.cjs` (all logs, paths, markdown examples, open commands)
+  - Updated `cli/demo.sh` and `badges/README.md` (now at new location) examples
+- **Artifact cleanup**: Removed stale `build/` (config.gypi) and `dist/` (tsbuildinfo) leftovers from root (gitignored but cluttering filesystem).
+- **Documentation enhancement**:
+  - Modernized root [README.md](./README.md) from narrow "Bun TypedArray Documentation Portal" to accurate "FactoryWager Enterprise Platform" workspace hub overview.
+  - Added Workspace Overview listing major directories, key `bun run` commands, links to cleanup summary and badges.
+  - Retained legacy typedarray content for historical continuity.
+- **Confirmed intentional structure**:
+  - `server/`, `deployment/` kept at root (actively referenced by `package.json` scripts like `bun run dev`, `start:*`, `deployment:readiness`).
+  - `scripts/`, `tools/`, `cli/`, `lib/`, `src/` etc. are appropriately placed for a complex monorepo.
+  - `scratch/` valuable for Bun v1.3.9 feature experiments/playgrounds; `projects/` for categorized sub-projects.
+- **Root now cleaner**: Only essential configs, entrypoints, and well-organized top-level dirs remain. No new loose files introduced.
+
+### Statistics Update
+- **Cumulative files organized**: 175+ (Phase 1) + badges move + artifact removals
+- **Enhancements applied**: Path updates in 4 files, 1 directory relocation for better asset grouping, 1 major README rewrite, 2 artifact dirs pruned
+- **Verification**: Working tree remains clean post-changes (gitignored items excluded)
+
+**Phase 2 Completed:** 2026-05 (current session)
+**Focus:** Safe incremental organization + high-value improvements (no breaking moves to referenced paths)
+
+✅ Root directory organization continues to evolve with the growing platform. Future candidates: deeper examples/ consolidation, scratch/ curation, potential monorepo workspace/ grouping if needed.
