@@ -18,10 +18,7 @@ bun-v1.3.9-examples/
 │   ├── package.json               # Example scripts
 │   └── workspace-demo/            # Workspace examples
 │       └── packages/               # Multiple workspace packages
-├── esm-bytecode/
-│   ├── cli.ts                     # ESM CLI example
-│   ├── build.sh                   # Build script
-│   └── package.json
+├── esm-bytecode/                # Archived → see archive/scratch/bun-v1.3.9-examples/esm-bytecode/
 ├── profiling/
 │   ├── cpu-profile-demo.ts        # CPU profiling with custom intervals
 │   ├── profile-compare.sh         # Compare profiling resolutions
@@ -34,7 +31,7 @@ bun-v1.3.9-examples/
 │   ├── playground.ts              # Interactive menu system
 │   ├── demos/                     # All feature demonstrations
 │   └── package.json
-└── playground-web/
+└── playground-web/            # Archived → see archive/scratch/bun-v1.3.9-examples/playground-web/
     ├── server.ts                  # Web server
     ├── index.html                 # Web UI
     ├── styles.css                # Styling
@@ -61,7 +58,8 @@ bun run benchmarks/string-optimizations.ts
 bun test tests/mock-auto-cleanup.test.ts
 
 # 3. ESM Bytecode Build
-cd esm-bytecode && bun run build:all
+# ESM Bytecode example has been archived.
+# See: archive/scratch/bun-v1.3.9-examples/esm-bytecode/
 
 # 4. CPU Profiling
 cd profiling && bun run profile:high-res
@@ -164,7 +162,7 @@ bun build --compile --bytecode --format=esm ./cli.ts
 bun build --compile --bytecode --format=cjs ./cli.ts
 ```
 
-[Build example →](esm-bytecode/)
+[Build example →](archive/scratch/bun-v1.3.9-examples/esm-bytecode/) (archived)
 
 ### 5. Configurable CPU Profiling
 
@@ -232,10 +230,10 @@ bun run --parallel "benchmarks:*"
 # Run tests
 bun test tests/mock-auto-cleanup.test.ts
 
-# Build and run ESM bytecode
-cd esm-bytecode
-bun run build:all
-./dist/cli-esm greet "Bun v1.3.9"
+# Build and run ESM bytecode (archived)
+# cd archive/scratch/bun-v1.3.9-examples/esm-bytecode
+# bun run build:all
+# ./dist/cli-esm greet "Bun v1.3.9"
 
 # Profile with different intervals
 cd profiling

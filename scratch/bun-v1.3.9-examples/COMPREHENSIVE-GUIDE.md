@@ -8,10 +8,10 @@ A complete guide to all features, improvements, and optimizations in Bun v1.3.9.
 2. [HTTP/2 Connection Upgrades](#http2-connection-upgrades)
 3. [Test Mock Auto-Cleanup](#test-mock-auto-cleanup)
 4. [NO_PROXY Environment Variable](#noproxy-environment-variable)
-5. [CPU Profiling](#cpu-profiling)
-6. [ESM Bytecode Compilation](#esm-bytecode-compilation)
+5. [CPU Profiling](#cpu-profiling) *(archived)*
+6. [ESM Bytecode Compilation](#esm-bytecode-compilation) *(archived)*
 7. [Performance Improvements](#performance-improvements)
-8. [Bugfixes](#bugfixes)
+8. [Bugfixes](#bugfixes) *(archived)*
 9. [Migration Guide](#migration-guide)
 
 ---
@@ -193,7 +193,9 @@ const ws = new WebSocket("ws://localhost:3000/ws", {
 
 ---
 
-## 📊 CPU Profiling
+## 📊 CPU Profiling *(archived)*
+
+> **Note:** The full set of CPU profiling examples has been moved to `archive/scratch/bun-v1.3.9-examples/advanced/cpu-profiling/`.
 
 Bun now supports the `--cpu-prof-interval` flag to configure the CPU profiler's sampling interval.
 
@@ -217,7 +219,7 @@ bun --cpu-prof index.js
 
 ---
 
-## 📦 ESM Bytecode Compilation
+## 📦 ESM Bytecode Compilation *(archived)*
 
 Using `--bytecode` with `--format=esm` is now supported.
 
@@ -235,7 +237,7 @@ bun build --compile --bytecode ./cli.ts
 
 **Note:** In a future version, the default may change to ESM when `--bytecode` is used.
 
-[See examples →](esm-bytecode/)
+[See examples →](archive/scratch/bun-v1.3.9-examples/esm-bytecode/) (archived)
 
 ---
 
@@ -313,7 +315,9 @@ bun build --compile --bytecode ./cli.ts
 
 ---
 
-## 🐛 Bugfixes
+## 🐛 Bugfixes *(archived)*
+
+> **Note:** Detailed bugfix examples have been moved to `archive/scratch/bun-v1.3.9-examples/advanced/bugfixes/`.
 
 ### Node.js Compatibility
 

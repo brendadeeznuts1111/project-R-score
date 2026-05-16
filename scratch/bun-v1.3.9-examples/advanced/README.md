@@ -30,36 +30,20 @@ advanced/
 │   ├── enterprise-integration.ts
 │   ├── test-utils.ts
 │   └── reference-impl.ts
-├── cpu-profiling/            # --cpu-prof-interval
-│   ├── custom-intervals.ts
-│   ├── analysis-workflows.ts
-│   ├── ci-integration.ts
-│   └── optimization-guide.ts
-├── esm-bytecode/             # ESM bytecode compilation
-│   ├── build-pipelines.ts
-│   ├── distribution.ts
-│   ├── optimization.ts
-│   └── cross-platform.ts
 ├── performance/              # Performance optimizations
 │   ├── regex-jit-patterns.ts
 │   ├── markdown-optimization.ts
 │   ├── string-optimization.ts
 │   ├── collection-optimization.ts
 │   └── jsc-upgrade-benefits.ts
-├── integrations/             # Real-world integrations
-│   ├── microservices.ts
-│   ├── ci-cd-pipeline.ts
-│   ├── production-setup.ts
-│   └── enterprise-patterns.ts
-└── reference/                # Reference implementations
-    ├── proxy-client.ts
-    ├── websocket-client.ts
-    ├── test-framework.ts
-    └── monitoring-utils.ts
-├── bugfixes/                  # Bugfixes and improvements reference
-    ├── BUGFIXES-REFERENCE.md
-    └── string-width-thai-lao.ts
 ```
+
+**Archived subfolders** (moved to `archive/scratch/bun-v1.3.9-examples/advanced/`):
+- `cpu-profiling/`
+- `esm-bytecode/`
+- `integrations/`
+- `reference/`
+- `bugfixes/`
 
 ## Features Covered
 

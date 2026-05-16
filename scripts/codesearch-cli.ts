@@ -25,6 +25,10 @@ interface CliOptions extends CodeSearchOptions {
   version: boolean;
   stats: boolean;
   noCache: boolean;
+  configPaths: boolean;
+  auditPaths: boolean;
+  from?: string;
+  to?: string;
 }
 
 function parseArgs(argv: string[]): { query: string; options: CliOptions } | null {
@@ -109,6 +113,20 @@ function parseArgs(argv: string[]): { query: string; options: CliOptions } | nul
       case '--no-color':
         // Handled in output
         break;
+      case '--config-paths':
+      case '--audit-config':
+        options.configPaths = true;
+        options.auditPaths = true;
+        break;
+      case '--audit-paths':
+        options.auditPaths = true;
+        break;
+      case '--from':
+        options.from = argv[++i];
+        break;
+      case '--to':
+        options.to = argv[++i];
+        break;
     }
   }
 
@@ -122,7 +140,8 @@ function parseArgs(argv: string[]): { query: string; options: CliOptions } | nul
     return null;
   }
 
-  if (!query) {
+  // Allow --config-paths to run without a positional query
+  if (!query && !options.configPaths && !options.auditPaths) {
     console.error('Error: Query required\n');
     printUsage();
     process.exit(1);
@@ -159,6 +178,11 @@ OPTIONS:
   --no-color             Disable colors
   -h, --help             Show this help
   --version              Show version
+  --config-paths, --audit-config
+                         Shortcut for common config migration (configs/ → config/)
+  --audit-paths          General path migration audit mode (works with --from / --to)
+  --from <old-path>      Old path for migration audit (used with --audit-paths or --config-paths)
+  --to <new-path>        New path for migration audit (used with --audit-paths or --config-paths)
 
 EXAMPLES:
   # Basic search
@@ -341,12 +365,140 @@ async function main(): Promise<void> {
 
   const { query, options } = parsed;
 
+  // Path migration / audit mode (general + config shortcut)
+  if (options.auditPaths || options.configPaths) {
+    await runPathMigrationAudit(options);
+    return;
+  }
+
   try {
     await runSearch(query, options);
   } catch (error) {
     console.error(`${colors.red}Error:${colors.reset}`, error instanceof Error ? error.message : String(error));
     process.exit(1);
   }
+}
+
+async function runPathMigrationAudit(options: CliOptions): Promise<void> {
+  const isConfigMode = options.configPaths;
+
+  console.log(`${colors.bright}🔍 Path Migration Audit Mode${colors.reset}${isConfigMode ? ' (Config)' : ''}\n`);
+
+  const fromPath = options.from || (isConfigMode ? 'configs/' : null);
+  const toPath = options.to || (isConfigMode ? 'config/' : null);
+
+  if (!fromPath) {
+    console.error('Error: --from <path> is required when using --audit-paths or --config-paths');
+    process.exit(1);
+  }
+
+  console.log(`Auditing references to paths...`);
+  if (fromPath && toPath) {
+    console.log(`Migration audit: ${colors.yellow}${fromPath}${colors.reset} → ${colors.green}${toPath}${colors.reset}\n`);
+  } else {
+    console.log(`Showing references to "${fromPath}" (potential stale references).\n`);
+  }
+
+  const searcher = new CodeSearch();
+
+  // === Stale references (old path) ===
+  console.log(`${colors.yellow}Stale / Old Path References ("${fromPath}"):${colors.reset}`);
+
+  // Base search for the old path
+  const staleResult = await searcher.search({
+    query: fromPath,
+    paths: options.paths || ['.'],
+    type: 'all',
+    context: 1,
+    maxResults: 150,
+    cache: true,
+  });
+
+  // Additional regex search for dynamic imports containing the old path
+  // This catches patterns like: `...${env}...configs/cookie-crc32/...`
+  const dynamicQuery = `${fromPath.replace('/', '\\/')}.*\\$\\{|\\$\\{.*${fromPath.replace('/', '\\/')}`;
+  const dynamicResult = await searcher.search({
+    query: dynamicQuery,
+    paths: options.paths || ['.'],
+    type: 'all',
+    context: 1,
+    maxResults: 50,
+    cache: true,
+  });
+
+  // Merge and deduplicate
+  const allStale = [...staleResult.matches, ...dynamicResult.matches];
+  const uniqueStale = allStale.filter((m, index, self) =>
+    index === self.findIndex(t => t.file === m.file && t.line === m.line)
+  );
+
+  if (uniqueStale.length === 0) {
+    console.log(`  ${colors.green}✓ No stale references found for "${fromPath}"${colors.reset}\n`);
+  } else {
+    uniqueStale.slice(0, 40).forEach((m, i) => {
+      const file = m.file.replace(process.cwd(), '.');
+      const content = m.content.trim().slice(0, 110);
+
+      // Try to generate a suggested replacement if --from and --to were provided
+      let suggestion = '';
+      if (options.from && options.to) {
+        const suggested = content.replace(new RegExp(options.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), options.to);
+        if (suggested !== content) {
+          suggestion = `\n     ${colors.green}→ Suggested: ${suggested.slice(0, 100)}${colors.reset}`;
+        }
+      }
+
+      const isDynamic = content.includes('${') || content.includes('`');
+      const prefix = isDynamic ? `${colors.cyan}[dynamic]${colors.reset} ` : '';
+
+      console.log(`  ${i + 1}. ${prefix}${file}:${m.line}`);
+      console.log(`     ${content}${suggestion}`);
+    });
+
+    if (uniqueStale.length > 40) {
+      console.log(`  ... and ${uniqueStale.length - 40} more`);
+    }
+    console.log('');
+  }
+
+  // === Current / New path references ===
+  console.log(`${colors.blue}Current / New Path References ("${toPath}"):${colors.reset}`);
+
+  const currentResult = await searcher.search({
+    query: toPath,
+    paths: options.paths || ['.'],
+    type: 'all',
+    context: 0,
+    maxResults: 60,
+    cache: true,
+  });
+
+  if (currentResult.matches.length === 0) {
+    console.log(`  ${colors.dim}(No references to "${toPath}" found in this run)${colors.reset}`);
+  } else {
+    currentResult.matches.slice(0, 25).forEach((m, i) => {
+      const file = m.file.replace(process.cwd(), '.');
+      console.log(`  ${i + 1}. ${file}:${m.line}`);
+    });
+
+    if (currentResult.matches.length > 25) {
+      console.log(`  ... and ${currentResult.matches.length - 25} more`);
+    }
+  }
+
+  // Summary
+  console.log(`\n${colors.bright}Summary:${colors.reset}`);
+  console.log(`  Stale references found: ${uniqueStale.length}`);
+  console.log(`  Current path references found: ${currentResult.matches.length}`);
+
+  if (options.from && options.to && uniqueStale.length > 0) {
+    console.log(`\n${colors.yellow}Tip:${colors.reset} Use the suggested lines above to update your code.`);
+    console.log(`      Run with --json for machine-readable output in the future.`);
+  }
+
+  console.log(`\n${colors.dim}Usage examples:${colors.reset}`);
+  console.log(`  bun run scripts/codesearch-cli.ts --config-paths --from configs/ --to config/`);
+  console.log(`  bun run scripts/codesearch-cli.ts --config-paths --from cli/ --to tools/cli/`);
 }
 
 await main();
