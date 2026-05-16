@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FactoryWager Performance Report</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: #f8fafc;
+        }
+        .header {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            margin-bottom: 2rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .metric {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 6px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #1e293b;
+        }
+        .metric-label {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+        .test-results {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .test-item {
+            padding: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .test-item:last-child {
+            border-bottom: none;
+        }
+        .status-passed { color: #22c55e; }
+        .status-failed { color: #ef4444; }
+        .timestamp {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🚀 FactoryWager Performance Report</h1>
+        <p>Generated on 2/7/2026, 8:50:24 PM</p>
+        <p>Performance Grade: <strong>A+</strong></p>
+    </div>
+
+    <div class="summary">
+        <div class="metric">
+            <div class="metric-value">29</div>
+            <div class="metric-label">Total Tests</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">28</div>
+            <div class="metric-label">Passed</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">1</div>
+            <div class="metric-label">Failed</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">96.6%</div>
+            <div class="metric-label">Success Rate</div>
+        </div>
+        <div class="metric">
+            <div class="metric-value">149.28ms</div>
+            <div class="metric-label">Avg Response</div>
+        </div>
+    </div>
+
+    <div class="test-results">
+        <h2>📊 Test Results</h2>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ DNS Resolution</h3>
+                
+                    <p>Average Duration: 17.89ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 11.58ms - 33.81ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 123.08ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 89.92ms - 158.28ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ CLI: help</h3>
+                
+                    <p>Average Duration: 126.99ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 106.84ms - 159.48ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ CLI: status</h3>
+                
+                    <p>Average Duration: 897.14ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 756.87ms - 1177.87ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ CLI: domains list</h3>
+                
+                    <p>Average Duration: 596.31ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 366.33ms - 1241.76ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ CLI: badges list</h3>
+                
+                    <p>Average Duration: 64.75ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 58.87ms - 71.75ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ Badge Generation</h3>
+                
+                    <p>Average Duration: 57.31ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 54.82ms - 60.71ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-running">❌ Concurrent HTTP Requests</h3>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 102.39ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 78.21ms - 154.57ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 136.73ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 77.73ms - 400.15ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 124.04ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 70.70ms - 394.65ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 86.85ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 68.53ms - 126.34ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 81.21ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 69.47ms - 96.10ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 104.58ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 71.46ms - 157.90ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 83.86ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 73.31ms - 100.53ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 143.40ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 77.74ms - 368.20ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 94.40ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 76.21ms - 148.06ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 116.70ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 74.60ms - 245.73ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 98.29ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 69.41ms - 144.31ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 80.50ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 74.24ms - 85.27ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 95.58ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 70.84ms - 136.48ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 140.64ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 80.32ms - 212.22ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 124.67ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 74.68ms - 320.56ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 98.08ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 75.40ms - 163.11ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 91.89ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 70.86ms - 160.64ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 80.05ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 70.97ms - 91.25ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 95.40ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 70.05ms - 134.91ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ HTTP Response</h3>
+                
+                    <p>Average Duration: 167.89ms</p>
+                    <p>Success Rate: 100.0%</p>
+                    <p>Range: 75.58ms - 714.16ms</p>
+                
+                
+            </div>
+        
+            <div class="test-item">
+                <h3 class="status-passed">✅ Memory Usage</h3>
+                
+                
+            </div>
+        
+    </div>
+
+    <div class="timestamp">
+        Report generated by FactoryWager Performance Testing Suite
+    </div>
+</body>
+</html>

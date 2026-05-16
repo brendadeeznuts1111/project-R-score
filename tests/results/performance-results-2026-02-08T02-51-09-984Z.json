@@ -1,0 +1,2528 @@
+{
+  "timestamp": "2026-02-08T02:50:24.326Z",
+  "tests": [
+    {
+      "name": "DNS Resolution",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 11.993959000000004,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 14.917125000000013,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 22.174874999999986,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 15.442165999999986,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 18.48887499999998,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 19.244709,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 33.807041999999996,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 8,
+          "duration": 16.324750000000023,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 11.575458999999967,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 10,
+          "duration": 14.901374999999973,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 17.887033499999994,
+        "minDuration": 11.575458999999967,
+        "maxDuration": 33.807041999999996,
+        "medianDuration": 15.883458000000005,
+        "p95Duration": 33.807041999999996,
+        "p99Duration": 33.807041999999996
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 152.73366599999997,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 89.92058300000008,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 144.209291,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 99.72250000000008,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 158.283459,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 154.84295799999995,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 141.314666,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 101.15300000000002,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 89.92824999999993,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 98.7125840000001,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 123.08209570000001,
+        "minDuration": 89.92058300000008,
+        "maxDuration": 158.283459,
+        "medianDuration": 121.233833,
+        "p95Duration": 158.283459,
+        "p99Duration": 158.283459
+      },
+      "status": "passed"
+    },
+    {
+      "name": "CLI: help",
+      "iterations": 5,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 159.47658300000012,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 123.55054100000007,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 116.12312500000007,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 106.84337499999992,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 128.96170800000027,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 5,
+        "successfulRuns": 5,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 126.9910664000001,
+        "minDuration": 106.84337499999992,
+        "maxDuration": 159.47658300000012,
+        "medianDuration": 123.55054100000007,
+        "p95Duration": 159.47658300000012,
+        "p99Duration": 159.47658300000012
+      },
+      "status": "passed"
+    },
+    {
+      "name": "CLI: status",
+      "iterations": 5,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 770.5933329999998,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 1177.8724170000005,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 952.8312500000002,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 827.5201670000006,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 756.8739170000008,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 5,
+        "successfulRuns": 5,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 897.1382168000004,
+        "minDuration": 756.8739170000008,
+        "maxDuration": 1177.8724170000005,
+        "medianDuration": 827.5201670000006,
+        "p95Duration": 1177.8724170000005,
+        "p99Duration": 1177.8724170000005
+      },
+      "status": "passed"
+    },
+    {
+      "name": "CLI: domains list",
+      "iterations": 5,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 1241.7611660000002,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 422.1851660000011,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 380.06658400000015,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 366.32779200000004,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 571.1929170000003,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 5,
+        "successfulRuns": 5,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 596.3067250000004,
+        "minDuration": 366.32779200000004,
+        "maxDuration": 1241.7611660000002,
+        "medianDuration": 422.1851660000011,
+        "p95Duration": 1241.7611660000002,
+        "p99Duration": 1241.7611660000002
+      },
+      "status": "passed"
+    },
+    {
+      "name": "CLI: badges list",
+      "iterations": 5,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 58.87437499999942,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 62.650791999998546,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 71.7479170000006,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 68.92637500000092,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 61.54020799999853,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 5,
+        "successfulRuns": 5,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 64.7479333999996,
+        "minDuration": 58.87437499999942,
+        "maxDuration": 71.7479170000006,
+        "medianDuration": 62.650791999998546,
+        "p95Duration": 71.7479170000006,
+        "p99Duration": 71.7479170000006
+      },
+      "status": "passed"
+    },
+    {
+      "name": "Badge Generation",
+      "iterations": 3,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 54.81679199999962,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 56.38979199999994,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 60.71220799999901,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 3,
+        "successfulRuns": 3,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 57.30626399999952,
+        "minDuration": 54.81679199999962,
+        "maxDuration": 60.71220799999901,
+        "medianDuration": 56.38979199999994,
+        "p95Duration": 60.71220799999901,
+        "p99Duration": 60.71220799999901
+      },
+      "status": "passed"
+    },
+    {
+      "name": "Concurrent HTTP Requests",
+      "concurrency": 5,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 152.10708299999897,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 2,
+          "duration": 130.84291699999994,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 3,
+          "duration": 135.41899999999987,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 4,
+          "duration": 136.75395799999933,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 5,
+          "duration": 151.27612500000032,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 6,
+          "duration": 147.4329170000001,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 7,
+          "duration": 152.4065419999988,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 8,
+          "duration": 157.41508299999987,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 9,
+          "duration": 141.5947500000002,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        },
+        {
+          "iteration": 10,
+          "duration": 138.25608400000056,
+          "success": false,
+          "successfulRequests": 1,
+          "totalRequests": 5,
+          "details": [
+            {
+              "domain": "wiki.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "dashboard.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "api.factory-wager.com",
+              "status": 404,
+              "success": false
+            },
+            {
+              "domain": "registry.factory-wager.com",
+              "status": 200,
+              "success": true
+            },
+            {
+              "domain": "npm.factory-wager.com",
+              "status": 404,
+              "success": false
+            }
+          ]
+        }
+      ],
+      "statistics": {},
+      "status": "running"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 91.91220800000156,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 87.52545900000041,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 83.81112500000017,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 79.35916599999837,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 78.20858399999997,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 82.68270899999698,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 150.59708300000057,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 154.56758400000035,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 78.91462500000125,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 136.32225000000108,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 102.39007930000007,
+        "minDuration": 78.20858399999997,
+        "maxDuration": 154.56758400000035,
+        "medianDuration": 85.66829200000029,
+        "p95Duration": 154.56758400000035,
+        "p99Duration": 154.56758400000035
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 178.84345799999937,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 119.22400000000198,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 400.15087499999936,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 87.90629199999967,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 79.00795799999833,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 180.38287499999933,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 82.7085420000003,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 77.7274580000012,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 82.21366699999999,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 79.11816700000054,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 136.72832920000002,
+        "minDuration": 77.7274580000012,
+        "maxDuration": 400.15087499999936,
+        "medianDuration": 85.30741699999999,
+        "p95Duration": 400.15087499999936,
+        "p99Duration": 400.15087499999936
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 394.64741700000013,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 70.7021249999998,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 77.83000000000175,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 141.47608300000138,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 83.0625,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 94.70516599999974,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 156.73220800000126,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 74.55145800000173,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 70.73595799999748,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 75.91295900000114,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 124.03558740000044,
+        "minDuration": 70.7021249999998,
+        "maxDuration": 394.64741700000013,
+        "medianDuration": 80.44625000000087,
+        "p95Duration": 394.64741700000013,
+        "p99Duration": 394.64741700000013
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 74.4631249999984,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 84.55670800000007,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 76.67133299999841,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 126.33633299999929,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 81.8652089999996,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 68.53312500000175,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 91.76487500000076,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 78.40791700000045,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 86.44458300000042,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 10,
+          "duration": 99.44545799999833,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 86.84886659999975,
+        "minDuration": 68.53312500000175,
+        "maxDuration": 126.33633299999929,
+        "medianDuration": 83.21095849999983,
+        "p95Duration": 126.33633299999929,
+        "p99Duration": 126.33633299999929
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 69.4732499999991,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 77.99979200000234,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 74.82654200000252,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 77.19887500000186,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 78.37079099999755,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 83.9534590000003,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 96.10383300000103,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 85.49699999999939,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 82.54733300000225,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 86.13791700000002,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 81.21087920000063,
+        "minDuration": 69.4732499999991,
+        "maxDuration": 96.10383300000103,
+        "medianDuration": 80.4590619999999,
+        "p95Duration": 96.10383300000103,
+        "p99Duration": 96.10383300000103
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 83.22695800000292,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 71.4552079999994,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 112.84466599999723,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 86.41079199999876,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 85.83491700000013,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 157.90033299999777,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 117.93312499999956,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 96.46670900000026,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 85.59554199999911,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 148.13424999999916,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 104.58024999999944,
+        "minDuration": 71.4552079999994,
+        "maxDuration": 157.90033299999777,
+        "medianDuration": 91.43875049999951,
+        "p95Duration": 157.90033299999777,
+        "p99Duration": 157.90033299999777
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 78.95887500000026,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 83.76458399999683,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 88.19783400000233,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 88.03316700000141,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 79.53358399999706,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 75.58916600000157,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 86.8159999999989,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 83.87862499999756,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 73.31287499999962,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 100.52516699999978,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 83.86098769999953,
+        "minDuration": 73.31287499999962,
+        "maxDuration": 100.52516699999978,
+        "medianDuration": 83.82160449999719,
+        "p95Duration": 100.52516699999978,
+        "p99Duration": 100.52516699999978
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 94.25525000000198,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 368.1950419999994,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 355.96620899999834,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 93.49750000000131,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 85.11375000000044,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 105.87458300000071,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 84.7176670000008,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 77.73704200000066,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 80.83808299999873,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 87.76266699999906,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 143.39577930000013,
+        "minDuration": 77.73704200000066,
+        "maxDuration": 368.1950419999994,
+        "medianDuration": 90.63008350000018,
+        "p95Duration": 368.1950419999994,
+        "p99Duration": 368.1950419999994
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 89.97404200000165,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 77.72854200000074,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 147.17324999999983,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 148.06245800000033,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 83.23325000000114,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 85.5455409999995,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 77.32966599999781,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 76.40774999999849,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 82.38395799999853,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 76.20729199999914,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 94.40457489999972,
+        "minDuration": 76.20729199999914,
+        "maxDuration": 148.06245800000033,
+        "medianDuration": 82.80860399999983,
+        "p95Duration": 148.06245800000033,
+        "p99Duration": 148.06245800000033
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 137.77816600000006,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 84.12779200000296,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 75.10870900000009,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 130.67020799999955,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 74.59758300000249,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 87.57766700000138,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 93.08541700000205,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 245.7312090000014,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 102.25974999999744,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 136.11020800000188,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 116.70467090000093,
+        "minDuration": 74.59758300000249,
+        "maxDuration": 245.7312090000014,
+        "medianDuration": 97.67258349999975,
+        "p95Duration": 245.7312090000014,
+        "p99Duration": 245.7312090000014
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 140.08741699999882,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 101.95295899999837,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 83.11599999999817,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 86.52375000000029,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 107.84366599999703,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 144.3086660000008,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 86.1862919999985,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 83.95562500000233,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 79.51075000000128,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 69.41133399999671,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 98.28964589999923,
+        "minDuration": 69.41133399999671,
+        "maxDuration": 144.3086660000008,
+        "medianDuration": 86.3550209999994,
+        "p95Duration": 144.3086660000008,
+        "p99Duration": 144.3086660000008
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 85.19916699999885,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 74.24287499999991,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 85.2677079999994,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 77.03945799999929,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 79.03279199999815,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 83.09249999999884,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 79.4205409999995,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 82.10866700000042,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 81.19024999999965,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 78.4216249999954,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 80.50155829999895,
+        "minDuration": 74.24287499999991,
+        "maxDuration": 85.2677079999994,
+        "medianDuration": 80.30539549999958,
+        "p95Duration": 85.2677079999994,
+        "p99Duration": 85.2677079999994
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 78.54937499999505,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 136.48095900000044,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 81.5402499999982,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 70.8382500000007,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 77.02983299999323,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 74.09087500000169,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 135.70237500000076,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 134.2141249999986,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 84.36808400000155,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 82.94904100000713,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 95.57631669999974,
+        "minDuration": 70.8382500000007,
+        "maxDuration": 136.48095900000044,
+        "medianDuration": 82.24464550000266,
+        "p95Duration": 136.48095900000044,
+        "p99Duration": 136.48095900000044
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 80.55204200000298,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 2,
+          "duration": 85.11112499999581,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 80.32441600000311,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 4,
+          "duration": 107.71633299999667,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 167.29504199999792,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 137.1972919999971,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 212.22370899999805,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 192.9239579999994,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 155.13329099999828,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 187.96487499999785,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 140.64420829999872,
+        "minDuration": 80.32441600000311,
+        "maxDuration": 212.22370899999805,
+        "medianDuration": 146.1652914999977,
+        "p95Duration": 212.22370899999805,
+        "p99Duration": 212.22370899999805
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 74.68295800000487,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 320.5626669999983,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 78.74020799999562,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 82.39679099999921,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 160.9098329999979,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 91.700665999997,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 151.95970800000214,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 122.62350000000151,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 87.12858300000516,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 10,
+          "duration": 75.99945899999875,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 124.67043730000005,
+        "minDuration": 74.68295800000487,
+        "maxDuration": 320.5626669999983,
+        "medianDuration": 89.41462450000108,
+        "p95Duration": 320.5626669999983,
+        "p99Duration": 320.5626669999983
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 92.78058400000009,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 153.96866600000067,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 163.1117499999964,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 87.16470899999695,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 5,
+          "duration": 79.78487500000483,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 76.18608400000085,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 82.73162500000035,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 86.95587499999965,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 82.7622080000001,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 75.40087499999936,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 98.08472509999993,
+        "minDuration": 75.40087499999936,
+        "maxDuration": 163.1117499999964,
+        "medianDuration": 84.85904149999988,
+        "p95Duration": 163.1117499999964,
+        "p99Duration": 163.1117499999964
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 78.01112499999726,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 84.79320800000278,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 3,
+          "duration": 80.54266699999425,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 91.85191599999962,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 87.04658299999574,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 6,
+          "duration": 111.94333399999596,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 73.88266700000531,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 160.64308300000266,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 70.86379200000374,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 79.36679200000071,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 91.8945166999998,
+        "minDuration": 70.86379200000374,
+        "maxDuration": 160.64308300000266,
+        "medianDuration": 82.66793749999852,
+        "p95Duration": 160.64308300000266,
+        "p99Duration": 160.64308300000266
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 73.95075000000361,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 79.36229100000492,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 79.13591699999961,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 91.25091600000451,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 80.47637499999837,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 90.40604099999473,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 7,
+          "duration": 72.8934170000066,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 78.38220800000272,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 83.65062500000204,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 70.97458299999562,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 80.04831230000127,
+        "minDuration": 70.97458299999562,
+        "maxDuration": 91.25091600000451,
+        "medianDuration": 79.24910400000226,
+        "p95Duration": 91.25091600000451,
+        "p99Duration": 91.25091600000451
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 76.62570799999958,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 116.27262499999779,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 81.9050830000051,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 87.72720799999661,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 70.05195800000365,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 134.90629099999933,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 73.12116699999751,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 104.1291659999988,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 9,
+          "duration": 109.23479200000293,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 99.98504200000025,
+          "success": true,
+          "result": true
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 95.39590400000016,
+        "minDuration": 70.05195800000365,
+        "maxDuration": 134.90629099999933,
+        "medianDuration": 93.85612499999843,
+        "p95Duration": 134.90629099999933,
+        "p99Duration": 134.90629099999933
+      },
+      "status": "passed"
+    },
+    {
+      "name": "HTTP Response",
+      "iterations": 10,
+      "results": [
+        {
+          "iteration": 1,
+          "duration": 75.58279100000073,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 2,
+          "duration": 104.49187499999971,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 3,
+          "duration": 80.21491600000445,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 4,
+          "duration": 185.38000000000466,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 5,
+          "duration": 78.69254100000398,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 6,
+          "duration": 94.02570900000137,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 7,
+          "duration": 98.52137499999662,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 8,
+          "duration": 101.43374999999651,
+          "success": true,
+          "result": true
+        },
+        {
+          "iteration": 9,
+          "duration": 714.1630829999995,
+          "success": true,
+          "result": false
+        },
+        {
+          "iteration": 10,
+          "duration": 146.3762080000015,
+          "success": true,
+          "result": false
+        }
+      ],
+      "statistics": {
+        "totalRuns": 10,
+        "successfulRuns": 10,
+        "failedRuns": 0,
+        "successRate": 100,
+        "averageDuration": 167.8882248000009,
+        "minDuration": 75.58279100000073,
+        "maxDuration": 714.1630829999995,
+        "medianDuration": 99.97756249999657,
+        "p95Duration": 714.1630829999995,
+        "p99Duration": 714.1630829999995
+      },
+      "status": "passed"
+    },
+    {
+      "name": "Memory Usage",
+      "measurements": [
+        {
+          "iteration": 1,
+          "heapUsed": 12352288,
+          "heapTotal": 18841600,
+          "external": 3836461,
+          "rss": 67796992,
+          "heapDelta": 1760208,
+          "heapAfterGC": 12476376
+        },
+        {
+          "iteration": 2,
+          "heapUsed": 12105808,
+          "heapTotal": 18841600,
+          "external": 3844133,
+          "rss": 57671680,
+          "heapDelta": -224400,
+          "heapAfterGC": 12106032
+        },
+        {
+          "iteration": 3,
+          "heapUsed": 14001160,
+          "heapTotal": 19103744,
+          "external": 3941866,
+          "rss": 61816832,
+          "heapDelta": 1875656,
+          "heapAfterGC": 14001616
+        },
+        {
+          "iteration": 4,
+          "heapUsed": 15781384,
+          "heapTotal": 20938752,
+          "external": 4032149,
+          "rss": 64536576,
+          "heapDelta": 1743776,
+          "heapAfterGC": 15781624
+        },
+        {
+          "iteration": 5,
+          "heapUsed": 13588736,
+          "heapTotal": 23298048,
+          "external": 3926174,
+          "rss": 72777728,
+          "heapDelta": -2217968,
+          "heapAfterGC": 13588976
+        },
+        {
+          "iteration": 6,
+          "heapUsed": 15356544,
+          "heapTotal": 23822336,
+          "external": 4020742,
+          "rss": 74694656,
+          "heapDelta": 1755832,
+          "heapAfterGC": 15356784
+        },
+        {
+          "iteration": 7,
+          "heapUsed": 17137080,
+          "heapTotal": 25657344,
+          "external": 4115798,
+          "rss": 76644352,
+          "heapDelta": 1759824,
+          "heapAfterGC": 17137320
+        },
+        {
+          "iteration": 8,
+          "heapUsed": 9460600,
+          "heapTotal": 27492352,
+          "external": 3663118,
+          "rss": 69042176,
+          "heapDelta": -7711952,
+          "heapAfterGC": 9460840
+        },
+        {
+          "iteration": 9,
+          "heapUsed": 11235664,
+          "heapTotal": 27754496,
+          "external": 3756916,
+          "rss": 63258624,
+          "heapDelta": 1747560,
+          "heapAfterGC": 11235904
+        },
+        {
+          "iteration": 10,
+          "heapUsed": 12976408,
+          "heapTotal": 27754496,
+          "external": 3846856,
+          "rss": 65290240,
+          "heapDelta": 1719088,
+          "heapAfterGC": 12976648
+        },
+        {
+          "iteration": 11,
+          "heapUsed": 14719624,
+          "heapTotal": 27754496,
+          "external": 3937728,
+          "rss": 67534848,
+          "heapDelta": 1716696,
+          "heapAfterGC": 14981936
+        },
+        {
+          "iteration": 12,
+          "heapUsed": 12055336,
+          "heapTotal": 27754496,
+          "external": 3801192,
+          "rss": 72843264,
+          "heapDelta": -2678648,
+          "heapAfterGC": 12055576
+        },
+        {
+          "iteration": 13,
+          "heapUsed": 13734328,
+          "heapTotal": 27754496,
+          "external": 3887209,
+          "rss": 74629120,
+          "heapDelta": 1655920,
+          "heapAfterGC": 13734568
+        },
+        {
+          "iteration": 14,
+          "heapUsed": 15432128,
+          "heapTotal": 27754496,
+          "external": 3972909,
+          "rss": 60358656,
+          "heapDelta": 1677672,
+          "heapAfterGC": 15432368
+        },
+        {
+          "iteration": 15,
+          "heapUsed": 14146224,
+          "heapTotal": 28016640,
+          "external": 3931166,
+          "rss": 73056256,
+          "heapDelta": -1308992,
+          "heapAfterGC": 14146464
+        },
+        {
+          "iteration": 16,
+          "heapUsed": 15887720,
+          "heapTotal": 28016640,
+          "external": 4020585,
+          "rss": 65667072,
+          "heapDelta": 1717432,
+          "heapAfterGC": 15887960
+        },
+        {
+          "iteration": 17,
+          "heapUsed": 17738912,
+          "heapTotal": 28016640,
+          "external": 4118765,
+          "rss": 67796992,
+          "heapDelta": 1830392,
+          "heapAfterGC": 17739152
+        },
+        {
+          "iteration": 18,
+          "heapUsed": 19515576,
+          "heapTotal": 29589504,
+          "external": 4213686,
+          "rss": 70090752,
+          "heapDelta": 1751208,
+          "heapAfterGC": 19515816
+        },
+        {
+          "iteration": 19,
+          "heapUsed": 21288208,
+          "heapTotal": 31162368,
+          "external": 4304897,
+          "rss": 71401472,
+          "heapDelta": 1746336,
+          "heapAfterGC": 21288448
+        },
+        {
+          "iteration": 20,
+          "heapUsed": 23153440,
+          "heapTotal": 32997376,
+          "external": 4397203,
+          "rss": 60948480,
+          "heapDelta": 1842288,
+          "heapAfterGC": 23153680
+        }
+      ],
+      "statistics": {
+        "measurements": 20,
+        "initialHeapUsed": 10587728,
+        "finalHeapUsed": 23153440,
+        "averageHeapUsed": 15083358.4,
+        "minHeapUsed": 9460600,
+        "maxHeapUsed": 23153440,
+        "heapGrowth": 12565712,
+        "averageHeapDelta": 607896.4
+      },
+      "status": "passed"
+    }
+  ],
+  "summary": {
+    "totalTests": 29,
+    "passedTests": 28,
+    "failedTests": 1,
+    "averageResponseTime": 149.28196995185183,
+    "minResponseTime": 11.575458999999967,
+    "maxResponseTime": 1241.7611660000002
+  }
+}
