@@ -656,4 +656,15 @@ Only essential files remain at root:
 **Phase 2 Completed:** 2026-05 (current session)
 **Focus:** Safe incremental organization + high-value improvements (no breaking moves to referenced paths)
 
-✅ Root directory organization continues to evolve with the growing platform. Future candidates: deeper examples/ consolidation, scratch/ curation, potential monorepo workspace/ grouping if needed.
+## Phase 4.3 (May 2026) — Workspace Isolation & Monorepo Cleanup
+
+See `STRUCTURE.md` for the full history. Key outcomes:
+- Root workspace restricted to 4 globs → `bun install` in <1s (from 120s+)
+- Projects triaged into `active/` / `experimental/` / `archive/`
+- fantasy42-fire22-registry deduplicated (3 copies → 1)
+- 1,542 dependency versions pinned to exact
+- Package naming standardized: `@fw/*` → `@factorywager/*`
+- Registry manifest auto-generated in `docs/packages/REGISTRY.md`
+- Leaked Cloudflare credentials removed from git
+
+✅ Root organization continues to evolve. See `STRUCTURE.md` Future Candidates for next steps.
