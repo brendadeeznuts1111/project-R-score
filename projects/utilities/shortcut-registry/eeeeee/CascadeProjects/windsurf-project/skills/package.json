@@ -32,12 +32,12 @@
   "author": "Bun-Native Skills Team",
   "license": "MIT",
   "dependencies": {
-    "commander": "^11.0.0",
-    "zod": "^3.22.0"
+    "commander": "11.0.0",
+    "zod": "3.22.0"
   },
   "devDependencies": {
-    "@biomejs/biome": "^1.4.0",
-    "@types/node": "^20.0.0",
+    "@biomejs/biome": "1.4.0",
+    "@types/node": "20.0.0",
     "bun-types": "latest"
   },
   "workspaces": [

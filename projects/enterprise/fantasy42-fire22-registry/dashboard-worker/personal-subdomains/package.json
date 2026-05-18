@@ -14,11 +14,11 @@
     "build": "wrangler deploy --dry-run"
   },
   "dependencies": {
-    "@cloudflare/workers-types": "^4.20231218.0"
+    "@cloudflare/workers-types": "4.20231218.0"
   },
   "devDependencies": {
-    "wrangler": "^3.22.4",
-    "typescript": "^5.3.3"
+    "wrangler": "3.22.4",
+    "typescript": "5.3.3"
   },
   "keywords": [
     "cloudflare",

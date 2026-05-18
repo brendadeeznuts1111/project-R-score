@@ -30,11 +30,11 @@
     "@fire22/benchmark-formatter": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.0"
+    "bun": "1.2.0"
   },
   "optionalDependencies": {
     "bombardier": "*",

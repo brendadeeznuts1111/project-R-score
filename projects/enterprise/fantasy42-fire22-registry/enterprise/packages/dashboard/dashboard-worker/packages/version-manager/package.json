@@ -72,10 +72,10 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.0.0"
+    "typescript": "5.0.0"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "engines": {
     "bun": ">=1.2.21",

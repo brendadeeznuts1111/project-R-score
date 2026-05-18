@@ -79,12 +79,12 @@
   },
   "dependencies": {},
   "optionalDependencies": {
-    "@swc/core": "^1.4.0"
+    "@swc/core": "1.4.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0",
-    "bun-types": "^1.0.0",
-    "typescript": "^5.0.0"
+    "@types/node": "20.0.0",
+    "bun-types": "1.0.0",
+    "typescript": "5.0.0"
   },
   "files": [
     "dist/**/*",

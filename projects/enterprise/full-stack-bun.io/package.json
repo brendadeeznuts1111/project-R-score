@@ -78,14 +78,14 @@
     "scrape-safe": "bun run src/scrape-safe.ts"
   },
   "dependencies": {
-    "@types/bun": "^1.3.5",
-    "lodash": "^4.17.21",
-    "zod": "^3.25.76",
-    "elysia": "^1.4.20"
+    "@types/bun": "1.3.5",
+    "lodash": "4.17.21",
+    "zod": "3.25.76",
+    "elysia": "1.4.20"
   },
   "devDependencies": {
-    "prettier": "^3.7.4",
-    "@socketsecurity/bun-security-scanner": "^1.1.2"
+    "prettier": "3.7.4",
+    "@socketsecurity/bun-security-scanner": "1.1.2"
   },
   "optionalPeerDependencies": {
     "pinnacle-sdk": "^2.2.0",

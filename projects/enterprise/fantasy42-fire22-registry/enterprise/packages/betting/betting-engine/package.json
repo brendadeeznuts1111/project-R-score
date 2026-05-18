@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Betting Engine Package for Fantasy42-Fire22 Registry - Core sports betting logic and validation",
   "main": "src/index.ts",
-  "types": "src/index.ts",
+  "types": "./dist/index.d.ts",
   "exports": {
     ".": "./src/index.ts",
     "./odds": "./src/odds/index.ts",
@@ -50,19 +50,19 @@
     "@fire22-registry/core-security": "workspace:*",
     "@fire22-registry/compliance-core": "workspace:*",
     "@fire22-registry/analytics-dashboard": "workspace:*",
-    "lodash": "^4.17.21",
-    "moment": "^2.30.1",
-    "semver": "^7.7.2",
-    "uuid": "^9.0.1",
-    "zod": "^3.20.0"
+    "lodash": "4.17.21",
+    "moment": "2.30.1",
+    "semver": "7.7.2",
+    "uuid": "9.0.1",
+    "zod": "3.20.0"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "@types/uuid": "^9.0.7",
-    "@types/lodash": "^4.14.202",
-    "typescript": "^5.0.0",
-    "prettier": "^3.1.1",
-    "eslint": "^8.56.0"
+    "@types/bun": "1.2.21",
+    "@types/uuid": "9.0.7",
+    "@types/lodash": "4.14.202",
+    "typescript": "5.0.0",
+    "prettier": "3.1.1",
+    "eslint": "8.56.0"
   },
   "keywords": [
     "fantasy42",
@@ -212,7 +212,6 @@
   ],
   "sideEffects": false,
   "type": "module",
-  "types": "./dist/index.d.ts",
   "unpkg": "./dist/index.js",
   "jsdelivr": "./dist/index.js"
 }

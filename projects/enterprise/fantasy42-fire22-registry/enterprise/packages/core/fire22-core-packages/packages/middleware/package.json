@@ -29,14 +29,14 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "3.22.4"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
+    "@types/bun": "1.2.21",
     "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.0.0"
+    "bun": "1.0.0"
   },
   "keywords": [
     "fire22",

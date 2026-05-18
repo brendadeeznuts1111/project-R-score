@@ -73,21 +73,28 @@
   "author": "Bun Proxy Team <team@bun.sh>",
   "license": "MIT",
   "dependencies": {
-    "bun-types": "^1.3.5"
+    "bun-types": "1.3.5"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.5",
-    "@typescript-eslint/eslint-plugin": "^6.19.0",
-    "@typescript-eslint/parser": "^6.19.0",
-    "eslint": "^8.56.0",
-    "prettier": "^3.2.4",
-    "typedoc": "^0.25.4",
-    "typescript": "^5.3.3"
+    "@types/bun": "1.3.5",
+    "@typescript-eslint/eslint-plugin": "6.19.0",
+    "@typescript-eslint/parser": "6.19.0",
+    "eslint": "8.56.0",
+    "prettier": "3.2.4",
+    "typedoc": "0.25.4",
+    "typescript": "5.3.3"
   },
   "engines": {
     "bun": ">=1.3.0",
     "node": ">=18.0.0"
   },
-  "os": ["darwin", "linux", "win32"],
-  "cpu": ["x64", "arm64"]
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "cpu": [
+    "x64",
+    "arm64"
+  ]
 }

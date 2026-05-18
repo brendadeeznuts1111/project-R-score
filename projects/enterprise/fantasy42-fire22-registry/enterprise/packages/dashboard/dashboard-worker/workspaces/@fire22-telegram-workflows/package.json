@@ -38,18 +38,18 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
-    "grammy": "^1.21.1",
-    "zod": "^3.22.4",
+    "grammy": "1.21.1",
+    "zod": "3.22.4",
     "@fire22/telegram-bot": "workspace:*",
     "@fire22/queue-system": "workspace:*",
     "@fire22/multilingual": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "fire22": {
     "workspace": "telegram-workflows",

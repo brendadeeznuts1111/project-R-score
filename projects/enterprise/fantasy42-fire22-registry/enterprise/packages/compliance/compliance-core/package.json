@@ -15,10 +15,10 @@
   },
   "dependencies": {
     "@fire22-registry/core-security": "workspace:*",
-    "semver": "^7.7.2"
+    "semver": "7.7.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21"
+    "@types/bun": "1.2.21"
   },
   "keywords": [
     "fantasy42",

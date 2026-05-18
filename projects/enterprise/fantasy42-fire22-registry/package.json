@@ -40,22 +40,22 @@
     "node": ">=18.0.0"
   },
   "dependencies": {
-    "zod": "^3.25.76"
+    "zod": "3.25.76"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.8",
-    "eslint": "^9.39.2",
-    "husky": "^9.1.7",
-    "license-checker": "^25.0.1",
-    "lint-staged": "^16.2.7",
-    "snyk": "^1.1302.1",
-    "stylelint": "^16.26.1",
-    "stylelint-config-recommended": "^17.0.0",
-    "stylelint-config-standard": "^39.0.1",
-    "stylelint-order": "^7.0.1"
+    "@types/bun": "1.3.8",
+    "eslint": "9.39.2",
+    "husky": "9.1.7",
+    "license-checker": "25.0.1",
+    "lint-staged": "16.2.7",
+    "snyk": "1.1302.1",
+    "stylelint": "16.26.1",
+    "stylelint-config-recommended": "17.0.0",
+    "stylelint-config-standard": "39.0.1",
+    "stylelint-order": "7.0.1"
   },
   "peerDependencies": {
-    "@types/react": "^19.1.12"
+    "@types/react": "19.1.12"
   },
   "optionalDependencies": {},
   "scripts": {

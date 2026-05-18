@@ -33,15 +33,15 @@
     "link:local": "bun link"
   },
   "dependencies": {
-    "zod": "^3.22.4"
+    "zod": "3.22.4"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
+    "@types/bun": "1.2.21",
     "bun-types": "1.2.21",
-    "typescript": "^5.9.2"
+    "typescript": "5.9.2"
   },
   "keywords": [
     "bun",

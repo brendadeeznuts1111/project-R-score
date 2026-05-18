@@ -37,10 +37,10 @@
   "author": "Bun Tools Team",
   "license": "MIT",
   "peerDependencies": {
-    "react": ">=18.0.0"
+    "react": "18.0.0"
   },
   "devDependencies": {
-    "@types/react": "^18.0.0",
-    "react": "^18.0.0"
+    "@types/react": "18.0.0",
+    "react": "18.0.0"
   }
 }

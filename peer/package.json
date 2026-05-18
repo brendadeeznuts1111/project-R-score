@@ -11,11 +11,11 @@
     "typecheck": "bun ./node_modules/typescript/bin/tsc --noEmit"
   },
   "devDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "dependencies": {
-    "@zkp2p/sdk": "^0.3.2",
-    "viem": "^2.48.4",
-    "zod": "^4.3.6"
+    "@zkp2p/sdk": "0.3.2",
+    "viem": "2.48.4",
+    "zod": "4.3.6"
   }
 }

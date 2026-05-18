@@ -1,7 +1,9 @@
 {
   "name": "stuff-monorepo",
   "private": true,
-  "workspaces": ["packages/*"],
+  "workspaces": [
+    "packages/*"
+  ],
   "//": "Note: --filter '!pkg' is overridden by dependency resolution. Use explicit targets instead.",
   "scripts": {
     "dev": "bun run --parallel --filter '*' dev",
@@ -23,6 +25,6 @@
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.0.0"
+    "typescript": "5.0.0"
   }
 }

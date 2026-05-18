@@ -447,21 +447,21 @@
     "@modelcontextprotocol/server-puppeteer": "latest",
     "@modelcontextprotocol/server-sequential-thinking": "latest",
     "@upstash/context7-mcp": "latest",
-    "fuzzysort": "^3.1.0",
-    "js-yaml": "^4.1.1",
-    "lightningcss": "^1.31.1",
-    "lru-cache": "^11.2.5",
+    "fuzzysort": "3.1.0",
+    "js-yaml": "4.1.1",
+    "lightningcss": "1.31.1",
+    "lru-cache": "11.2.5",
     "mcp-bun": "latest",
-    "rss-mcp": "^1.0.1",
-    "semver": "^7.7.3",
-    "ts-morph": "^21.0.1",
-    "yaml": "^2.8.2"
+    "rss-mcp": "1.0.1",
+    "semver": "7.7.3",
+    "ts-morph": "21.0.1",
+    "yaml": "2.8.2"
   },
   "devDependencies": {
-    "@biomejs/biome": "^2.3.13",
+    "@biomejs/biome": "2.3.13",
     "@types/bun": "latest",
     "@types/node": "latest",
-    "@types/semver": "^7.7.1"
+    "@types/semver": "7.7.1"
   },
   "mcp": {
     "servers": {

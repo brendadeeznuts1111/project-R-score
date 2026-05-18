@@ -9,7 +9,7 @@
     "init-db": "bun run scripts/init-db.ts"
   },
   "dependencies": {
-    "elysia": "^1.0.0"
+    "elysia": "1.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest"

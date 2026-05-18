@@ -74,16 +74,16 @@
     "start": "bun run src/index.ts"
   },
   "dependencies": {
-    "drizzle-orm": "^0.29.0",
-    "zod": "^3.22.4",
-    "date-fns": "^3.0.6"
+    "drizzle-orm": "0.29.0",
+    "zod": "3.22.4",
+    "date-fns": "3.0.6"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
+    "@types/bun": "1.2.21",
     "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "keywords": [
     "fire22",

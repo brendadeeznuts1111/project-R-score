@@ -271,15 +271,15 @@
     "test:correlation": "bun test test/correlation/*.test.ts"
   },
   "dependencies": {
-    "ccxt": "^4.5.35",
-    "hono": "^4.11.7",
-    "protobufjs": "^7.5.4",
-    "zod": "^4.3.6",
-    "vis-network": "^9.1.13"
+    "ccxt": "4.5.35",
+    "hono": "4.11.7",
+    "protobufjs": "7.5.4",
+    "zod": "4.3.6",
+    "vis-network": "9.1.13"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "peerDependencies": {},
   "optionalDependencies": {},

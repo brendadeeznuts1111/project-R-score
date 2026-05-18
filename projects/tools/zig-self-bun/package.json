@@ -49,10 +49,10 @@
     "docs": "bun run scripts/generate-docs.ts"
   },
   "devDependencies": {
-    "@babel/parser": "^7.29.0",
-    "@babel/traverse": "^7.29.0",
-    "@babel/generator": "^7.29.0",
-    "@babel/types": "^7.29.0"
+    "@babel/parser": "7.29.0",
+    "@babel/traverse": "7.29.0",
+    "@babel/generator": "7.29.0",
+    "@babel/types": "7.29.0"
   },
   "keywords": [
     "bun",

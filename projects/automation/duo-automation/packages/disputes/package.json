@@ -38,16 +38,16 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@duoplus/core": "^1.0.0",
-    "crypto": "^1.0.1"
+    "@duoplus/core": "1.0.0",
+    "crypto": "1.0.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.6",
-    "@types/node": "^25.0.8",
-    "typescript": "^5.9.3"
+    "@types/bun": "1.3.6",
+    "@types/node": "25.0.8",
+    "typescript": "5.9.3"
   },
   "peerDependencies": {
-    "bun": ">=1.1.40"
+    "bun": "1.1.40"
   },
   "keywords": [
     "disputes",

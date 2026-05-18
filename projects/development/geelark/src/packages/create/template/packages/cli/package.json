@@ -7,7 +7,7 @@
     "dev-hq": "./src/index.ts"
   },
   "dependencies": {
-    "commander": "^11.1.0"
+    "commander": "11.1.0"
   },
   "scripts": {
     "dev": "bun run src/index.ts",

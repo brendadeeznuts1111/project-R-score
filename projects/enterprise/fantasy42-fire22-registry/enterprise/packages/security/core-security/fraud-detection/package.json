@@ -31,14 +31,14 @@
     "fraud:monitor": "bun run scripts/fraud-monitor.ts"
   },
   "dependencies": {
-    "@fire22-registry/core-security": "^3.1.0"
+    "@fire22-registry/core-security": "3.1.0"
   },
   "devDependencies": {
-    "bun-types": "^1.0.0",
-    "@types/node": "^20.0.0"
+    "bun-types": "1.0.0",
+    "@types/node": "20.0.0"
   },
   "peerDependencies": {
-    "@fire22-registry/compliance-core": "^4.3.0"
+    "@fire22-registry/compliance-core": "4.3.0"
   },
   "keywords": [
     "fantasy42",

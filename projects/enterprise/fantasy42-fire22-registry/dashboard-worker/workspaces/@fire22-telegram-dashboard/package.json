@@ -42,11 +42,11 @@
     "@fire22/multilingual": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "fire22": {
     "workspace": "telegram-dashboard",

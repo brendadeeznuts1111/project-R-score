@@ -31,12 +31,12 @@
     "deploy:integrity": "bun run scripts/deploy.ts"
   },
   "dependencies": {
-    "fast-diff": "^1.3.0",
-    "ws": "^8.16.0",
-    "zlib": "^1.0.5"
+    "fast-diff": "1.3.0",
+    "ws": "8.16.0",
+    "zlib": "1.0.5"
   },
   "devDependencies": {
-    "@types/ws": "^8.5.10",
+    "@types/ws": "8.5.10",
     "@types/bun": "latest"
   },
   "keywords": [

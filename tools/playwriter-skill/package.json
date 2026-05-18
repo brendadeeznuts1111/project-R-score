@@ -13,10 +13,10 @@
     "mcp-server": "bun run mcp-server.ts"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.0.0"
+    "@modelcontextprotocol/sdk": "1.0.0"
   },
   "peerDependencies": {
-    "playwriter": ">=1.0.0"
+    "playwriter": "1.0.0"
   },
   "keywords": [
     "playwright",

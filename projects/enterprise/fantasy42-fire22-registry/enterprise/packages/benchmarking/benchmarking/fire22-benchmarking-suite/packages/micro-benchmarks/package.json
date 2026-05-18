@@ -30,14 +30,14 @@
     "@fire22/memory-profiler": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.0"
+    "bun": "1.2.0"
   },
   "optionalDependencies": {
-    "mitata": "^1.0.0"
+    "mitata": "1.0.0"
   },
   "trustedDependencies": [
     "mitata"

@@ -24,7 +24,7 @@
   },
   "dependencies": {
     "bun-types": "latest",
-    "commander": "^11.0.0"
+    "commander": "11.0.0"
   },
   "devDependencies": {
     "@types/bun": "latest",

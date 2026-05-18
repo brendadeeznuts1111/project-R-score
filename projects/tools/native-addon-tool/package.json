@@ -8,11 +8,11 @@
     "typecheck": "bun cli-resolver.ts typecheck"
   },
   "dependencies": {
-    "ffi-napi": "^4.0.3",
-    "ref-napi": "^3.2.3"
+    "ffi-napi": "4.0.3",
+    "ref-napi": "3.2.3"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "20.0.0"
   },
   "keywords": [
     "bun",

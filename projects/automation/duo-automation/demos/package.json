@@ -8,6 +8,6 @@
     "./ports": "./config/ports.js"
   },
   "dependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   }
 }

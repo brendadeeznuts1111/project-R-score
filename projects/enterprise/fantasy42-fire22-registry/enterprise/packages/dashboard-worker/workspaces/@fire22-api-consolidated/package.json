@@ -42,9 +42,9 @@
     "publish:registry": "bun publish --registry https://fire22.workers.dev/registry/"
   },
   "dependencies": {
-    "itty-router": "^4.0.0",
-    "jsonwebtoken": "^9.0.2",
-    "zod": "^3.23.8"
+    "itty-router": "4.0.0",
+    "jsonwebtoken": "9.0.2",
+    "zod": "3.23.8"
   },
   "peerDependencies": {
     "@fire22/validator": "workspace:*",
@@ -56,7 +56,7 @@
     }
   },
   "devDependencies": {
-    "typescript": "^5.9.0"
+    "typescript": "5.9.0"
   },
   "keywords": [
     "fire22",

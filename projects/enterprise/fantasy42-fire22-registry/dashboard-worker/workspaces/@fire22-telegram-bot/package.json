@@ -48,17 +48,17 @@
     "typecheck": "bunx tsc --noEmit"
   },
   "dependencies": {
-    "grammy": "^1.21.1",
+    "grammy": "1.21.1",
     "@fire22/api-client": "3.0.9",
     "@fire22/multilingual": "workspace:*",
     "@fire22/queue-system": "workspace:*"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "peerDependencies": {
-    "bun": ">=1.2.21"
+    "bun": "1.2.21"
   },
   "fire22": {
     "workspace": "telegram-bot",

@@ -17,7 +17,7 @@
     "all": "bun run csv && bun run position && bun run sqlite && bun run bun-sql"
   },
   "dependencies": {
-    "mitata": "^1.0.34",
-    "csv-parse": "^6.1.0"
+    "mitata": "1.0.34",
+    "csv-parse": "6.1.0"
   }
 }

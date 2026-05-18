@@ -9,11 +9,11 @@
     "typecheck": "bun cli-resolver.ts typecheck"
   },
   "dependencies": {
-    "wrangler": "^3.0.0",
-    "itty-router": "^5.0.0"
+    "wrangler": "3.0.0",
+    "itty-router": "5.0.0"
   },
   "devDependencies": {
-    "@types/node": "^20.0.0"
+    "@types/node": "20.0.0"
   },
   "keywords": [
     "bun",

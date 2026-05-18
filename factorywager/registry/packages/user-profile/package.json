@@ -9,7 +9,7 @@
     "bench": "bun run src/bench.ts"
   },
   "dependencies": {
-    "zod": "^3.22.0"
+    "zod": "3.22.0"
   },
   "devDependencies": {
     "@types/bun": "latest"

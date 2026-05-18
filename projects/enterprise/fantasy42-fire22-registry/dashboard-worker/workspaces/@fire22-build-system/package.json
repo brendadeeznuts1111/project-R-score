@@ -20,13 +20,13 @@
     "deploy:standalone": "wrangler deploy --config wrangler.standalone.toml"
   },
   "dependencies": {
-    "mitata": "^1.0.0",
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "mitata": "1.0.0",
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.21",
-    "typescript": "^5.9.2"
+    "@types/bun": "1.2.21",
+    "typescript": "5.9.2"
   },
   "fire22": {
     "workspace": "build-system",

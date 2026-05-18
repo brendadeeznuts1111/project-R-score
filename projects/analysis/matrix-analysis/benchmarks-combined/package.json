@@ -13,8 +13,8 @@
     "url": "https://github.com/brendadeeznuts1111/matrix-analysis/issues"
   },
   "dependencies": {
-    "mitata": "^1.0.34",
-    "benchmark": "^2.1.4"
+    "mitata": "1.0.34",
+    "benchmark": "2.1.4"
   },
   "scripts": {
     "start": "bun run-all.ts",
@@ -42,7 +42,16 @@
     "links:check:verbose": "bun scripts/check-links.ts --verbose",
     "links:quick": "bun scripts/quick-link-check.ts"
   },
-  "keywords": ["benchmark", "performance", "bun", "typescript", "mitata", "nolarose", "mcp", "config"],
+  "keywords": [
+    "benchmark",
+    "performance",
+    "bun",
+    "typescript",
+    "mitata",
+    "nolarose",
+    "mcp",
+    "config"
+  ],
   "author": {
     "name": "Nolarose Development Team",
     "email": "dev@nolarose.com",
@@ -89,19 +98,36 @@
       "members": [
         {
           "role": "lead",
-          "permissions": ["admin", "deploy", "review", "mentor", "manageTeam"]
+          "permissions": [
+            "admin",
+            "deploy",
+            "review",
+            "mentor",
+            "manageTeam"
+          ]
         },
         {
           "role": "senior",
-          "permissions": ["deploy", "review", "mentor", "develop", "test"]
+          "permissions": [
+            "deploy",
+            "review",
+            "mentor",
+            "develop",
+            "test"
+          ]
         },
         {
           "role": "developer",
-          "permissions": ["develop", "test"]
+          "permissions": [
+            "develop",
+            "test"
+          ]
         },
         {
           "role": "contributor",
-          "permissions": ["test"]
+          "permissions": [
+            "test"
+          ]
         }
       ]
     },
@@ -123,25 +149,25 @@
       "local": "http://localhost:3000"
     },
     "tags": [
-  "tier-1380",
-  "enterprise",
-  "mcp",
-  "config-management",
-  "performance",
-  "benchmarking",
-  "bun",
-  "typescript",
-  "mitata",
-  "ci-cd",
-  "metrics",
-  "monitoring",
-  "analytics",
-  "factory-wager",
-  "duoplus",
-  "venmo-family",
-  "production-ready",
-  "regression-testing",
-  "optimization"
-]
+      "tier-1380",
+      "enterprise",
+      "mcp",
+      "config-management",
+      "performance",
+      "benchmarking",
+      "bun",
+      "typescript",
+      "mitata",
+      "ci-cd",
+      "metrics",
+      "monitoring",
+      "analytics",
+      "factory-wager",
+      "duoplus",
+      "venmo-family",
+      "production-ready",
+      "regression-testing",
+      "optimization"
+    ]
   }
 }

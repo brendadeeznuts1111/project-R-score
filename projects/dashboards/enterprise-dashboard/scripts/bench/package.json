@@ -3,7 +3,7 @@
   "type": "module",
   "description": "Performance benchmarks aligned with Bun's official benchmark structure",
   "dependencies": {
-    "mitata": "^1.0.34"
+    "mitata": "1.0.34"
   },
   "scripts": {
     "crc32": "bun crc32-bench-mitata.ts",

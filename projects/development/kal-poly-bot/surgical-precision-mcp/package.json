@@ -32,12 +32,12 @@
     "@types/bun": "latest"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.25.1",
-    "decimal.js": "^10.6.0",
-    "minimist": "^1.2.8"
+    "@modelcontextprotocol/sdk": "1.25.1",
+    "decimal.js": "10.6.0",
+    "minimist": "1.2.8"
   },
   "keywords": [
     "mcp",

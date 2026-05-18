@@ -5,8 +5,8 @@
   "description": "Clawdbot voice-call plugin",
   "dependencies": {
     "@sinclair/typebox": "0.34.47",
-    "ws": "^8.19.0",
-    "zod": "^4.3.5"
+    "ws": "8.19.0",
+    "zod": "4.3.5"
   },
   "clawdbot": {
     "extensions": [

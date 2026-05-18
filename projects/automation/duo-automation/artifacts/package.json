@@ -7,7 +7,9 @@
     "bun": ">=1.3.6"
   },
   "workspaces": {
-    "packages": ["packages/*"],
+    "packages": [
+      "packages/*"
+    ],
     "catalog": {
       "commander": "^14.0.2",
       "elysia": "^1.4.21",
@@ -469,31 +471,31 @@
     "timeseries:remediate-container": "bun run time-series/enhanced-dashboard.ts --remediate --container=container-123"
   },
   "dependencies": {
-    "@supabase/supabase-js": "^2.90.1",
-    "commander": "^14.0.2",
-    "console-table-printer": "^2.12.2",
-    "elysia": "^1.4.21",
-    "figlet": "^1.7.0",
-    "http-proxy-middleware": "^2.0.6",
-    "https-proxy-agent": "^7.0.6",
-    "imap": "^0.8.19",
-    "inquirer": "^9.2.12",
-    "libphonenumber-js": "^1.12.34",
-    "mailparser": "^3.9.1",
-    "nodemailer": "^7.0.12",
-    "puppeteer": "^24.35.0",
-    "reflect-metadata": "^0.2.2",
-    "socks-proxy-agent": "^8.0.5",
-    "tesseract.js": "^7.0.0",
-    "zstd": "^1.0.4"
+    "@supabase/supabase-js": "2.90.1",
+    "commander": "14.0.2",
+    "console-table-printer": "2.12.2",
+    "elysia": "1.4.21",
+    "figlet": "1.7.0",
+    "http-proxy-middleware": "2.0.6",
+    "https-proxy-agent": "7.0.6",
+    "imap": "0.8.19",
+    "inquirer": "9.2.12",
+    "libphonenumber-js": "1.12.34",
+    "mailparser": "3.9.1",
+    "nodemailer": "7.0.12",
+    "puppeteer": "24.35.0",
+    "reflect-metadata": "0.2.2",
+    "socks-proxy-agent": "8.0.5",
+    "tesseract.js": "7.0.0",
+    "zstd": "1.0.4"
   },
   "devDependencies": {
-    "@types/bun": "^1.3.6",
-    "@types/imap": "^0.8.43",
-    "@types/node": "^25.0.8",
-    "@types/nodemailer": "^7.0.5"
+    "@types/bun": "1.3.6",
+    "@types/imap": "0.8.43",
+    "@types/node": "25.0.8",
+    "@types/nodemailer": "7.0.5"
   },
   "peerDependencies": {
-    "typescript": "^5.9.3"
+    "typescript": "5.9.3"
   }
 }

@@ -109,16 +109,28 @@
   "types": "./dist/index.d.ts",
   "typesVersions": {
     "*": {
-      "*": ["./dist/index.d.ts"],
-      "platform": ["./dist/completely-integrated-surgical-precision-platform.d.ts"],
-      "coordinator": ["./dist/PrecisionOperationBootstrapCoordinator.d.ts"],
-      "service-mesh": ["./dist/service_mesh/ServiceMeshIntegrationEngine.d.ts"],
-      "observability": ["./dist/observability/ObservabilityPlatformManager.d.ts"],
-      "disaster-recovery": ["./dist/disaster_recovery/DisasterRecoveryManager.d.ts"]
+      "*": [
+        "./dist/index.d.ts"
+      ],
+      "platform": [
+        "./dist/completely-integrated-surgical-precision-platform.d.ts"
+      ],
+      "coordinator": [
+        "./dist/PrecisionOperationBootstrapCoordinator.d.ts"
+      ],
+      "service-mesh": [
+        "./dist/service_mesh/ServiceMeshIntegrationEngine.d.ts"
+      ],
+      "observability": [
+        "./dist/observability/ObservabilityPlatformManager.d.ts"
+      ],
+      "disaster-recovery": [
+        "./dist/disaster_recovery/DisasterRecoveryManager.d.ts"
+      ]
     }
   },
   "peerDependencies": {
-    "bun": ">=1.3.4"
+    "bun": "1.3.4"
   },
   "peerDependenciesMeta": {
     "bun": {
@@ -126,7 +138,7 @@
     }
   },
   "optionalDependencies": {
-    "kubectl": ">=1.24.0"
+    "kubectl": "1.24.0"
   },
   "devDependencies": {},
   "bundledDependencies": [],
