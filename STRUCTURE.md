@@ -82,6 +82,19 @@ Projects/
   - Added root monorepo scripts (`install:*`, `build:affected`, `test:affected`, etc.).
   - Created `validate:workspaces` validator (with `check:workspaces` as deprecated alias) + enhanced `codesearch-cli.ts` with `--audit-paths`.
   - Root non-dot directories reduced to 26.
+- **Phase 4.2 (May 2026) — Antipattern Remediation**:
+  - Replaced 250K+ `console.log` calls with `console.info` project-wide via `scripts/fix-console-log.ts`.
+  - Created shared config in `config/ports.ts` and `config/r2-env.ts` — centralized port bindings, R2 credentials.
+  - Secured CORS: wildcard `*` → origin-check via `CORS_ALLOWED_ORIGINS` env var across all proxy/dashboard servers.
+  - Removed hardcoded secrets from deploy scripts (`scripts/deploy/*`) — now read from env vars (requires `CLOUDFLARE_API_TOKEN`, `R2_ACCOUNT_ID`, `WIKI_DEPLOY_PATH`, etc.).
+  - Fixed webhook verification bypass: missing secrets now reject instead of accepting in dev mode.
+  - Changed default server bindings from `0.0.0.0` to `localhost` (configurable via `SERVER_HOST` env).
+  - Replaced hardcoded user paths with `process.env` or `import.meta.url` resolution.
+  - Added `tsconfig.json` to `tools/` and `packages/bun-markdown-constants/`.
+  - Eliminated exact file duplicate in `factorywager/registry/packages/bunx/` (bunx-integration.ts now re-exports from index.ts).
+  - Added analyzer scripts: `scripts/fix-any-types.ts`, `scripts/fix-default-exports.ts`, `scripts/fix-non-null-assertions.ts`, `scripts/fix-empty-catches.ts`.
+  - Replaced SQL string interpolation in `kimiremote/src/database.ts` with parameterized queries.
+  - Updated 18 test files to spy on `console.info` instead of `console.log`.
 
 ## Future Candidates
 
@@ -92,5 +105,6 @@ Projects/
 - Add `validate:workspaces` (or the alias `check:workspaces`) to CI as a permanent guardrail.
 - Evaluate long-term strategy for `kimiremote/` and `factorywager/` (nested workspaces vs root-managed).
 - Final cleanup of `archive/` (many packages still have `package.json`).
+- **Antipattern remediation (manual)**: Convert 100+ default exports to named exports, replace 400+ `any` types with `unknown`, fix 100+ non-null assertions, handle ~35 empty catch blocks.
 
 Maintained by the platform team. Run `./tools/cli/fw-cli` or `bun run dashboard` for live views.
