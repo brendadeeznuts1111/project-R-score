@@ -218,3 +218,39 @@ bun.secrets
 # SQLite artifacts (development databases)
 *.db-shm
 *.db-wal
+
+# Runtime databases (should never be committed)
+*.db
+*.sqlite
+*.sqlite3
+profiles.db
+
+# Heap snapshots and memory dumps
+*.heapsnapshot
+Heap-*
+
+# Compiled binaries and object files
+*.bin
+*.o
+*.obj
+*.exe
+
+# ML models (large binary files)
+**/train-anomaly*
+**/models/*.pkl
+**/models/*.h5
+
+# Tarball archives
+*.tar
+*.tar.gz
+*.tgz
+*.zip
+
+# .icns and other binary assets
+*.icns
+
+# Smart environment cache (generated AI artifacts)
+.smart-env/
+
+# Bun native compiled output
+*.bun-build
