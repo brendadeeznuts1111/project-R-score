@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/enhanced-logging",
+  "name": "@fire22/dashboard-worker-enhanced-logging-enhanced-logging",
   "version": "1.0.0-lkey.0",
   "description": "Enhanced logging system with L-Key integration for Fire22 platform",
   "main": "dist/index.js",

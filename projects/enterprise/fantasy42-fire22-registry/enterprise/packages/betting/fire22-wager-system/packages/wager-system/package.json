@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/wager-system",
+  "name": "@fire22/enterprise-wager-system",
   "version": "1.0.3",
   "description": "Fire22 Wager System - Financial calculations, wager processing, and risk management",
   "main": "src/index.ts",

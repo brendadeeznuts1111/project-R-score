@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/branding-audit",
+  "name": "@fire22/branding-audit-branding-audit",
   "version": "2.1.0",
   "description": "Advanced branding audit toolkit for Fire22 - ensures perfect color implementation, accessibility, and brand compliance",
   "main": "src/index.ts",

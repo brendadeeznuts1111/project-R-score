@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/benchmark-orchestrator",
+  "name": "@fire22/benchmark-orchestrator-benchmark-orchestrator",
   "version": "1.0.0",
   "description": "Enterprise benchmark orchestrator ensuring every package meets security and performance standards",
   "main": "./dist/index.js",

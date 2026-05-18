@@ -1,5 +1,5 @@
 {
-  "name": "@factorywager/registry-worker",
+  "name": "@factorywager/registry-worker-archive",
   "version": "1.0.0",
   "type": "module",
   "main": "./src/worker.ts",

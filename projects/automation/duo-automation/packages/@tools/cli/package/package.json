@@ -1,5 +1,5 @@
 {
-  "name": "@duoplus/cli-core",
+  "name": "@duoplus/cli-core-pkg",
   "version": "1.2.4-beta.0",
   "description": "Core CLI functionality for Duo Automation",
   "type": "module",

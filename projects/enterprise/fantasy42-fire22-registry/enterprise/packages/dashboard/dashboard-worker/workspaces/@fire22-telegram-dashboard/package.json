@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/telegram-dashboard",
+  "name": "@fire22/dashboard-telegram-dashboard",
   "version": "1.0.0",
   "description": "Dashboard integration for Fire22 Telegram system with real-time SSE",
   "author": "Fire22 Team",

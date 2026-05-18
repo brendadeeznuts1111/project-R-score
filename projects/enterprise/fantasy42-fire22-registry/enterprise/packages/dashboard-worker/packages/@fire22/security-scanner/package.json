@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/security-scanner",
+  "name": "@fire22/enterprise-security-scanner",
   "version": "1.0.0",
   "description": "Advanced security scanner for Fire22 Dashboard using Bun's native security features",
   "type": "module",

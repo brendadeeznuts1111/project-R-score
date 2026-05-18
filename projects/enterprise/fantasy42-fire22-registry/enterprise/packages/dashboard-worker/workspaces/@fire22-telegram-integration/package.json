@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/telegram-integration",
+  "name": "@fire22/enterprise-telegram-integration",
   "version": "3.0.9",
   "description": "Telegram bot and P2P queue system",
   "type": "module",

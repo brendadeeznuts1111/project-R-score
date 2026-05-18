@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/env-manager",
+  "name": "@fire22/dashboard-env-manager",
   "version": "1.0.3",
   "description": "Fire22 Environment Manager - Configuration validation, security auditing, and environment switching",
   "main": "src/index.ts",

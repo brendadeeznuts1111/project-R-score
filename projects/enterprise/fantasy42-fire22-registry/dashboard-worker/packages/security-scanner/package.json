@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/security-scanner",
+  "name": "@fire22/dashboard-worker-security-scanner-security-scanner",
   "version": "1.0.0",
   "description": "Production-ready Bun security scanner for Fire22 workspace with threat feed integration",
   "main": "dist/index.js",

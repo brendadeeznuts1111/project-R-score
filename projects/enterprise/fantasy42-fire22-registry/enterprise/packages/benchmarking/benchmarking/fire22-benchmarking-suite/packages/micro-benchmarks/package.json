@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/micro-benchmarks",
+  "name": "@fire22/enterprise-micro-benchmarks",
   "version": "1.0.3",
   "description": "Precision microbenchmarking for critical functions",
   "main": "dist/index.js",

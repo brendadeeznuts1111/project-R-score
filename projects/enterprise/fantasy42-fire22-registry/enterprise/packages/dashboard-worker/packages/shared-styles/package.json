@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/shared-styles",
+  "name": "@fire22/enterprise-shared-styles",
   "version": "1.0.0",
   "description": "Shared CSS styles for Fire22 packages with Bun CSS bundling",
   "main": "index.css",

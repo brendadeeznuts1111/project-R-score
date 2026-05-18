@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/security-audit",
+  "name": "@fire22/security-audit-security-audit",
   "version": "1.0.0",
   "description": "Enterprise-grade security auditing for Fantasy42-Fire22 packages",
   "main": "./dist/index.js",

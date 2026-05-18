@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/language-keys",
+  "name": "@fire22/enterprise-language-keys",
   "version": "1.0.0",
   "description": "Fire22 Language Keys System - Authentic multilingual support for Fire22 workspaces",
   "main": "dist/index.js",

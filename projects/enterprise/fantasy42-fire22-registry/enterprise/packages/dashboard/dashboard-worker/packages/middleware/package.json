@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/middleware",
+  "name": "@fire22/dashboard-middleware",
   "version": "1.0.3",
   "description": "Fire22 Middleware System - Request handling, error formatting, and performance monitoring",
   "main": "src/index.ts",

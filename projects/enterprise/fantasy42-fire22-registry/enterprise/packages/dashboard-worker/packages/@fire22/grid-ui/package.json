@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/grid-ui",
+  "name": "@fire22/enterprise-grid-ui",
   "version": "1.0.0",
   "type": "module",
   "description": "Fire22 Package Review Grid with Bun JSX + CSS bundling",

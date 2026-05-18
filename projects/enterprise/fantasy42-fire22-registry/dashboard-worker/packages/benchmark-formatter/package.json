@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/benchmark-formatter",
+  "name": "@fire22/dashboard-worker-benchmark-formatter-benchmark-formatter",
   "version": "1.0.3",
   "description": "Beautiful benchmark output using Bun's native formatting utilities",
   "main": "dist/index.js",

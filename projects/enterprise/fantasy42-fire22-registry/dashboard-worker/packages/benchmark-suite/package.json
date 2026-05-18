@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/benchmark-suite",
+  "name": "@fire22/dashboard-worker-benchmark-suite-benchmark-suite",
   "version": "1.0.3",
   "description": "High-precision performance benchmarking using Bun's native APIs",
   "main": "dist/index.js",

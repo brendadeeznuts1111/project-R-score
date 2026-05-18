@@ -1,5 +1,5 @@
 {
-  "name": "@factorywager/registry",
+  "name": "@factorywager/registry-archive",
   "version": "1.0.0",
   "description": "🏭 FactoryWager Private NPM Registry - Bun v1.4+ Optimized",
   "type": "module",

@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/api-consolidated",
+  "name": "@fire22/enterprise-api-consolidated",
   "version": "1.0.0",
   "description": "Fire22 consolidated API implementation with enterprise-grade security and validation",
   "type": "module",

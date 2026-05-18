@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/bench",
+  "name": "@fire22/enterprise-bench",
   "version": "1.0.0",
   "description": "Comprehensive benchmarking suite for Fire22 dashboard",
   "main": "index.ts",
@@ -26,14 +26,14 @@
     "publish:dry": "bun publish --dry-run",
     "publish:beta": "bun publish --tag beta",
     "pack": "bun pm pack",
-    "preinstall": "echo '🚀 Installing Fire22 Benchmarking Suite...'",
-    "postinstall": "echo '✅ Benchmarking Suite installed successfully!'",
+    "preinstall": "echo '\ud83d\ude80 Installing Fire22 Benchmarking Suite...'",
+    "postinstall": "echo '\u2705 Benchmarking Suite installed successfully!'",
     "preprepare": "mkdir -p results",
     "prepare": "echo 'Benchmark suite prepared'",
     "prepublishOnly": "bun run bench:ci",
     "prepack": "bun run bench:report",
-    "postpack": "echo '📦 Package packed successfully!'",
-    "postpublish": "echo '🎉 Package published successfully!'"
+    "postpack": "echo '\ud83d\udce6 Package packed successfully!'",
+    "postpublish": "echo '\ud83c\udf89 Package published successfully!'"
   },
   "keywords": [
     "benchmark",

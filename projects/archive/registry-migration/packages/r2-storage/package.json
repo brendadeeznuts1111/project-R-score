@@ -1,5 +1,5 @@
 {
-  "name": "@factorywager/r2-storage",
+  "name": "@factorywager/r2-storage-archive",
   "version": "1.0.0",
   "type": "module",
   "exports": {

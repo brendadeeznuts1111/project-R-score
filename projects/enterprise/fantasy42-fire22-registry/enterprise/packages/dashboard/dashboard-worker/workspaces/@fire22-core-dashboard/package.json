@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/core-dashboard",
+  "name": "@fire22/dashboard-core-dashboard",
   "version": "3.0.9",
   "description": "Main dashboard functionality and UI",
   "type": "module",

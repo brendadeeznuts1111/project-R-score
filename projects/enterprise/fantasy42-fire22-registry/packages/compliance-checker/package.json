@@ -1,5 +1,5 @@
 {
-  "name": "@fire22/compliance-checker",
+  "name": "@fire22/compliance-checker-compliance-checker",
   "version": "1.0.0",
   "description": "Enterprise compliance validation for Fantasy42-Fire22 with regulatory framework support",
   "main": "./dist/index.js",
