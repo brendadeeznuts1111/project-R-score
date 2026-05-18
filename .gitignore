@@ -214,3 +214,7 @@ bun.secrets
 .env.staging
 .env.test
 *.local.json
+
+# SQLite artifacts (development databases)
+*.db-shm
+*.db-wal
