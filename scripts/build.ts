@@ -6,24 +6,24 @@ import { mkdirSync } from 'fs';
 // Build script that follows Bun's native patterns
 async function build() {
   console.info('🚀 Building Bun TypedArray Documentation Portal...\n');
-  
+
   // 1. Fetch all documentation URLs to verify they exist
   console.info('📋 Validating documentation URLs...');
-  
+
   const urlsToCheck = [
     `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
     `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
     `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
     RSS_URLS.BUN_BLOG,
   ];
-  
+
   const results = await Promise.allSettled(
-    urlsToCheck.map(async (url) => {
+    urlsToCheck.map(async url => {
       const response = await fetch(url, { method: 'HEAD' });
       return { url, status: response.status, ok: response.ok };
     })
   );
-  
+
   results.forEach((result, i) => {
     if (result.status === 'fulfilled') {
       console.info(`  ${result.value.ok ? '✅' : '❌'} ${urlsToCheck[i]} - ${result.value.status}`);
@@ -31,10 +31,10 @@ async function build() {
       console.info(`  ❌ ${urlsToCheck[i]} - Failed to fetch`);
     }
   });
-  
+
   // 2. Generate URL manifest
   console.info('\n📄 Generating URL manifest...');
-  
+
   const manifest = {
     generated: new Date().toISOString(),
     baseUrl: BUN_DOCS.BASE,
@@ -60,15 +60,15 @@ async function build() {
       our_feed: 'http://example.com/feed/rss',
     },
   };
-  
+
   // Create public directory if it doesn't exist
   mkdirSync('public', { recursive: true });
   await Bun.write('public/manifest.json', JSON.stringify(manifest, null, 2));
   console.info('  ✅ Generated public/manifest.json');
-  
+
   // 3. Create example script
   console.info('\n📝 Creating example script...');
-  
+
   const exampleScript = `// Example: Fetching Bun TypedArray Documentation
 // Generated: ${new Date().toISOString()}
 
@@ -109,15 +109,15 @@ async function fetchAllDocs() {
 console.info("Testing Bun TypedArray documentation fetch...");
 fetchTypedArrayDocs().catch(console.error);
 `;
-  
+
   // Create examples directory if it doesn't exist
   mkdirSync('examples', { recursive: true });
   await Bun.write('examples/fetch-example.js', exampleScript);
   console.info('  ✅ Generated examples/fetch-example.js');
-  
+
   // 4. Create README with fetch examples
   console.info('\n📖 Creating README...');
-  
+
   const readme = `# Bun TypedArray Documentation Portal
 
 ## Base URL Pattern
@@ -178,10 +178,10 @@ bun test
 bun run build
 \`\`\`
 `;
-  
+
   await Bun.write('README.md', readme);
   console.info('  ✅ Generated README.md');
-  
+
   console.info('\n✨ Build complete!');
   console.info('\n🚀 Start the server:');
   console.info('   bun run dev');

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 
-import { mkdir } from "node:fs/promises";
-import { dirname, join } from "node:path";
+import { mkdir } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
 
 type PromoteOptions = {
   baselinePath: string;
@@ -9,24 +9,24 @@ type PromoteOptions = {
 };
 
 function getArg(name: string): string {
-  const direct = Bun.argv.find((arg) => arg.startsWith(`${name}=`));
+  const direct = Bun.argv.find(arg => arg.startsWith(`${name}=`));
   if (direct) return direct.slice(name.length + 1);
-  const idx = Bun.argv.findIndex((arg) => arg === name);
-  return idx >= 0 && idx + 1 < Bun.argv.length ? Bun.argv[idx + 1] : "";
+  const idx = Bun.argv.findIndex(arg => arg === name);
+  return idx >= 0 && idx + 1 < Bun.argv.length ? Bun.argv[idx + 1] : '';
 }
 
 function parseOptions(): PromoteOptions {
   return {
-    baselinePath: getArg("--baseline") || "reports/protocol-parallel.baseline.json",
-    comparePath: getArg("--compare") || "reports/protocol-parallel.compare.json",
+    baselinePath: getArg('--baseline') || 'reports/protocol-parallel.baseline.json',
+    comparePath: getArg('--compare') || 'reports/protocol-parallel.compare.json',
   };
 }
 
 async function runCompareGate(): Promise<number> {
-  const proc = Bun.spawn(["bun", "run", "test:protocol:parallel:compare"], {
+  const proc = Bun.spawn(['bun', 'run', 'test:protocol:parallel:compare'], {
     cwd: process.cwd(),
-    stdout: "inherit",
-    stderr: "inherit",
+    stdout: 'inherit',
+    stderr: 'inherit',
   });
   return await proc.exited;
 }
@@ -42,9 +42,9 @@ async function promoteBaseline(options: PromoteOptions): Promise<void> {
 
   const baselineExists = await baselineFile.exists();
   if (baselineExists) {
-    const archiveDir = join(dirname(options.baselinePath), "archive");
+    const archiveDir = join(dirname(options.baselinePath), 'archive');
     await mkdir(archiveDir, { recursive: true });
-    const ts = new Date().toISOString().replace(/[:.]/g, "-");
+    const ts = new Date().toISOString().replace(/[:.]/g, '-');
     const archivePath = join(archiveDir, `protocol-parallel.baseline.${ts}.json`);
     await Bun.write(archivePath, baselineFile);
     console.info(`Archived previous baseline -> ${archivePath}`);
@@ -66,7 +66,7 @@ async function main() {
   process.exit(0);
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error(error instanceof Error ? error.message : String(error));
   process.exit(1);
 });

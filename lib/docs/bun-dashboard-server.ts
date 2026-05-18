@@ -7,13 +7,13 @@ const zenServer = (Bun as any).serve({
   port: 3001,
   fetch(req) {
     const url = new URL(req.url);
-    
+
     // Serve the main dashboard
     if (url.pathname === '/' || url.pathname === '/dashboard') {
       const dashboard = (Bun as any).file('zen-dashboard.html');
       return new Response(dashboard);
     }
-    
+
     // Bun file API endpoint
     if (url.pathname === '/api/bunfile') {
       const bunFileInfo = {
@@ -24,12 +24,12 @@ const zenServer = (Bun as any).serve({
         instructions: [
           'Use: bun://localhost:3001/dashboard',
           'Or open: http://localhost:3001/dashboard',
-          'Bun file protocol provides direct file access'
-        ]
+          'Bun file protocol provides direct file access',
+        ],
       };
       return Response.json(bunFileInfo);
     }
-    
+
     // Real-time metrics
     if (url.pathname === '/api/metrics') {
       const metrics = {
@@ -38,17 +38,17 @@ const zenServer = (Bun as any).serve({
         uptime: process.uptime(),
         platform: process.platform,
         nodeVersion: process.version,
-        pid: process.pid
+        pid: process.pid,
       };
       return Response.json(metrics);
     }
-    
+
     return new Response('Not Found', { status: 404 });
   },
 });
 
 console.info('🎪 Zen Dashboard Server - Bun File Protocol Edition');
-console.info('=' .repeat(60));
+console.info('='.repeat(60));
 console.info(`🌐 Server running on port ${zenServer.port}`);
 console.info('');
 console.info('📱 Access Methods:');

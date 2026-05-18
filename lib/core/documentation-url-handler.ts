@@ -209,9 +209,9 @@ export class DocumentationURLHandler {
           // Extract category from path
           const cliMatch = parsed.pathname.match(/\/docs\/cli\/([a-z]+)/);
           if (cliMatch) {
-            category = Object.values(CLICategory).find((cat) => {
+            category = Object.values(CLICategory).find(cat => {
               const paths = Object.values(CLI_DOCUMENTATION_URLS[cat as CLICategory] ?? {});
-              return paths.some((path) => path.includes(cliMatch[1]));
+              return paths.some(path => path.includes(cliMatch[1]));
             });
           }
         }

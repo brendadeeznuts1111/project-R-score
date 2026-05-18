@@ -2,7 +2,7 @@
 
 /**
  * Watch Filter CLI - Enhanced --watch + --filter Integration
- * 
+ *
  * Production-hardened CLI for Bun's enhanced watch engine with
  * adaptive debounce, health checks, and real-time dashboard.
  */

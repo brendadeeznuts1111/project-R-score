@@ -42,7 +42,7 @@ async function main() {
       // Static dashboard
       if (url.pathname === '/' || url.pathname === '/dashboard') {
         return new Response(dashboardHTML, {
-          headers: { 'Content-Type': 'text/html' }
+          headers: { 'Content-Type': 'text/html' },
         });
       }
 
@@ -52,7 +52,7 @@ async function main() {
       }
 
       return new Response('Not Found', { status: 404 });
-    }
+    },
   });
 
   console.info(styled(`✅ Dashboard running at http://localhost:${port}`, 'success'));
@@ -60,7 +60,9 @@ async function main() {
   console.info('');
 
   if (liveUpdates) {
-    console.info(styled('🔄 Live updates enabled - dashboard will refresh automatically', 'success'));
+    console.info(
+      styled('🔄 Live updates enabled - dashboard will refresh automatically', 'success')
+    );
   }
 }
 
@@ -99,7 +101,7 @@ async function handleAPI(req: Request, url: URL): Promise<Response> {
         return Response.json({
           status: 'healthy',
           version: '5.1',
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
 
@@ -118,13 +120,13 @@ async function handleStatic(pathname: string): Promise<Response> {
   // Mock static file serving - in real implementation, serve actual files
   if (assetPath.endsWith('.css')) {
     return new Response(dashboardCSS, {
-      headers: { 'Content-Type': 'text/css' }
+      headers: { 'Content-Type': 'text/css' },
     });
   }
 
   if (assetPath.endsWith('.js')) {
     return new Response(dashboardJS, {
-      headers: { 'Content-Type': 'application/javascript' }
+      headers: { 'Content-Type': 'application/javascript' },
     });
   }
 
@@ -138,7 +140,7 @@ async function getSecretsOverview() {
     versionedSecrets: 12,
     expiringSoon: 3,
     lastAudit: new Date().toISOString(),
-    version: '5.1'
+    version: '5.1',
   };
 }
 

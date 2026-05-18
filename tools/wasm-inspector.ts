@@ -119,7 +119,8 @@ function printInspect(result: InspectResult): void {
     console.info(`  ${c.dim}(none)${c.reset}`);
   } else {
     for (const exp of result.exports) {
-      const kindColor = exp.kind === 'function' ? c.cyan : exp.kind === 'memory' ? c.green : c.yellow;
+      const kindColor =
+        exp.kind === 'function' ? c.cyan : exp.kind === 'memory' ? c.green : c.yellow;
       const kindLabel = exp.kind === 'function' ? 'func' : exp.kind;
       console.info(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${exp.name}`);
     }
@@ -131,7 +132,8 @@ function printInspect(result: InspectResult): void {
     console.info(`  ${c.dim}(none)${c.reset}`);
   } else {
     for (const imp of result.imports) {
-      const kindColor = imp.kind === 'function' ? c.cyan : imp.kind === 'memory' ? c.green : c.yellow;
+      const kindColor =
+        imp.kind === 'function' ? c.cyan : imp.kind === 'memory' ? c.green : c.yellow;
       const kindLabel = imp.kind === 'function' ? 'func' : imp.kind;
       console.info(`  ${kindColor}${kindLabel.padEnd(8)}${c.reset} ${imp.module}.${imp.name}`);
     }
@@ -162,7 +164,9 @@ function printReference(): void {
     if (entry.members && entry.members.length > 0) {
       for (const member of entry.members) {
         if (verbose && member.signature) {
-          console.info(`  ${c.green}.${member.name}${c.reset}  ${c.dim}${member.signature}${c.reset}`);
+          console.info(
+            `  ${c.green}.${member.name}${c.reset}  ${c.dim}${member.signature}${c.reset}`
+          );
         } else {
           const label = member.kind === 'method' ? `${member.name}()` : member.name;
           console.info(`  ${c.green}.${label}${c.reset}  ${c.dim}${member.description}${c.reset}`);

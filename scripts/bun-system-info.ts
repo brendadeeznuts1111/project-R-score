@@ -27,7 +27,7 @@ const colors = {
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -36,14 +36,22 @@ function colorize(text: string, color: keyof typeof colors): string {
 
 function getStatusColor(status?: string): keyof typeof colors {
   switch (status) {
-    case 'good': return 'green';
-    case 'warning': return 'yellow';
-    case 'info': return 'blue';
-    default: return 'reset';
+    case 'good':
+      return 'green';
+    case 'warning':
+      return 'yellow';
+    case 'info':
+      return 'blue';
+    default:
+      return 'reset';
   }
 }
 
-async function checkBunUpdateStatus(): Promise<{ label: string; value: string; status: 'good' | 'warning' | 'info' }> {
+async function checkBunUpdateStatus(): Promise<{
+  label: string;
+  value: string;
+  status: 'good' | 'warning' | 'info';
+}> {
   const currentRevision = Bun.revision.slice(0, 8);
   const latestStable = 'b64edcb4';
 
@@ -51,7 +59,7 @@ async function checkBunUpdateStatus(): Promise<{ label: string; value: string; s
     return {
       label: 'Update Status',
       value: 'Latest stable release',
-      status: 'good'
+      status: 'good',
     };
   }
 
@@ -65,37 +73,39 @@ async function checkBunUpdateStatus(): Promise<{ label: string; value: string; s
       return {
         label: 'Update Status',
         value: 'Latest main branch (canary)',
-        status: 'good'
+        status: 'good',
       };
     }
 
     return {
       label: 'Update Status',
       value: `Canary build (ahead of ${latestStable.slice(0, 8)})`,
-      status: 'info'
+      status: 'info',
     };
   } catch {
     return {
       label: 'Update Status',
       value: 'Unable to check latest version',
-      status: 'warning'
+      status: 'warning',
     };
   }
 }
 
-async function checkGitFileStatus(filename?: string): Promise<{ label: string; value: string; status: 'good' | 'warning' }> {
+async function checkGitFileStatus(
+  filename?: string
+): Promise<{ label: string; value: string; status: 'good' | 'warning' }> {
   if (!filename) {
     return {
       label: 'Git File Check',
       value: 'No file specified',
-      status: 'warning'
+      status: 'warning',
     };
   }
 
   try {
     const proc = Bun.spawn(['git', 'ls-files', '--error-unmatch', filename], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
 
     const exitCode = await proc.exited;
@@ -104,13 +114,13 @@ async function checkGitFileStatus(filename?: string): Promise<{ label: string; v
     return {
       label: 'Git File Status',
       value: `${filename}: ${isTracked ? 'tracked' : 'untracked'}`,
-      status: isTracked ? 'good' : 'warning'
+      status: isTracked ? 'good' : 'warning',
     };
   } catch {
     return {
       label: 'Git File Status',
       value: 'Git check failed',
-      status: 'warning'
+      status: 'warning',
     };
   }
 }
@@ -118,24 +128,44 @@ async function checkGitFileStatus(filename?: string): Promise<{ label: string; v
 async function countCodeLines(): Promise<{ label: string; value: string; status: 'info' }> {
   // Skip expensive line counting by default - use quick alternative
   try {
-    const proc = Bun.spawn(['find', '.', '-name', '*.ts', '-o', '-name', '*.tsx', '-o', '-name', '*.js', '-o', '-name', '*.mjs'], {
-      stdout: 'pipe',
-      stderr: 'pipe'
-    });
+    const proc = Bun.spawn(
+      [
+        'find',
+        '.',
+        '-name',
+        '*.ts',
+        '-o',
+        '-name',
+        '*.tsx',
+        '-o',
+        '-name',
+        '*.js',
+        '-o',
+        '-name',
+        '*.mjs',
+      ],
+      {
+        stdout: 'pipe',
+        stderr: 'pipe',
+      }
+    );
 
     const output = await new Response(proc.stdout).text();
-    const files = output.trim().split('\n').filter(line => line.length > 0);
+    const files = output
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0);
 
     return {
       label: 'Codebase Statistics',
       value: `${files.length} TypeScript/JavaScript files found`,
-      status: 'info'
+      status: 'info',
     };
   } catch (error) {
     return {
       label: 'Codebase Statistics',
       value: 'Unable to scan files',
-      status: 'info'
+      status: 'info',
     };
   }
 }
@@ -144,23 +174,26 @@ async function getGitStatus(): Promise<{ label: string; value: string; status: '
   try {
     const proc = Bun.spawn(['git', 'status', '--porcelain'], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
 
     const output = await new Response(proc.stdout).text();
-    const lines = output.trim().split('\n').filter(line => line.length > 0);
+    const lines = output
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0);
     const changeCount = lines.length;
 
     return {
       label: 'Git Status',
       value: `${changeCount} uncommitted change${changeCount !== 1 ? 's' : ''}`,
-      status: 'info'
+      status: 'info',
     };
   } catch {
     return {
       label: 'Git Status',
       value: 'Not a git repository',
-      status: 'info'
+      status: 'info',
     };
   }
 }
@@ -179,17 +212,13 @@ async function runSystemAnalysis(): Promise<void> {
         { label: 'Version', value: Bun.version },
         { label: 'Revision', value: `${Bun.revision.slice(0, 8)} (${Bun.revision})` },
         { label: 'Platform', value: `${process.platform}-${process.arch}` },
-        await checkBunUpdateStatus()
-      ]
+        await checkBunUpdateStatus(),
+      ],
     },
     {
       category: 'Project Analysis',
-      items: [
-        await getGitStatus(),
-        await countCodeLines(),
-        await checkGitFileStatus(filename)
-      ]
-    }
+      items: [await getGitStatus(), await countCodeLines(), await checkGitFileStatus(filename)],
+    },
   ];
 
   for (const category of systemInfo) {
@@ -212,7 +241,7 @@ async function runSystemAnalysis(): Promise<void> {
 }
 
 // Run the analysis
-runSystemAnalysis().catch((error) => {
+runSystemAnalysis().catch(error => {
   console.error(colorize(`Analysis failed: ${error}`, 'red'));
   process.exit(1);
 });

@@ -92,7 +92,7 @@ function checkRule(rule: PackageBoundaryRule): Violation[] {
       const resolvedAbs = resolveImport(file, specifier);
       const rel = toRel(resolvedAbs);
 
-      const allowed = rule.allowedRoots.some((root) => isUnder(rel, root));
+      const allowed = rule.allowedRoots.some(root => isUnder(rel, root));
       if (!allowed) {
         violations.push({
           file: toRel(file),

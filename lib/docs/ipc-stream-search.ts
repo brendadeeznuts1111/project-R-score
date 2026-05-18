@@ -26,7 +26,7 @@ class IPCDocumentationWorker {
   constructor() {
     this.searcher = new ZenStreamSearcher();
     this.setupIPCListeners();
-    
+
     // Keep the process alive
     this.keepAlive();
   }
@@ -44,7 +44,7 @@ class IPCDocumentationWorker {
     // Listen for search requests from parent process
     process.on('message', async (message: IPCMessage) => {
       console.info(`📨 Worker received message: ${message.type}`);
-      
+
       switch (message.type) {
         case 'search':
           await this.handleSearchRequest(message);
@@ -61,7 +61,7 @@ class IPCDocumentationWorker {
     process.send!({
       type: 'complete',
       timestamp: Date.now(),
-      results: [{ message: 'Worker ready for documentation searches' }]
+      results: [{ message: 'Worker ready for documentation searches' }],
     });
   }
 
@@ -70,49 +70,48 @@ class IPCDocumentationWorker {
       process.send!({
         type: 'error',
         error: 'No query provided',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       return;
     }
 
     try {
       console.info(`🔍 Worker starting search for: ${message.query}`);
-      
+
       // Perform streaming search with progress callbacks
       const stats = await this.searcher.streamSearch({
         query: message.query,
         cachePath: '/Users/nolarose/Projects/.cache',
-        onMatch: (match) => {
+        onMatch: match => {
           // Send individual matches as they arrive
           process.send!({
             type: 'result',
             results: [match],
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         },
-        onProgress: (progressStats) => {
+        onProgress: progressStats => {
           // Send progress updates
           process.send!({
             type: 'progress',
             progress: progressStats.matchesFound,
             stats: progressStats,
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-        }
+        },
       });
 
       // Send completion message with final stats
       process.send!({
         type: 'complete',
         stats,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
-
     } catch (error) {
       process.send!({
         type: 'error',
         error: error instanceof Error ? error.message : 'Unknown error',
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
   }
@@ -138,18 +137,18 @@ class IPCDocumentationOrchestrator {
    */
   spawnWorker(workerId: string): boolean {
     try {
-      const worker = (Bun as any).spawn(["bun", "--import", "./lib/docs/ipc-stream-search.ts"], {
+      const worker = (Bun as any).spawn(['bun', '--import', './lib/docs/ipc-stream-search.ts'], {
         ipc: (message: IPCMessage, subprocess) => {
           this.handleWorkerMessage(workerId, message, subprocess);
         },
-        serialization: "json", // Use JSON for compatibility
-        stdout: "inherit",
-        stderr: "inherit"
+        serialization: 'json', // Use JSON for compatibility
+        stdout: 'inherit',
+        stderr: 'inherit',
       });
 
       this.workers.set(workerId, worker);
       console.info(`🚀 Spawned worker: ${workerId}`);
-      
+
       // Wait a moment for worker to initialize
       setTimeout(() => {
         // Send initial message to verify connection
@@ -157,7 +156,7 @@ class IPCDocumentationOrchestrator {
           worker.send({
             type: 'search',
             query: 'test',
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
         }
       }, 500);
@@ -228,7 +227,7 @@ class IPCDocumentationOrchestrator {
         worker.send({
           type: 'search',
           query,
-          timestamp: Date.now()
+          timestamp: Date.now(),
         });
       } catch (error) {
         console.error(`❌ Failed to send message to ${workerId}:`, error);
@@ -256,7 +255,7 @@ class IPCDocumentationOrchestrator {
     return {
       totalMatches,
       results: allResults,
-      stats: allStats
+      stats: allStats,
     };
   }
 
@@ -271,9 +270,9 @@ class IPCDocumentationOrchestrator {
         if (!worker.killed) {
           worker.send({
             type: 'shutdown',
-            timestamp: Date.now()
+            timestamp: Date.now(),
           });
-          
+
           // Wait a bit then force kill if needed
           setTimeout(() => {
             if (!worker.killed) {
@@ -309,14 +308,14 @@ class TerminalDocumentationExplorer {
     this.terminal = new (Bun as any).Terminal({
       cols: 100,
       rows: 30,
-      name: "xterm-256color",
+      name: 'xterm-256color',
       data: (terminal: any, data: Uint8Array) => {
         // Display terminal output
         process.stdout.write(data);
       },
       exit: (terminal: any, exitCode: number) => {
         console.info(`\n📟 Terminal exited with code: ${exitCode}`);
-      }
+      },
     });
   }
 
@@ -326,16 +325,16 @@ class TerminalDocumentationExplorer {
   async startInteractiveSearch(): Promise<void> {
     console.info('🎯 Starting interactive documentation search...');
 
-    this.process = Bun.spawn(["fzf", "--ansi", "--multi", "--height", "20"], {
+    this.process = Bun.spawn(['fzf', '--ansi', '--multi', '--height', '20'], {
       terminal: this.terminal,
       env: {
         ...process.env,
-        FZF_DEFAULT_COMMAND: "rg --color=always --line-number '' /Users/nolarose/Projects/.cache"
-      }
+        FZF_DEFAULT_COMMAND: "rg --color=always --line-number '' /Users/nolarose/Projects/.cache",
+      },
     });
 
     // Send some sample data to fzf
-    this.terminal.write("Searching documentation...\n");
+    this.terminal.write('Searching documentation...\n');
 
     await this.process.exited;
   }
@@ -346,12 +345,12 @@ class TerminalDocumentationExplorer {
   async startBashSession(): Promise<void> {
     console.info('🐚 Starting bash session for documentation exploration...');
 
-    this.process = Bun.spawn(["bash"], {
+    this.process = Bun.spawn(['bash'], {
       terminal: this.terminal,
       env: {
         ...process.env,
-        PS1: "\\[\\e[32m\\]docs>\\[\\e[0m\\] "
-      }
+        PS1: '\\[\\e[32m\\]docs>\\[\\e[0m\\] ',
+      },
     });
 
     await this.process.exited;
@@ -375,11 +374,11 @@ class TerminalDocumentationExplorer {
  */
 async function demonstrateAdvancedFeatures() {
   console.info('🚀 Advanced Bun.spawn Features Demonstration');
-  console.info('=' .repeat(60));
+  console.info('='.repeat(60));
 
   // 1. IPC-based Multi-Worker Documentation Search
   console.info('\n📡 1. IPC-Based Multi-Worker Search');
-  console.info('-' .repeat(40));
+  console.info('-'.repeat(40));
 
   const orchestrator = new IPCDocumentationOrchestrator();
 
@@ -408,7 +407,7 @@ async function demonstrateAdvancedFeatures() {
 
   // 2. Terminal-based Interactive Documentation Explorer
   console.info('\n📟 2. Terminal-Based Interactive Explorer');
-  console.info('-' .repeat(40));
+  console.info('-'.repeat(40));
 
   const explorer = new TerminalDocumentationExplorer();
 

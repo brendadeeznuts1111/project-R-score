@@ -3,7 +3,7 @@ import {
   applyDashboardTestEnv,
   getDashboardTestConfig,
   withDashboardServer,
-} from "./lib/dashboard-test-server";
+} from './lib/dashboard-test-server';
 
 type CheckResult = {
   name: string;
@@ -45,49 +45,51 @@ async function run(): Promise<number> {
   const checks: CheckResult[] = [];
 
   try {
-    const health = await fetchJson("/api/health");
+    const health = await fetchJson('/api/health');
     check(
       checks,
-      "health-contract",
+      'health-contract',
       health.res.status === 200 &&
-        typeof health.json?.status === "string" &&
-        typeof health.json?.timestamp === "string" &&
-        typeof health.json?.service === "string" &&
-        typeof health.json?.version === "string" &&
-        typeof health.json?.runtime?.bunVersion === "string" &&
+        typeof health.json?.status === 'string' &&
+        typeof health.json?.timestamp === 'string' &&
+        typeof health.json?.service === 'string' &&
+        typeof health.json?.version === 'string' &&
+        typeof health.json?.runtime?.bunVersion === 'string' &&
         Array.isArray(health.json?.checks),
       `status=${health.res.status}`
     );
     check(
       checks,
-      "health-trace-header",
-      typeof health.res.headers.get("x-trace-id") === "string" &&
-        String(health.res.headers.get("x-trace-id") || "").length >= 6 &&
-        Number.isFinite(Number.parseFloat(String(health.res.headers.get("x-trace-duration-ms") || "NaN"))),
-      `traceId=${String(health.res.headers.get("x-trace-id") || "missing")} duration=${String(health.res.headers.get("x-trace-duration-ms") || "missing")}`
+      'health-trace-header',
+      typeof health.res.headers.get('x-trace-id') === 'string' &&
+        String(health.res.headers.get('x-trace-id') || '').length >= 6 &&
+        Number.isFinite(
+          Number.parseFloat(String(health.res.headers.get('x-trace-duration-ms') || 'NaN'))
+        ),
+      `traceId=${String(health.res.headers.get('x-trace-id') || 'missing')} duration=${String(health.res.headers.get('x-trace-duration-ms') || 'missing')}`
     );
 
-    const dashboard = await fetchJson("/api/dashboard");
+    const dashboard = await fetchJson('/api/dashboard');
     check(
       checks,
-      "dashboard-contract",
+      'dashboard-contract',
       dashboard.res.status === 200 &&
-        typeof dashboard.json?.status === "string" &&
-        typeof dashboard.json?.runtime?.bunVersion === "string" &&
+        typeof dashboard.json?.status === 'string' &&
+        typeof dashboard.json?.runtime?.bunVersion === 'string' &&
         Number.isFinite(dashboard.json?.metrics?.system?.inFlightRequests) &&
         Number.isFinite(dashboard.json?.metrics?.system?.activeWorkers),
       `status=${dashboard.res.status}`
     );
 
-    const runtime = await fetchJson("/api/dashboard/runtime");
+    const runtime = await fetchJson('/api/dashboard/runtime');
     check(
       checks,
-      "dashboard-runtime-contract",
+      'dashboard-runtime-contract',
       runtime.res.status === 200 &&
-        typeof runtime.json?.bunVersion === "string" &&
-        typeof runtime.json?.bunRevision === "string" &&
-        typeof runtime.json?.platform === "string" &&
-        typeof runtime.json?.arch === "string" &&
+        typeof runtime.json?.bunVersion === 'string' &&
+        typeof runtime.json?.bunRevision === 'string' &&
+        typeof runtime.json?.platform === 'string' &&
+        typeof runtime.json?.arch === 'string' &&
         Number.isFinite(runtime.json?.pid) &&
         Number.isFinite(runtime.json?.port) &&
         Number.isFinite(runtime.json?.process?.pid) &&
@@ -95,23 +97,23 @@ async function run(): Promise<number> {
       `status=${runtime.res.status}`
     );
 
-    const mini = await fetchJson("/api/dashboard/mini");
+    const mini = await fetchJson('/api/dashboard/mini');
     check(
       checks,
-      "dashboard-mini-contract",
+      'dashboard-mini-contract',
       mini.res.status === 200 &&
-        typeof mini.json?.capacity?.summary === "string" &&
+        typeof mini.json?.capacity?.summary === 'string' &&
         Number.isFinite(mini.json?.headroom?.connections?.pct) &&
         Number.isFinite(mini.json?.headroom?.workers?.pct),
       `status=${mini.res.status}`
     );
 
-    const trends = await fetchJson("/api/dashboard/trends?minutes=15&limit=50");
+    const trends = await fetchJson('/api/dashboard/trends?minutes=15&limit=50');
     check(
       checks,
-      "dashboard-trends-contract",
+      'dashboard-trends-contract',
       trends.res.status === 200 &&
-        trends.json?.source === "sqlite" &&
+        trends.json?.source === 'sqlite' &&
         trends.json?.initialized === true &&
         Number.isFinite(trends.json?.summary?.count) &&
         Number.isFinite(trends.json?.summary?.avgLoadMaxPct) &&
@@ -127,72 +129,72 @@ async function run(): Promise<number> {
       `status=${trends.res.status} count=${trends.json?.summary?.count}`
     );
 
-    const trendSummary = await fetchJson("/api/dashboard/trends/summary?minutes=15&limit=50");
+    const trendSummary = await fetchJson('/api/dashboard/trends/summary?minutes=15&limit=50');
     check(
       checks,
-      "dashboard-trends-summary-contract",
+      'dashboard-trends-summary-contract',
       trendSummary.res.status === 200 &&
-        trendSummary.json?.source === "sqlite" &&
+        trendSummary.json?.source === 'sqlite' &&
         trendSummary.json?.initialized === true &&
         Number.isFinite(trendSummary.json?.summary?.count) &&
         Number.isFinite(trendSummary.json?.summary?.avgLoadMaxPct) &&
         Number.isFinite(trendSummary.json?.summary?.avgCapacityPct) &&
         Number.isFinite(trendSummary.json?.summary?.windowCoveragePct) &&
-        typeof trendSummary.json?.summary?.sparklineLoad === "string" &&
-        typeof trendSummary.json?.summary?.sparklineCapacity === "string" &&
+        typeof trendSummary.json?.summary?.sparklineLoad === 'string' &&
+        typeof trendSummary.json?.summary?.sparklineCapacity === 'string' &&
         Number.isFinite(trendSummary.json?.window?.minutes) &&
         Number.isFinite(trendSummary.json?.window?.limit),
       `status=${trendSummary.res.status} count=${trendSummary.json?.summary?.count}`
     );
 
-    const traces = await fetchJson("/api/dashboard/traces?limit=20");
+    const traces = await fetchJson('/api/dashboard/traces?limit=20');
     check(
       checks,
-      "dashboard-traces-contract",
+      'dashboard-traces-contract',
       traces.res.status === 200 &&
-        traces.json?.source === "in-memory-request-traces" &&
+        traces.json?.source === 'in-memory-request-traces' &&
         Number.isFinite(traces.json?.bufferSize) &&
         Number.isFinite(traces.json?.capacity) &&
         Number.isFinite(traces.json?.summary?.statusBuckets?.ok2xx) &&
         Array.isArray(traces.json?.traces) &&
         traces.json?.traces?.length >= 1 &&
-        typeof traces.json?.traces?.[0]?.id === "string" &&
-        typeof traces.json?.traces?.[0]?.path === "string" &&
+        typeof traces.json?.traces?.[0]?.id === 'string' &&
+        typeof traces.json?.traces?.[0]?.path === 'string' &&
         Number.isFinite(traces.json?.traces?.[0]?.status),
       `status=${traces.res.status} traces=${traces.json?.traces?.length ?? 0}`
     );
 
-    const severity = await fetchJson("/api/dashboard/severity-test?load=42");
+    const severity = await fetchJson('/api/dashboard/severity-test?load=42');
     check(
       checks,
-      "dashboard-severity-contract",
+      'dashboard-severity-contract',
       severity.res.status === 200 &&
-        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.utilization || "")) &&
-        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.capacity || "")) &&
-        ["ok", "warn", "fail"].includes(String(severity.json?.severity?.headroom || "")),
+        ['ok', 'warn', 'fail'].includes(String(severity.json?.severity?.utilization || '')) &&
+        ['ok', 'warn', 'fail'].includes(String(severity.json?.severity?.capacity || '')) &&
+        ['ok', 'warn', 'fail'].includes(String(severity.json?.severity?.headroom || '')),
       `status=${severity.res.status}`
     );
 
-    const components = await fetchJson("/api/control/component-status");
+    const components = await fetchJson('/api/control/component-status');
     check(
       checks,
-      "component-status-contract",
+      'component-status-contract',
       components.res.status === 200 &&
         Number.isFinite(components.json?.summary?.rowCount) &&
         Number.isFinite(components.json?.summary?.stableCount) &&
         Number.isFinite(components.json?.summary?.betaCount) &&
         Array.isArray(components.json?.rows) &&
         components.json?.rows.length >= 10 &&
-        typeof components.json?.rows?.[0]?.component === "string" &&
-        typeof components.json?.rows?.[0]?.file === "string" &&
-        typeof components.json?.rows?.[0]?.status === "string",
+        typeof components.json?.rows?.[0]?.component === 'string' &&
+        typeof components.json?.rows?.[0]?.file === 'string' &&
+        typeof components.json?.rows?.[0]?.status === 'string',
       `status=${components.res.status} rows=${components.json?.rows?.length ?? 0}`
     );
 
-    const processRuntime = await fetchJson("/api/control/process/runtime");
+    const processRuntime = await fetchJson('/api/control/process/runtime');
     check(
       checks,
-      "process-runtime-contract",
+      'process-runtime-contract',
       processRuntime.res.status === 200 &&
         Number.isFinite(processRuntime.json?.process?.pid) &&
         Number.isFinite(processRuntime.json?.process?.ppid) &&
@@ -201,42 +203,42 @@ async function run(): Promise<number> {
         Number.isFinite(processRuntime.json?.process?.workerPool?.active) &&
         Number.isFinite(processRuntime.json?.process?.workerPool?.queued) &&
         Array.isArray(processRuntime.json?.process?.commands?.recent) &&
-        typeof processRuntime.json?.process?.shuttingDown === "boolean",
-      `status=${processRuntime.res.status} pid=${processRuntime.json?.process?.pid ?? "n/a"}`
+        typeof processRuntime.json?.process?.shuttingDown === 'boolean',
+      `status=${processRuntime.res.status} pid=${processRuntime.json?.process?.pid ?? 'n/a'}`
     );
 
-    const runtimePorts = await fetchJson("/api/control/runtime/ports");
+    const runtimePorts = await fetchJson('/api/control/runtime/ports');
     check(
       checks,
-      "runtime-ports-contract",
+      'runtime-ports-contract',
       runtimePorts.res.status === 200 &&
         Number.isFinite(runtimePorts.json?.requestedPort) &&
         Number.isFinite(runtimePorts.json?.activePort) &&
-        typeof runtimePorts.json?.portRange === "string" &&
-        typeof runtimePorts.json?.fallbackAllowed === "boolean" &&
-        typeof runtimePorts.json?.remapped === "boolean" &&
+        typeof runtimePorts.json?.portRange === 'string' &&
+        typeof runtimePorts.json?.fallbackAllowed === 'boolean' &&
+        typeof runtimePorts.json?.remapped === 'boolean' &&
         Number.isFinite(runtimePorts.json?.process?.pid),
-      `status=${runtimePorts.res.status} requested=${runtimePorts.json?.requestedPort ?? "n/a"} active=${runtimePorts.json?.activePort ?? "n/a"}`
+      `status=${runtimePorts.res.status} requested=${runtimePorts.json?.requestedPort ?? 'n/a'} active=${runtimePorts.json?.activePort ?? 'n/a'}`
     );
 
-    const socketRuntime = await fetchJson("/api/control/socket/runtime");
+    const socketRuntime = await fetchJson('/api/control/socket/runtime');
     check(
       checks,
-      "socket-runtime-contract",
+      'socket-runtime-contract',
       socketRuntime.res.status === 200 &&
-        typeof socketRuntime.json?.sockets?.path === "string" &&
-        typeof socketRuntime.json?.sockets?.topic === "string" &&
+        typeof socketRuntime.json?.sockets?.path === 'string' &&
+        typeof socketRuntime.json?.sockets?.topic === 'string' &&
         Number.isFinite(socketRuntime.json?.sockets?.connectedClients) &&
         Number.isFinite(socketRuntime.json?.sockets?.totalConnections) &&
         Number.isFinite(socketRuntime.json?.sockets?.broadcastCount) &&
         Number.isFinite(socketRuntime.json?.process?.pid),
-      `status=${socketRuntime.res.status} clients=${socketRuntime.json?.sockets?.connectedClients ?? "n/a"}`
+      `status=${socketRuntime.res.status} clients=${socketRuntime.json?.sockets?.connectedClients ?? 'n/a'}`
     );
 
-    const workerPoolRuntime = await fetchJson("/api/control/worker-pool");
+    const workerPoolRuntime = await fetchJson('/api/control/worker-pool');
     check(
       checks,
-      "worker-pool-contract",
+      'worker-pool-contract',
       workerPoolRuntime.res.status === 200 &&
         Number.isFinite(workerPoolRuntime.json?.pool?.active) &&
         Number.isFinite(workerPoolRuntime.json?.pool?.max) &&
@@ -251,56 +253,60 @@ async function run(): Promise<number> {
         Array.isArray(workerPoolRuntime.json?.diagnostics?.lastErrors) &&
         Number.isFinite(workerPoolRuntime.json?.config?.minWorkers) &&
         Number.isFinite(workerPoolRuntime.json?.config?.maxWorkers) &&
-        ["ok", "warn", "fail"].includes(String(workerPoolRuntime.json?.queueSeverity || "")),
-      `status=${workerPoolRuntime.res.status} workers=${workerPoolRuntime.json?.diagnostics?.busy ?? "n/a"}/${workerPoolRuntime.json?.diagnostics?.workers ?? "n/a"} queued=${workerPoolRuntime.json?.diagnostics?.queued ?? "n/a"}`
+        ['ok', 'warn', 'fail'].includes(String(workerPoolRuntime.json?.queueSeverity || '')),
+      `status=${workerPoolRuntime.res.status} workers=${workerPoolRuntime.json?.diagnostics?.busy ?? 'n/a'}/${workerPoolRuntime.json?.diagnostics?.workers ?? 'n/a'} queued=${workerPoolRuntime.json?.diagnostics?.queued ?? 'n/a'}`
     );
 
-    const workerPoolDiagnostics = await fetchJson("/api/control/worker-pool/diagnostics");
+    const workerPoolDiagnostics = await fetchJson('/api/control/worker-pool/diagnostics');
     check(
       checks,
-      "worker-pool-diagnostics-contract",
+      'worker-pool-diagnostics-contract',
       workerPoolDiagnostics.res.status === 200 &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.workers) &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.busy) &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.queued) &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.inFlight) &&
-        Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.["in-flight"]) &&
+        Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.['in-flight']) &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.timedOutTasks) &&
         Number.isFinite(workerPoolDiagnostics.json?.diagnostics?.rejectedTasks) &&
         Array.isArray(workerPoolDiagnostics.json?.diagnostics?.lastErrors) &&
-        ["ok", "warn", "fail"].includes(String(workerPoolDiagnostics.json?.queueSeverity || "")),
-      `status=${workerPoolDiagnostics.res.status} workers=${workerPoolDiagnostics.json?.diagnostics?.busy ?? "n/a"}/${workerPoolDiagnostics.json?.diagnostics?.workers ?? "n/a"} inFlight=${workerPoolDiagnostics.json?.diagnostics?.inFlight ?? "n/a"}`
+        ['ok', 'warn', 'fail'].includes(String(workerPoolDiagnostics.json?.queueSeverity || '')),
+      `status=${workerPoolDiagnostics.res.status} workers=${workerPoolDiagnostics.json?.diagnostics?.busy ?? 'n/a'}/${workerPoolDiagnostics.json?.diagnostics?.workers ?? 'n/a'} inFlight=${workerPoolDiagnostics.json?.diagnostics?.inFlight ?? 'n/a'}`
     );
 
-    const workerPoolBench = await fetchJsonWithInit("/api/control/worker-pool/bench?iterations=8&concurrency=2", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
-    });
+    const workerPoolBench = await fetchJsonWithInit(
+      '/api/control/worker-pool/bench?iterations=8&concurrency=2',
+      {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: '{}',
+      }
+    );
     check(
       checks,
-      "worker-pool-bench-contract",
+      'worker-pool-bench-contract',
       workerPoolBench.res.status === 200 &&
         Number.isFinite(workerPoolBench.json?.snapshot?.latencyMs?.p50) &&
         Number.isFinite(workerPoolBench.json?.snapshot?.latencyMs?.p95) &&
         Number.isFinite(workerPoolBench.json?.snapshot?.throughputPerSec) &&
-        typeof workerPoolBench.json?.gate?.compared === "boolean" &&
-        typeof workerPoolBench.json?.gate?.pass === "boolean" &&
-        (Array.isArray(workerPoolBench.json?.gate?.failures) || Number.isFinite(workerPoolBench.json?.gate?.regressionPct)) &&
-        typeof workerPoolBench.json?.persisted?.snapshotPath === "string" &&
-        typeof workerPoolBench.json?.persisted?.latestPath === "string",
-      `status=${workerPoolBench.res.status} pass=${String(workerPoolBench.json?.gate?.pass)} compared=${String(workerPoolBench.json?.gate?.compared)} p95=${String(workerPoolBench.json?.snapshot?.latencyMs?.p95 ?? "n/a")}`
+        typeof workerPoolBench.json?.gate?.compared === 'boolean' &&
+        typeof workerPoolBench.json?.gate?.pass === 'boolean' &&
+        (Array.isArray(workerPoolBench.json?.gate?.failures) ||
+          Number.isFinite(workerPoolBench.json?.gate?.regressionPct)) &&
+        typeof workerPoolBench.json?.persisted?.snapshotPath === 'string' &&
+        typeof workerPoolBench.json?.persisted?.latestPath === 'string',
+      `status=${workerPoolBench.res.status} pass=${String(workerPoolBench.json?.gate?.pass)} compared=${String(workerPoolBench.json?.gate?.compared)} p95=${String(workerPoolBench.json?.snapshot?.latencyMs?.p95 ?? 'n/a')}`
     );
 
-    const udpRuntime = await fetchJson("/api/control/udp/runtime");
+    const udpRuntime = await fetchJson('/api/control/udp/runtime');
     check(
       checks,
-      "udp-runtime-contract",
+      'udp-runtime-contract',
       udpRuntime.res.status === 200 &&
-        typeof udpRuntime.json?.udp?.supported === "boolean" &&
+        typeof udpRuntime.json?.udp?.supported === 'boolean' &&
         Number.isFinite(udpRuntime.json?.udp?.timeoutMs) &&
-        typeof udpRuntime.json?.udp?.control?.isOpen === "boolean" &&
-        typeof udpRuntime.json?.udp?.control?.packetTracking === "boolean" &&
+        typeof udpRuntime.json?.udp?.control?.isOpen === 'boolean' &&
+        typeof udpRuntime.json?.udp?.control?.packetTracking === 'boolean' &&
         Number.isFinite(udpRuntime.json?.udp?.control?.packetSourceId) &&
         Number.isFinite(udpRuntime.json?.udp?.control?.nextSequenceId) &&
         Array.isArray(udpRuntime.json?.udp?.control?.multicastMemberships) &&
@@ -311,147 +317,147 @@ async function run(): Promise<number> {
       `status=${udpRuntime.res.status} supported=${String(udpRuntime.json?.udp?.supported)}`
     );
 
-    const udpSelfTest = await fetchJson("/api/control/udp/self-test");
+    const udpSelfTest = await fetchJson('/api/control/udp/self-test');
     check(
       checks,
-      "udp-self-test-contract",
+      'udp-self-test-contract',
       udpSelfTest.res.status === 200 &&
-        typeof udpSelfTest.json?.ok === "boolean" &&
+        typeof udpSelfTest.json?.ok === 'boolean' &&
         Number.isFinite(udpSelfTest.json?.runtime?.timeoutMs) &&
         Number.isFinite(udpSelfTest.json?.runtime?.state?.totalRuns),
       `status=${udpSelfTest.res.status} ok=${String(udpSelfTest.json?.ok)}`
     );
 
-    const udpOpen = await fetchJsonWithInit("/api/control/udp/open", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hostname: "0.0.0.0", port: 0 }),
+    const udpOpen = await fetchJsonWithInit('/api/control/udp/open', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hostname: '0.0.0.0', port: 0 }),
     });
     check(
       checks,
-      "udp-open-contract",
+      'udp-open-contract',
       udpOpen.res.status === 200 &&
-        typeof udpOpen.json?.ok === "boolean" &&
+        typeof udpOpen.json?.ok === 'boolean' &&
         Number.isFinite(udpOpen.json?.udp?.control?.boundPort),
-      `status=${udpOpen.res.status} ok=${String(udpOpen.json?.ok)} port=${String(udpOpen.json?.udp?.control?.boundPort ?? "n/a")}`
+      `status=${udpOpen.res.status} ok=${String(udpOpen.json?.ok)} port=${String(udpOpen.json?.udp?.control?.boundPort ?? 'n/a')}`
     );
 
-    const udpOptions = await fetchJsonWithInit("/api/control/udp/options", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const udpOptions = await fetchJsonWithInit('/api/control/udp/options', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ ttl: 64, multicastTTL: 2, multicastLoopback: true }),
     });
     check(
       checks,
-      "udp-options-contract",
+      'udp-options-contract',
       udpOptions.res.status === 200 &&
-        typeof udpOptions.json?.ok === "boolean" &&
+        typeof udpOptions.json?.ok === 'boolean' &&
         Number.isFinite(udpOptions.json?.udp?.control?.options?.ttl),
-      `status=${udpOptions.res.status} ok=${String(udpOptions.json?.ok)} ttl=${String(udpOptions.json?.udp?.control?.options?.ttl ?? "n/a")}`
+      `status=${udpOptions.res.status} ok=${String(udpOptions.json?.ok)} ttl=${String(udpOptions.json?.udp?.control?.options?.ttl ?? 'n/a')}`
     );
 
-    const udpPeer = await fetchJsonWithInit("/api/control/udp/peer", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort }),
+    const udpPeer = await fetchJsonWithInit('/api/control/udp/peer', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ hostname: '127.0.0.1', port: udpOpen.json?.udp?.control?.boundPort }),
     });
     check(
       checks,
-      "udp-peer-contract",
+      'udp-peer-contract',
       udpPeer.res.status === 200 &&
         udpPeer.json?.ok === true &&
-        udpPeer.json?.peer?.hostname === "127.0.0.1" &&
+        udpPeer.json?.peer?.hostname === '127.0.0.1' &&
         Number.isFinite(udpPeer.json?.peer?.port),
-      `status=${udpPeer.res.status} ok=${String(udpPeer.json?.ok)} peer=${String(udpPeer.json?.peer?.hostname ?? "n/a")}:${String(udpPeer.json?.peer?.port ?? "n/a")}`
+      `status=${udpPeer.res.status} ok=${String(udpPeer.json?.ok)} peer=${String(udpPeer.json?.peer?.hostname ?? 'n/a')}:${String(udpPeer.json?.peer?.port ?? 'n/a')}`
     );
 
-    const udpSend = await fetchJsonWithInit("/api/control/udp/send", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const udpSend = await fetchJsonWithInit('/api/control/udp/send', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        hostname: "127.0.0.1",
+        hostname: '127.0.0.1',
         port: udpOpen.json?.udp?.control?.boundPort,
-        payload: "dashboard-endpoint-udp-send",
+        payload: 'dashboard-endpoint-udp-send',
       }),
     });
     check(
       checks,
-      "udp-send-contract",
+      'udp-send-contract',
       udpSend.res.status === 200 &&
-        typeof udpSend.json?.ok === "boolean" &&
-        typeof udpSend.json?.to === "string" &&
-        typeof udpSend.json?.packet?.tracked === "boolean" &&
+        typeof udpSend.json?.ok === 'boolean' &&
+        typeof udpSend.json?.to === 'string' &&
+        typeof udpSend.json?.packet?.tracked === 'boolean' &&
         Number.isFinite(udpSend.json?.packet?.header?.sequenceId) &&
         Number.isFinite(udpSend.json?.packet?.header?.sourceId) &&
-        typeof udpSend.json?.packet?.header?.timestampUs === "string" &&
+        typeof udpSend.json?.packet?.header?.timestampUs === 'string' &&
         Number.isFinite(udpSend.json?.udp?.control?.sendsAttempted),
-      `status=${udpSend.res.status} ok=${String(udpSend.json?.ok)} sends=${String(udpSend.json?.udp?.control?.sendsAttempted ?? "n/a")}`
+      `status=${udpSend.res.status} ok=${String(udpSend.json?.ok)} sends=${String(udpSend.json?.udp?.control?.sendsAttempted ?? 'n/a')}`
     );
 
-    const udpSendMany = await fetchJsonWithInit("/api/control/udp/send-many", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const udpSendMany = await fetchJsonWithInit('/api/control/udp/send-many', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         packets: [
-          { hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort, payload: "p1" },
-          { hostname: "127.0.0.1", port: udpOpen.json?.udp?.control?.boundPort, payload: "p2" },
+          { hostname: '127.0.0.1', port: udpOpen.json?.udp?.control?.boundPort, payload: 'p1' },
+          { hostname: '127.0.0.1', port: udpOpen.json?.udp?.control?.boundPort, payload: 'p2' },
         ],
       }),
     });
     check(
       checks,
-      "udp-send-many-contract",
+      'udp-send-many-contract',
       udpSendMany.res.status === 200 &&
-        typeof udpSendMany.json?.ok === "boolean" &&
+        typeof udpSendMany.json?.ok === 'boolean' &&
         Number.isFinite(udpSendMany.json?.sent) &&
         Number.isFinite(udpSendMany.json?.requested) &&
         Array.isArray(udpSendMany.json?.packets) &&
         Number.isFinite(udpSendMany.json?.packets?.[0]?.header?.sequenceId) &&
         Number.isFinite(udpSendMany.json?.packets?.[1]?.header?.sequenceId) &&
         Number.isFinite(udpSendMany.json?.udp?.control?.sendManyPacketsSent),
-      `status=${udpSendMany.res.status} ok=${String(udpSendMany.json?.ok)} sent=${String(udpSendMany.json?.sent ?? "n/a")}/${String(udpSendMany.json?.requested ?? "n/a")}`
+      `status=${udpSendMany.res.status} ok=${String(udpSendMany.json?.ok)} sent=${String(udpSendMany.json?.sent ?? 'n/a')}/${String(udpSendMany.json?.requested ?? 'n/a')}`
     );
 
-    const udpProfile = await fetchJsonWithInit("/api/control/udp/profile/select", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const udpProfile = await fetchJsonWithInit('/api/control/udp/profile/select', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        scope: "site-local",
-        reliability: "reliable",
-        security: "encrypt",
-        scale: "large",
-        ipFamily: "ipv4",
+        scope: 'site-local',
+        reliability: 'reliable',
+        security: 'encrypt',
+        scale: 'large',
+        ipFamily: 'ipv4',
       }),
     });
     check(
       checks,
-      "udp-profile-select-contract",
+      'udp-profile-select-contract',
       udpProfile.res.status === 200 &&
         udpProfile.json?.ok === true &&
-        typeof udpProfile.json?.selection?.address === "string" &&
+        typeof udpProfile.json?.selection?.address === 'string' &&
         Number.isFinite(udpProfile.json?.selection?.ttl) &&
-        typeof udpProfile.json?.selection?.isMulticast === "boolean",
-      `status=${udpProfile.res.status} ok=${String(udpProfile.json?.ok)} selection=${String(udpProfile.json?.selection?.address ?? "n/a")} ttl=${String(udpProfile.json?.selection?.ttl ?? "n/a")}`
+        typeof udpProfile.json?.selection?.isMulticast === 'boolean',
+      `status=${udpProfile.res.status} ok=${String(udpProfile.json?.ok)} selection=${String(udpProfile.json?.selection?.address ?? 'n/a')} ttl=${String(udpProfile.json?.selection?.ttl ?? 'n/a')}`
     );
 
-    const udpClose = await fetchJsonWithInit("/api/control/udp/close", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: "{}",
+    const udpClose = await fetchJsonWithInit('/api/control/udp/close', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: '{}',
     });
     check(
       checks,
-      "udp-close-contract",
+      'udp-close-contract',
       udpClose.res.status === 200 &&
         udpClose.json?.ok === true &&
         udpClose.json?.udp?.control?.isOpen === false,
       `status=${udpClose.res.status} ok=${String(udpClose.json?.ok)} isOpen=${String(udpClose.json?.udp?.control?.isOpen)}`
     );
 
-    const readiness = await fetchJson("/api/control/deployment-readiness");
+    const readiness = await fetchJson('/api/control/deployment-readiness');
     check(
       checks,
-      "deployment-readiness-contract",
+      'deployment-readiness-contract',
       readiness.res.status === 200 &&
         Number.isFinite(readiness.json?.summary?.productionReadyCount) &&
         Number.isFinite(readiness.json?.summary?.betaStagingCount) &&
@@ -463,27 +469,27 @@ async function run(): Promise<number> {
       `status=${readiness.res.status} ready=${readiness.json?.matrix?.productionReady?.length ?? 0} beta=${readiness.json?.matrix?.betaStaging?.length ?? 0}`
     );
 
-    const performance = await fetchJson("/api/control/performance-impact");
+    const performance = await fetchJson('/api/control/performance-impact');
     check(
       checks,
-      "performance-impact-contract",
+      'performance-impact-contract',
       performance.res.status === 200 &&
-        typeof performance.json?.overall?.before === "string" &&
-        typeof performance.json?.overall?.after === "string" &&
-        typeof performance.json?.overall?.improvement === "string" &&
+        typeof performance.json?.overall?.before === 'string' &&
+        typeof performance.json?.overall?.after === 'string' &&
+        typeof performance.json?.overall?.improvement === 'string' &&
         Number.isFinite(performance.json?.summary?.componentCount) &&
         Array.isArray(performance.json?.components) &&
         performance.json?.components?.length >= 5 &&
-        typeof performance.json?.components?.[0]?.name === "string" &&
-        typeof performance.json?.components?.[0]?.metric === "string" &&
-        typeof performance.json?.components?.[0]?.gain === "string",
+        typeof performance.json?.components?.[0]?.name === 'string' &&
+        typeof performance.json?.components?.[0]?.metric === 'string' &&
+        typeof performance.json?.components?.[0]?.gain === 'string',
       `status=${performance.res.status} components=${performance.json?.components?.length ?? 0}`
     );
 
-    const security = await fetchJson("/api/control/security-posture");
+    const security = await fetchJson('/api/control/security-posture');
     check(
       checks,
-      "security-posture-contract",
+      'security-posture-contract',
       security.res.status === 200 &&
         Number.isFinite(security.json?.summary?.reviewed) &&
         Number.isFinite(security.json?.summary?.pending) &&
@@ -491,80 +497,80 @@ async function run(): Promise<number> {
         Number.isFinite(security.json?.totals?.componentCount) &&
         Array.isArray(security.json?.components) &&
         security.json?.components?.length >= 1 &&
-        typeof security.json?.components?.[0]?.file === "string" &&
-        typeof security.json?.components?.[0]?.reviewDate === "string",
+        typeof security.json?.components?.[0]?.file === 'string' &&
+        typeof security.json?.components?.[0]?.reviewDate === 'string',
       `status=${security.res.status} components=${security.json?.components?.length ?? 0}`
     );
 
-    const projectHealth = await fetchJson("/api/control/project-health");
+    const projectHealth = await fetchJson('/api/control/project-health');
     check(
       checks,
-      "project-health-benchmark-contract",
+      'project-health-benchmark-contract',
       projectHealth.res.status === 200 &&
-        typeof projectHealth.json?.source === "string" &&
+        typeof projectHealth.json?.source === 'string' &&
         Number.isFinite(projectHealth.json?.health?.weightedScore) &&
-        typeof projectHealth.json?.benchmarkStatus?.available === "boolean" &&
-        typeof projectHealth.json?.benchmarkStatus?.status === "string" &&
+        typeof projectHealth.json?.benchmarkStatus?.available === 'boolean' &&
+        typeof projectHealth.json?.benchmarkStatus?.status === 'string' &&
         Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.total) &&
         Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.pass) &&
         Number.isFinite(projectHealth.json?.benchmarkStatus?.summary?.fail) &&
-        typeof projectHealth.json?.benchmarkStatus?.gate?.compared === "boolean" &&
-        typeof projectHealth.json?.benchmarkStatus?.gate?.pass === "boolean" &&
+        typeof projectHealth.json?.benchmarkStatus?.gate?.compared === 'boolean' &&
+        typeof projectHealth.json?.benchmarkStatus?.gate?.pass === 'boolean' &&
         Number.isFinite(projectHealth.json?.benchmarkStatus?.gate?.failures),
-      `status=${projectHealth.res.status} benchStatus=${projectHealth.json?.benchmarkStatus?.status ?? "n/a"}`
+      `status=${projectHealth.res.status} benchStatus=${projectHealth.json?.benchmarkStatus?.status ?? 'n/a'}`
     );
 
-    const domain = await fetchJson("/api/control/domain-graph?domain=orchestration");
+    const domain = await fetchJson('/api/control/domain-graph?domain=orchestration');
     check(
       checks,
-      "domain-graph-contract",
+      'domain-graph-contract',
       domain.res.status === 200 &&
-        typeof domain.json?.domain === "string" &&
+        typeof domain.json?.domain === 'string' &&
         Array.isArray(domain.json?.availableDomains) &&
-        typeof domain.json?.mermaid === "string" &&
-        String(domain.json?.mermaid || "").includes("```mermaid"),
-      `status=${domain.res.status} domain=${domain.json?.domain ?? "n/a"}`
+        typeof domain.json?.mermaid === 'string' &&
+        String(domain.json?.mermaid || '').includes('```mermaid'),
+      `status=${domain.res.status} domain=${domain.json?.domain ?? 'n/a'}`
     );
 
-    const featureMatrix = await fetchJson("/api/control/feature-matrix");
+    const featureMatrix = await fetchJson('/api/control/feature-matrix');
     const featureRows = Array.isArray(featureMatrix.json?.rows) ? featureMatrix.json.rows : [];
-    const featureNames = new Set(featureRows.map((row: any) => String(row?.feature || "")));
+    const featureNames = new Set(featureRows.map((row: any) => String(row?.feature || '')));
     check(
       checks,
-      "feature-matrix-contract",
+      'feature-matrix-contract',
       featureMatrix.res.status === 200 &&
         Number.isFinite(featureMatrix.json?.summary?.rowCount) &&
         featureRows.length >= 20 &&
-        featureNames.has("RegExp SIMD Prefix Search") &&
-        featureNames.has("RegExp Fixed-Count Parentheses JIT") &&
-        featureNames.has("String.startsWith Intrinsic") &&
-        featureNames.has("Set/Map.size Intrinsic") &&
-        featureNames.has("String.trim Intrinsic") &&
-        featureNames.has("Object.defineProperty Intrinsic") &&
-        featureNames.has("String.replace Rope Return") &&
-        featureNames.has("Bun.markdown API") &&
-        featureNames.has("metafile markdown output") &&
-        featureNames.has("mimalloc update") &&
-        featureNames.has("N-API typeof AsyncContextFrame fix") &&
-        featureNames.has("heap snapshot crash fix") &&
-        featureNames.has("node:vm SyntheticModule async_hooks fix") &&
-        featureNames.has("node:http2 Rare Crash Fixes") &&
-        featureNames.has("HTTP/2 gRPC stream state fix") &&
-        featureNames.has("HTTP Chunked Parser Smuggling Fix") &&
-        featureNames.has("CompileTarget SIMD Type Fix") &&
-        featureNames.has("CompileTarget Baseline/Modern Type Fix") &&
-        featureNames.has("Socket.reload Type Fix") &&
-        featureNames.has("npm i -g bun Windows cmd-shim fix"),
+        featureNames.has('RegExp SIMD Prefix Search') &&
+        featureNames.has('RegExp Fixed-Count Parentheses JIT') &&
+        featureNames.has('String.startsWith Intrinsic') &&
+        featureNames.has('Set/Map.size Intrinsic') &&
+        featureNames.has('String.trim Intrinsic') &&
+        featureNames.has('Object.defineProperty Intrinsic') &&
+        featureNames.has('String.replace Rope Return') &&
+        featureNames.has('Bun.markdown API') &&
+        featureNames.has('metafile markdown output') &&
+        featureNames.has('mimalloc update') &&
+        featureNames.has('N-API typeof AsyncContextFrame fix') &&
+        featureNames.has('heap snapshot crash fix') &&
+        featureNames.has('node:vm SyntheticModule async_hooks fix') &&
+        featureNames.has('node:http2 Rare Crash Fixes') &&
+        featureNames.has('HTTP/2 gRPC stream state fix') &&
+        featureNames.has('HTTP Chunked Parser Smuggling Fix') &&
+        featureNames.has('CompileTarget SIMD Type Fix') &&
+        featureNames.has('CompileTarget Baseline/Modern Type Fix') &&
+        featureNames.has('Socket.reload Type Fix') &&
+        featureNames.has('npm i -g bun Windows cmd-shim fix'),
       `status=${featureMatrix.res.status} rows=${featureRows.length}`
     );
 
-    const bundleAnalyze = await fetchJson("/api/control/bundle/analyze");
+    const bundleAnalyze = await fetchJson('/api/control/bundle/analyze');
     check(
       checks,
-      "bundle-analyze-contract",
+      'bundle-analyze-contract',
       bundleAnalyze.res.status === 200 &&
         bundleAnalyze.json?.ok === true &&
-        typeof bundleAnalyze.json?.entrypoint === "string" &&
+        typeof bundleAnalyze.json?.entrypoint === 'string' &&
         Number.isFinite(bundleAnalyze.json?.summary?.inputCount) &&
         Number.isFinite(bundleAnalyze.json?.summary?.outputCount) &&
         Number.isFinite(bundleAnalyze.json?.summary?.inputBytes) &&
@@ -576,56 +582,60 @@ async function run(): Promise<number> {
       `status=${bundleAnalyze.res.status} ok=${String(bundleAnalyze.json?.ok)}`
     );
 
-    const bundleAnalyzeEntry = await fetchJson("/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js");
+    const bundleAnalyzeEntry = await fetchJson(
+      '/api/control/bundle/analyze?entry=scratch/bun-v1.3.9-examples/playground-web/app.js'
+    );
     check(
       checks,
-      "bundle-analyze-entry-contract",
+      'bundle-analyze-entry-contract',
       bundleAnalyzeEntry.res.status === 200 &&
         bundleAnalyzeEntry.json?.ok === true &&
-        typeof bundleAnalyzeEntry.json?.entrypoint === "string" &&
-        String(bundleAnalyzeEntry.json?.entrypoint).endsWith("/scratch/bun-v1.3.9-examples/playground-web/app.js"),
-      `status=${bundleAnalyzeEntry.res.status} ok=${String(bundleAnalyzeEntry.json?.ok)} entry=${String(bundleAnalyzeEntry.json?.entrypoint || "n/a")}`
+        typeof bundleAnalyzeEntry.json?.entrypoint === 'string' &&
+        String(bundleAnalyzeEntry.json?.entrypoint).endsWith(
+          '/scratch/bun-v1.3.9-examples/playground-web/app.js'
+        ),
+      `status=${bundleAnalyzeEntry.res.status} ok=${String(bundleAnalyzeEntry.json?.ok)} entry=${String(bundleAnalyzeEntry.json?.entrypoint || 'n/a')}`
     );
 
-    const bundleAnalyzeBlocked = await fetchJson("/api/control/bundle/analyze?entry=../outside.ts");
+    const bundleAnalyzeBlocked = await fetchJson('/api/control/bundle/analyze?entry=../outside.ts');
     check(
       checks,
-      "bundle-analyze-entry-blocked-contract",
+      'bundle-analyze-entry-blocked-contract',
       bundleAnalyzeBlocked.res.status === 200 &&
         bundleAnalyzeBlocked.json?.ok === false &&
-        typeof bundleAnalyzeBlocked.json?.error === "string",
-      `status=${bundleAnalyzeBlocked.res.status} ok=${String(bundleAnalyzeBlocked.json?.ok)} error=${String(bundleAnalyzeBlocked.json?.error || "n/a")}`
+        typeof bundleAnalyzeBlocked.json?.error === 'string',
+      `status=${bundleAnalyzeBlocked.res.status} ok=${String(bundleAnalyzeBlocked.json?.ok)} error=${String(bundleAnalyzeBlocked.json?.error || 'n/a')}`
     );
 
-    const demoValidate = await fetchJson("/api/control/demo-module/validate?id=markdown-simd");
+    const demoValidate = await fetchJson('/api/control/demo-module/validate?id=markdown-simd');
     check(
       checks,
-      "demo-module-validate-contract",
+      'demo-module-validate-contract',
       demoValidate.res.status === 200 &&
         demoValidate.json?.ok === true &&
-        demoValidate.json?.id === "markdown-simd" &&
+        demoValidate.json?.id === 'markdown-simd' &&
         Number.isFinite(demoValidate.json?.exitCode),
       `status=${demoValidate.res.status} ok=${String(demoValidate.json?.ok)}`
     );
 
-    const demoBench = await fetchJson("/api/control/demo-module/bench?id=markdown-simd");
+    const demoBench = await fetchJson('/api/control/demo-module/bench?id=markdown-simd');
     check(
       checks,
-      "demo-module-bench-contract",
+      'demo-module-bench-contract',
       demoBench.res.status === 200 &&
         demoBench.json?.ok === true &&
-        demoBench.json?.id === "markdown-simd" &&
+        demoBench.json?.id === 'markdown-simd' &&
         Number.isFinite(demoBench.json?.exitCode),
       `status=${demoBench.res.status} ok=${String(demoBench.json?.ok)}`
     );
 
-    const demoFullLoop = await fetchJson("/api/control/demo-module/full-loop?id=markdown-simd");
+    const demoFullLoop = await fetchJson('/api/control/demo-module/full-loop?id=markdown-simd');
     check(
       checks,
-      "demo-module-full-loop-contract",
+      'demo-module-full-loop-contract',
       demoFullLoop.res.status === 200 &&
         demoFullLoop.json?.ok === true &&
-        demoFullLoop.json?.id === "markdown-simd" &&
+        demoFullLoop.json?.id === 'markdown-simd' &&
         Number.isFinite(demoFullLoop.json?.durationMs) &&
         demoFullLoop.json?.steps?.validate?.ok === true &&
         demoFullLoop.json?.steps?.bench?.ok === true &&
@@ -633,13 +643,15 @@ async function run(): Promise<number> {
       `status=${demoFullLoop.res.status} ok=${String(demoFullLoop.json?.ok)}`
     );
 
-    const buildMetafileFullLoop = await fetchJson("/api/control/demo-module/full-loop?id=build-metafile");
+    const buildMetafileFullLoop = await fetchJson(
+      '/api/control/demo-module/full-loop?id=build-metafile'
+    );
     check(
       checks,
-      "demo-module-full-loop-build-metafile-contract",
+      'demo-module-full-loop-build-metafile-contract',
       buildMetafileFullLoop.res.status === 200 &&
         buildMetafileFullLoop.json?.ok === true &&
-        buildMetafileFullLoop.json?.id === "build-metafile" &&
+        buildMetafileFullLoop.json?.id === 'build-metafile' &&
         Number.isFinite(buildMetafileFullLoop.json?.durationMs) &&
         buildMetafileFullLoop.json?.steps?.validate?.ok === true &&
         buildMetafileFullLoop.json?.steps?.bench?.ok === true &&
@@ -647,17 +659,12 @@ async function run(): Promise<number> {
       `status=${buildMetafileFullLoop.res.status} ok=${String(buildMetafileFullLoop.json?.ok)}`
     );
   } catch (error) {
-    check(
-      checks,
-      "runner",
-      false,
-      error instanceof Error ? error.message : String(error)
-    );
+    check(checks, 'runner', false, error instanceof Error ? error.message : String(error));
   }
 
-  const failed = checks.filter((c) => !c.ok);
+  const failed = checks.filter(c => !c.ok);
   for (const c of checks) {
-    console.info(`[${c.ok ? "PASS" : "FAIL"}] ${c.name} :: ${c.details}`);
+    console.info(`[${c.ok ? 'PASS' : 'FAIL'}] ${c.name} :: ${c.details}`);
   }
   const { base } = getDashboardTestConfig();
   console.info(`Checked ${checks.length} dashboard endpoint assertions against ${base}`);

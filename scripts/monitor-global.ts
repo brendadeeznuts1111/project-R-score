@@ -1,12 +1,12 @@
 #!/usr/bin/env bun
-import { summarizeDeploymentReadiness } from "./deployment/readiness-matrix";
-import { ExecutiveVerdict } from "../dashboard/project-health";
+import { summarizeDeploymentReadiness } from './deployment/readiness-matrix';
+import { ExecutiveVerdict } from '../dashboard/project-health';
 
 const args = process.argv.slice(2);
-const showDashboard = args.includes("--dashboard");
-const showAlerts = args.includes("--alerts");
-const intervalSec = Number.parseInt(getArg("--interval", "5"), 10) || 5;
-const once = args.includes("--once");
+const showDashboard = args.includes('--dashboard');
+const showAlerts = args.includes('--alerts');
+const intervalSec = Number.parseInt(getArg('--interval', '5'), 10) || 5;
+const once = args.includes('--once');
 
 function snapshot() {
   const dep = summarizeDeploymentReadiness();
@@ -16,10 +16,10 @@ function snapshot() {
     `ready=${dep.summary.productionReadyCount}`,
     `beta=${dep.summary.betaStagingCount}`,
     `overall=${dep.summary.overallReadiness}`,
-  ].join(" ");
+  ].join(' ');
 
   if (showDashboard) {
-    console.info("=== Global Deployment Monitor ===");
+    console.info('=== Global Deployment Monitor ===');
     console.info(line);
   } else {
     console.info(line);
@@ -27,12 +27,12 @@ function snapshot() {
 
   if (showAlerts) {
     const alerts: string[] = [];
-    if (dep.summary.betaStagingCount > 0) alerts.push("beta components pending");
-    if (dep.summary.overallReadiness < 90) alerts.push("overall readiness below 90");
+    if (dep.summary.betaStagingCount > 0) alerts.push('beta components pending');
+    if (dep.summary.overallReadiness < 90) alerts.push('overall readiness below 90');
     if (alerts.length > 0) {
-      console.info(`alerts=${alerts.join(", ")}`);
+      console.info(`alerts=${alerts.join(', ')}`);
     } else {
-      console.info("alerts=none");
+      console.info('alerts=none');
     }
   }
 }
@@ -46,7 +46,7 @@ snapshot();
 setInterval(snapshot, Math.max(1, intervalSec) * 1000);
 
 function getArg(flag: string, fallback: string): string {
-  const eq = args.find((a) => a.startsWith(`${flag}=`));
+  const eq = args.find(a => a.startsWith(`${flag}=`));
   if (eq) return eq.slice(flag.length + 1) || fallback;
   const idx = args.indexOf(flag);
   if (idx < 0 || idx + 1 >= args.length) return fallback;

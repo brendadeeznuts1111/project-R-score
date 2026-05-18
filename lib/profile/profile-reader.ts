@@ -43,18 +43,23 @@ export class ProfileReader {
   async listSessions(): Promise<SessionSummary[]> {
     const prefix = `${this.prefix}/sessions/`;
 
-    const response = await S3Client.list({
-      prefix,
-      delimiter: '/',
-    }, this.s3Opts);
+    const response = await S3Client.list(
+      {
+        prefix,
+        delimiter: '/',
+      },
+      this.s3Opts
+    );
 
     const entries = response.commonPrefixes || [];
 
     if (entries.length === 0 && (response.contents?.length ?? 0) > 0) {
-      console.warn('[ProfileReader] S3 list returned contents but no commonPrefixes — delimiter may not be working');
+      console.warn(
+        '[ProfileReader] S3 list returned contents but no commonPrefixes — delimiter may not be working'
+      );
     }
 
-    return entries.map((entry) => {
+    return entries.map(entry => {
       // entry.prefix is e.g. "profiles/sessions/abc123/"
       const sessionId = entry.prefix.replace(prefix, '').replace(/\/$/, '');
       return {

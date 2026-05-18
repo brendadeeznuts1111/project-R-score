@@ -454,7 +454,7 @@ export class AdvancedLRUCache<T> extends EventEmitter {
       evictions: this.evictions,
       totalSets: this.totalSets,
       totalGets: this.totalGets,
-      averageAccessTime: this.totalGets > 0 ? (this.totalAccessTime / this.totalGets) / 1e6 : 0,
+      averageAccessTime: this.totalGets > 0 ? this.totalAccessTime / this.totalGets / 1e6 : 0,
       memoryUsage: this.memoryUsage,
       oldestEntry: this.oldestEntry > 0 ? this.oldestEntry : undefined,
       newestEntry: this.newestEntry > 0 ? this.newestEntry : undefined,

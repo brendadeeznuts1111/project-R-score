@@ -33,7 +33,7 @@ const colors = {
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -49,7 +49,7 @@ async function validateUrl(url: string, useHead: boolean = true): Promise<Valida
       url,
       status: response.status,
       statusText: response.statusText,
-      ok: response.ok
+      ok: response.ok,
     };
   } catch (error) {
     return {
@@ -57,7 +57,7 @@ async function validateUrl(url: string, useHead: boolean = true): Promise<Valida
       status: 0,
       statusText: 'NETWORK_ERROR',
       ok: false,
-      error: error instanceof Error ? error.message : 'Unknown error'
+      error: error instanceof Error ? error.message : 'Unknown error',
     };
   }
 }
@@ -105,12 +105,12 @@ function extractUrlConstants(constants: any): TestCase[] {
         // Simple variable substitution for common patterns
         const vars: Record<string, string> = {
           BUN_BASE_URL: 'https://bun.com',
-          BUN_REPO_URL: 'https://github.com/oven-sh/bun'
+          BUN_REPO_URL: 'https://github.com/oven-sh/bun',
         };
         return vars[varName] || match;
       }),
       description: `Constant from ${constant.project} project`,
-      expectedStatus: 200
+      expectedStatus: 200,
     }));
 }
 
@@ -129,50 +129,50 @@ async function runValidation(): Promise<void> {
     {
       name: 'GitHub Tree URL (commit hash validation)',
       url: 'https://github.com/oven-sh/bun/tree/main/packages/bun-types',
-      description: 'Validates if the specific commit hash exists in GitHub'
+      description: 'Validates if the specific commit hash exists in GitHub',
     },
     {
       name: 'Raw GitHub File (bun.d.ts)',
       url: 'https://raw.githubusercontent.com/oven-sh/bun/main/packages/bun-types/bun.d.ts',
-      description: 'Checks if the raw bun.d.ts file exists at this commit'
+      description: 'Checks if the raw bun.d.ts file exists at this commit',
     },
     {
       name: 'Bun Docs Base URL',
       url: 'https://bun.com/docs',
-      description: 'Official Bun documentation homepage'
+      description: 'Official Bun documentation homepage',
     },
     {
       name: 'Bun Runtime Utils Docs',
       url: 'https://bun.com/docs/runtime/utils',
-      description: 'Specific runtime utils documentation page'
+      description: 'Specific runtime utils documentation page',
     },
 
     // Additional important URLs
     {
       name: 'GitHub Repository',
       url: 'https://github.com/oven-sh/bun',
-      description: 'Main Bun repository on GitHub'
+      description: 'Main Bun repository on GitHub',
     },
     {
       name: 'Bun Releases',
       url: 'https://github.com/oven-sh/bun/releases',
-      description: 'Bun release pages'
+      description: 'Bun release pages',
     },
     {
       name: 'Bun Installation',
       url: 'https://bun.sh/install',
-      description: 'Official Bun installation script'
+      description: 'Official Bun installation script',
     },
     {
       name: 'Bun Blog',
       url: 'https://bun.com/blog',
-      description: 'Official Bun blog'
+      description: 'Official Bun blog',
     },
     {
       name: 'Bun Changelog RSS',
       url: 'https://bun.com/rss.xml',
-      description: 'Bun changelog RSS feed'
-    }
+      description: 'Bun changelog RSS feed',
+    },
   ];
 
   // Add URL constants from the JSON file
@@ -186,7 +186,7 @@ async function runValidation(): Promise<void> {
 
   // Run all validations in parallel for speed
   const results = await Promise.all(
-    testCases.map(async (testCase) => {
+    testCases.map(async testCase => {
       const result = await validateUrl(testCase.url);
       return { testCase, result };
     })
@@ -229,12 +229,15 @@ async function runValidation(): Promise<void> {
 
   const gitReference = 'main';
   const isCommitHash = gitReference.length === 40 && /^[a-f0-9]+$/.test(gitReference);
-  const isBranchName = gitReference === 'main' || gitReference === 'master' || gitReference.match(/^[a-zA-Z0-9._-]+$/);
+  const isBranchName =
+    gitReference === 'main' || gitReference === 'master' || gitReference.match(/^[a-zA-Z0-9._-]+$/);
   const isValidReference = isCommitHash || isBranchName;
 
   console.info(`Git reference: ${colorize(gitReference, 'blue')}`);
   console.info(`Type: ${isCommitHash ? 'Commit hash' : 'Branch name'}`);
-  console.info(`Format check: ${isValidReference ? colorize('✅ Valid', 'green') : colorize('❌ Invalid', 'red')}`);
+  console.info(
+    `Format check: ${isValidReference ? colorize('✅ Valid', 'green') : colorize('❌ Invalid', 'red')}`
+  );
 
   if (isCommitHash) {
     console.info(`Length check (40 chars): ${colorize('✅ Valid', 'green')}`);
@@ -251,7 +254,7 @@ async function runValidation(): Promise<void> {
 }
 
 // Run the validation
-runValidation().catch((error) => {
+runValidation().catch(error => {
   console.error(colorize(`Script failed: ${error}`, 'red'));
   process.exit(1);
 });

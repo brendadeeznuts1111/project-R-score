@@ -26,14 +26,14 @@ import { Glob } from 'bun';
 
 /** Root cause of the issue */
 export type ErrorSource =
-  | 'dns'              // Domain does not resolve (e.g. docs.bun.sh, cdn.bun.sh)
-  | 'provider_change'  // Provider restructured URLs (e.g. feed.xml → rss.xml)
-  | 'cdn'              // CDN / static-asset domain issue
-  | 'redirect'         // URL redirects to a different location
-  | 'deleted_module'   // Source file was removed from the codebase
-  | 'path_rename'      // Directory/file was renamed during reorg
-  | 'duplicate_def'    // Same symbol defined in multiple places
-  | 'planned'          // URL is intentionally fictional / not yet live
+  | 'dns' // Domain does not resolve (e.g. docs.bun.sh, cdn.bun.sh)
+  | 'provider_change' // Provider restructured URLs (e.g. feed.xml → rss.xml)
+  | 'cdn' // CDN / static-asset domain issue
+  | 'redirect' // URL redirects to a different location
+  | 'deleted_module' // Source file was removed from the codebase
+  | 'path_rename' // Directory/file was renamed during reorg
+  | 'duplicate_def' // Same symbol defined in multiple places
+  | 'planned' // URL is intentionally fictional / not yet live
   | 'unknown';
 
 export interface Issue {
@@ -66,7 +66,9 @@ const args = process.argv.slice(2);
 const flags = new Set(args.filter(a => a.startsWith('--') || a === '-h'));
 // Filter out flag values (e.g. the value after --source)
 const flagsWithValues = new Set(['--source']);
-const commands = args.filter((a, i) => !a.startsWith('-') && (i === 0 || !flagsWithValues.has(args[i - 1])));
+const commands = args.filter(
+  (a, i) => !a.startsWith('-') && (i === 0 || !flagsWithValues.has(args[i - 1]))
+);
 
 const showHelp = flags.has('--help') || flags.has('-h');
 const jsonOutput = flags.has('--json');
@@ -75,14 +77,26 @@ const verbose = flags.has('--verbose');
 const noColor = flags.has('--no-color');
 
 // --source <value> filter (supports comma-separated: --source dns,cdn)
-const VALID_SOURCES = ['dns', 'provider_change', 'cdn', 'redirect', 'deleted_module', 'path_rename', 'duplicate_def', 'planned', 'unknown'] as const;
+const VALID_SOURCES = [
+  'dns',
+  'provider_change',
+  'cdn',
+  'redirect',
+  'deleted_module',
+  'path_rename',
+  'duplicate_def',
+  'planned',
+  'unknown',
+] as const;
 const sourceIdx = args.indexOf('--source');
 const sourceFilter: Set<ErrorSource> | null = (() => {
   if (sourceIdx === -1 || sourceIdx + 1 >= args.length) return null;
   const values = args[sourceIdx + 1].split(',').map(s => s.trim());
   const invalid = values.filter(v => !VALID_SOURCES.includes(v as any));
   if (invalid.length > 0) {
-    console.error(`Unknown source(s): ${invalid.join(', ')}\nValid sources: ${VALID_SOURCES.join(', ')}`);
+    console.error(
+      `Unknown source(s): ${invalid.join(', ')}\nValid sources: ${VALID_SOURCES.join(', ')}`
+    );
     process.exit(2);
   }
   return new Set(values as ErrorSource[]);
@@ -132,9 +146,15 @@ if (!validCommands.includes(command)) {
 function color(text: string, c: string): string {
   if (noColor || jsonOutput) return text;
   const codes: Record<string, string> = {
-    red: '\x1b[31m', green: '\x1b[32m', yellow: '\x1b[33m',
-    blue: '\x1b[34m', cyan: '\x1b[36m', magenta: '\x1b[35m',
-    dim: '\x1b[2m', bold: '\x1b[1m', reset: '\x1b[0m',
+    red: '\x1b[31m',
+    green: '\x1b[32m',
+    yellow: '\x1b[33m',
+    blue: '\x1b[34m',
+    cyan: '\x1b[36m',
+    magenta: '\x1b[35m',
+    dim: '\x1b[2m',
+    bold: '\x1b[1m',
+    reset: '\x1b[0m',
   };
   return `${codes[c] || ''}${text}${codes.reset}`;
 }
@@ -180,7 +200,12 @@ async function readLines(filePath: string): Promise<string[]> {
 
 // ─── URL pattern checker ─────────────────────────────────────────────
 
-const BROKEN_URL_PATTERNS: { pattern: RegExp; source: ErrorSource; message: string; fix: string }[] = [
+const BROKEN_URL_PATTERNS: {
+  pattern: RegExp;
+  source: ErrorSource;
+  message: string;
+  fix: string;
+}[] = [
   {
     pattern: /bun\.sh\/feed\.xml/,
     source: 'provider_change',
@@ -271,7 +296,12 @@ export async function checkEnums(): Promise<CheckResult> {
 
 // ─── Import path checker ─────────────────────────────────────────────
 
-const BROKEN_IMPORT_PATTERNS: { pattern: RegExp; source: ErrorSource; message: string; fix: string }[] = [
+const BROKEN_IMPORT_PATTERNS: {
+  pattern: RegExp;
+  source: ErrorSource;
+  message: string;
+  fix: string;
+}[] = [
   {
     pattern: /from\s+['"].*\/documentation\/constants\//,
     source: 'path_rename',
@@ -299,13 +329,15 @@ const BROKEN_IMPORT_PATTERNS: { pattern: RegExp; source: ErrorSource; message: s
   {
     pattern: /from\s+['"].*\/enums\/Provider\.enum/,
     source: 'deleted_module',
-    message: 'Broken import: src/core/enums/Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
+    message:
+      'Broken import: src/core/enums/Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
     fix: "Import from 'lib/docs/constants/enums' instead",
   },
   {
     pattern: /from\s+['"].*Provider\.enum/,
     source: 'deleted_module',
-    message: 'Broken import: Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
+    message:
+      'Broken import: Provider.enum.ts was deleted — enums consolidated into lib/docs/constants/enums.ts',
     fix: "Import from 'lib/docs/constants/enums' instead",
   },
 ];

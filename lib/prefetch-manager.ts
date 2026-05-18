@@ -54,8 +54,8 @@ export class PrefetchManager {
         { type: 'dns', url: 'https://support.factory-wager.com' },
         { type: 'dns', url: 'https://fonts.googleapis.com' },
         { type: 'dns', url: 'https://fonts.gstatic.com' },
-        { type: 'dns', url: 'https://cdn.jsdelivr.net' }
-      ]
+        { type: 'dns', url: 'https://cdn.jsdelivr.net' },
+      ],
     });
 
     // Preconnect Strategy
@@ -63,22 +63,22 @@ export class PrefetchManager {
       name: 'Preconnect Critical Resources',
       enabled: true,
       resources: [
-        { 
-          type: 'preconnect', 
+        {
+          type: 'preconnect',
           url: 'https://registry.factory-wager.com',
-          priority: 'high'
+          priority: 'high',
         },
-        { 
-          type: 'preconnect', 
+        {
+          type: 'preconnect',
           url: 'https://monitor.factory-wager.com',
-          priority: 'high'
+          priority: 'high',
         },
-        { 
-          type: 'preconnect', 
+        {
+          type: 'preconnect',
           url: 'https://fonts.googleapis.com',
-          priority: 'low'
-        }
-      ]
+          priority: 'low',
+        },
+      ],
     });
 
     // Prefetch Strategy for Navigation
@@ -88,14 +88,17 @@ export class PrefetchManager {
       resources: [
         { type: 'prefetch', url: 'https://docs.factory-wager.com/' },
         { type: 'prefetch', url: 'https://registry.factory-wager.com/' },
-        { type: 'prefetch', url: 'https://wiki.factory-wager.com/' }
+        { type: 'prefetch', url: 'https://wiki.factory-wager.com/' },
       ],
       conditions: () => {
         // Only prefetch on stable connections
         if (typeof navigator === 'undefined') return false;
         const connection = (navigator as any).connection;
-        return !connection || (connection.effectiveType !== 'slow-2g' && connection.effectiveType !== '2g');
-      }
+        return (
+          !connection ||
+          (connection.effectiveType !== 'slow-2g' && connection.effectiveType !== '2g')
+        );
+      },
     });
 
     // Preload Critical Resources
@@ -108,7 +111,7 @@ export class PrefetchManager {
           url: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap',
           as: 'style',
           priority: 'high',
-          crossorigin: 'anonymous'
+          crossorigin: 'anonymous',
         },
         {
           type: 'preload',
@@ -116,9 +119,9 @@ export class PrefetchManager {
           as: 'font',
           priority: 'high',
           crossorigin: 'anonymous',
-          integrity: 'sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3'
-        }
-      ]
+          integrity: 'sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3',
+        },
+      ],
     });
 
     // Module Preload for JavaScript
@@ -129,45 +132,48 @@ export class PrefetchManager {
         {
           type: 'modulepreload',
           url: 'https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js',
-          priority: 'low'
+          priority: 'low',
         },
         {
           type: 'modulepreload',
           url: 'https://cdn.jsdelivr.net/npm/lucide@latest/dist/umd/lucide.js',
-          priority: 'low'
-        }
+          priority: 'low',
+        },
       ],
       conditions: () => {
         // Only on desktop with good connection
         if (typeof navigator === 'undefined') return false;
         const connection = (navigator as any).connection;
         return connection && connection.effectiveType === '4g';
-      }
+      },
     });
   }
 
   private setupIntersectionObserver() {
     if (typeof IntersectionObserver === 'undefined') return;
 
-    this.observer = new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        if (entry.isIntersecting) {
-          const element = entry.target as HTMLElement;
-          const prefetchUrl = element.dataset.prefetch;
-          const prefetchType = element.dataset.prefetchType || 'prefetch';
-          
-          if (prefetchUrl && !this.prefetchedResources.has(prefetchUrl)) {
-            this.addResource({
-              type: prefetchType as any,
-              url: prefetchUrl,
-              priority: 'low'
-            });
+    this.observer = new IntersectionObserver(
+      entries => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            const element = entry.target as HTMLElement;
+            const prefetchUrl = element.dataset.prefetch;
+            const prefetchType = element.dataset.prefetchType || 'prefetch';
+
+            if (prefetchUrl && !this.prefetchedResources.has(prefetchUrl)) {
+              this.addResource({
+                type: prefetchType as any,
+                url: prefetchUrl,
+                priority: 'low',
+              });
+            }
           }
-        }
-      });
-    }, {
-      rootMargin: '50px'
-    });
+        });
+      },
+      {
+        rootMargin: '50px',
+      }
+    );
   }
 
   executeStrategy(strategyName: string): void {
@@ -181,7 +187,7 @@ export class PrefetchManager {
     }
 
     console.info(`Executing strategy: ${strategy.name}`);
-    
+
     strategy.resources.forEach(resource => {
       this.addResource(resource);
     });
@@ -267,7 +273,11 @@ export class PrefetchManager {
     console.info(`Added ${config.type} for ${config.url}`);
   }
 
-  observeElement(element: HTMLElement, url: string, type: 'prefetch' | 'preload' = 'prefetch'): void {
+  observeElement(
+    element: HTMLElement,
+    url: string,
+    type: 'prefetch' | 'preload' = 'prefetch'
+  ): void {
     if (!this.observer) return;
 
     element.dataset.prefetch = url;
@@ -290,7 +300,7 @@ export class PrefetchManager {
           this.addResource({
             type: 'prefetch',
             url: url,
-            priority: 'high'
+            priority: 'high',
           });
         }
       }, delay);
@@ -317,12 +327,12 @@ export class PrefetchManager {
         if (distance < threshold && distance > -threshold) {
           const url = element.dataset.prefetch;
           const type = element.dataset.prefetchType || 'prefetch';
-          
+
           if (url && !this.prefetchedResources.has(url)) {
             this.addResource({
               type: type as any,
               url: url,
-              priority: 'low'
+              priority: 'low',
             });
           }
         }
@@ -338,7 +348,7 @@ export class PrefetchManager {
     if (typeof navigator === 'undefined') return;
 
     const connection = (navigator as any).connection;
-    
+
     if (!connection) {
       // No connection API, use conservative approach
       this.executeStrategy('dns_prefetch');
@@ -383,13 +393,13 @@ export class PrefetchManager {
   measurePrefetchPerformance(): void {
     if (typeof performance === 'undefined') return;
 
-    const observer = new PerformanceObserver((list) => {
-      list.getEntries().forEach((entry) => {
+    const observer = new PerformanceObserver(list => {
+      list.getEntries().forEach(entry => {
         if (entry.name.includes('prefetch') || entry.name.includes('preload')) {
           console.info(`Prefetch performance for ${entry.name}:`, {
             duration: entry.duration,
             transferSize: entry.transferSize,
-            encodedBodySize: entry.encodedBodySize
+            encodedBodySize: entry.encodedBodySize,
           });
         }
       });

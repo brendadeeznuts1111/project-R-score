@@ -2,12 +2,17 @@
 
 /**
  * Enhanced Watch Filter Integration v3.15 - Official CLI Native
- * 
+ *
  * Integrates the watch engine with official Bun CLI patterns
  * using the native CLI integration for maximum compatibility
  */
 
-import { executeBunCLI, parseOfficialFlags, BunCLIFlags, CLISession } from '../lib/bun-cli-native-v3.15';
+import {
+  executeBunCLI,
+  parseOfficialFlags,
+  BunCLIFlags,
+  CLISession,
+} from '../lib/bun-cli-native-v3.15';
 import { createWatchSession, startWebSocketDashboard } from '../lib/watch-engine-v3.14';
 
 // Enhanced watch-filter session with CLI integration
@@ -47,40 +52,44 @@ const c = {
 /**
  * Enhanced watch-filter with official CLI integration
  */
-export async function startWatchFilterCLI(
-  rawArgs: string[]
-): Promise<WatchFilterSession> {
+export async function startWatchFilterCLI(rawArgs: string[]): Promise<WatchFilterSession> {
   const sessionId = crypto.randomUUID();
   const { flags, command, args } = parseOfficialFlags(rawArgs);
-  
+
   // Ensure watch mode is enabled
   if (!flags.watch && !flags.hot) {
     flags.watch = true;
   }
-  
+
   // Extract pattern and script from args
   const pattern = flags.filter || '*';
   const script = command || 'dev';
-  
+
   console.info(c.bold('🚀 Enhanced Watch Filter CLI v3.15'));
   console.info(c.gray('Official Bun CLI integration with enhanced filtering\n'));
-  
+
   // Create CLI session
-  const cliSession = await executeBunCLI([
-    '--filter', pattern,
-    '--watch',
-    ...(flags.hot ? ['--hot'] : []),
-    ...(flags.smol ? ['--smol'] : []),
-    ...(flags.noClear ? ['--no-clear'] : []),
-    ...(flags.silent ? ['--silent'] : []),
-    ...(flags.filterOutputLines ? ['--filter-output-lines', String(flags.filterOutputLines)] : []),
-    ...(flags.parallel ? ['--parallel'] : []),
-    ...(flags.sequential ? ['--sequential'] : []),
-    ...(flags.continueOnError ? ['--continue-on-error'] : []),
-    script,
-    ...args
-  ], { captureOutput: true });
-  
+  const cliSession = await executeBunCLI(
+    [
+      '--filter',
+      pattern,
+      '--watch',
+      ...(flags.hot ? ['--hot'] : []),
+      ...(flags.smol ? ['--smol'] : []),
+      ...(flags.noClear ? ['--no-clear'] : []),
+      ...(flags.silent ? ['--silent'] : []),
+      ...(flags.filterOutputLines
+        ? ['--filter-output-lines', String(flags.filterOutputLines)]
+        : []),
+      ...(flags.parallel ? ['--parallel'] : []),
+      ...(flags.sequential ? ['--sequential'] : []),
+      ...(flags.continueOnError ? ['--continue-on-error'] : []),
+      script,
+      ...args,
+    ],
+    { captureOutput: true }
+  );
+
   const watchSession: WatchFilterSession = {
     id: sessionId,
     cliSession,
@@ -90,11 +99,11 @@ export async function startWatchFilterCLI(
     status: 'initializing',
     lastActivity: Date.now(),
     restartCount: 0,
-    events: []
+    events: [],
   };
-  
+
   watchSessions.set(sessionId, watchSession);
-  
+
   try {
     // Start enhanced watch session
     watchSession.watchSessionId = await createWatchSession(pattern, script, {
@@ -105,29 +114,28 @@ export async function startWatchFilterCLI(
       healthCheckUrl: process.env.HEALTH_CHECK_URL,
       hotReload: flags.hot ?? false,
       smolMode: flags.smol ?? false,
-      consoleDepth: 2
+      consoleDepth: 2,
     });
-    
+
     watchSession.status = 'watching';
-    
+
     console.info(c.green(`✅ Watch filter session started: ${sessionId}`));
     console.info(c.cyan(`📋 Pattern: ${pattern} → Script: ${script}`));
     console.info(c.gray(`🔗 Dashboard: http://localhost:3001\n`));
-    
+
     // Log initial event
     addWatchEvent(sessionId, 'filter_update', {
       pattern,
       script,
       flags,
-      packages: 'discovering'
+      packages: 'discovering',
     });
-    
   } catch (error) {
     watchSession.status = 'error';
     console.error(c.red(`❌ Failed to start watch session: ${error}`));
     addWatchEvent(sessionId, 'error', { error: String(error) });
   }
-  
+
   return watchSession;
 }
 
@@ -143,19 +151,19 @@ export async function updateWatchFilter(
   if (!session) {
     throw new Error(`Watch session not found: ${sessionId}`);
   }
-  
+
   console.info(c.cyan(`\n🔄 Updating filter: ${session.pattern} → ${newPattern}`));
-  
+
   // Stop current watch session
   if (session.watchSessionId) {
     // Note: In a real implementation, you'd stop the existing watch session
     // For now, we'll just update the pattern and restart
   }
-  
+
   // Update pattern
   session.pattern = newPattern;
   session.lastActivity = Date.now();
-  
+
   // Start new watch session with updated pattern
   try {
     session.watchSessionId = await createWatchSession(newPattern, session.script, {
@@ -165,20 +173,19 @@ export async function updateWatchFilter(
       maxRestarts: 10,
       healthCheckUrl: process.env.HEALTH_CHECK_URL,
       hotReload: newFlags?.hot ?? false,
-      smolMode: newFlags?.smol ?? false
+      smolMode: newFlags?.smol ?? false,
     });
-    
+
     session.restartCount++;
     session.status = 'watching';
-    
+
     addWatchEvent(sessionId, 'filter_update', {
       oldPattern: session.pattern,
       newPattern,
-      restartCount: session.restartCount
+      restartCount: session.restartCount,
     });
-    
+
     console.info(c.green(`✅ Filter updated successfully`));
-    
   } catch (error) {
     session.status = 'error';
     console.error(c.red(`❌ Failed to update filter: ${error}`));
@@ -197,17 +204,20 @@ export function getWatchSessionStats(sessionId: string): {
 } | null {
   const session = watchSessions.get(sessionId);
   if (!session) return null;
-  
-  const eventSummary = session.events.reduce((summary, event) => {
-    summary[event.type] = (summary[event.type] || 0) + 1;
-    return summary;
-  }, {} as Record<string, number>);
-  
+
+  const eventSummary = session.events.reduce(
+    (summary, event) => {
+      summary[event.type] = (summary[event.type] || 0) + 1;
+      return summary;
+    },
+    {} as Record<string, number>
+  );
+
   return {
     session,
     cliSession: session.cliSession,
     uptime: Date.now() - session.startTime,
-    eventSummary
+    eventSummary,
   };
 }
 
@@ -224,18 +234,18 @@ export function listWatchSessions(): WatchFilterSession[] {
 export async function stopWatchSession(sessionId: string): Promise<void> {
   const session = watchSessions.get(sessionId);
   if (!session) return;
-  
+
   console.info(c.yellow(`🛑 Stopping watch session: ${sessionId}`));
-  
+
   session.status = 'stopped';
   session.lastActivity = Date.now();
-  
+
   // Add final event
-  addWatchEvent(sessionId, 'restart', { 
+  addWatchEvent(sessionId, 'restart', {
     action: 'stopped',
-    totalDuration: Date.now() - session.startTime
+    totalDuration: Date.now() - session.startTime,
   });
-  
+
   watchSessions.delete(sessionId);
   console.info(c.green(`✅ Watch session stopped`));
 }
@@ -243,19 +253,23 @@ export async function stopWatchSession(sessionId: string): Promise<void> {
 /**
  * Add event to watch session
  */
-function addWatchEvent(sessionId: string, type: WatchEvent['type'], details: Record<string, any>): void {
+function addWatchEvent(
+  sessionId: string,
+  type: WatchEvent['type'],
+  details: Record<string, any>
+): void {
   const session = watchSessions.get(sessionId);
   if (!session) return;
-  
+
   const event: WatchEvent = {
     timestamp: Date.now(),
     type,
-    details
+    details,
   };
-  
+
   session.events.push(event);
   session.lastActivity = Date.now();
-  
+
   // Keep only last 100 events
   if (session.events.length > 100) {
     session.events = session.events.slice(-100);
@@ -272,33 +286,32 @@ export async function runWatchFilterCLI(args: string[]): Promise<void> {
   } catch (error) {
     console.info(c.yellow('⚠️  Dashboard port 3001 in use, continuing without dashboard'));
   }
-  
+
   // Parse arguments to check for help
   if (args.includes('--help') || args.includes('-h')) {
     showWatchFilterHelp();
     return;
   }
-  
+
   try {
     // Start watch filter session
     const session = await startWatchFilterCLI(args);
-    
+
     // Setup graceful shutdown
     process.on('SIGINT', async () => {
       console.info(c.yellow('\n\n🛑 Shutting down watch filter...'));
       await stopWatchSession(session.id);
       process.exit(0);
     });
-    
+
     process.on('SIGTERM', async () => {
       console.info(c.yellow('\n\n🛑 Shutting down watch filter...'));
       await stopWatchSession(session.id);
       process.exit(0);
     });
-    
+
     // Keep process alive
     await new Promise(() => {});
-    
   } catch (error) {
     console.error(c.red(`❌ Watch filter CLI failed: ${error}`));
     process.exit(1);
@@ -310,24 +323,28 @@ export async function runWatchFilterCLI(args: string[]): Promise<void> {
  */
 function showWatchFilterHelp(): void {
   console.info(c.bold('🚀 Enhanced Watch Filter CLI v3.15 - Help\n'));
-  
+
   console.info(c.cyan('USAGE:'));
   console.info('  bun watch-filter [options] <script> [args...]\n');
-  
+
   console.info(c.cyan('OPTIONS:'));
   console.info('  ' + c.yellow('--filter, -F <pattern>') + '     Filter packages by glob pattern');
-  console.info('  ' + c.yellow('--filter-output-lines <n>') + ' Limit output lines per package (default: 10)');
+  console.info(
+    '  ' + c.yellow('--filter-output-lines <n>') + ' Limit output lines per package (default: 10)'
+  );
   console.info('  ' + c.yellow('--ws') + '                       Run in all workspaces');
-  console.info('  ' + c.yellow('--parallel') + '                 Run packages in parallel (default)');
+  console.info(
+    '  ' + c.yellow('--parallel') + '                 Run packages in parallel (default)'
+  );
   console.info('  ' + c.yellow('--sequential') + '               Run packages sequentially');
   console.info('  ' + c.yellow('--continue-on-error') + '         Continue on error');
   console.info('  ' + c.yellow('--watch') + '                    Enable watch mode');
   console.info('  ' + c.yellow('--hot') + '                      Enable hot reload');
-  console.info('  ' + c.yellow('--no-clear') + '                 Don\'t clear screen on restart');
+  console.info('  ' + c.yellow('--no-clear') + "                 Don't clear screen on restart");
   console.info('  ' + c.yellow('--smol') + '                     Use memory-optimized mode');
   console.info('  ' + c.yellow('--silent') + '                   Suppress output');
   console.info('  ' + c.yellow('--help, -h') + '                 Show this help\n');
-  
+
   console.info(c.cyan('EXAMPLES:'));
   console.info('  ' + c.gray('# Watch all packages with dev script'));
   console.info('  ' + c.green('bun watch-filter --filter "*" dev'));
@@ -342,12 +359,14 @@ function showWatchFilterHelp(): void {
   console.info('  ' + c.green('bun watch-filter --filter "worker-*" --smol start'));
   console.info('');
   console.info('  ' + c.gray('# Sequential execution with continue on error'));
-  console.info('  ' + c.green('bun watch-filter --filter "test-*" --sequential --continue-on-error test'));
+  console.info(
+    '  ' + c.green('bun watch-filter --filter "test-*" --sequential --continue-on-error test')
+  );
   console.info('');
-  
+
   console.info(c.cyan('DASHBOARD:'));
   console.info('  ' + c.blue('http://localhost:3001') + ' - Real-time monitoring dashboard\n');
-  
+
   console.info(c.gray('For more information, visit: https://bun.com/docs/runtime'));
 }
 

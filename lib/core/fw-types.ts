@@ -87,7 +87,12 @@ export function profileTimestamp(date = new Date()): string {
 }
 
 /** Canonical R2 key for a profile file */
-export function profileR2Key(sessionId: string, type: ProfileType, filename: string, prefix = 'profiles'): string {
+export function profileR2Key(
+  sessionId: string,
+  type: ProfileType,
+  filename: string,
+  prefix = 'profiles'
+): string {
   return `${prefix}/sessions/${sessionId}/${type}/${filename}`;
 }
 
@@ -98,7 +103,9 @@ export function manifestR2Key(sessionId: string, prefix = 'profiles'): string {
 
 /** Generate a canonical session ID */
 export function generateSessionId(): string {
-  return Bun.env.TERMINAL_SESSION_ID
-    || Bun.env.TERM_SESSION_ID
-    || `pty-${process.pid}-${profileTimestamp()}`;
+  return (
+    Bun.env.TERMINAL_SESSION_ID ||
+    Bun.env.TERM_SESSION_ID ||
+    `pty-${process.pid}-${profileTimestamp()}`
+  );
 }

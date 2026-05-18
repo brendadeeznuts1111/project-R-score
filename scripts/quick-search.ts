@@ -17,7 +17,7 @@ interface SearchOptions {
 
 async function main() {
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0) {
     console.info(`
 🔍 Quick Search - Ghost Search Maneuver
@@ -75,7 +75,7 @@ EXAMPLES:
   }
 
   const startTime = performance.now();
-  
+
   console.info(`🔍 Searching for "${query}"...\n`);
 
   try {
@@ -83,43 +83,33 @@ EXAMPLES:
       // Documentation only search
       const docs = await searchDocs(query, {
         caseSensitive: options.caseSensitive,
-        maxResults: options.maxResults
+        maxResults: options.maxResults,
       });
-      
+
       console.info(`--- Documentation Matches (${docs.length}) ---`);
       displayResults(docs, 'docs');
-      
     } else if (options.codeOnly) {
       // Code only search
-      const code = await searchProjectCode(
-        query, 
-        options.projectDir || '.',
-        {
-          caseSensitive: options.caseSensitive,
-          maxResults: options.maxResults
-        }
-      );
-      
+      const code = await searchProjectCode(query, options.projectDir || '.', {
+        caseSensitive: options.caseSensitive,
+        maxResults: options.maxResults,
+      });
+
       console.info(`--- Code Matches (${code.length}) ---`);
       displayResults(code, 'code');
-      
     } else {
       // Ghost Search - parallel docs and code
-      const { docs, code } = await ghostSearch(
-        query,
-        options.projectDir || '.',
-        {
-          caseSensitive: options.caseSensitive,
-          maxResults: options.maxResults
-        }
-      );
-      
+      const { docs, code } = await ghostSearch(query, options.projectDir || '.', {
+        caseSensitive: options.caseSensitive,
+        maxResults: options.maxResults,
+      });
+
       console.info(`--- Documentation Matches (${docs.length}) ---`);
       displayResults(docs, 'docs');
-      
+
       console.info(`\n--- Project Code Matches (${code.length}) ---`);
       displayResults(code, 'code');
-      
+
       const totalMatches = docs.length + code.length;
       console.info(`\n📊 Total matches: ${totalMatches}`);
     }
@@ -127,7 +117,6 @@ EXAMPLES:
     const endTime = performance.now();
     const duration = (endTime - startTime).toFixed(2);
     console.info(`⚡ Search completed in ${duration}ms`);
-
   } catch (error) {
     console.error('❌ Search failed:', error);
     process.exit(1);
@@ -145,7 +134,7 @@ function displayResults(matches: any[], type: 'docs' | 'code'): void {
     const filename = data.path.text.split('/').pop();
     const lineNumber = data.line_number;
     const line = data.lines.text.trim();
-    
+
     // Highlight the match
     let highlightedLine = line;
     if (data.submatches.length > 0) {
@@ -163,41 +152,40 @@ function displayResults(matches: any[], type: 'docs' | 'code'): void {
 // Performance comparison mode
 if (process.argv.includes('--parallel')) {
   console.info('🏎️ Running parallel performance test...\n');
-  
+
   const testQueries = ['Bun.serve', 'SQLite', 'fetch', 'markdown'];
   const projectDir = '.';
-  
+
   const parallelStart = performance.now();
-  
+
   // Run all searches in parallel
-  const parallelPromises = testQueries.map(query => 
+  const parallelPromises = testQueries.map(query =>
     ghostSearch(query, projectDir, { maxResults: 10 })
   );
-  
+
   const parallelResults = await Promise.all(parallelPromises);
   const parallelEnd = performance.now();
-  
+
   console.info('📊 Parallel Results:');
   testQueries.forEach((query, index) => {
     const { docs, code } = parallelResults[index];
     console.info(`  ${query}: ${docs.length} docs, ${code.length} code matches`);
   });
-  
+
   console.info(`\n⚡ Parallel execution time: ${(parallelEnd - parallelStart).toFixed(2)}ms`);
-  
+
   // Compare with sequential execution
   const sequentialStart = performance.now();
-  
+
   for (const query of testQueries) {
     await ghostSearch(query, projectDir, { maxResults: 10 });
   }
-  
+
   const sequentialEnd = performance.now();
   const speedup = ((sequentialEnd - sequentialStart) / (parallelEnd - parallelStart)).toFixed(2);
-  
+
   console.info(`🐌 Sequential execution time: ${(sequentialEnd - sequentialStart).toFixed(2)}ms`);
   console.info(`🚀 Speedup: ${speedup}x faster with parallel execution`);
-  
 } else {
   main();
 }

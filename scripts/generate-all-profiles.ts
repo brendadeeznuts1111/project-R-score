@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Profile Generation Script
- * 
+ *
  * Discovers all project directories and generates heap profile.md files
  * using Bun's --heap-prof-md flag.
  */
@@ -9,11 +9,11 @@
 import { existsSync, readdirSync, statSync } from 'fs';
 import { join, dirname, basename } from 'path';
 import { $ } from 'bun';
-import { 
-  createProfilingError, 
+import {
+  createProfilingError,
   handleProfilingError,
   ProfilingErrorCode,
-  type ProfilingError 
+  type ProfilingError,
 } from './profiling-errors.ts';
 
 interface ProjectInfo {
@@ -39,7 +39,7 @@ const HEAP_FORMAT = HEAP_FORMAT_ARG === 'v8' ? 'v8' : HEAP_FORMAT_ARG === 'both'
 const HEAP_PROF_DIR_ARG = args.find(arg => arg.startsWith('--heap-prof-dir='))?.split('=')[1];
 const CPU_PROF_DIR_ARG = args.find(arg => arg.startsWith('--cpu-prof-dir='))?.split('=')[1];
 // Default to heap profiling if nothing specified, or both if --both is specified
-const HEAP_PROF = BOTH || (!CPU_PROF && !HEAP_PROF_ONLY) || (HEAP_PROF_ONLY);
+const HEAP_PROF = BOTH || (!CPU_PROF && !HEAP_PROF_ONLY) || HEAP_PROF_ONLY;
 const CPU_PROF_FINAL = BOTH || CPU_PROF;
 const HEAP_PROF_FINAL = BOTH || HEAP_PROF;
 
@@ -48,13 +48,13 @@ const HEAP_PROF_FINAL = BOTH || HEAP_PROF;
  */
 async function createMinimalTestScript(projectPath: string): Promise<string | null> {
   const testScriptPath = join(projectPath, '__profile_test__.ts');
-  
+
   try {
     // Check if it already exists
     if (existsSync(testScriptPath)) {
       return '__profile_test__.ts';
     }
-    
+
     // Create a minimal script that imports the project
     const testScript = `#!/usr/bin/env bun
 /**
@@ -95,7 +95,7 @@ try {
   console.error('Error in profile test:', error);
 }
 `;
-    
+
     await Bun.write(testScriptPath, testScript);
     return '__profile_test__.ts';
   } catch (error) {
@@ -106,7 +106,10 @@ try {
 /**
  * Find entry point for a project directory
  */
-async function findEntryPoint(projectPath: string, createTestScript: boolean = true): Promise<string | null> {
+async function findEntryPoint(
+  projectPath: string,
+  createTestScript: boolean = true
+): Promise<string | null> {
   try {
     const entryPoints = [
       'index.ts',
@@ -138,7 +141,7 @@ async function findEntryPoint(projectPath: string, createTestScript: boolean = t
         // Use Bun.JSONC.parse() for JSONC support (comments, trailing commas)
         // Reference: https://bun.com/blog/bun-v1.3.6#bun-jsonc-api-for-parsing-json-with-comments
         const content = Bun.JSONC.parse(pkgContent);
-        
+
         // Check for main field
         if (content.main) {
           const mainPath = join(projectPath, content.main);
@@ -146,7 +149,7 @@ async function findEntryPoint(projectPath: string, createTestScript: boolean = t
             return content.main;
           }
         }
-        
+
         if (content.scripts) {
           // Try to find a main script
           const mainScripts = ['start', 'dev', 'main', 'index', 'build', 'test'];
@@ -169,7 +172,7 @@ async function findEntryPoint(projectPath: string, createTestScript: boolean = t
         // Ignore JSON parse errors - continue
       }
     }
-    
+
     // If no entry point found and createTestScript is enabled, create a minimal test script
     if (createTestScript) {
       const testScript = await createMinimalTestScript(projectPath);
@@ -221,7 +224,7 @@ async function discoverProjects(rootDir: string, depth = 0): Promise<ProjectInfo
 
     try {
       const entries = readdirSync(dir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         try {
           if (entry.isDirectory()) {
@@ -231,30 +234,30 @@ async function discoverProjects(rootDir: string, depth = 0): Promise<ProjectInfo
             }
 
             const fullPath = join(dir, entry.name);
-            
+
             try {
               const packageJsonPath = join(fullPath, 'package.json');
 
-          if (existsSync(packageJsonPath)) {
-            // Found a project directory
-            try {
-              // Don't create test scripts during discovery - only when actually profiling
-              const entryPoint = await findEntryPoint(fullPath, false);
-              projects.push({
-                path: fullPath,
-                name: entry.name,
-                entryPoint,
-                hasPackageJson: true,
-              });
-            } catch (e) {
-              // Fail safely - add project without entry point
-              projects.push({
-                path: fullPath,
-                name: entry.name,
-                entryPoint: null,
-                hasPackageJson: true,
-              });
-            }
+              if (existsSync(packageJsonPath)) {
+                // Found a project directory
+                try {
+                  // Don't create test scripts during discovery - only when actually profiling
+                  const entryPoint = await findEntryPoint(fullPath, false);
+                  projects.push({
+                    path: fullPath,
+                    name: entry.name,
+                    entryPoint,
+                    hasPackageJson: true,
+                  });
+                } catch (e) {
+                  // Fail safely - add project without entry point
+                  projects.push({
+                    path: fullPath,
+                    name: entry.name,
+                    entryPoint: null,
+                    hasPackageJson: true,
+                  });
+                }
               } else {
                 // Recurse into subdirectories
                 await findPackageJsonDirs(fullPath, currentDepth + 1);
@@ -338,8 +341,8 @@ async function discoverProjects(rootDir: string, depth = 0): Promise<ProjectInfo
  * Generate profiles for a project (CPU, heap, or both)
  */
 async function generateProfile(
-  project: ProjectInfo, 
-  dryRun: boolean, 
+  project: ProjectInfo,
+  dryRun: boolean,
   originalCwd: string,
   cpuProf: boolean,
   heapProf: boolean,
@@ -350,7 +353,7 @@ async function generateProfile(
   // Determine output paths
   const cpuDir = cpuProfDir || project.path;
   const heapDir = heapProfDir || project.path;
-  
+
   const cpuProfilePath = join(cpuDir, 'cpu-profile.md');
   const heapProfileMdPath = join(heapDir, 'profile.md');
   const heapProfileV8Path = join(heapDir, `${project.name}.heapsnapshot`);
@@ -358,7 +361,7 @@ async function generateProfile(
 
   console.info(`\n📊 ${dryRun ? '[DRY RUN] ' : ''}Generating profile for: ${project.name}`);
   console.info(`   Path: ${project.path}`);
-  
+
   // Handle missing entry point
   if (!project.entryPoint) {
     if (dryRun) {
@@ -374,10 +377,10 @@ async function generateProfile(
           project.entryPoint = testScript;
           console.info(`   ✅ Created minimal test script: ${testScript}`);
         } else {
-          const error = createProfilingError(
-            ProfilingErrorCode.ENTRY_POINT_NOT_FOUND,
-            { project: project.name, path: project.path }
-          );
+          const error = createProfilingError(ProfilingErrorCode.ENTRY_POINT_NOT_FOUND, {
+            project: project.name,
+            path: project.path,
+          });
           error.log();
           return result;
         }
@@ -392,20 +395,22 @@ async function generateProfile(
       }
     }
   }
-  
+
   // Entry point exists (either found or created)
   console.info(`   Entry point: ${project.entryPoint}`);
   if (project.entryPoint === '__profile_test__.ts') {
     console.info(`   ⚠️  Using auto-generated test script (no root entry point found)`);
   }
-  
+
   console.info(`   CPU Profiling: ${cpuProf ? '✅' : '❌'}`);
   if (cpuProf && cpuProfDir) {
     console.info(`   CPU Output Dir: ${cpuProfDir}`);
   }
   console.info(`   Heap Profiling: ${heapProf ? '✅' : '❌'}`);
   if (heapProf) {
-    console.info(`   Heap Format: ${heapFormat === 'both' ? 'Markdown + V8' : heapFormat === 'v8' ? 'V8 Snapshot' : 'Markdown'}`);
+    console.info(
+      `   Heap Format: ${heapFormat === 'both' ? 'Markdown + V8' : heapFormat === 'v8' ? 'V8 Snapshot' : 'Markdown'}`
+    );
     if (heapProfDir) {
       console.info(`   Heap Output Dir: ${heapProfDir}`);
     }
@@ -428,7 +433,7 @@ async function generateProfile(
 
   try {
     const entryPointPath = join(project.path, project.entryPoint);
-    
+
     // Verify entry point exists
     if (!existsSync(entryPointPath)) {
       console.info(`   ⚠️  Entry point not found: ${entryPointPath}`);
@@ -437,14 +442,14 @@ async function generateProfile(
 
     // Store original directory and change to project directory
     const previousCwd = process.cwd();
-    
+
     try {
       process.chdir(project.path);
 
       // Build bun command with profiling flags
       let cmd: any;
       const cmdParts: string[] = ['bun'];
-      
+
       // CPU profiling flags
       if (cpuProf) {
         cmdParts.push('--cpu-prof-md');
@@ -453,7 +458,7 @@ async function generateProfile(
         }
         cmdParts.push('--cpu-prof-name', 'cpu-profile.md');
       }
-      
+
       // Heap profiling flags
       if (heapProf) {
         if (heapFormat === 'md' || heapFormat === 'both') {
@@ -471,17 +476,17 @@ async function generateProfile(
           cmdParts.push('--heap-prof-name', `${project.name}.heapsnapshot`);
         }
       }
-      
+
       cmdParts.push(project.entryPoint);
-      
+
       // Execute command using template literal syntax
       cmd = $(cmdParts).quiet();
-      
+
       // Run bun with profiling with timeout
       const execResult = await Promise.race([
         cmd,
-        new Promise<{ exitCode: number }>((resolve) => 
-          setTimeout(() => resolve({ exitCode: 124 }), 30000) // 30 second timeout
+        new Promise<{ exitCode: number }>(
+          resolve => setTimeout(() => resolve({ exitCode: 124 }), 30000) // 30 second timeout
         ),
       ]);
 
@@ -508,7 +513,7 @@ async function generateProfile(
         // Check if heap profiles were created
         if (heapProf) {
           let heapSuccess = false;
-          
+
           if (heapFormat === 'md' || heapFormat === 'both') {
             if (existsSync(heapProfileMdPath)) {
               try {
@@ -523,7 +528,7 @@ async function generateProfile(
               console.info(`   ⚠️  Heap markdown command succeeded but profile.md not found`);
             }
           }
-          
+
           if (heapFormat === 'v8' || heapFormat === 'both') {
             if (existsSync(heapProfileV8Path)) {
               try {
@@ -535,38 +540,32 @@ async function generateProfile(
                 heapSuccess = true;
               }
             } else if (heapFormat === 'v8') {
-              const error = createProfilingError(
-                ProfilingErrorCode.PROFILE_FILE_NOT_CREATED,
-                { 
-                  project: project.name, 
-                  expectedPath: heapProfileV8Path,
-                  format: 'v8-snapshot'
-                }
-              );
+              const error = createProfilingError(ProfilingErrorCode.PROFILE_FILE_NOT_CREATED, {
+                project: project.name,
+                expectedPath: heapProfileV8Path,
+                format: 'v8-snapshot',
+              });
               error.log();
             }
           }
-          
+
           result.heap = heapSuccess;
         }
 
         return result;
       } else if (execResult.exitCode === 124) {
-        const error = createProfilingError(
-          ProfilingErrorCode.PROFILE_TIMEOUT,
-          { project: project.name, entryPoint: project.entryPoint }
-        );
+        const error = createProfilingError(ProfilingErrorCode.PROFILE_TIMEOUT, {
+          project: project.name,
+          entryPoint: project.entryPoint,
+        });
         error.log();
         return result;
       } else {
-        const error = createProfilingError(
-          ProfilingErrorCode.PROFILE_GENERATION_FAILED,
-          { 
-            project: project.name, 
-            entryPoint: project.entryPoint,
-            exitCode: execResult.exitCode 
-          }
-        );
+        const error = createProfilingError(ProfilingErrorCode.PROFILE_GENERATION_FAILED, {
+          project: project.name,
+          entryPoint: project.entryPoint,
+          exitCode: execResult.exitCode,
+        });
         error.log();
         return result;
       }
@@ -591,7 +590,7 @@ async function generateProfile(
     } catch (e) {
       // Ignore if we can't change back
     }
-    
+
     const profilingError = handleProfilingError(
       error,
       ProfilingErrorCode.PROFILE_GENERATION_FAILED,
@@ -607,16 +606,16 @@ async function generateProfile(
  */
 async function main() {
   const originalCwd = process.cwd();
-  
+
   try {
     if (DRY_RUN) {
       console.info('🔍 [DRY RUN MODE] Discovering projects...\n');
     } else {
       console.info('🔍 Discovering projects...\n');
     }
-    
+
     const projects = await discoverProjects(ROOT_DIR);
-    
+
     console.info(`Found ${projects.length} projects:\n`);
     projects.forEach(p => {
       console.info(`  - ${p.name} (${p.path})`);
@@ -627,50 +626,58 @@ async function main() {
       }
     });
 
-  const profileType = BOTH ? 'CPU + Heap' : CPU_PROF_FINAL && !HEAP_PROF_FINAL ? 'CPU' : HEAP_PROF_FINAL && !CPU_PROF_FINAL ? 'Heap' : 'CPU + Heap';
-  
-  if (DRY_RUN) {
-    console.info(`\n\n🔍 [DRY RUN MODE] Would generate ${profileType} profiles for ${projects.filter(p => p.entryPoint).length} projects...\n`);
-  } else {
-    console.info(`\n\n🚀 Generating ${profileType} profiles...\n`);
-  }
+    const profileType = BOTH
+      ? 'CPU + Heap'
+      : CPU_PROF_FINAL && !HEAP_PROF_FINAL
+        ? 'CPU'
+        : HEAP_PROF_FINAL && !CPU_PROF_FINAL
+          ? 'Heap'
+          : 'CPU + Heap';
 
-  const results = {
-    cpuSuccess: 0,
-    heapSuccess: 0,
-    cpuFailed: 0,
-    heapFailed: 0,
-    skipped: 0,
-  };
-
-  for (const project of projects) {
-    try {
-      const profileResult = await generateProfile(
-        project, 
-        DRY_RUN, 
-        originalCwd, 
-        CPU_PROF_FINAL, 
-        HEAP_PROF_FINAL,
-        HEAP_FORMAT as 'md' | 'v8' | 'both',
-        HEAP_PROF_DIR_ARG,
-        CPU_PROF_DIR_ARG
+    if (DRY_RUN) {
+      console.info(
+        `\n\n🔍 [DRY RUN MODE] Would generate ${profileType} profiles for ${projects.filter(p => p.entryPoint).length} projects...\n`
       );
-      
-      if (profileResult.cpu) {
-        results.cpuSuccess++;
-      } else if (CPU_PROF_FINAL) {
-        results.cpuFailed++;
-      }
-      
-      if (profileResult.heap) {
-        results.heapSuccess++;
-      } else if (HEAP_PROF_FINAL) {
-        results.heapFailed++;
-      }
-      
-      if (!project.entryPoint) {
-        results.skipped++;
-      }
+    } else {
+      console.info(`\n\n🚀 Generating ${profileType} profiles...\n`);
+    }
+
+    const results = {
+      cpuSuccess: 0,
+      heapSuccess: 0,
+      cpuFailed: 0,
+      heapFailed: 0,
+      skipped: 0,
+    };
+
+    for (const project of projects) {
+      try {
+        const profileResult = await generateProfile(
+          project,
+          DRY_RUN,
+          originalCwd,
+          CPU_PROF_FINAL,
+          HEAP_PROF_FINAL,
+          HEAP_FORMAT as 'md' | 'v8' | 'both',
+          HEAP_PROF_DIR_ARG,
+          CPU_PROF_DIR_ARG
+        );
+
+        if (profileResult.cpu) {
+          results.cpuSuccess++;
+        } else if (CPU_PROF_FINAL) {
+          results.cpuFailed++;
+        }
+
+        if (profileResult.heap) {
+          results.heapSuccess++;
+        } else if (HEAP_PROF_FINAL) {
+          results.heapFailed++;
+        }
+
+        if (!project.entryPoint) {
+          results.skipped++;
+        }
       } catch (error) {
         // Fail safely - continue with next project
         const profilingError = handleProfilingError(
@@ -686,48 +693,56 @@ async function main() {
           results.skipped++;
         }
       }
-  }
+    }
 
-  console.info(`\n\n📈 Summary:`);
-  if (DRY_RUN) {
-    if (CPU_PROF_FINAL) {
-      console.info(`   🔍 [DRY RUN] CPU profiles would succeed: ${results.cpuSuccess}`);
-      console.info(`   🔍 [DRY RUN] CPU profiles would fail: ${results.cpuFailed}`);
+    console.info(`\n\n📈 Summary:`);
+    if (DRY_RUN) {
+      if (CPU_PROF_FINAL) {
+        console.info(`   🔍 [DRY RUN] CPU profiles would succeed: ${results.cpuSuccess}`);
+        console.info(`   🔍 [DRY RUN] CPU profiles would fail: ${results.cpuFailed}`);
+      }
+      if (HEAP_PROF_FINAL) {
+        console.info(`   🔍 [DRY RUN] Heap profiles would succeed: ${results.heapSuccess}`);
+        console.info(`   🔍 [DRY RUN] Heap profiles would fail: ${results.heapFailed}`);
+      }
+      console.info(`   ⏭️  Skipped: ${results.skipped}`);
+    } else {
+      if (CPU_PROF_FINAL) {
+        console.info(`   ✅ CPU Success: ${results.cpuSuccess}`);
+        console.info(`   ❌ CPU Failed: ${results.cpuFailed}`);
+      }
+      if (HEAP_PROF_FINAL) {
+        console.info(`   ✅ Heap Success: ${results.heapSuccess}`);
+        console.info(`   ❌ Heap Failed: ${results.heapFailed}`);
+      }
+      console.info(`   ⏭️  Skipped: ${results.skipped}`);
     }
-    if (HEAP_PROF_FINAL) {
-      console.info(`   🔍 [DRY RUN] Heap profiles would succeed: ${results.heapSuccess}`);
-      console.info(`   🔍 [DRY RUN] Heap profiles would fail: ${results.heapFailed}`);
+    console.info(`   📊 Total: ${projects.length}`);
+
+    if (!DRY_RUN) {
+      console.info(`\n💡 Usage:`);
+      console.info(`   CPU only:              bun run scripts/generate-all-profiles.ts --cpu-prof`);
+      console.info(`   Heap markdown:         bun run scripts/generate-all-profiles.ts (default)`);
+      console.info(
+        `   Heap V8 snapshot:      bun run scripts/generate-all-profiles.ts --heap-format=v8`
+      );
+      console.info(
+        `   Heap both formats:     bun run scripts/generate-all-profiles.ts --heap-format=both`
+      );
+      console.info(`   Both CPU + Heap:       bun run scripts/generate-all-profiles.ts --both`);
+      console.info(
+        `   Custom output dir:     bun run scripts/generate-all-profiles.ts --heap-prof-dir=./profiles`
+      );
+      console.info(`   Dry run:               bun run scripts/generate-all-profiles.ts --dry-run`);
+      console.info(`\n   Examples:`);
+      console.info(`   # Generate V8 snapshots in ./profiles:`);
+      console.info(
+        `   bun run scripts/generate-all-profiles.ts --heap-format=v8 --heap-prof-dir=./profiles`
+      );
+      console.info(`   # Generate both markdown and V8 formats:`);
+      console.info(`   bun run scripts/generate-all-profiles.ts --heap-format=both`);
     }
-    console.info(`   ⏭️  Skipped: ${results.skipped}`);
-  } else {
-    if (CPU_PROF_FINAL) {
-      console.info(`   ✅ CPU Success: ${results.cpuSuccess}`);
-      console.info(`   ❌ CPU Failed: ${results.cpuFailed}`);
-    }
-    if (HEAP_PROF_FINAL) {
-      console.info(`   ✅ Heap Success: ${results.heapSuccess}`);
-      console.info(`   ❌ Heap Failed: ${results.heapFailed}`);
-    }
-    console.info(`   ⏭️  Skipped: ${results.skipped}`);
-  }
-  console.info(`   📊 Total: ${projects.length}`);
-  
-  if (!DRY_RUN) {
-    console.info(`\n💡 Usage:`);
-    console.info(`   CPU only:              bun run scripts/generate-all-profiles.ts --cpu-prof`);
-    console.info(`   Heap markdown:         bun run scripts/generate-all-profiles.ts (default)`);
-    console.info(`   Heap V8 snapshot:      bun run scripts/generate-all-profiles.ts --heap-format=v8`);
-    console.info(`   Heap both formats:     bun run scripts/generate-all-profiles.ts --heap-format=both`);
-    console.info(`   Both CPU + Heap:       bun run scripts/generate-all-profiles.ts --both`);
-    console.info(`   Custom output dir:     bun run scripts/generate-all-profiles.ts --heap-prof-dir=./profiles`);
-    console.info(`   Dry run:               bun run scripts/generate-all-profiles.ts --dry-run`);
-    console.info(`\n   Examples:`);
-    console.info(`   # Generate V8 snapshots in ./profiles:`);
-    console.info(`   bun run scripts/generate-all-profiles.ts --heap-format=v8 --heap-prof-dir=./profiles`);
-    console.info(`   # Generate both markdown and V8 formats:`);
-    console.info(`   bun run scripts/generate-all-profiles.ts --heap-format=both`);
-  }
-    
+
     // Ensure we're back in original directory
     try {
       process.chdir(originalCwd);
@@ -741,7 +756,7 @@ async function main() {
     } catch (e) {
       // Ignore if we can't change back
     }
-    
+
     const profilingError = handleProfilingError(
       error,
       ProfilingErrorCode.PROFILE_GENERATION_FAILED,

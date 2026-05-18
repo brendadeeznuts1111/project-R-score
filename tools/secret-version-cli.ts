@@ -40,7 +40,7 @@ async function showHelp() {
     ['visualize <key>', 'Generate version visualization'],
     ['schedule <key> <cron|interval> <value>', 'Schedule rotation'],
     ['impact <key>', 'Show impact analysis'],
-    ['help', 'Show this help']
+    ['help', 'Show this help'],
   ];
 
   commands.forEach(([cmd, desc]) => {
@@ -48,7 +48,9 @@ async function showHelp() {
   });
 
   console.info(styled('\nExamples:', 'primary'));
-  console.info(styled('  bun secret-version-cli.ts set API_KEY "sk_live_123" "Production key"', 'muted'));
+  console.info(
+    styled('  bun secret-version-cli.ts set API_KEY "sk_live_123" "Production key"', 'muted')
+  );
   console.info(styled('  bun secret-version-cli.ts rollback API_KEY v1.0.0 "Bug fix"', 'muted'));
   console.info(styled('  bun secret-version-cli.ts schedule JWT_KEY cron "0 0 1 * *"', 'muted'));
 
@@ -61,7 +63,7 @@ async function handleSet(key: string, value: string, description?: string) {
       author: process.env.USER || 'cli',
       description: description || 'Set via CLI',
       level: 'STANDARD',
-      tags: { 'source': 'cli' }
+      tags: { source: 'cli' },
     });
 
     log.success(`Set ${key}`);
@@ -133,7 +135,7 @@ async function handleRollback(key: string, targetVersion: string, reason?: strin
 
     const result = await versionedManager.rollback(key, targetVersion, {
       confirm,
-      reason: rollbackReason
+      reason: rollbackReason,
     });
 
     if (!result.cancelled) {
@@ -174,8 +176,9 @@ async function handleExpirations() {
 
       expiring.forEach(secret => {
         const color = secret.daysLeft <= 3 ? 'error' : 'warning';
-        console.info(styled(`• ${secret.key}`, color) +
-                    styled(` | ${secret.daysLeft} days left`, 'muted'));
+        console.info(
+          styled(`• ${secret.key}`, color) + styled(` | ${secret.daysLeft} days left`, 'muted')
+        );
       });
     }
   } catch (error) {
@@ -202,8 +205,11 @@ async function handleVisualize(key: string) {
     log.metric('Total versions', impact.totalVersions, 'muted');
     log.metric('Rollbacks', impact.rollbacks, impact.rollbacks > 0 ? 'warning' : 'success');
     log.metric('Rotations', impact.rotations, 'accent');
-    log.metric('Stability', (impact.stability * 100).toFixed(1) + '%',
-              impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error');
+    log.metric(
+      'Stability',
+      (impact.stability * 100).toFixed(1) + '%',
+      impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error'
+    );
 
     if (impact.recommendations.length > 0) {
       console.info(styled('\nRecommendations:', 'warning'));
@@ -218,9 +224,10 @@ async function handleVisualize(key: string) {
 
 async function handleSchedule(key: string, type: string, value: string) {
   try {
-    const schedule = type === 'cron'
-      ? { type: 'cron' as const, cron: value }
-      : { type: 'interval' as const, intervalMs: parseInt(value) };
+    const schedule =
+      type === 'cron'
+        ? { type: 'cron' as const, cron: value }
+        : { type: 'interval' as const, intervalMs: parseInt(value) };
 
     const rule = {
       key,
@@ -228,8 +235,8 @@ async function handleSchedule(key: string, type: string, value: string) {
       action: 'rotate' as const,
       metadata: {
         severity: 'MEDIUM' as const,
-        notify: ['cli']
-      }
+        notify: ['cli'],
+      },
     };
 
     const result = await lifecycleManager.scheduleRotation(key, rule);
@@ -253,8 +260,11 @@ async function handleImpact(key: string) {
     log.metric('Total versions', impact.totalVersions, 'muted');
     log.metric('Rollbacks', impact.rollbacks, impact.rollbacks > 0 ? 'warning' : 'success');
     log.metric('Rotations', impact.rotations, 'accent');
-    log.metric('Stability', (impact.stability * 100).toFixed(1) + '%',
-              impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error');
+    log.metric(
+      'Stability',
+      (impact.stability * 100).toFixed(1) + '%',
+      impact.stability > 0.8 ? 'success' : impact.stability > 0.5 ? 'warning' : 'error'
+    );
 
     if (impact.recommendations.length > 0) {
       console.info(styled('\nRecommendations:', 'warning'));

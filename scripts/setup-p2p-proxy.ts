@@ -12,7 +12,7 @@ async function setupP2PProxy() {
   console.info('╔════════════════════════════════════════════════════════════╗');
   console.info('║  🔧 P2P Proxy Setup                                        ║');
   console.info('╚════════════════════════════════════════════════════════════╝\n');
-  
+
   // 1. Create .env template
   const envTemplate = `# P2P Proxy Configuration
 # Copy this to .env and fill in your values
@@ -38,7 +38,7 @@ P2P_PROXY_PORT=3002
 # Ngrok (for local webhook testing)
 NGROK_AUTH_TOKEN=your_ngrok_token_here
 `;
-  
+
   try {
     await Bun.file('.env').text();
     console.info('ℹ️  .env already exists');
@@ -46,7 +46,7 @@ NGROK_AUTH_TOKEN=your_ngrok_token_here
     await writeFile('.env', envTemplate);
     console.info('✅ Created .env template');
   }
-  
+
   // 2. Create ngrok config
   const ngrokConfig = `authtoken: ${process.env.NGROK_AUTH_TOKEN || 'your_token_here'}
 tunnels:
@@ -55,10 +55,10 @@ tunnels:
     addr: 3002
     domain: ${BRAND_NAME.toLowerCase()}.ngrok.app
 `;
-  
+
   await writeFile('ngrok.yml', ngrokConfig);
   console.info('✅ Created ngrok.yml');
-  
+
   // 3. Create setup instructions
   const instructions = `# P2P Proxy Setup Instructions
 
@@ -164,10 +164,10 @@ Client → QR/Link → Branded Page → P2P Payment → Your Account
 - Redis commands: \`redis-cli monitor | grep p2p\`
 - Logs: \`bun run server/p2p-proxy-server-enhanced.ts 2>&1 | tee proxy.log\`
 `;
-  
+
   await writeFile('SETUP_P2P_PROXY.md', instructions);
   console.info('✅ Created SETUP_P2P_PROXY.md');
-  
+
   // 4. Create a simple test script
   const testScript = `#!/usr/bin/env bun
 /**
@@ -215,10 +215,10 @@ async function testProxy() {
 
 testProxy().catch(console.error);
 `;
-  
+
   await writeFile('tests/p2p-proxy-quick-test.ts', testScript);
   console.info('✅ Created tests/p2p-proxy-quick-test.ts');
-  
+
   console.info('\n╔════════════════════════════════════════════════════════════╗');
   console.info('║  🎉 Setup Complete!                                        ║');
   console.info('╠════════════════════════════════════════════════════════════╣');

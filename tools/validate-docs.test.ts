@@ -30,8 +30,7 @@ describe('validate-docs', () => {
     test('should not flag @planned annotated lines', async () => {
       const result = await checkUrls();
       const plannedIssues = result.issues.filter(
-        i => i.file === 'lib/docs/constants/domains.ts' &&
-             i.message.includes('docs.bun.sh')
+        i => i.file === 'lib/docs/constants/domains.ts' && i.message.includes('docs.bun.sh')
       );
       expect(plannedIssues).toHaveLength(0);
     });
@@ -59,9 +58,7 @@ describe('validate-docs', () => {
 
     test('should not flag the canonical source itself', async () => {
       const result = await checkEnums();
-      const canonicalIssues = result.issues.filter(
-        i => i.file === 'lib/docs/constants/enums.ts'
-      );
+      const canonicalIssues = result.issues.filter(i => i.file === 'lib/docs/constants/enums.ts');
       expect(canonicalIssues).toHaveLength(0);
     });
 
@@ -69,8 +66,9 @@ describe('validate-docs', () => {
       const result = await checkEnums();
       // These files now import+re-export, not define inline enums
       const reExportIssues = result.issues.filter(
-        i => i.file === 'lib/docs/constants/domains.ts' ||
-             i.file === 'lib/har-analyzer/domain-mapper.ts'
+        i =>
+          i.file === 'lib/docs/constants/domains.ts' ||
+          i.file === 'lib/har-analyzer/domain-mapper.ts'
       );
       expect(reExportIssues).toHaveLength(0);
     });

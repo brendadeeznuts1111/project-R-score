@@ -10,11 +10,26 @@ type PackageJson = {
 };
 
 export const BLOCKED_PACKAGES = ['aws-sdk', 'event-stream'] as const;
-export const CORE_SCAN_DIRS = ['scripts', 'server', 'lib', 'packages', 'src', 'dashboard', 'tests'] as const;
+export const CORE_SCAN_DIRS = [
+  'scripts',
+  'server',
+  'lib',
+  'packages',
+  'src',
+  'dashboard',
+  'tests',
+] as const;
 
-export function listBlockedDeps(pkg: PackageJson): Array<{ section: string; name: string; version: string }> {
+export function listBlockedDeps(
+  pkg: PackageJson
+): Array<{ section: string; name: string; version: string }> {
   const out: Array<{ section: string; name: string; version: string }> = [];
-  const sections: Array<['dependencies' | 'devDependencies' | 'optionalDependencies', Record<string, string> | undefined]> = [
+  const sections: Array<
+    [
+      'dependencies' | 'devDependencies' | 'optionalDependencies',
+      Record<string, string> | undefined,
+    ]
+  > = [
     ['dependencies', pkg.dependencies],
     ['devDependencies', pkg.devDependencies],
     ['optionalDependencies', pkg.optionalDependencies],
@@ -40,20 +55,24 @@ export function rgAvailable(): boolean {
 }
 
 export function scanBlockedImportsWithRipgrep(): string {
-  const pattern = "(from ['\\\"](aws-sdk|event-stream)['\\\"]|require\\(['\\\"](aws-sdk|event-stream)['\\\"]\\))";
-  const proc = Bun.spawnSync(
-    ['rg', '-n', '-S', pattern, ...CORE_SCAN_DIRS],
-    { cwd: process.cwd(), stderr: 'pipe', stdout: 'pipe' }
-  );
+  const pattern =
+    '(from [\'\\"](aws-sdk|event-stream)[\'\\"]|require\\([\'\\"](aws-sdk|event-stream)[\'\\"]\\))';
+  const proc = Bun.spawnSync(['rg', '-n', '-S', pattern, ...CORE_SCAN_DIRS], {
+    cwd: process.cwd(),
+    stderr: 'pipe',
+    stdout: 'pipe',
+  });
   return proc.exitCode === 0 ? proc.stdout.toString().trim() : '';
 }
 
 export function scanBlockedImportsWithGrep(): string {
-  const pattern = "from ['\\\"]aws-sdk['\\\"]|from ['\\\"]event-stream['\\\"]|require\\(['\\\"]aws-sdk['\\\"]\\)|require\\(['\\\"]event-stream['\\\"]\\)";
-  const proc = Bun.spawnSync(
-    ['grep', '-RInE', pattern, ...CORE_SCAN_DIRS],
-    { cwd: process.cwd(), stderr: 'pipe', stdout: 'pipe' }
-  );
+  const pattern =
+    'from [\'\\"]aws-sdk[\'\\"]|from [\'\\"]event-stream[\'\\"]|require\\([\'\\"]aws-sdk[\'\\"]\\)|require\\([\'\\"]event-stream[\'\\"]\\)';
+  const proc = Bun.spawnSync(['grep', '-RInE', pattern, ...CORE_SCAN_DIRS], {
+    cwd: process.cwd(),
+    stderr: 'pipe',
+    stdout: 'pipe',
+  });
   return proc.exitCode === 0 ? proc.stdout.toString().trim() : '';
 }
 

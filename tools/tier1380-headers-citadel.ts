@@ -28,25 +28,28 @@ export class Tier1380HeadersCitadel {
       csrfTokenLength: 36,
       sessionIdLength: 32,
       compressionPrefix: 0x01,
-      ...config
+      ...config,
     };
   }
 
   /**
    * Generate atomic R2 snapshot with full headers enumeration + CSRF + zstd + CRC32
    */
-  async createAtomicSnapshot(headers: Headers, cookies: Map<string, string>): Promise<{
+  async createAtomicSnapshot(
+    headers: Headers,
+    cookies: Map<string, string>
+  ): Promise<{
     key: string;
     checksum: string;
     size: { raw: number; compressed: number };
     metadata: Record<string, string>;
   }> {
     // Generate CSRF token if not present
-    const csrfToken = headers.get("X-CSRF-Token") || crypto.randomUUID();
-    headers.set("X-CSRF-Token", csrfToken);
+    const csrfToken = headers.get('X-CSRF-Token') || crypto.randomUUID();
+    headers.set('X-CSRF-Token', csrfToken);
 
     // Ensure CSRF cookie matches header
-    cookies.set("csrf", csrfToken);
+    cookies.set('csrf', csrfToken);
 
     // Build payload with full headers enumeration
     const payload: Tier1380Snapshot = {
@@ -54,9 +57,9 @@ export class Tier1380HeadersCitadel {
       cookies: [...cookies.entries()],
       publicApi: this.config.publicApiUrl,
       timestamp: new Date().toISOString(),
-      checksum: "", // Will be filled below
+      checksum: '', // Will be filled below
       variant: this.config.variant,
-      csrfProtected: true
+      csrfProtected: true,
     };
 
     // Serialize and calculate checksum
@@ -76,14 +79,14 @@ export class Tier1380HeadersCitadel {
 
     // Prepare metadata
     const metadata = {
-      "checksum:crc32": checksum,
-      "variant": this.config.variant,
-      "csrf-protected": "true",
-      "headers-count": headers.size.toString(),
-      "cookies-count": cookies.size.toString(),
-      "raw-size": finalRaw.length.toString(),
-      "compressed-size": prefixed.length.toString(),
-      "compression-ratio": ((prefixed.length / finalRaw.length) * 100).toFixed(2)
+      'checksum:crc32': checksum,
+      variant: this.config.variant,
+      'csrf-protected': 'true',
+      'headers-count': headers.size.toString(),
+      'cookies-count': cookies.size.toString(),
+      'raw-size': finalRaw.length.toString(),
+      'compressed-size': prefixed.length.toString(),
+      'compression-ratio': ((prefixed.length / finalRaw.length) * 100).toFixed(2),
     };
 
     return {
@@ -91,9 +94,9 @@ export class Tier1380HeadersCitadel {
       checksum,
       size: {
         raw: finalRaw.length,
-        compressed: prefixed.length
+        compressed: prefixed.length,
       },
-      metadata
+      metadata,
     };
   }
 
@@ -110,16 +113,16 @@ export class Tier1380HeadersCitadel {
 
     const result = await r2Bucket.put(key, data, {
       httpMetadata: {
-        contentType: "application/zstd",
-        contentEncoding: "zstd"
+        contentType: 'application/zstd',
+        contentEncoding: 'zstd',
       },
       customMetadata: {
         ...metadata,
-        "tier": "1380",
-        "factory-wager": "headers-csrf-r2-v1",
-        "created-at": new Date().toISOString(),
-        "atomic-write": "true"
-      }
+        tier: '1380',
+        'factory-wager': 'headers-csrf-r2-v1',
+        'created-at': new Date().toISOString(),
+        'atomic-write': 'true',
+      },
     });
 
     const duration = performance.now() - startTime;
@@ -131,48 +134,54 @@ export class Tier1380HeadersCitadel {
   /**
    * Validate CSRF token and session
    */
-  validateCSRF(headers: Headers, cookies: Map<string, string>): {
+  validateCSRF(
+    headers: Headers,
+    cookies: Map<string, string>
+  ): {
     isValid: boolean;
     csrfToken?: string;
     sessionId?: string;
     errors: string[];
   } {
     const errors: string[] = [];
-    const csrfToken = headers.get("X-CSRF-Token");
-    const sessionId = cookies.get("session");
-    const csrfCookie = cookies.get("csrf");
+    const csrfToken = headers.get('X-CSRF-Token');
+    const sessionId = cookies.get('session');
+    const csrfCookie = cookies.get('csrf');
 
     // Validate CSRF token presence and format
     if (!csrfToken) {
-      errors.push("CSRF token missing from headers");
+      errors.push('CSRF token missing from headers');
     } else if (csrfToken.length < this.config.csrfTokenLength!) {
       errors.push(`CSRF token too short: ${csrfToken.length} < ${this.config.csrfTokenLength}`);
     }
 
     // Validate session presence and format
     if (!sessionId) {
-      errors.push("Session ID missing from cookies");
+      errors.push('Session ID missing from cookies');
     } else if (sessionId.length < this.config.sessionIdLength!) {
       errors.push(`Session ID too short: ${sessionId.length} < ${this.config.sessionIdLength}`);
     }
 
     // Validate CSRF cookie matches header
     if (csrfToken && csrfCookie && csrfToken !== csrfCookie) {
-      errors.push("CSRF token mismatch between header and cookie");
+      errors.push('CSRF token mismatch between header and cookie');
     }
 
     return {
       isValid: errors.length === 0,
       csrfToken,
       sessionId,
-      errors
+      errors,
     };
   }
 
   /**
    * Read and verify R2 snapshot integrity
    */
-  async readSnapshot(r2Bucket: R2Bucket, key: string): Promise<{
+  async readSnapshot(
+    r2Bucket: R2Bucket,
+    key: string
+  ): Promise<{
     snapshot: Tier1380Snapshot | null;
     isValid: boolean;
     error?: string;
@@ -180,7 +189,7 @@ export class Tier1380HeadersCitadel {
     try {
       const object = await r2Bucket.get(key);
       if (!object) {
-        return { snapshot: null, isValid: false, error: "Snapshot not found" };
+        return { snapshot: null, isValid: false, error: 'Snapshot not found' };
       }
 
       const data = await object.arrayBuffer();
@@ -188,7 +197,7 @@ export class Tier1380HeadersCitadel {
 
       // Verify compression prefix
       if (uint8Array[0] !== this.config.compressionPrefix!) {
-        return { snapshot: null, isValid: false, error: "Invalid compression prefix" };
+        return { snapshot: null, isValid: false, error: 'Invalid compression prefix' };
       }
 
       // Decompress
@@ -198,14 +207,15 @@ export class Tier1380HeadersCitadel {
 
       // Parse and verify checksum
       const snapshot: Tier1380Snapshot = JSON.parse(raw);
-      const expectedChecksum = Bun.hash.crc32(JSON.stringify({ ...snapshot, checksum: "" })).toString(16);
+      const expectedChecksum = Bun.hash
+        .crc32(JSON.stringify({ ...snapshot, checksum: '' }))
+        .toString(16);
 
       if (snapshot.checksum !== expectedChecksum) {
-        return { snapshot: null, isValid: false, error: "Checksum mismatch" };
+        return { snapshot: null, isValid: false, error: 'Checksum mismatch' };
       }
 
       return { snapshot, isValid: true };
-
     } catch (error: unknown) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       return { snapshot: null, isValid: false, error: errorMessage };
@@ -221,22 +231,25 @@ export class Tier1380HeadersCitadel {
     cookies: Map<string, string>;
     headers: Headers;
   } {
-    const sessionId = crypto.randomUUID().replace(/-/g, '').substring(0, this.config.sessionIdLength);
+    const sessionId = crypto
+      .randomUUID()
+      .replace(/-/g, '')
+      .substring(0, this.config.sessionIdLength);
     const csrfToken = crypto.randomUUID();
 
     const cookies = new Map<string, string>([
-      ["session", sessionId],
-      ["csrf", csrfToken],
-      ["tier", "1380"],
-      ["variant", this.config.variant]
+      ['session', sessionId],
+      ['csrf', csrfToken],
+      ['tier', '1380'],
+      ['variant', this.config.variant],
     ]);
 
     const headers = new Headers({
-      "X-Tier1380": "live",
-      "X-CSRF-Token": csrfToken,
-      "Content-Type": "application/tier1380+json",
-      "X-Session-ID": sessionId,
-      "X-Variant": this.config.variant
+      'X-Tier1380': 'live',
+      'X-CSRF-Token': csrfToken,
+      'Content-Type': 'application/tier1380+json',
+      'X-Session-ID': sessionId,
+      'X-Variant': this.config.variant,
     });
 
     return { sessionId, csrfToken, cookies, headers };
@@ -245,41 +258,40 @@ export class Tier1380HeadersCitadel {
   /**
    * PTY debug channel for live inspection
    */
-  async createPTYDebugChannel(
-    headers: Headers,
-    cookies: Map<string, string>
-  ): Promise<void> {
+  async createPTYDebugChannel(headers: Headers, cookies: Map<string, string>): Promise<void> {
     if (!process.env.FW_ALLOW_PTY) {
-      console.info("⚠️ PTY debug disabled. Set FW_ALLOW_PTY=1 to enable.");
+      console.info('⚠️ PTY debug disabled. Set FW_ALLOW_PTY=1 to enable.');
       return;
     }
 
     const term = Bun.terminal({
       onData: (data: string) => {
-        console.info("🖥️ PTY data:", data.slice(0, 60));
-      }
+        console.info('🖥️ PTY data:', data.slice(0, 60));
+      },
     });
 
     const checksum = Bun.hash.crc32(JSON.stringify([...headers.entries()])).toString(16);
 
-    term.write([
-      `🏭 FactoryWager Tier-1380 PTY Debug Channel`,
-      `==========================================`,
-      `Headers Iterator: ${headers.size} entries`,
-      `First Header: ${JSON.stringify(headers.entries().next().value)}`,
-      `CSRF Token: ${cookies.get("csrf")}`,
-      `Session ID: ${cookies.get("session")}`,
-      `R2 Bucket: ${this.config.r2Bucket}`,
-      `Variant: ${this.config.variant}`,
-      `Checksum: ${checksum}`,
-      `Timestamp: ${new Date().toISOString()}`,
-      `Status: LIVE INSPECTION ACTIVE`,
-      `==========================================`
-    ].join("\n") + "\n");
+    term.write(
+      [
+        `🏭 FactoryWager Tier-1380 PTY Debug Channel`,
+        `==========================================`,
+        `Headers Iterator: ${headers.size} entries`,
+        `First Header: ${JSON.stringify(headers.entries().next().value)}`,
+        `CSRF Token: ${cookies.get('csrf')}`,
+        `Session ID: ${cookies.get('session')}`,
+        `R2 Bucket: ${this.config.r2Bucket}`,
+        `Variant: ${this.config.variant}`,
+        `Checksum: ${checksum}`,
+        `Timestamp: ${new Date().toISOString()}`,
+        `Status: LIVE INSPECTION ACTIVE`,
+        `==========================================`,
+      ].join('\n') + '\n'
+    );
 
     // Keep PTY open for a short time for inspection
     setTimeout(() => {
-      term.write("🏭 PTY inspection complete. Channel closing.\n");
+      term.write('🏭 PTY inspection complete. Channel closing.\n');
       term.end();
     }, 5000);
   }
@@ -303,7 +315,7 @@ export async function createTier1380Snapshot(
     headers: [...headers.entries()],
     cookies: [...cookies.entries()],
     publicApi: config.publicApiUrl,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   const raw = JSON.stringify(payload);
@@ -314,7 +326,7 @@ export async function createTier1380Snapshot(
   // Atomic R2 put
   await citadel.putToR2(r2Bucket, key, prefixed, {
     ...metadata,
-    "checksum:crc32": finalChecksum
+    'checksum:crc32': finalChecksum,
   });
 
   console.info({
@@ -323,11 +335,11 @@ export async function createTier1380Snapshot(
     headersCount: headers.size,
     firstHeader: headers.entries().next().value,
     cookiesCount: cookies.size,
-    csrfToken: cookies.get("csrf"),
+    csrfToken: cookies.get('csrf'),
     rawSize: raw.length,
     compressedSize: prefixed.length,
     checksum: finalChecksum,
-    "✅": "Headers Iterator + CSRF + R2 Atomic Snapshot LIVE"
+    '✅': 'Headers Iterator + CSRF + R2 Atomic Snapshot LIVE',
   });
 }
 
@@ -335,13 +347,13 @@ export async function createTier1380Snapshot(
 export default {
   async fetch(req: Request, env: { R2_BUCKET: R2Bucket }): Promise<Response> {
     const citadel = new Tier1380HeadersCitadel({
-      r2Bucket: env.R2_BUCKET.bucketName || "scanner-cookies",
-      publicApiUrl: "https://api.tier1380.com",
-      variant: "tier1380-live"
+      r2Bucket: env.R2_BUCKET.bucketName || 'scanner-cookies',
+      publicApiUrl: 'https://api.tier1380.com',
+      variant: 'tier1380-live',
     });
 
     const headers = new Headers(req.headers);
-    const cookieHeader = headers.get("Cookie") || "";
+    const cookieHeader = headers.get('Cookie') || '';
     const cookies = new Bun.CookieMap(cookieHeader);
 
     // Convert CookieMap to regular Map for validation
@@ -355,17 +367,17 @@ export default {
     if (!validation.isValid) {
       return new Response(
         JSON.stringify({
-          error: "CSRF or session invalid",
+          error: 'CSRF or session invalid',
           errors: validation.errors,
           csrfPresent: !!validation.csrfToken,
-          sessionPresent: !!validation.sessionId
+          sessionPresent: !!validation.sessionId,
         }),
         {
           status: 403,
           headers: {
-            "Content-Type": "application/json",
-            "X-Tier1380-Status": "csrf-failed"
-          }
+            'Content-Type': 'application/json',
+            'X-Tier1380-Status': 'csrf-failed',
+          },
         }
       );
     }
@@ -374,26 +386,29 @@ export default {
     const sessionObj = await env.R2_BUCKET.get(`sessions/${validation.sessionId}`);
     const sessionData = sessionObj ? await sessionObj.json() : null;
 
-    return Response.json({
-      headers: [...headers.entries()],
-      cookies: [...cookieMap.entries()],
-      csrfValid: validation.csrfToken ? validation.csrfToken.length >= 36 : false,
-      sessionValid: validation.sessionId ? validation.sessionId.length >= 32 : false,
-      r2SessionExists: !!sessionObj,
-      r2Bucket: env.R2_BUCKET.bucketName || "scanner-cookies",
-      tier1380: {
-        variant: "live",
-        checksum: Bun.hash.crc32(JSON.stringify([...headers.entries()])).toString(16),
-        timestamp: new Date().toISOString()
+    return Response.json(
+      {
+        headers: [...headers.entries()],
+        cookies: [...cookieMap.entries()],
+        csrfValid: validation.csrfToken ? validation.csrfToken.length >= 36 : false,
+        sessionValid: validation.sessionId ? validation.sessionId.length >= 32 : false,
+        r2SessionExists: !!sessionObj,
+        r2Bucket: env.R2_BUCKET.bucketName || 'scanner-cookies',
+        tier1380: {
+          variant: 'live',
+          checksum: Bun.hash.crc32(JSON.stringify([...headers.entries()])).toString(16),
+          timestamp: new Date().toISOString(),
+        },
+        '✅': 'Headers + CookieMap + CSRF + R2 LIVE',
       },
-      "✅": "Headers + CookieMap + CSRF + R2 LIVE"
-    }, {
-      headers: {
-        "X-Tier1380-Status": "success",
-        "Content-Type": "application/json"
+      {
+        headers: {
+          'X-Tier1380-Status': 'success',
+          'Content-Type': 'application/json',
+        },
       }
-    });
-  }
+    );
+  },
 };
 
 /**

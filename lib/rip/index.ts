@@ -102,9 +102,12 @@ export class RipgrepEngine {
           scope: raw.schema?.scope ?? defaults.schema.scope,
           type: raw.schema?.type ?? defaults.schema.type,
           variant: raw.schema?.variant ?? defaults.schema.variant,
-          hash_algo: raw.schema?.['hash-algo'] ?? raw.schema?.hash_algo ?? defaults.schema.hash_algo,
-          id_pattern: raw.schema?.['id-pattern'] ?? raw.schema?.id_pattern ?? defaults.schema.id_pattern,
-          ai_prefix: raw.schema?.['ai-prefix'] ?? raw.schema?.ai_prefix ?? defaults.schema.ai_prefix,
+          hash_algo:
+            raw.schema?.['hash-algo'] ?? raw.schema?.hash_algo ?? defaults.schema.hash_algo,
+          id_pattern:
+            raw.schema?.['id-pattern'] ?? raw.schema?.id_pattern ?? defaults.schema.id_pattern,
+          ai_prefix:
+            raw.schema?.['ai-prefix'] ?? raw.schema?.ai_prefix ?? defaults.schema.ai_prefix,
         },
         defaults: {
           scope: raw.defaults?.scope ?? defaults.defaults.scope,

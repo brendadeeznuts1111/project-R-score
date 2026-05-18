@@ -2,7 +2,7 @@
 
 /**
  * 🎯 Enhanced WikiMode System with Barbershop Integration
- * 
+ *
  * A comprehensive wiki template management system that integrates with the Barbershop
  * demo ecosystem to provide advanced wiki generation, profiling, and management capabilities.
  */
@@ -77,7 +77,9 @@ ${description}
 
 ## Sections (${sections})
 
-${Array.from({ length: sections }, (_, i) => `
+${Array.from(
+  { length: sections },
+  (_, i) => `
 ### Section ${i + 1}
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
@@ -92,7 +94,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor i
 - Dashboard widgets
 - Analytics tracking
 - Real-time synchronization
-`).join('')}
+`
+).join('')}
 
 ---
 
@@ -198,13 +201,13 @@ interface WikiModeConfig {
   outputPath: string;
   profileMode: boolean;
   barbershopMode: boolean;
-  
+
   // Enhanced features
   realTimeProfiling: boolean;
   collaborativeEditing: boolean;
   performanceOptimization: boolean;
   dashboardIntegration: boolean;
-  
+
   // Barbershop specific
   barbershopEndpoint?: string;
   dashboardWidgets?: string[];
@@ -266,7 +269,7 @@ class EnhancedWikiMode {
 
   private static async loadEnhancedTemplates(): Promise<EnhancedWikiTemplate[]> {
     const baseTemplates = MCPWikiGenerator.getWikiTemplates();
-    
+
     return baseTemplates.map(template => ({
       ...template,
       barbershopIntegration: {
@@ -318,7 +321,7 @@ class EnhancedWikiMode {
    */
   async generateWiki(templateName: string, customData?: any): Promise<WikiGenerationResult> {
     const startTime = performance.now();
-    
+
     try {
       const template = this.config.templates.find(t => t.name === templateName);
       if (!template) {
@@ -356,20 +359,21 @@ class EnhancedWikiMode {
           templateUsed: templateName,
           barbershopIntegration: this.config.barbershopMode,
         },
-        performance: profileData ? {
-          profileData,
-          optimizationScore: this.calculateOptimizationScore(profileData),
-          recommendations: this.generateOptimizationRecommendations(profileData),
-        } : undefined,
+        performance: profileData
+          ? {
+              profileData,
+              optimizationScore: this.calculateOptimizationScore(profileData),
+              recommendations: this.generateOptimizationRecommendations(profileData),
+            }
+          : undefined,
         barbershopData,
       };
 
       // Store in history
       this.generationHistory.push(result);
-      
+
       console.info(styled(`✅ Wiki generated in ${generationTime.toFixed(2)}ms`, 'success'));
       return result;
-
     } catch (error) {
       console.error(styled('❌ Wiki generation failed:', 'error'), error);
       throw error;
@@ -387,7 +391,7 @@ class EnhancedWikiMode {
 
       // Run wiki profiler
       const profileResult = await wikiProfile(tempFile);
-      
+
       // Clean up temp file
       try {
         const tempFileObj = Bun.file(tempFile);
@@ -408,7 +412,10 @@ class EnhancedWikiMode {
   /**
    * Integrate with Barbershop system
    */
-  private async integrateWithBarbershop(template: EnhancedWikiTemplate, content: string): Promise<any> {
+  private async integrateWithBarbershop(
+    template: EnhancedWikiTemplate,
+    content: string
+  ): Promise<any> {
     try {
       const barbershopData: any = {};
 
@@ -540,7 +547,7 @@ class EnhancedWikiMode {
     if (!profileData) return 50;
 
     let score = 50;
-    
+
     // Add points for various metrics
     if (profileData.performance?.generationTime < 100) score += 20;
     if (profileData.content?.wordCount > 500) score += 10;
@@ -587,12 +594,20 @@ class EnhancedWikiMode {
     // Display templates with enhanced information
     const tableData = this.config.templates.map(template => ({
       'Template Name': styled(template.name, 'success'),
-      'Format': styled(template.format, 'info'),
-      'Workspace': styled(template.workspace, 'muted'),
-      'Barbershop': template.barbershopIntegration?.enabled ? styled('✅', 'success') : styled('❌', 'error'),
-      'Profiling': template.barbershopIntegration?.profileIntegration ? styled('✅', 'success') : styled('❌', 'error'),
-      'Analytics': template.barbershopIntegration?.analyticsTracking ? styled('✅', 'success') : styled('❌', 'error'),
-      'Collaboration': template.collaboration?.sharedEditing ? styled('✅', 'success') : styled('❌', 'error'),
+      Format: styled(template.format, 'info'),
+      Workspace: styled(template.workspace, 'muted'),
+      Barbershop: template.barbershopIntegration?.enabled
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
+      Profiling: template.barbershopIntegration?.profileIntegration
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
+      Analytics: template.barbershopIntegration?.analyticsTracking
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
+      Collaboration: template.collaboration?.sharedEditing
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
     }));
 
     console.info(Bun.inspect.table(tableData));
@@ -603,10 +618,14 @@ class EnhancedWikiMode {
       console.info(styled('📊 Recent Generation History:', 'info'));
       const historyData = this.generationHistory.slice(-5).map((result, index) => ({
         '#': index + 1,
-        'Template': result.template.name,
-        'Time': `${result.metadata.generationTime.toFixed(2)}ms`,
-        'Barbershop': result.metadata.barbershopIntegration ? styled('✅', 'success') : styled('❌', 'error'),
-        'Score': result.performance?.optimizationScore ? `${result.performance.optimizationScore}%` : 'N/A',
+        Template: result.template.name,
+        Time: `${result.metadata.generationTime.toFixed(2)}ms`,
+        Barbershop: result.metadata.barbershopIntegration
+          ? styled('✅', 'success')
+          : styled('❌', 'error'),
+        Score: result.performance?.optimizationScore
+          ? `${result.performance.optimizationScore}%`
+          : 'N/A',
       }));
 
       console.info(Bun.inspect.table(historyData));
@@ -615,11 +634,21 @@ class EnhancedWikiMode {
 
     // Display configuration
     console.info(styled('⚙️ Configuration:', 'info'));
-    console.info(`  Profile Mode: ${this.config.profileMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.info(`  Barbershop Mode: ${this.config.barbershopMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.info(`  Real-time Profiling: ${this.config.realTimeProfiling ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.info(`  Collaborative Editing: ${this.config.collaborativeEditing ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
-    console.info(`  Analytics: ${this.config.analyticsEnabled ? styled('Enabled', 'success') : styled('Disabled', 'error')}`);
+    console.info(
+      `  Profile Mode: ${this.config.profileMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`
+    );
+    console.info(
+      `  Barbershop Mode: ${this.config.barbershopMode ? styled('Enabled', 'success') : styled('Disabled', 'error')}`
+    );
+    console.info(
+      `  Real-time Profiling: ${this.config.realTimeProfiling ? styled('Enabled', 'success') : styled('Disabled', 'error')}`
+    );
+    console.info(
+      `  Collaborative Editing: ${this.config.collaborativeEditing ? styled('Enabled', 'success') : styled('Disabled', 'error')}`
+    );
+    console.info(
+      `  Analytics: ${this.config.analyticsEnabled ? styled('Enabled', 'success') : styled('Disabled', 'error')}`
+    );
     console.info('');
   }
 
@@ -718,10 +747,10 @@ class EnhancedWikiMode {
   private async generateAndDisplay(templateName: string): Promise<void> {
     try {
       const result = await this.generateWiki(templateName);
-      
+
       console.info(styled('\n📄 Generated Content Preview:', 'success'));
       console.info(colorBar('success', 40));
-      
+
       // Show first 500 characters of content
       const preview = result.content.substring(0, 500) + (result.content.length > 500 ? '...' : '');
       console.info(preview);
@@ -731,8 +760,10 @@ class EnhancedWikiMode {
       console.info(styled('📊 Metadata:', 'info'));
       console.info(`  Generated: ${result.metadata.generatedAt}`);
       console.info(`  Time: ${result.metadata.generationTime.toFixed(2)}ms`);
-      console.info(`  Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Yes' : 'No'}`);
-      
+      console.info(
+        `  Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Yes' : 'No'}`
+      );
+
       if (result.performance) {
         console.info(`  Optimization Score: ${result.performance.optimizationScore}%`);
       }
@@ -744,13 +775,13 @@ class EnhancedWikiMode {
   private async generateWithProfile(templateName: string): Promise<void> {
     try {
       const result = await this.generateWiki(templateName);
-      
+
       console.info(styled('\n📊 Performance Profile Results:', 'info'));
       console.info(colorBar('info', 40));
 
       if (result.performance) {
         console.info(`Optimization Score: ${result.performance.optimizationScore}%`);
-        
+
         if (result.performance.recommendations.length > 0) {
           console.info(styled('\n💡 Recommendations:', 'warning'));
           result.performance.recommendations.forEach(rec => {
@@ -762,7 +793,9 @@ class EnhancedWikiMode {
       if (result.barbershopData) {
         console.info(styled('\n🏗️ Barbershop Integration:', 'success'));
         console.info(`  Dashboard Widgets: ${result.barbershopData.dashboardWidgets?.length || 0}`);
-        console.info(`  Analytics Data: ${result.barbershopData.analyticsData ? 'Available' : 'N/A'}`);
+        console.info(
+          `  Analytics Data: ${result.barbershopData.analyticsData ? 'Available' : 'N/A'}`
+        );
         console.info(`  Barber Profiles: ${result.barbershopData.barberProfiles?.length || 0}`);
       }
     } catch (error) {
@@ -773,7 +806,7 @@ class EnhancedWikiMode {
   private async showBarbershopIntegration(): Promise<void> {
     console.info(styled('\n🏗️ Barbershop Integration Status:', 'info'));
     console.info(colorBar('enterprise', 50));
-    
+
     console.info(`Endpoint: ${this.config.barbershopEndpoint || 'Not configured'}`);
     console.info(`Dashboard Widgets: ${this.config.dashboardWidgets?.join(', ') || 'None'}`);
     console.info(`Analytics: ${this.config.analyticsEnabled ? 'Enabled' : 'Disabled'}`);
@@ -783,10 +816,14 @@ class EnhancedWikiMode {
     // Show template integration status
     console.info(styled('Template Integration Status:', 'muted'));
     const integrationData = this.config.templates.map(template => ({
-      'Template': template.name,
-      'Enabled': template.barbershopIntegration?.enabled ? styled('✅', 'success') : styled('❌', 'error'),
-      'Widgets': template.barbershopIntegration?.dashboardWidgets?.length || 0,
-      'Analytics': template.barbershopIntegration?.analyticsTracking ? styled('✅', 'success') : styled('❌', 'error'),
+      Template: template.name,
+      Enabled: template.barbershopIntegration?.enabled
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
+      Widgets: template.barbershopIntegration?.dashboardWidgets?.length || 0,
+      Analytics: template.barbershopIntegration?.analyticsTracking
+        ? styled('✅', 'success')
+        : styled('❌', 'error'),
     }));
 
     console.info(Bun.inspect.table(integrationData));
@@ -803,11 +840,13 @@ class EnhancedWikiMode {
 
     const historyData = this.generationHistory.map((result, index) => ({
       '#': index + 1,
-      'Template': result.template.name,
-      'Time': `${result.metadata.generationTime.toFixed(2)}ms`,
-      'Barbershop': result.metadata.barbershopIntegration ? 'Yes' : 'No',
-      'Score': result.performance?.optimizationScore ? `${result.performance.optimizationScore}%` : 'N/A',
-      'Generated': new Date(result.metadata.generatedAt).toLocaleTimeString(),
+      Template: result.template.name,
+      Time: `${result.metadata.generationTime.toFixed(2)}ms`,
+      Barbershop: result.metadata.barbershopIntegration ? 'Yes' : 'No',
+      Score: result.performance?.optimizationScore
+        ? `${result.performance.optimizationScore}%`
+        : 'N/A',
+      Generated: new Date(result.metadata.generatedAt).toLocaleTimeString(),
     }));
 
     console.info(Bun.inspect.table(historyData));
@@ -936,7 +975,9 @@ async function main() {
       case 'generate':
       case 'g':
         if (args.length < 2) {
-          console.error(styled('Usage: bun run enhanced-wikimode.ts generate <template-name>', 'error'));
+          console.error(
+            styled('Usage: bun run enhanced-wikimode.ts generate <template-name>', 'error')
+          );
           process.exit(1);
         }
         await wikiMode.generateAndDisplay(args[1]);
@@ -945,7 +986,9 @@ async function main() {
       case 'profile':
       case 'p':
         if (args.length < 2) {
-          console.error(styled('Usage: bun run enhanced-wikimode.ts profile <template-name>', 'error'));
+          console.error(
+            styled('Usage: bun run enhanced-wikimode.ts profile <template-name>', 'error')
+          );
           process.exit(1);
         }
         await wikiMode.generateWithProfile(args[1]);
@@ -983,4 +1026,9 @@ if (import.meta.main) {
   main();
 }
 
-export { EnhancedWikiMode, type WikiModeConfig, type WikiGenerationResult, type EnhancedWikiTemplate };
+export {
+  EnhancedWikiMode,
+  type WikiModeConfig,
+  type WikiGenerationResult,
+  type EnhancedWikiTemplate,
+};

@@ -3,7 +3,7 @@
 // benchmark-helper.ts - Comprehensive Bun Performance Benchmarking Utility
 // Based on Bun.nanoseconds() for high-precision timing
 
-import { nanoseconds } from "bun";
+import { nanoseconds } from 'bun';
 
 interface BenchmarkResult {
   name: string;
@@ -29,27 +29,27 @@ class BenchmarkHelper {
    */
   measure(name: string, fn: () => void | Promise<void>): BenchmarkResult {
     const start = nanoseconds();
-    
+
     // Execute the function
     const result = fn();
-    
+
     // Handle both sync and async functions
     if (result instanceof Promise) {
       return this.measureAsync(name, result);
     }
-    
+
     const end = nanoseconds();
     const totalTime = end - start;
-    
+
     const benchmarkResult: BenchmarkResult = {
       name,
       iterations: 1,
       totalTimeNs: totalTime,
       avgTimeNs: totalTime,
       avgTimeMs: totalTime / 1_000_000,
-      opsPerSecond: 1_000_000_000 / totalTime
+      opsPerSecond: 1_000_000_000 / totalTime,
     };
-    
+
     this.results.push(benchmarkResult);
     return benchmarkResult;
   }
@@ -62,16 +62,16 @@ class BenchmarkHelper {
     await promise;
     const end = nanoseconds();
     const totalTime = end - start;
-    
+
     const benchmarkResult: BenchmarkResult = {
       name,
       iterations: 1,
       totalTimeNs: totalTime,
       avgTimeNs: totalTime,
       avgTimeMs: totalTime / 1_000_000,
-      opsPerSecond: 1_000_000_000 / totalTime
+      opsPerSecond: 1_000_000_000 / totalTime,
     };
-    
+
     this.results.push(benchmarkResult);
     return benchmarkResult;
   }
@@ -79,26 +79,30 @@ class BenchmarkHelper {
   /**
    * Benchmark with multiple iterations
    */
-  benchmark(name: string, fn: () => void | Promise<void>, iterations: number = 1_000_000): BenchmarkResult {
+  benchmark(
+    name: string,
+    fn: () => void | Promise<void>,
+    iterations: number = 1_000_000
+  ): BenchmarkResult {
     const start = nanoseconds();
-    
+
     for (let i = 0; i < iterations; i++) {
       fn();
     }
-    
+
     const end = nanoseconds();
     const totalTime = end - start;
     const avgTime = totalTime / iterations;
-    
+
     const benchmarkResult: BenchmarkResult = {
       name,
       iterations,
       totalTimeNs: totalTime,
       avgTimeNs: avgTime,
       avgTimeMs: avgTime / 1_000_000,
-      opsPerSecond: 1_000_000_000 / avgTime
+      opsPerSecond: 1_000_000_000 / avgTime,
     };
-    
+
     this.results.push(benchmarkResult);
     return benchmarkResult;
   }
@@ -106,26 +110,30 @@ class BenchmarkHelper {
   /**
    * Benchmark async function with iterations
    */
-  async benchmarkAsync(name: string, fn: () => Promise<void>, iterations: number = 1000): Promise<BenchmarkResult> {
+  async benchmarkAsync(
+    name: string,
+    fn: () => Promise<void>,
+    iterations: number = 1000
+  ): Promise<BenchmarkResult> {
     const start = nanoseconds();
-    
+
     for (let i = 0; i < iterations; i++) {
       await fn();
     }
-    
+
     const end = nanoseconds();
     const totalTime = end - start;
     const avgTime = totalTime / iterations;
-    
+
     const benchmarkResult: BenchmarkResult = {
       name,
       iterations,
       totalTimeNs: totalTime,
       avgTimeNs: avgTime,
       avgTimeMs: avgTime / 1_000_000,
-      opsPerSecond: 1_000_000_000 / avgTime
+      opsPerSecond: 1_000_000_000 / avgTime,
     };
-    
+
     this.results.push(benchmarkResult);
     return benchmarkResult;
   }
@@ -136,18 +144,18 @@ class BenchmarkHelper {
   compare(baselineName: string, comparisonName: string): ComparisonResult | null {
     const baseline = this.results.find(r => r.name === baselineName);
     const comparison = this.results.find(r => r.name === comparisonName);
-    
+
     if (!baseline || !comparison) {
       return null;
     }
-    
+
     const improvement = ((baseline.avgTimeNs - comparison.avgTimeNs) / baseline.avgTimeNs) * 100;
-    
+
     return {
       baseline,
       comparison,
       improvement,
-      faster: improvement > 0
+      faster: improvement > 0,
     };
   }
 
@@ -167,17 +175,17 @@ class BenchmarkHelper {
    */
   printComparison(comparison: ComparisonResult): void {
     const { baseline, comparison, improvement, faster } = comparison;
-    
+
     console.info(`\n⚡ Performance Comparison`);
     console.info(`   Baseline: ${baseline.name} - ${baseline.avgTimeMs.toFixed(4)}ms`);
     console.info(`   Comparison: ${comparison.name} - ${comparison.avgTimeMs.toFixed(4)}ms`);
-    
+
     if (faster) {
       console.info(`   ✅ ${improvement.toFixed(1)}% faster`);
     } else {
       console.info(`   ❌ ${Math.abs(improvement).toFixed(1)}% slower`);
     }
-    
+
     console.info(`   Speed ratio: ${(baseline.avgTimeNs / comparison.avgTimeNs).toFixed(2)}x`);
   }
 
@@ -185,9 +193,9 @@ class BenchmarkHelper {
    * Print all results
    */
   printAll(): void {
-    console.info("\n🏁 Benchmark Results");
-    console.info("=" .repeat(60));
-    
+    console.info('\n🏁 Benchmark Results');
+    console.info('='.repeat(60));
+
     this.results.forEach(result => {
       this.printResult(result);
     });
@@ -250,34 +258,46 @@ version: 3.0.0
    * Benchmark Bun.YAML.parse()
    */
   async benchmarkBunYAML(iterations: number = 10000): Promise<BenchmarkResult> {
-    const { YAML } = await import("bun");
-    
-    return this.benchmark("Bun.YAML.parse()", () => {
-      YAML.parse(this.sampleYAML);
-    }, iterations);
+    const { YAML } = await import('bun');
+
+    return this.benchmark(
+      'Bun.YAML.parse()',
+      () => {
+        YAML.parse(this.sampleYAML);
+      },
+      iterations
+    );
   }
 
   /**
    * Benchmark Bun.YAML.parse() with multi-document
    */
   async benchmarkBunYAMLMulti(iterations: number = 10000): Promise<BenchmarkResult> {
-    const { YAML } = await import("bun");
-    
-    return this.benchmark("Bun.YAML.parse() (multi-doc)", () => {
-      YAML.parse(this.sampleYAMLMulti);
-    }, iterations);
+    const { YAML } = await import('bun');
+
+    return this.benchmark(
+      'Bun.YAML.parse() (multi-doc)',
+      () => {
+        YAML.parse(this.sampleYAMLMulti);
+      },
+      iterations
+    );
   }
 
   /**
    * Benchmark Bun.YAML.stringify()
    */
   async benchmarkBunYAMLStringify(iterations: number = 10000): Promise<BenchmarkResult> {
-    const { YAML } = await import("bun");
+    const { YAML } = await import('bun');
     const data = YAML.parse(this.sampleYAML);
-    
-    return this.benchmark("Bun.YAML.stringify()", () => {
-      YAML.stringify(data);
-    }, iterations);
+
+    return this.benchmark(
+      'Bun.YAML.stringify()',
+      () => {
+        YAML.stringify(data);
+      },
+      iterations
+    );
   }
 
   /**
@@ -285,13 +305,17 @@ version: 3.0.0
    */
   async benchmarkExternalYAML(iterations: number = 10000): Promise<BenchmarkResult | null> {
     try {
-      const yaml = await import("yaml");
-      
-      return this.benchmark("external yaml.parse()", () => {
-        yaml.parse(this.sampleYAML);
-      }, iterations);
+      const yaml = await import('yaml');
+
+      return this.benchmark(
+        'external yaml.parse()',
+        () => {
+          yaml.parse(this.sampleYAML);
+        },
+        iterations
+      );
     } catch {
-      console.info("⚠️  External YAML library not available for comparison");
+      console.info('⚠️  External YAML library not available for comparison');
       return null;
     }
   }
@@ -301,13 +325,17 @@ version: 3.0.0
    */
   async benchmarkJsYAML(iterations: number = 10000): Promise<BenchmarkResult | null> {
     try {
-      const { load } = await import("js-yaml");
-      
-      return this.benchmark("js-yaml.load()", () => {
-        load(this.sampleYAML);
-      }, iterations);
+      const { load } = await import('js-yaml');
+
+      return this.benchmark(
+        'js-yaml.load()',
+        () => {
+          load(this.sampleYAML);
+        },
+        iterations
+      );
     } catch {
-      console.info("⚠️  js-yaml library not available for comparison");
+      console.info('⚠️  js-yaml library not available for comparison');
       return null;
     }
   }
@@ -316,7 +344,7 @@ version: 3.0.0
    * Run comprehensive YAML benchmark suite
    */
   async runYAMLSuite(): Promise<void> {
-    console.info("🚀 Starting YAML Performance Benchmark Suite\n");
+    console.info('🚀 Starting YAML Performance Benchmark Suite\n');
 
     // Benchmark Bun.YAML
     const bunParse = await this.benchmarkBunYAML();
@@ -332,8 +360,8 @@ version: 3.0.0
     const externalYAML = await this.benchmarkExternalYAML();
     if (externalYAML) {
       this.printResult(externalYAML);
-      
-      const comparison = this.compare("external yaml.parse()", "Bun.YAML.parse()");
+
+      const comparison = this.compare('external yaml.parse()', 'Bun.YAML.parse()');
       if (comparison) {
         this.printComparison(comparison);
       }
@@ -342,14 +370,14 @@ version: 3.0.0
     const jsYAML = await this.benchmarkJsYAML();
     if (jsYAML) {
       this.printResult(jsYAML);
-      
-      const comparison = this.compare("js-yaml.load()", "Bun.YAML.parse()");
+
+      const comparison = this.compare('js-yaml.load()', 'Bun.YAML.parse()');
       if (comparison) {
         this.printComparison(comparison);
       }
     }
 
-    console.info("\n✅ YAML Benchmark Suite Complete!");
+    console.info('\n✅ YAML Benchmark Suite Complete!');
   }
 }
 
@@ -359,11 +387,11 @@ async function main() {
   const benchmark = new YAMLBenchmark();
 
   switch (command) {
-    case "yaml":
+    case 'yaml':
       await benchmark.runYAMLSuite();
       break;
 
-    case "measure":
+    case 'measure':
       // Simple measurement like bun -e template
       const code = process.argv[3];
       if (!code) {
@@ -371,36 +399,40 @@ async function main() {
         console.info("Example: bun benchmark-helper.ts measure 'Math.random()'");
         process.exit(1);
       }
-      
-      const result = benchmark.measure("Custom Expression", () => {
+
+      const result = benchmark.measure('Custom Expression', () => {
         eval(code);
       });
       benchmark.printResult(result);
       break;
 
-    case "loop":
+    case 'loop':
       // Loop benchmark like bun -e template
       const loopCode = process.argv[3];
       const iterations = parseInt(process.argv[4]) || 1_000_000;
-      
+
       if (!loopCode) {
         console.info("Usage: bun benchmark-helper.ts loop '<code>' [iterations]");
         console.info("Example: bun benchmark-helper.ts loop 'Math.random()' 1000000");
         process.exit(1);
       }
-      
-      const loopResult = benchmark.benchmark("Loop Expression", () => {
-        eval(loopCode);
-      }, iterations);
+
+      const loopResult = benchmark.benchmark(
+        'Loop Expression',
+        () => {
+          eval(loopCode);
+        },
+        iterations
+      );
       benchmark.printResult(loopResult);
       break;
 
-    case "export":
+    case 'export':
       console.info(benchmark.export());
       break;
 
-    case "--help":
-    case "-h":
+    case '--help':
+    case '-h':
       console.info(`
 Benchmark Helper - Performance Measurement Utility
 

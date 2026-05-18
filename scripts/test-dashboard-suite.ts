@@ -3,10 +3,10 @@ import {
   applyDashboardTestEnv,
   getDashboardTestConfig,
   withDashboardServer,
-} from "./lib/dashboard-test-server";
-import { runDashboardMiniChecks } from "./test-dashboard-mini";
-import { runDashboardEndpointChecks } from "./test-dashboard-endpoints";
-import { runDashboardWebsocketChecks } from "./test-dashboard-websocket";
+} from './lib/dashboard-test-server';
+import { runDashboardMiniChecks } from './test-dashboard-mini';
+import { runDashboardEndpointChecks } from './test-dashboard-endpoints';
+import { runDashboardWebsocketChecks } from './test-dashboard-websocket';
 
 async function run(): Promise<number> {
   const miniCode = await runDashboardMiniChecks();
@@ -18,7 +18,7 @@ async function run(): Promise<number> {
   const websocketCode = await runDashboardWebsocketChecks();
   if (websocketCode !== 0) return websocketCode;
 
-  console.info("[PASS] dashboard-suite :: mini + endpoints + websocket green");
+  console.info('[PASS] dashboard-suite :: mini + endpoints + websocket green');
   return 0;
 }
 

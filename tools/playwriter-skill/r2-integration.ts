@@ -141,10 +141,10 @@ class PlaywriterR2Integration {
   /**
    * List all artifacts for this session
    */
-  async listArtifacts(prefix?: string): Promise<Array<{ key: string; size: number; lastModified: Date }>> {
-    const searchPrefix = prefix
-      ? `${this.config.prefix}/${prefix}`
-      : this.config.prefix;
+  async listArtifacts(
+    prefix?: string
+  ): Promise<Array<{ key: string; size: number; lastModified: Date }>> {
+    const searchPrefix = prefix ? `${this.config.prefix}/${prefix}` : this.config.prefix;
 
     return await this.r2.list(searchPrefix);
   }

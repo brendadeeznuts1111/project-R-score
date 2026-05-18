@@ -153,7 +153,7 @@ function listSourceFiles(rootDir: string): string[] {
   return proc.stdout
     .toString()
     .split('\n')
-    .map((line) => line.trim())
+    .map(line => line.trim())
     .filter(Boolean);
 }
 
@@ -198,7 +198,13 @@ function lineText(lines: string[], line: number): string {
 }
 
 function discoverSymbolsAndEdges(code: string, filePath: string): DiscoverResult {
-  const sourceFile = ts.createSourceFile(filePath, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
+  const sourceFile = ts.createSourceFile(
+    filePath,
+    code,
+    ts.ScriptTarget.Latest,
+    true,
+    ts.ScriptKind.TSX
+  );
   const lines = code.split(/\r?\n/);
   const symbols: DiscoveredSymbol[] = [];
   const edges: DiscoveredEdge[] = [];
@@ -356,11 +362,13 @@ export function resolveSymbolIndexPath(customPath?: string): string {
   return resolve(customPath || '.cache/smart-search/symbols.sqlite');
 }
 
-export async function buildSymbolIndex(options: {
-  rootDir?: string;
-  dbPath?: string;
-  rebuild?: boolean;
-} = {}): Promise<SymbolIndexBuildResult> {
+export async function buildSymbolIndex(
+  options: {
+    rootDir?: string;
+    dbPath?: string;
+    rebuild?: boolean;
+  } = {}
+): Promise<SymbolIndexBuildResult> {
   const rootDir = resolve(options.rootDir || '.');
   const dbPath = resolveSymbolIndexPath(options.dbPath);
 
@@ -406,11 +414,25 @@ export async function buildSymbolIndex(options: {
     deleteEdges.run(fileId);
 
     for (const symbol of result.symbols) {
-      insertSymbol.run(fileId, symbol.name, symbol.kind, symbol.line, symbol.column, symbol.context);
+      insertSymbol.run(
+        fileId,
+        symbol.name,
+        symbol.kind,
+        symbol.line,
+        symbol.column,
+        symbol.context
+      );
     }
 
     for (const edge of result.edges) {
-      insertEdge.run(fileId, edge.callerName, edge.calleeName, edge.line, edge.column, edge.context);
+      insertEdge.run(
+        fileId,
+        edge.callerName,
+        edge.calleeName,
+        edge.line,
+        edge.column,
+        edge.context
+      );
     }
   });
 
@@ -421,9 +443,11 @@ export async function buildSymbolIndex(options: {
       continue;
     }
 
-    const existing = getFileRow.get(absolutePath) as
-      | { id: number; mtime_ms: number; size_bytes: number }
-      | null;
+    const existing = getFileRow.get(absolutePath) as {
+      id: number;
+      mtime_ms: number;
+      size_bytes: number;
+    } | null;
 
     if (existing && existing.mtime_ms === stat.mtimeMs && existing.size_bytes === stat.size) {
       skippedFiles += 1;
@@ -471,11 +495,15 @@ function tokenizeQuery(input: string): string[] {
     .replace(/([a-z])([A-Z])/g, '$1 $2')
     .replace(/[._\-/]+/g, ' ')
     .split(/\s+/)
-    .map((part) => part.trim().toLowerCase())
-    .filter((part) => part.length >= 2);
+    .map(part => part.trim().toLowerCase())
+    .filter(part => part.length >= 2);
 }
 
-function scoreSymbolHit(hit: Omit<SymbolSearchHit, 'score' | 'reason'>, query: string, tokens: string[]): SymbolSearchHit {
+function scoreSymbolHit(
+  hit: Omit<SymbolSearchHit, 'score' | 'reason'>,
+  query: string,
+  tokens: string[]
+): SymbolSearchHit {
   const queryLower = query.toLowerCase();
   const nameLower = hit.name.toLowerCase();
   const contextLower = hit.context.toLowerCase();
@@ -593,7 +621,7 @@ export function searchCallersBySymbol(
 
     const queryTokens = tokenizeQuery(symbolName);
 
-    const hits = rows.map((row) => {
+    const hits = rows.map(row => {
       let score = 30;
       const reasons: string[] = ['call edge'];
 
@@ -643,7 +671,7 @@ export function searchCallersBySymbol(
       };
     });
 
-    const hasRicherCallers = hits.some((hit) => hit.callerName && hit.callerName !== '<module>');
+    const hasRicherCallers = hits.some(hit => hit.callerName && hit.callerName !== '<module>');
     if (hasRicherCallers) {
       for (const hit of hits) {
         if (hit.callerName === '<module>') {
@@ -733,7 +761,7 @@ export function searchCalleesBySymbol(
 
     const queryTokens = tokenizeQuery(symbolName);
 
-    const hits = rows.map((row) => {
+    const hits = rows.map(row => {
       let score = 30;
       const reasons: string[] = ['call edge'];
 
@@ -783,7 +811,7 @@ export function searchCalleesBySymbol(
       };
     });
 
-    const hasRicherCallers = hits.some((hit) => hit.callerName && hit.callerName !== '<module>');
+    const hasRicherCallers = hits.some(hit => hit.callerName && hit.callerName !== '<module>');
     if (hasRicherCallers) {
       for (const hit of hits) {
         if (hit.callerName === '<module>') {
@@ -889,7 +917,7 @@ export function searchSymbolIndex(
       context: string;
     }>;
 
-    const scored = rows.map((row) =>
+    const scored = rows.map(row =>
       scoreSymbolHit(
         {
           file: row.file,

@@ -10,7 +10,7 @@ const advancedFetchService = new AdvancedFetchService();
 async function handleTypedArrayDocs(url: URL): Promise<Response> {
   const section = url.hash.slice(1) || 'typedarray';
   const docs = await fetchService.fetchTypedArrayDocs(section);
-  
+
   return new Response(docs, {
     headers: {
       'Content-Type': 'text/html',
@@ -22,9 +22,9 @@ async function handleTypedArrayDocs(url: URL): Promise<Response> {
 // Binary data documentation
 async function handleBinaryData(url: URL): Promise<Response> {
   const response = await fetch(`${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`);
-  
+
   const html = await response.text();
-  
+
   return new Response(html, {
     status: response.status,
     headers: {
@@ -45,7 +45,7 @@ const text = await response.text(); // or response.json(), response.arrayBuffer(
 const typedArrayResponse = await fetch("${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}");
 console.info(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 `;
-  
+
   return new Response(exampleCode, {
     headers: { 'Content-Type': 'application/javascript' },
   });
@@ -55,7 +55,7 @@ console.info(\`TypedArray docs status: \${typedArrayResponse.status}\`);
 async function handleRSSFeed(): Promise<Response> {
   try {
     const feedXml = await fetchService.fetchRSSFeed();
-    
+
     return new Response(feedXml, {
       headers: {
         'Content-Type': 'application/rss+xml; charset=utf-8',
@@ -78,9 +78,9 @@ async function handleTypedArrayURLs(): Promise<Response> {
       fetch: `${BUN_DOCS.BASE}${BUN_DOCS.API.FETCH}`,
       binary_data: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.BINARY_DATA}`,
       networking: `${BUN_DOCS.BASE}${BUN_DOCS.RUNTIME.NETWORKING}`,
-    }
+    },
   };
-  
+
   return Response.json(urls);
 }
 
@@ -111,7 +111,7 @@ async function generateRSSFeed(): Promise<Response> {
   </item>
 </channel>
 </rss>`;
-  
+
   return new Response(feed, {
     headers: {
       'Content-Type': 'application/rss+xml; charset=utf-8',
@@ -122,28 +122,28 @@ async function generateRSSFeed(): Promise<Response> {
 // JSON feed endpoint
 async function generateJSONFeed(): Promise<Response> {
   const feed = {
-    version: "https://jsonfeed.org/version/1",
-    title: "Bun TypedArray Documentation",
+    version: 'https://jsonfeed.org/version/1',
+    title: 'Bun TypedArray Documentation',
     home_page_url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}`,
     feed_url: `${BUN_DOCS.BASE}/feed/json`,
     items: [
       {
         id: TYPED_ARRAY_URLS.METHODS,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.METHODS}`,
-        title: "TypedArray Methods",
-        content_text: "Complete reference of all TypedArray methods",
+        title: 'TypedArray Methods',
+        content_text: 'Complete reference of all TypedArray methods',
         date_published: new Date().toISOString(),
       },
       {
         id: TYPED_ARRAY_URLS.CONVERSION,
         url: `${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.CONVERSION}`,
-        title: "Binary Data Conversion",
-        content_text: "Examples of converting between binary formats",
+        title: 'Binary Data Conversion',
+        content_text: 'Examples of converting between binary formats',
         date_published: new Date().toISOString(),
       },
     ],
   };
-  
+
   return Response.json(feed);
 }
 
@@ -261,7 +261,7 @@ console.info(data.base); // => "${BUN_DOCS.BASE}${TYPED_ARRAY_URLS.BASE}"</code>
   </script>
 </body>
 </html>`;
-  
+
   return new Response(html, {
     headers: { 'Content-Type': 'text/html' },
   });
@@ -337,7 +337,7 @@ const uint8Array = await response.clone().bytes(); // Bun-specific
 
 console.info("Advanced fetch demo completed!");
 `;
-  
+
   return new Response(demoCode, {
     headers: { 'Content-Type': 'application/javascript' },
   });
@@ -349,12 +349,12 @@ async function runAdvancedDemo(): Promise<Response> {
     if (process.env.DEBUG === '1') {
       console.info('🎯 Running advanced fetch demo...');
     }
-    
+
     // Run the demo in the background
-    advancedFetchService.runFullDemo().catch((error) => {
+    advancedFetchService.runFullDemo().catch(error => {
       console.error('❌ Advanced fetch demo failed:', error);
     });
-    
+
     const html = `
 <!DOCTYPE html>
 <html>
@@ -410,11 +410,10 @@ async function runAdvancedDemo(): Promise<Response> {
   </main>
 </body>
 </html>`;
-    
+
     return new Response(html, {
       headers: { 'Content-Type': 'text/html' },
     });
-    
   } catch (error: any) {
     return new Response(`Demo error: ${error.message}`, { status: 500 });
   }
@@ -436,7 +435,7 @@ const server = Bun.serve({
   async fetch(request: Request): Promise<Response> {
     const url = new URL(request.url);
     const path = url.pathname;
-    
+
     // Route handling
     switch (path) {
       case '/':

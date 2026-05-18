@@ -5,27 +5,27 @@
 
 // --- Types ---
 type Doc = { path: string; slug: string; title: string; desc: string; content: string };
-type JsonRpc = { jsonrpc: "2.0"; id?: number | string; method?: string; params?: any };
+type JsonRpc = { jsonrpc: '2.0'; id?: number | string; method?: string; params?: any };
 
 // --- Index ---
 const docs: Doc[] = [];
-let docsRoot = "";
+let docsRoot = '';
 
 async function buildIndex() {
   // Find bun-types/docs anywhere under the project
-  const glob = new Bun.Glob("**/bun-types/docs/**/*.mdx");
+  const glob = new Bun.Glob('**/bun-types/docs/**/*.mdx');
   const root = process.env.BUN_DOCS_ROOT || process.cwd();
   const seen = new Set<string>();
 
   for await (const path of glob.scan({ cwd: root, absolute: true })) {
     // Take the first bun-types/docs tree we find, skip dupes from other node_modules
-    const docsIdx = path.indexOf("bun-types/docs/");
+    const docsIdx = path.indexOf('bun-types/docs/');
     if (docsIdx === -1) continue;
-    const thisRoot = path.slice(0, docsIdx + "bun-types/docs/".length);
+    const thisRoot = path.slice(0, docsIdx + 'bun-types/docs/'.length);
     if (!docsRoot) docsRoot = thisRoot;
     if (thisRoot !== docsRoot) continue;
 
-    const slug = path.slice(docsRoot.length).replace(/\.mdx$/, "");
+    const slug = path.slice(docsRoot.length).replace(/\.mdx$/, '');
     if (seen.has(slug)) continue;
     seen.add(slug);
 
@@ -39,23 +39,27 @@ async function buildIndex() {
 }
 
 function parseFrontmatter(raw: string): { title: string; desc: string; body: string } {
-  if (!raw.startsWith("---")) return { title: "", desc: "", body: raw };
-  const end = raw.indexOf("\n---", 3);
-  if (end === -1) return { title: "", desc: "", body: raw };
+  if (!raw.startsWith('---')) return { title: '', desc: '', body: raw };
+  const end = raw.indexOf('\n---', 3);
+  if (end === -1) return { title: '', desc: '', body: raw };
   const fm = raw.slice(4, end);
   const body = raw.slice(end + 4).trim();
-  let title = "", desc = "";
-  for (const line of fm.split("\n")) {
+  let title = '',
+    desc = '';
+  for (const line of fm.split('\n')) {
     const m = line.match(/^(\w+):\s*"?(.+?)"?\s*$/);
     if (!m) continue;
-    if (m[1] === "title") title = m[2];
-    if (m[1] === "description") desc = m[2];
+    if (m[1] === 'title') title = m[2];
+    if (m[1] === 'description') desc = m[2];
   }
   return { title, desc, body };
 }
 
 // --- Search ---
-function searchDocs(query: string, limit = 10): { slug: string; title: string; desc: string; score: number }[] {
+function searchDocs(
+  query: string,
+  limit = 10
+): { slug: string; title: string; desc: string; score: number }[] {
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (!terms.length) return [];
 
@@ -88,8 +92,12 @@ function searchDocs(query: string, limit = 10): { slug: string; title: string; d
 }
 
 function countOccurrences(haystack: string, needle: string): number {
-  let count = 0, idx = 0;
-  while ((idx = haystack.indexOf(needle, idx)) !== -1) { count++; idx += needle.length; }
+  let count = 0,
+    idx = 0;
+  while ((idx = haystack.indexOf(needle, idx)) !== -1) {
+    count++;
+    idx += needle.length;
+  }
   return count;
 }
 
@@ -107,32 +115,40 @@ function listTopics(): { slug: string; title: string }[] {
 // --- MCP Protocol (stdio with Content-Length framing) ---
 const TOOLS = [
   {
-    name: "search_bun_docs",
-    description: "Search Bun documentation by keyword. Returns ranked results with titles and descriptions.",
+    name: 'search_bun_docs',
+    description:
+      'Search Bun documentation by keyword. Returns ranked results with titles and descriptions.',
     inputSchema: {
-      type: "object" as const,
+      type: 'object' as const,
       properties: {
-        query: { type: "string", description: "Search keywords (e.g. 'sqlite', 'websocket server', 'file io')" },
-        limit: { type: "number", description: "Max results (default 10)" },
+        query: {
+          type: 'string',
+          description: "Search keywords (e.g. 'sqlite', 'websocket server', 'file io')",
+        },
+        limit: { type: 'number', description: 'Max results (default 10)' },
       },
-      required: ["query"],
+      required: ['query'],
     },
   },
   {
-    name: "read_bun_doc",
-    description: "Read the full content of a Bun documentation page by its slug (e.g. 'runtime/sqlite', 'guides/http/cluster').",
+    name: 'read_bun_doc',
+    description:
+      "Read the full content of a Bun documentation page by its slug (e.g. 'runtime/sqlite', 'guides/http/cluster').",
     inputSchema: {
-      type: "object" as const,
+      type: 'object' as const,
       properties: {
-        slug: { type: "string", description: "Doc slug from search results (e.g. 'runtime/sqlite')" },
+        slug: {
+          type: 'string',
+          description: "Doc slug from search results (e.g. 'runtime/sqlite')",
+        },
       },
-      required: ["slug"],
+      required: ['slug'],
     },
   },
   {
-    name: "list_bun_topics",
-    description: "List all available Bun documentation topics with their slugs and titles.",
-    inputSchema: { type: "object" as const, properties: {} },
+    name: 'list_bun_topics',
+    description: 'List all available Bun documentation topics with their slugs and titles.',
+    inputSchema: { type: 'object' as const, properties: {} },
   },
 ];
 
@@ -140,57 +156,80 @@ function handleRequest(msg: JsonRpc): object | null {
   const { method, id, params } = msg;
 
   // Notifications (no id) — just acknowledge
-  if (method === "notifications/initialized") return null;
-  if (method?.startsWith("notifications/")) return null;
+  if (method === 'notifications/initialized') return null;
+  if (method?.startsWith('notifications/')) return null;
 
   switch (method) {
-    case "initialize":
+    case 'initialize':
       return {
-        jsonrpc: "2.0", id,
+        jsonrpc: '2.0',
+        id,
         result: {
-          protocolVersion: "2024-11-05",
+          protocolVersion: '2024-11-05',
           capabilities: { tools: {} },
-          serverInfo: { name: "bun-docs", version: "1.0.0" },
+          serverInfo: { name: 'bun-docs', version: '1.0.0' },
         },
       };
 
-    case "tools/list":
-      return { jsonrpc: "2.0", id, result: { tools: TOOLS } };
+    case 'tools/list':
+      return { jsonrpc: '2.0', id, result: { tools: TOOLS } };
 
-    case "tools/call": {
+    case 'tools/call': {
       const toolName = params?.name;
       const args = params?.arguments ?? {};
 
-      if (toolName === "search_bun_docs") {
+      if (toolName === 'search_bun_docs') {
         const results = searchDocs(args.query, args.limit);
-        const text = results.length === 0
-          ? `No results for "${args.query}".`
-          : results.map((r, i) => `${i + 1}. **${r.title}** (${r.slug})\n   ${r.desc} [score: ${r.score}]`).join("\n\n");
-        return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text }] } };
+        const text =
+          results.length === 0
+            ? `No results for "${args.query}".`
+            : results
+                .map(
+                  (r, i) => `${i + 1}. **${r.title}** (${r.slug})\n   ${r.desc} [score: ${r.score}]`
+                )
+                .join('\n\n');
+        return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } };
       }
 
-      if (toolName === "read_bun_doc") {
+      if (toolName === 'read_bun_doc') {
         const doc = readDoc(args.slug);
         if (!doc) {
-          return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text: `Doc not found: "${args.slug}". Use search_bun_docs to find valid slugs.` }], isError: true } };
+          return {
+            jsonrpc: '2.0',
+            id,
+            result: {
+              content: [
+                {
+                  type: 'text',
+                  text: `Doc not found: "${args.slug}". Use search_bun_docs to find valid slugs.`,
+                },
+              ],
+              isError: true,
+            },
+          };
         }
         const text = `# ${doc.title}\n\n${doc.desc}\n\n---\n\n${doc.content}`;
-        return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text }] } };
+        return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } };
       }
 
-      if (toolName === "list_bun_topics") {
+      if (toolName === 'list_bun_topics') {
         const topics = listTopics();
-        const text = `${topics.length} docs indexed from ${docsRoot}\n\n` +
-          topics.map(t => `- \`${t.slug}\` — ${t.title}`).join("\n");
-        return { jsonrpc: "2.0", id, result: { content: [{ type: "text", text }] } };
+        const text =
+          `${topics.length} docs indexed from ${docsRoot}\n\n` +
+          topics.map(t => `- \`${t.slug}\` — ${t.title}`).join('\n');
+        return { jsonrpc: '2.0', id, result: { content: [{ type: 'text', text }] } };
       }
 
-      return { jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown tool: ${toolName}` } };
+      return { jsonrpc: '2.0', id, error: { code: -32601, message: `Unknown tool: ${toolName}` } };
     }
 
     default:
       if (id !== undefined) {
-        return { jsonrpc: "2.0", id, error: { code: -32601, message: `Unknown method: ${method}` } };
+        return {
+          jsonrpc: '2.0',
+          id,
+          error: { code: -32601, message: `Unknown method: ${method}` },
+        };
       }
       return null;
   }
@@ -205,11 +244,11 @@ function send(msg: object) {
 
 async function main() {
   await buildIndex();
-  const stderr = (s: string) => process.stderr.write(s + "\n");
+  const stderr = (s: string) => process.stderr.write(s + '\n');
   stderr(`[bun-docs-mcp] Indexed ${docs.length} docs from ${docsRoot}`);
 
   // Read stdin as a stream, parse Content-Length framed messages
-  let buffer = "";
+  let buffer = '';
   const decoder = new TextDecoder();
 
   for await (const chunk of Bun.stdin.stream()) {
@@ -217,7 +256,7 @@ async function main() {
 
     while (true) {
       // Look for Content-Length header
-      const headerEnd = buffer.indexOf("\r\n\r\n");
+      const headerEnd = buffer.indexOf('\r\n\r\n');
       if (headerEnd === -1) break;
 
       const header = buffer.slice(0, headerEnd);

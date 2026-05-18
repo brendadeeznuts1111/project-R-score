@@ -205,7 +205,9 @@ export function validateConfig(config: RegistryConfig): { valid: boolean; errors
 
   if (config.auth?.type === 'jwt' && !config.auth.jwtSecret) {
     // Warning only - can use env var
-    console.info(styled('⚠️ JWT secret not in config, will use REGISTRY_SECRET env var', 'warning'));
+    console.info(
+      styled('⚠️ JWT secret not in config, will use REGISTRY_SECRET env var', 'warning')
+    );
   }
 
   return {

@@ -48,17 +48,17 @@ interface GlobalErrorState {
 
 /**
  * Global Error Handler
- * 
+ *
  * Centralizes handling of:
  * - Uncaught exceptions
  * - Unhandled promise rejections
  * - Process warnings
  * - Signal-based shutdown
- * 
+ *
  * @example
  * ```typescript
  * import { initializeGlobalErrorHandling } from './lib/core/global-error-handler';
- * 
+ *
  * initializeGlobalErrorHandling({
  *   exitOnUncaughtException: true,
  *   exitOnUnhandledRejection: false,
@@ -134,7 +134,7 @@ export class GlobalErrorHandler {
     this.state.lastErrorTime = Date.now();
 
     const enhancedError = this.enhanceError(error, 'UNCAUGHT_EXCEPTION');
-    
+
     console.error('\n🚨 UNCAUGHT EXCEPTION');
     console.error('======================');
     console.error(`Error: ${enhancedError.message}`);
@@ -162,16 +162,11 @@ export class GlobalErrorHandler {
   /**
    * Handle unhandled promise rejections
    */
-  private handleUnhandledRejection(
-    reason: unknown,
-    promise: Promise<unknown>
-  ): void {
+  private handleUnhandledRejection(reason: unknown, promise: Promise<unknown>): void {
     this.state.unhandledRejections++;
     this.state.lastErrorTime = Date.now();
 
-    const error = reason instanceof Error 
-      ? reason 
-      : new Error(String(reason));
+    const error = reason instanceof Error ? reason : new Error(String(reason));
 
     const enhancedError = this.enhanceError(error, 'UNHANDLED_REJECTION');
 
@@ -249,7 +244,7 @@ export class GlobalErrorHandler {
     try {
       // Run all shutdown handlers
       console.info(`🔄 Running ${this.shutdownHandlers.length} shutdown handlers...`);
-      
+
       for (const handler of this.shutdownHandlers) {
         try {
           await handler();
@@ -308,7 +303,7 @@ export class GlobalErrorHandler {
   } {
     const uptime = process.uptime();
     const totalErrors = this.state.uncaughtExceptions + this.state.unhandledRejections;
-    const errorRate = uptime > 0 ? (totalErrors / (uptime / 60)) : 0;
+    const errorRate = uptime > 0 ? totalErrors / (uptime / 60) : 0;
 
     return {
       uncaughtExceptions: this.state.uncaughtExceptions,

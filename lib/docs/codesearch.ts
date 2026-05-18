@@ -1,7 +1,7 @@
 /**
  * Unified CodeSearch Module
  * High-performance code search with ripgrep, caching, and streaming
- * 
+ *
  * Features:
  * - Zero-copy streaming with Bun.readableStreamToText
  * - LRU caching with TTL
@@ -226,7 +226,9 @@ export class CodeSearch {
   private cache: LRUCache<string, SearchResult>;
   private defaultOptions: Partial<CodeSearchOptions>;
 
-  constructor(options: { cache?: LRUCache<string, SearchResult>; defaults?: Partial<CodeSearchOptions> } = {}) {
+  constructor(
+    options: { cache?: LRUCache<string, SearchResult>; defaults?: Partial<CodeSearchOptions> } = {}
+  ) {
     this.cache = options.cache ?? searchCache;
     this.defaultOptions = options.defaults ?? {};
   }
@@ -331,7 +333,11 @@ export class CodeSearch {
       return result;
     } catch (error) {
       console.error('Search failed:', error);
-      return { matches: [], stats: { filesSearched: 0, matchesFound: 0, timeMs: performance.now() - start }, files: [] };
+      return {
+        matches: [],
+        stats: { filesSearched: 0, matchesFound: 0, timeMs: performance.now() - start },
+        files: [],
+      };
     }
   }
 
@@ -379,7 +385,11 @@ export class CodeSearch {
 
               if (matchesFound >= maxResults) {
                 reader.releaseLock();
-                return { filesSearched: files.size, matchesFound, timeMs: performance.now() - start };
+                return {
+                  filesSearched: files.size,
+                  matchesFound,
+                  timeMs: performance.now() - start,
+                };
               }
             }
           } catch {
@@ -411,11 +421,14 @@ export class CodeSearch {
   /**
    * Search multiple queries concurrently
    */
-  async searchBatch(queries: string[], options: Omit<CodeSearchOptions, 'query'>): Promise<Map<string, SearchResult>> {
+  async searchBatch(
+    queries: string[],
+    options: Omit<CodeSearchOptions, 'query'>
+  ): Promise<Map<string, SearchResult>> {
     const results = new Map<string, SearchResult>();
 
     await Promise.all(
-      queries.map(async (query) => {
+      queries.map(async query => {
         const result = await this.search({ ...options, query });
         results.set(query, result);
       })
@@ -427,7 +440,10 @@ export class CodeSearch {
   /**
    * Symbol search with word boundaries
    */
-  async searchSymbol(symbol: string, options: Omit<CodeSearchOptions, 'query' | 'wordBoundary'> = {}): Promise<SearchResult> {
+  async searchSymbol(
+    symbol: string,
+    options: Omit<CodeSearchOptions, 'query' | 'wordBoundary'> = {}
+  ): Promise<SearchResult> {
     return this.search({
       ...options,
       query: symbol,
@@ -440,7 +456,10 @@ export class CodeSearch {
   /**
    * Text search (no word boundaries)
    */
-  async searchText(query: string, options: Omit<CodeSearchOptions, 'query'> = {}): Promise<SearchResult> {
+  async searchText(
+    query: string,
+    options: Omit<CodeSearchOptions, 'query'> = {}
+  ): Promise<SearchResult> {
     return this.search({ ...options, query });
   }
 
@@ -460,7 +479,11 @@ export class CodeSearch {
   /**
    * Process ripgrep outputs into SearchResult
    */
-  private processOutputs(outputs: RipgrepOutput[], options: CodeSearchOptions, timeMs: number): SearchResult {
+  private processOutputs(
+    outputs: RipgrepOutput[],
+    options: CodeSearchOptions,
+    timeMs: number
+  ): SearchResult {
     const matches: CodeMatch[] = [];
     const files = new Set<string>();
     const maxResults = options.maxResults ?? 50;
@@ -526,7 +549,9 @@ export async function searchSymbol(symbol: string, paths?: string[]): Promise<Co
 /**
  * Streaming search
  */
-export async function* searchCodeStream(options: CodeSearchOptions): AsyncGenerator<CodeMatch, SearchStats> {
+export async function* searchCodeStream(
+  options: CodeSearchOptions
+): AsyncGenerator<CodeMatch, SearchStats> {
   const searcher = new CodeSearch();
   return yield* searcher.searchStream(options);
 }
@@ -589,7 +614,10 @@ export async function searchWithScoring(
     }
 
     // Definition bonus
-    if (options.boostDefinitions !== false && /\b(function|class|interface|const|let|var)\s+\w+/.test(match.content)) {
+    if (
+      options.boostDefinitions !== false &&
+      /\b(function|class|interface|const|let|var)\s+\w+/.test(match.content)
+    ) {
       score += 3;
       reasons.push('definition');
     }

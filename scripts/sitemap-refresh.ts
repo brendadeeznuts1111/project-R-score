@@ -21,12 +21,37 @@ const PAGES: SitemapPage[] = [
   { path: '/wiki-index.html', localFile: 'wiki-index.html', changefreq: 'daily', priority: '0.9' },
   { path: '/app-index.html', localFile: 'app-index.html', changefreq: 'weekly', priority: '0.7' },
   { path: '/api-index.html', localFile: 'api-index.html', changefreq: 'weekly', priority: '0.7' },
-  { path: '/dashboard-index.html', localFile: 'dashboard-index.html', changefreq: 'weekly', priority: '0.8' },
-  { path: '/registry-index.html', localFile: 'registry-index.html', changefreq: 'weekly', priority: '0.8' },
+  {
+    path: '/dashboard-index.html',
+    localFile: 'dashboard-index.html',
+    changefreq: 'weekly',
+    priority: '0.8',
+  },
+  {
+    path: '/registry-index.html',
+    localFile: 'registry-index.html',
+    changefreq: 'weekly',
+    priority: '0.8',
+  },
   { path: '/rss-index.html', localFile: 'rss-index.html', changefreq: 'daily', priority: '0.6' },
-  { path: '/admin-index.html', localFile: 'admin-index.html', changefreq: 'weekly', priority: '0.5' },
-  { path: '/storage-index.html', localFile: 'storage-index.html', changefreq: 'weekly', priority: '0.5' },
-  { path: '/staging-index.html', localFile: 'staging-index.html', changefreq: 'weekly', priority: '0.4' },
+  {
+    path: '/admin-index.html',
+    localFile: 'admin-index.html',
+    changefreq: 'weekly',
+    priority: '0.5',
+  },
+  {
+    path: '/storage-index.html',
+    localFile: 'storage-index.html',
+    changefreq: 'weekly',
+    priority: '0.5',
+  },
+  {
+    path: '/staging-index.html',
+    localFile: 'staging-index.html',
+    changefreq: 'weekly',
+    priority: '0.4',
+  },
 ];
 
 function escapeXml(value: string): string {
@@ -39,12 +64,16 @@ function escapeXml(value: string): string {
 }
 
 async function detectDomain(): Promise<string> {
-  const envDomain = String(Bun.env.SITEMAP_DOMAIN || '').trim().toLowerCase();
+  const envDomain = String(Bun.env.SITEMAP_DOMAIN || '')
+    .trim()
+    .toLowerCase();
   if (envDomain) return envDomain;
 
   const cnamePath = resolve('CNAME');
   if (existsSync(cnamePath)) {
-    const cname = String(await readFile(cnamePath, 'utf8')).trim().toLowerCase();
+    const cname = String(await readFile(cnamePath, 'utf8'))
+      .trim()
+      .toLowerCase();
     if (cname) return cname;
   }
   return DEFAULT_DOMAIN;
@@ -65,7 +94,7 @@ async function gitLastmod(filePath: string): Promise<string> {
 
 async function buildSitemapPagesXml(domain: string): Promise<string> {
   const rows = await Promise.all(
-    PAGES.map(async (page) => {
+    PAGES.map(async page => {
       const local = resolve(page.localFile);
       const lastmod = existsSync(local) ? await gitLastmod(local) : new Date().toISOString();
       const loc = `https://${domain}${page.path}`;
@@ -117,7 +146,7 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
+  main().catch(error => {
     console.error(`[sitemap-refresh] ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   });

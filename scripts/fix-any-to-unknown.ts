@@ -21,7 +21,15 @@ import path from 'node:path';
 
 const ROOT = process.argv[2] || process.cwd();
 const EXTENSIONS = new Set(['.ts', '.tsx']);
-const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache', '.wrangler']);
+const EXCLUDE_DIRS = new Set([
+  'node_modules',
+  '.git',
+  'dist',
+  'build',
+  '.cache',
+  '.npm-cache',
+  '.wrangler',
+]);
 
 const DRY_RUN = process.argv.includes('--dry-run');
 
@@ -107,4 +115,6 @@ for await (const file of walkFiles(ROOT)) {
   filesChanged++;
 }
 
-console.info(`\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} :any -> :unknown across ${filesChanged} files.`);
+console.info(
+  `\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} :any -> :unknown across ${filesChanged} files.`
+);

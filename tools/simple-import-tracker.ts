@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 // tools/simple-import-tracker.ts — Bun plugin for tracking imports
 
-import { plugin } from "bun";
+import { plugin } from 'bun';
 
 plugin({
-  name: "simple import tracker",
+  name: 'simple import tracker',
   setup(build) {
     const transpiler = new Bun.Transpiler();
     const trackedImports: Record<string, number> = {};
@@ -60,7 +60,7 @@ Object.entries(importStats).forEach(([path, count]) => {
 
 export default importStats;
         `,
-        loader: "js",
+        loader: 'js',
       };
     });
   },

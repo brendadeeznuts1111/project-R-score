@@ -1,5 +1,5 @@
 // levenshtein-tier1380.ts — Pure, optimized Levenshtein similarity engine
-import { Database } from "bun:sqlite";
+import { Database } from 'bun:sqlite';
 
 // ────────────────────────────────────────────────────────────────
 // TYPES
@@ -71,21 +71,21 @@ export const BUN_DEFAULT_SIMILARITY_THRESHOLDS: SimilarityThresholds = {
   close: 1.0,
   similar: 2.0,
   partial: 3.0,
-  unrelated: 4.0
+  unrelated: 4.0,
 };
 
 export const BUN_EDIT_OPERATION_WEIGHTS = {
   insertion: 1,
   deletion: 1,
   substitution: 2,
-  transposition: 1
+  transposition: 1,
 };
 
 export const BUN_UNICODE_CATEGORIES = {
   COMBINING_MARK: /[\u0300-\u036f\u1ab0-\u1aff\u20d0-\u20ff\ufe20-\ufe2f]/,
   EMOJI: /\p{Emoji}/u,
   ZWJ: /\u200d/,
-  VARIATION_SELECTOR: /[\ufe00-\ufe0f\ue0100-\ue01ef]/
+  VARIATION_SELECTOR: /[\ufe00-\ufe0f\ue0100-\ue01ef]/,
 };
 
 export const BUN_PERFORMANCE_CONFIGS: Record<string, PerformanceConfig> = {
@@ -93,26 +93,26 @@ export const BUN_PERFORMANCE_CONFIGS: Record<string, PerformanceConfig> = {
     matrixPreallocation: true,
     useBufferOperations: false,
     parallelThreshold: 1000,
-    unicodeAware: true
+    unicodeAware: true,
   },
   production: {
     matrixPreallocation: true,
     useBufferOperations: true,
     parallelThreshold: 100,
-    unicodeAware: true
+    unicodeAware: true,
   },
   benchmark: {
     matrixPreallocation: true,
     useBufferOperations: true,
     parallelThreshold: 10,
-    unicodeAware: false
-  }
+    unicodeAware: false,
+  },
 };
 
 export const BUN_CACHE_STRATEGIES = {
   LRU: 'lru',
   FIFO: 'fifo',
-  TTL: 'ttl'
+  TTL: 'ttl',
 } as const;
 
 // ────────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@ function countGraphemes(str: string): number {
     const segmenter = new Intl.Segmenter('en', { granularity: 'grapheme' });
     return Array.from(segmenter.segment(str)).length;
   }
-  
+
   // Fallback: count code points (approximation)
   let count = 0;
   for (const _ of str) {
@@ -154,7 +154,7 @@ function calculateVisualWidth(str: string): number {
   if (typeof Bun !== 'undefined' && 'stringWidth' in Bun) {
     return (Bun as any).stringWidth(str);
   }
-  
+
   // Simplified fallback
   let width = 0;
   for (const char of str) {
@@ -162,41 +162,41 @@ function calculateVisualWidth(str: string): number {
     if (code !== undefined) {
       // East Asian Fullwidth characters
       if (
-        (code >= 0x1100 && code <= 0x115F) || // Hangul Jamo
-        (code >= 0x231A && code <= 0x231B) || // Miscellaneous Technical
-        (code >= 0x2329 && code <= 0x232A) || // Miscellaneous Technical
-        (code >= 0x23E9 && code <= 0x23EC) || // Miscellaneous Technical
-        (code >= 0x23F0 && code <= 0x23F0) || // Miscellaneous Technical
-        (code >= 0x23F3 && code <= 0x23F3) || // Miscellaneous Technical
-        (code >= 0x25FD && code <= 0x25FE) || // Geometric Shapes
+        (code >= 0x1100 && code <= 0x115f) || // Hangul Jamo
+        (code >= 0x231a && code <= 0x231b) || // Miscellaneous Technical
+        (code >= 0x2329 && code <= 0x232a) || // Miscellaneous Technical
+        (code >= 0x23e9 && code <= 0x23ec) || // Miscellaneous Technical
+        (code >= 0x23f0 && code <= 0x23f0) || // Miscellaneous Technical
+        (code >= 0x23f3 && code <= 0x23f3) || // Miscellaneous Technical
+        (code >= 0x25fd && code <= 0x25fe) || // Geometric Shapes
         (code >= 0x2614 && code <= 0x2615) || // Miscellaneous Symbols
         (code >= 0x2648 && code <= 0x2653) || // Miscellaneous Symbols
-        (code >= 0x267F && code <= 0x267F) || // Miscellaneous Symbols
+        (code >= 0x267f && code <= 0x267f) || // Miscellaneous Symbols
         (code >= 0x2693 && code <= 0x2693) || // Miscellaneous Symbols
-        (code >= 0x26A1 && code <= 0x26A1) || // Miscellaneous Symbols
-        (code >= 0x26AA && code <= 0x26AB) || // Miscellaneous Symbols
-        (code >= 0x26BD && code <= 0x26BE) || // Miscellaneous Symbols
-        (code >= 0x26C4 && code <= 0x26C5) || // Miscellaneous Symbols
-        (code >= 0x26CE && code <= 0x26CE) || // Miscellaneous Symbols
-        (code >= 0x26D4 && code <= 0x26D4) || // Miscellaneous Symbols
-        (code >= 0x26EA && code <= 0x26EA) || // Miscellaneous Symbols
-        (code >= 0x26F2 && code <= 0x26F3) || // Miscellaneous Symbols
-        (code >= 0x26F5 && code <= 0x26F5) || // Miscellaneous Symbols
-        (code >= 0x26FA && code <= 0x26FA) || // Miscellaneous Symbols
-        (code >= 0x26FD && code <= 0x26FD) || // Miscellaneous Symbols
+        (code >= 0x26a1 && code <= 0x26a1) || // Miscellaneous Symbols
+        (code >= 0x26aa && code <= 0x26ab) || // Miscellaneous Symbols
+        (code >= 0x26bd && code <= 0x26be) || // Miscellaneous Symbols
+        (code >= 0x26c4 && code <= 0x26c5) || // Miscellaneous Symbols
+        (code >= 0x26ce && code <= 0x26ce) || // Miscellaneous Symbols
+        (code >= 0x26d4 && code <= 0x26d4) || // Miscellaneous Symbols
+        (code >= 0x26ea && code <= 0x26ea) || // Miscellaneous Symbols
+        (code >= 0x26f2 && code <= 0x26f3) || // Miscellaneous Symbols
+        (code >= 0x26f5 && code <= 0x26f5) || // Miscellaneous Symbols
+        (code >= 0x26fa && code <= 0x26fa) || // Miscellaneous Symbols
+        (code >= 0x26fd && code <= 0x26fd) || // Miscellaneous Symbols
         (code >= 0x2705 && code <= 0x2705) || // Dingbats
-        (code >= 0x270A && code <= 0x270B) || // Dingbats
+        (code >= 0x270a && code <= 0x270b) || // Dingbats
         (code >= 0x2728 && code <= 0x2728) || // Dingbats
-        (code >= 0x274C && code <= 0x274C) || // Dingbats
-        (code >= 0x274E && code <= 0x274E) || // Dingbats
+        (code >= 0x274c && code <= 0x274c) || // Dingbats
+        (code >= 0x274e && code <= 0x274e) || // Dingbats
         (code >= 0x2753 && code <= 0x2755) || // Dingbats
         (code >= 0x2757 && code <= 0x2757) || // Dingbats
         (code >= 0x2795 && code <= 0x2797) || // Dingbats
-        (code >= 0x27B0 && code <= 0x27B0) || // Dingbats
-        (code >= 0x27BF && code <= 0x27BF) || // Dingbats
-        (code >= 0x2B1B && code <= 0x2B1C) || // Miscellaneous Symbols and Arrows
-        (code >= 0x2B50 && code <= 0x2B50) || // Miscellaneous Symbols and Arrows
-        (code >= 0x2B55 && code <= 0x2B55)    // Miscellaneous Symbols and Arrows
+        (code >= 0x27b0 && code <= 0x27b0) || // Dingbats
+        (code >= 0x27bf && code <= 0x27bf) || // Dingbats
+        (code >= 0x2b1b && code <= 0x2b1c) || // Miscellaneous Symbols and Arrows
+        (code >= 0x2b50 && code <= 0x2b50) || // Miscellaneous Symbols and Arrows
+        (code >= 0x2b55 && code <= 0x2b55) // Miscellaneous Symbols and Arrows
       ) {
         width += 2;
       } else {
@@ -228,10 +228,10 @@ export class LevenshteinEngine {
         enabled: true,
         ttlSeconds: 3600,
         maxEntries: 10000,
-        strategy: BUN_CACHE_STRATEGIES.LRU
+        strategy: BUN_CACHE_STRATEGIES.LRU,
       },
       performanceConfig: BUN_PERFORMANCE_CONFIGS.production,
-      ...config
+      ...config,
     };
 
     // Initialize buffers with optimal size
@@ -289,7 +289,7 @@ export class LevenshteinEngine {
         WHERE hash = ? 
         LIMIT 1
       `);
-      
+
       const row = stmt.get(hash) as any;
       if (row) {
         const result: SimilarityResult = {
@@ -302,9 +302,9 @@ export class LevenshteinEngine {
           score: row.score,
           suggestion: this.generateSuggestion(row.score, row.target, row.candidate),
           hash: Buffer.from(hash, 'hex'),
-          timestamp: row.timestamp
+          timestamp: row.timestamp,
         };
-        
+
         this.cache.set(hash, result);
         this.cacheHits++;
         return result;
@@ -338,7 +338,7 @@ export class LevenshteinEngine {
           (hash, target, candidate, distance, normalized_distance, score, operations, timestamp)
           VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `);
-        
+
         stmt.run(
           hash,
           result.target,
@@ -373,12 +373,14 @@ export class LevenshteinEngine {
     const m = processedB.length;
 
     // Handle edge cases
-    if (n === 0) return { distance: m, operations: { insertions: m, deletions: 0, substitutions: 0 } };
-    if (m === 0) return { distance: n, operations: { insertions: 0, deletions: n, substitutions: 0 } };
+    if (n === 0)
+      return { distance: m, operations: { insertions: m, deletions: 0, substitutions: 0 } };
+    if (m === 0)
+      return { distance: n, operations: { insertions: 0, deletions: n, substitutions: 0 } };
 
     // Convert to char codes using optimized method
     let aCodes: Int32Array, bCodes: Int32Array;
-    
+
     if (useBufferOps && n + m < BUN_MAX_MATRIX_SIZE) {
       aCodes = this.stringToCharCodesBuffer(processedA, 0);
       bCodes = this.stringToCharCodesBuffer(processedB, n);
@@ -428,7 +430,7 @@ export class LevenshteinEngine {
     const operations: EditOperations = {
       insertions: 0,
       deletions: 0,
-      substitutions: 0
+      substitutions: 0,
     };
 
     // Fill matrix
@@ -458,7 +460,7 @@ export class LevenshteinEngine {
 
     return {
       distance: prevRow[m],
-      operations
+      operations,
     };
   }
 
@@ -474,7 +476,7 @@ export class LevenshteinEngine {
       matrix[i] = new Array(m + 1);
       matrix[i][0] = i;
     }
-    
+
     for (let j = 0; j <= m; j++) {
       matrix[0][j] = j;
     }
@@ -482,7 +484,7 @@ export class LevenshteinEngine {
     // Fill matrix
     for (let i = 1; i <= n; i++) {
       const aChar = a[i - 1];
-      
+
       for (let j = 1; j <= m; j++) {
         const bChar = b[j - 1];
         const cost = aChar === bChar ? 0 : 1;
@@ -499,7 +501,7 @@ export class LevenshteinEngine {
 
     return {
       distance: matrix[n][m],
-      operations
+      operations,
     };
   }
 
@@ -529,11 +531,12 @@ export class LevenshteinEngine {
     const operations: EditOperations = {
       insertions: 0,
       deletions: 0,
-      substitutions: 0
+      substitutions: 0,
     };
 
-    let i = n, j = m;
-    
+    let i = n,
+      j = m;
+
     while (i > 0 || j > 0) {
       if (i === 0) {
         operations.insertions++;
@@ -544,10 +547,11 @@ export class LevenshteinEngine {
       } else {
         const cost = a[i - 1] === b[j - 1] ? 0 : 1;
         const current = matrix[i][j];
-        
+
         if (current === matrix[i - 1][j - 1] + cost) {
           if (cost === 1) operations.substitutions++;
-          i--; j--;
+          i--;
+          j--;
         } else if (current === matrix[i][j - 1] + 1) {
           operations.insertions++;
           j--;
@@ -588,21 +592,17 @@ export class LevenshteinEngine {
     }
 
     // Calculate distance
-    const { distance, operations } = this.calculateLevenshteinDistance(
-      target,
-      candidate,
-      { unicodeAware }
-    );
+    const { distance, operations } = this.calculateLevenshteinDistance(target, candidate, {
+      unicodeAware,
+    });
 
     // Calculate normalized distance (0-999 scale)
     const maxLen = Math.max(target.length, candidate.length);
-    const normalizedDistance = maxLen === 0 ? 0 : Math.min(
-      999,
-      Math.floor((distance / maxLen) * 999)
-    );
+    const normalizedDistance =
+      maxLen === 0 ? 0 : Math.min(999, Math.floor((distance / maxLen) * 999));
 
     // Calculate complexity-weighted operations
-    const operationComplexity = 
+    const operationComplexity =
       operations.insertions * BUN_EDIT_OPERATION_WEIGHTS.insertion +
       operations.deletions * BUN_EDIT_OPERATION_WEIGHTS.deletion +
       operations.substitutions * BUN_EDIT_OPERATION_WEIGHTS.substitution;
@@ -612,10 +612,11 @@ export class LevenshteinEngine {
 
     // Calculate score: S = C + (N×10⁻³) + (E×10⁻⁶) + (T×10⁻⁹)
     const latencyNs = Bun.nanoseconds() - startNs;
-    const score = category + 
-                 (normalizedDistance * 0.001) + 
-                 (operationComplexity * 0.000001) + 
-                 (Number(latencyNs) * 0.000000001);
+    const score =
+      category +
+      normalizedDistance * 0.001 +
+      operationComplexity * 0.000001 +
+      Number(latencyNs) * 0.000000001;
 
     const result: SimilarityResult = {
       target,
@@ -627,7 +628,7 @@ export class LevenshteinEngine {
       score: Math.round(score * 1e9) / 1e9, // 9 decimal precision
       suggestion: this.generateSuggestion(score, target, candidate),
       hash: Buffer.from(hash, 'hex'),
-      timestamp: Number(startNs)
+      timestamp: Number(startNs),
     };
 
     // Cache result
@@ -647,7 +648,8 @@ export class LevenshteinEngine {
       profileName?: string;
     }
   ): Promise<SimilarityResult[]> {
-    const concurrency = options?.concurrency ?? 
+    const concurrency =
+      options?.concurrency ??
       (candidates.length > this.config.performanceConfig.parallelThreshold ? 4 : 1);
 
     const chunks: string[][] = [];
@@ -657,7 +659,7 @@ export class LevenshteinEngine {
 
     const results: SimilarityResult[] = [];
 
-    return new Promise((resolve) => {
+    return new Promise(resolve => {
       const processChunk = async (chunk: string[], index: number) => {
         for (const candidate of chunk) {
           results[index] = this.calculateSimilarity(target, candidate, options);
@@ -677,7 +679,7 @@ export class LevenshteinEngine {
       graphemeCount: countGraphemes(text),
       visualWidth: calculateVisualWidth(text),
       isWellFormed: text.isWellFormed?.() ?? true,
-      normalizedForm: normalizeUnicode(text)
+      normalizedForm: normalizeUnicode(text),
     };
   }
 
@@ -720,11 +722,11 @@ export class LevenshteinEngine {
   public getCacheStats(): { hits: number; misses: number; hitRate: number } {
     const total = this.cacheHits + this.cacheMisses;
     const hitRate = total > 0 ? (this.cacheHits / total) * 100 : 0;
-    
+
     return {
       hits: this.cacheHits,
       misses: this.cacheMisses,
-      hitRate: parseFloat(hitRate.toFixed(2))
+      hitRate: parseFloat(hitRate.toFixed(2)),
     };
   }
 
@@ -744,15 +746,15 @@ export class LevenshteinEngine {
       SELECT * FROM similarity_cache 
       ORDER BY timestamp DESC
     `);
-    
+
     const rows = stmt.all() as any[];
     const data = {
       version: BUN_LEVENSHTEIN_VERSION,
       timestamp: Date.now(),
       entries: rows.map(row => ({
         ...row,
-        operations: JSON.parse(row.operations)
-      }))
+        operations: JSON.parse(row.operations),
+      })),
     };
 
     await Bun.write(filePath, JSON.stringify(data, null, 2));
@@ -761,18 +763,15 @@ export class LevenshteinEngine {
   // ────────────────────────────────────────────────────────────────
   // PERFORMANCE UTILITIES
   // ────────────────────────────────────────────────────────────────
-  public benchmark(
-    iterations: number = 1000,
-    stringLength: number = 32
-  ): Promise<BenchmarkResult> {
-    return new Promise((resolve) => {
+  public benchmark(iterations: number = 1000, stringLength: number = 32): Promise<BenchmarkResult> {
+    return new Promise(resolve => {
       const times: number[] = [];
       const memorySamples: number[] = [];
 
       // Warm up
       for (let i = 0; i < Math.min(10, iterations); i++) {
         this.calculateSimilarity('a'.repeat(stringLength), 'b'.repeat(stringLength), {
-          useCache: false
+          useCache: false,
         });
       }
 
@@ -780,11 +779,11 @@ export class LevenshteinEngine {
       for (let i = 0; i < iterations; i++) {
         const target = 't'.repeat(stringLength) + i;
         const candidate = 'c'.repeat(stringLength) + i;
-        
+
         const start = Bun.nanoseconds();
         this.calculateSimilarity(target, candidate, { useCache: false });
         times.push(Bun.nanoseconds() - start);
-        
+
         if (i % 100 === 0) {
           memorySamples.push(process.memoryUsage().heapUsed);
         }
@@ -803,9 +802,11 @@ export class LevenshteinEngine {
         p99TimeNs: p99Time,
         minTimeNs: sortedTimes[0],
         maxTimeNs: sortedTimes[times.length - 1],
-        memoryUsage: memorySamples.length > 0 ? 
-          memorySamples.reduce((a, b) => a + b, 0) / memorySamples.length : 0,
-        cacheStats: this.getCacheStats()
+        memoryUsage:
+          memorySamples.length > 0
+            ? memorySamples.reduce((a, b) => a + b, 0) / memorySamples.length
+            : 0,
+        cacheStats: this.getCacheStats(),
       });
     });
   }
@@ -836,11 +837,11 @@ export interface BenchmarkResult {
 export const levenshtein = new LevenshteinEngine();
 export const developmentEngine = new LevenshteinEngine({
   environment: 'development',
-  performanceConfig: BUN_PERFORMANCE_CONFIGS.development
+  performanceConfig: BUN_PERFORMANCE_CONFIGS.development,
 });
 export const productionEngine = new LevenshteinEngine({
   environment: 'production',
-  performanceConfig: BUN_PERFORMANCE_CONFIGS.production
+  performanceConfig: BUN_PERFORMANCE_CONFIGS.production,
 });
 
 // ────────────────────────────────────────────────────────────────
@@ -848,11 +849,11 @@ export const productionEngine = new LevenshteinEngine({
 // ────────────────────────────────────────────────────────────────
 if (import.meta.main) {
   const args = Bun.argv.slice(2);
-  
+
   if (args[0] === 'compare' && args.length >= 3) {
     const engine = new LevenshteinEngine();
     const result = engine.calculateSimilarity(args[1], args[2]);
-    
+
     console.info(`
 ┌─────────────────────────────────────────────┐
 │ Levenshtein Similarity Result              │
@@ -868,12 +869,12 @@ if (import.meta.main) {
   } else if (args[0] === 'benchmark') {
     const iterations = parseInt(args[1]) || 1000;
     const length = parseInt(args[2]) || 32;
-    
+
     const engine = new LevenshteinEngine({
       environment: 'benchmark',
-      performanceConfig: BUN_PERFORMANCE_CONFIGS.benchmark
+      performanceConfig: BUN_PERFORMANCE_CONFIGS.benchmark,
     });
-    
+
     console.info(`Running benchmark: ${iterations} iterations, ${length} chars`);
     engine.benchmark(iterations, length).then(result => {
       console.info(`

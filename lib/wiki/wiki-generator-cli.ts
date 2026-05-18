@@ -19,8 +19,7 @@ import { DOC_PATTERNS } from '../docs/patterns';
 // Step 3: CLI reference data
 import { r2MCPIntegration } from '../mcp/r2-integration';
 
-import type { CLICategory} from '../docs/constants/cli';
-
+import type { CLICategory } from '../docs/constants/cli';
 
 // Step 4: URL validation
 
@@ -184,7 +183,11 @@ function generateSearchIndex(wikiData: WikiData): SearchIndex {
  * Find a CLI command example by command name
  */
 function findCLIExample(cmdName: string): string | undefined {
-  const allExamples = { ...CLI_COMMAND_EXAMPLES.BASIC, ...CLI_COMMAND_EXAMPLES.ADVANCED, ...CLI_COMMAND_EXAMPLES.DEVELOPMENT };
+  const allExamples = {
+    ...CLI_COMMAND_EXAMPLES.BASIC,
+    ...CLI_COMMAND_EXAMPLES.ADVANCED,
+    ...CLI_COMMAND_EXAMPLES.DEVELOPMENT,
+  };
   // Try exact match first, then case-insensitive partial match
   const key = cmdName.toUpperCase();
   for (const [exKey, exValue] of Object.entries(allExamples)) {
@@ -357,13 +360,10 @@ function generateValidationReport(wikiData: WikiData): string {
  * Generate wiki analytics
  */
 function generateAnalytics(wikiData: WikiData, generationTime: number): WikiAnalytics {
-  const categoryCounts = Object.entries(wikiData.categories).map(
-    ([_, data]) => data.count
-  );
+  const categoryCounts = Object.entries(wikiData.categories).map(([_, data]) => data.count);
   const mostUsedCategory =
-    Object.entries(wikiData.categories).sort(
-      ([, a], [, b]) => b.count - a.count
-    )[0]?.[0] || 'Unknown';
+    Object.entries(wikiData.categories).sort(([, a], [, b]) => b.count - a.count)[0]?.[0] ||
+    'Unknown';
 
   const examplesCount = wikiData.wikiPages.filter((p: WikiPage) => p.example).length;
   const coverage = (examplesCount / wikiData.total) * 100;
@@ -483,10 +483,7 @@ function generateWikiURLs(config: Partial<WikiConfig> = {}): WikiData {
   }
 
   // Step 6: Integrate cookie-CRC32 wiki pages
-  const cookiePages = getCookieCRC32WikiPages(
-    finalConfig.baseUrl,
-    finalConfig.workspace,
-  );
+  const cookiePages = getCookieCRC32WikiPages(finalConfig.baseUrl, finalConfig.workspace);
   const cookieCategoryPages: WikiPage[] = [];
   console.info(`\n📂 Processing cookie_crc32 utilities...`);
   for (const cp of cookiePages) {
@@ -589,8 +586,8 @@ Use these keywords to quickly find utilities:
     );
 
     for (const [category, data] of sortedCategories) {
-      const percentage = (((data).count / wikiData.total) * 100).toFixed(1);
-      content += `- **${category.replace('_', ' ')}**: ${(data).count} utilities (${percentage}%)\n`;
+      const percentage = ((data.count / wikiData.total) * 100).toFixed(1);
+      content += `- **${category.replace('_', ' ')}**: ${data.count} utilities (${percentage}%)\n`;
     }
     content += `\n`;
   }
@@ -620,7 +617,9 @@ Use these keywords to quickly find utilities:
     }
 
     // Step 2: Add related docs for pages that have them
-    const pagesWithRelated = categoryData.pages.filter(p => p.relatedDocs && p.relatedDocs.length > 0);
+    const pagesWithRelated = categoryData.pages.filter(
+      p => p.relatedDocs && p.relatedDocs.length > 0
+    );
     if (pagesWithRelated.length > 0) {
       content += `\n**Related Documentation:**\n`;
       for (const page of pagesWithRelated) {
@@ -1346,13 +1345,19 @@ async function loadR2Data(config: WikiConfig): Promise<R2Data> {
         withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('dashboard/metrics.json'))
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/ai/configuration.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/ai/configuration.json')
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/domain-intelligence/status.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/domain-intelligence/status.json')
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-read', async () => r2.getJSON('integrations/advanced-metrics/latest.json'))
+        withCircuitBreaker('wiki-r2-read', async () =>
+          r2.getJSON('integrations/advanced-metrics/latest.json')
+        )
       ),
     ]);
 
@@ -1428,21 +1433,30 @@ async function createWikiFilesWithR2(
         r2Data,
         config
       );
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.md`, markdownContent);
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.md`,
+        markdownContent
+      );
       console.info('   ✅ Created: bun-utilities-wiki-r2.md');
     }
 
     // Create enhanced HTML with R2 data
     if (config.format === 'html' || config.format === 'all') {
       const htmlContent = generateHTMLWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.html`, htmlContent);
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.html`,
+        htmlContent
+      );
       console.info('   ✅ Created: bun-utilities-wiki-r2.html');
     }
 
     // Create enhanced JSON with R2 data
     if (config.format === 'json' || config.format === 'all') {
       const jsonContent = generateJSONWikiWithR2(wikiData, analytics, searchIndex, r2Data, config);
-      await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki-r2.json`, jsonContent);
+      await AtomicFileOperations.writeAtomic(
+        `${outputDir}/bun-utilities-wiki-r2.json`,
+        jsonContent
+      );
       console.info('   ✅ Created: bun-utilities-wiki-r2.json');
     }
 
@@ -1628,23 +1642,31 @@ async function storeWikiInR2(
     // Store all wiki data with circuit breaker + semaphore
     await Promise.all([
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/metadata.json', {
-          timestamp: new Date().toISOString(),
-          config,
-          analytics,
-          totalUtilities: wikiData.total,
-          categories: Object.keys(wikiData.categories).length,
-          pagesChecksum: pagesChecksum.hex,
-        }))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/metadata.json', {
+            timestamp: new Date().toISOString(),
+            config,
+            analytics,
+            totalUtilities: wikiData.total,
+            categories: Object.keys(wikiData.categories).length,
+            pagesChecksum: pagesChecksum.hex,
+          })
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/search-index.json', searchIndex))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/search-index.json', searchIndex)
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/pages.json', wikiData.wikiPages))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/pages.json', wikiData.wikiPages)
+        )
       ),
       ConcurrencyManagers.networkRequests.withPermit(async () =>
-        withCircuitBreaker('wiki-r2-write', async () => r2.putJSON('wiki/categories.json', wikiData.categories))
+        withCircuitBreaker('wiki-r2-write', async () =>
+          r2.putJSON('wiki/categories.json', wikiData.categories)
+        )
       ),
     ]);
 

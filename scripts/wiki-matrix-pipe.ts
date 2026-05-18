@@ -2,7 +2,7 @@
 
 /**
  * 🎯 FactoryWager Wiki Matrix - Pipe-Friendly Version
- * 
+ *
  * Supports stdin input for programmatic usage and pipeline integration.
  * Uses Bun's stringWidth and custom table formatting.
  */
@@ -24,12 +24,13 @@ class WikiMatrixPipe {
   private safeJsonParse(input: string): PipeCommand | null {
     try {
       const parsed = JSON.parse(input);
-      
+
       // Validate structure
       if (!parsed || typeof parsed !== 'object') return null;
       if (!parsed.action || typeof parsed.action !== 'string') return null;
-      if (!['matrix', 'details', 'compare', 'stats', 'templates'].includes(parsed.action)) return null;
-      
+      if (!['matrix', 'details', 'compare', 'stats', 'templates'].includes(parsed.action))
+        return null;
+
       // Validate params if present
       if (parsed.params) {
         if (typeof parsed.params !== 'object') return null;
@@ -39,12 +40,12 @@ class WikiMatrixPipe {
           if (typeof index !== 'number' || index < 1) return null;
         }
       }
-      
+
       // Validate format if present
       if (parsed.format && !['table', 'json', 'csv'].includes(parsed.format)) {
         return null;
       }
-      
+
       return parsed as PipeCommand;
     } catch {
       return null;
@@ -55,7 +56,7 @@ class WikiMatrixPipe {
     try {
       // Read from stdin
       const stdin = await Bun.stdin.text();
-      
+
       if (!stdin.trim()) {
         console.info(styled('📋 Available pipe commands:', 'info'));
         console.info(styled('  {"action": "matrix"}', 'muted'));
@@ -65,8 +66,15 @@ class WikiMatrixPipe {
         console.info(styled('  {"action": "templates"}', 'muted'));
         console.info('');
         console.info(styled('Example usage:', 'primary'));
-        console.info(styled('  echo \'{"action": "matrix"}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
-        console.info(styled('  echo \'{"action": "details", "params": {"index": 2}}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted'));
+        console.info(
+          styled('  echo \'{"action": "matrix"}\' | bun run scripts/wiki-matrix-pipe.ts', 'muted')
+        );
+        console.info(
+          styled(
+            '  echo \'{"action": "details", "params": {"index": 2}}\' | bun run scripts/wiki-matrix-pipe.ts',
+            'muted'
+          )
+        );
         return;
       }
 
@@ -77,10 +85,9 @@ class WikiMatrixPipe {
         console.error(styled('Please check your JSON command format', 'muted'));
         exitWithCode(EXIT_CODES.INVALID_INPUT);
       }
-      
+
       // Execute command
       await this.executeCommand(command);
-      
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error(styled(`❌ Error processing stdin: ${message}`, 'error'));
@@ -124,7 +131,7 @@ class WikiMatrixPipe {
       complexity: this.determineComplexity(template),
       examples: template.includeExamples,
       baseUrl: template.baseUrl,
-      workspace: template.workspace
+      workspace: template.workspace,
     }));
 
     if (format === 'json') {
@@ -153,7 +160,7 @@ class WikiMatrixPipe {
       complexity: this.determineComplexity(template),
       examples: template.includeExamples,
       customSections: template.customSections?.length || 0,
-      integration: this.determineIntegration(template.format)
+      integration: this.determineIntegration(template.format),
     };
 
     if (format === 'json') {
@@ -166,13 +173,19 @@ class WikiMatrixPipe {
   }
 
   private async displayComparison(format: string = 'table'): Promise<void> {
-    const features = ['Examples', 'Custom Sections', 'API Ready', 'Easy Import', 'Enterprise Ready'];
+    const features = [
+      'Examples',
+      'Custom Sections',
+      'API Ready',
+      'Easy Import',
+      'Enterprise Ready',
+    ];
     const comparisonData = features.map(feature => {
       const row: any = { feature };
-      
+
       this.templates.forEach(template => {
         let hasFeature = false;
-        
+
         switch (feature) {
           case 'Examples':
             hasFeature = template.includeExamples;
@@ -187,13 +200,14 @@ class WikiMatrixPipe {
             hasFeature = template.format === 'markdown';
             break;
           case 'Enterprise Ready':
-            hasFeature = template.baseUrl.includes('atlassian') || template.name.includes('Enterprise');
+            hasFeature =
+              template.baseUrl.includes('atlassian') || template.name.includes('Enterprise');
             break;
         }
-        
+
         row[template.name.substring(0, 12)] = hasFeature;
       });
-      
+
       return row;
     });
 
@@ -212,12 +226,15 @@ class WikiMatrixPipe {
       formats: {} as Record<string, number>,
       complexities: {} as Record<string, number>,
       withExamples: this.templates.filter(t => t.includeExamples).length,
-      withCustomSections: this.templates.filter(t => t.customSections && t.customSections.length > 0).length
+      withCustomSections: this.templates.filter(
+        t => t.customSections && t.customSections.length > 0
+      ).length,
     };
 
     this.templates.forEach(template => {
       stats.formats[template.format] = (stats.formats[template.format] || 0) + 1;
-      stats.complexities[this.determineComplexity(template)] = (stats.complexities[this.determineComplexity(template)] || 0) + 1;
+      stats.complexities[this.determineComplexity(template)] =
+        (stats.complexities[this.determineComplexity(template)] || 0) + 1;
     });
 
     if (format === 'json') {
@@ -232,7 +249,7 @@ class WikiMatrixPipe {
         { metric: 'JSON Format', value: stats.formats.json || 0 },
         { metric: 'Simple Complexity', value: stats.complexities.Simple || 0 },
         { metric: 'Medium Complexity', value: stats.complexities.Medium || 0 },
-        { metric: 'Advanced Complexity', value: stats.complexities.Advanced || 0 }
+        { metric: 'Advanced Complexity', value: stats.complexities.Advanced || 0 },
       ];
       this.outputCSV(flatStats);
     } else {
@@ -255,7 +272,7 @@ class WikiMatrixPipe {
 
     const headers = Object.keys(data[0]);
     const colWidths: number[] = [];
-    
+
     // Calculate column widths using Bun.stringWidth
     headers.forEach((header, i) => {
       let maxWidth = Bun.stringWidth(header);
@@ -281,7 +298,7 @@ class WikiMatrixPipe {
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
     console.info(styled(topBorder, 'muted'));
-    
+
     // Header row
     let headerRow = '│';
     headers.forEach((header, i) => {
@@ -289,7 +306,7 @@ class WikiMatrixPipe {
       headerRow += ` ${styled(paddedHeader, 'accent')} │`;
     });
     console.info(headerRow);
-    
+
     console.info(styled(headerSeparator, 'muted'));
 
     // Data rows
@@ -313,7 +330,7 @@ class WikiMatrixPipe {
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
       console.info(dataRow);
-      
+
       if (rowIndex < data.length - 1) {
         console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
@@ -326,10 +343,10 @@ class WikiMatrixPipe {
     if (data.length === 0) return;
 
     const headers = Object.keys(data[0]);
-    
+
     // Output CSV header
     console.info(headers.join(','));
-    
+
     // Output CSV rows
     data.forEach(row => {
       const values = headers.map(header => {
@@ -355,12 +372,12 @@ class WikiMatrixPipe {
     };
 
     console.info(styled(createSeparator('┌', '┐', '┬'), 'muted'));
-    
+
     entries.forEach(([key, value], index) => {
       const keyStr = key.padEnd(colWidths[0]);
       const valueStr = String(value).padEnd(colWidths[1]);
       console.info(`│ ${styled(keyStr, 'primary')} │ ${styled(valueStr, 'info')} │`);
-      
+
       if (index < entries.length - 1) {
         console.info(styled(createSeparator('├', '┤', '┼'), 'muted'));
       }
@@ -372,7 +389,7 @@ class WikiMatrixPipe {
   private displayComparisonTable(data: any[]): void {
     const headers = Object.keys(data[0]);
     const colWidths: number[] = [];
-    
+
     headers.forEach((header, i) => {
       let maxWidth = Bun.stringWidth(header);
       data.forEach(row => {
@@ -397,7 +414,7 @@ class WikiMatrixPipe {
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
     console.info(styled(topBorder, 'muted'));
-    
+
     // Header
     let headerRow = '│';
     headers.forEach((header, i) => {
@@ -406,7 +423,7 @@ class WikiMatrixPipe {
       headerRow += ` ${styled(paddedHeader, color)} │`;
     });
     console.info(headerRow);
-    
+
     console.info(styled(headerSeparator, 'muted'));
 
     // Data rows
@@ -415,17 +432,17 @@ class WikiMatrixPipe {
       headers.forEach((header, colIndex) => {
         let value = String(row[header] || '');
         let color = header === 'feature' ? 'primary' : 'muted';
-        
+
         if (header !== 'feature') {
           color = value === 'true' ? 'success' : value === 'false' ? 'error' : 'muted';
           value = value === 'true' ? '✅' : value === 'false' ? '❌' : value;
         }
-        
+
         const paddedValue = value.padEnd(colWidths[colIndex]);
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
       console.info(dataRow);
-      
+
       if (rowIndex < data.length - 1) {
         console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
       }
@@ -446,7 +463,7 @@ class WikiMatrixPipe {
       ['JSON Format', (stats.formats.json || 0).toString()],
       ['Simple Complexity', (stats.complexities.Simple || 0).toString()],
       ['Medium Complexity', (stats.complexities.Medium || 0).toString()],
-      ['Advanced Complexity', (stats.complexities.Advanced || 0).toString()]
+      ['Advanced Complexity', (stats.complexities.Advanced || 0).toString()],
     ];
 
     const colWidths = [20, 10];
@@ -456,12 +473,12 @@ class WikiMatrixPipe {
     };
 
     console.info(styled(createSeparator('┌', '┐', '┬'), 'muted'));
-    
+
     entries.forEach(([key, value], index) => {
       const keyStr = key.padEnd(colWidths[0]);
       const valueStr = value.padEnd(colWidths[1]);
       console.info(`│ ${styled(keyStr, 'accent')} │ ${styled(valueStr, 'primary')} │`);
-      
+
       if (index < entries.length - 1) {
         console.info(styled(createSeparator('├', '┤', '┼'), 'muted'));
       }
@@ -477,7 +494,9 @@ class WikiMatrixPipe {
     this.templates.forEach((template, index) => {
       console.info(styled(`\n${index + 1}. ${template.name}`, 'accent'));
       console.info(styled(`   ${template.description}`, 'muted'));
-      console.info(styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info'));
+      console.info(
+        styled(`   Format: ${template.format} | Workspace: ${template.workspace}`, 'info')
+      );
     });
   }
 
@@ -497,7 +516,7 @@ class WikiMatrixPipe {
     if (template.format === 'json') score += 1;
     if (!template.includeExamples) score += 1;
     if (template.baseUrl.includes('atlassian')) score += 1;
-    
+
     if (score <= 1) return 'Simple';
     if (score <= 3) return 'Medium';
     return 'Advanced';
@@ -505,10 +524,14 @@ class WikiMatrixPipe {
 
   private determineIntegration(format: string): string {
     switch (format) {
-      case 'markdown': return 'Direct Import';
-      case 'html': return 'Embed/IFrame';
-      case 'json': return 'API Integration';
-      default: return 'Manual';
+      case 'markdown':
+        return 'Direct Import';
+      case 'html':
+        return 'Embed/IFrame';
+      case 'json':
+        return 'API Integration';
+      default:
+        return 'Manual';
     }
   }
 }

@@ -25,7 +25,7 @@ const colors = {
   blue: '\x1b[34m',
   magenta: '\x1b[35m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -34,12 +34,12 @@ function colorize(text: string, color: keyof typeof colors): string {
 
 async function fetchLatestCommit(): Promise<GitHubValidationResult> {
   try {
-    const response = await fetch("https://api.github.com/repos/oven-sh/bun/git/refs/heads/main");
+    const response = await fetch('https://api.github.com/repos/oven-sh/bun/git/refs/heads/main');
     if (!response.ok) {
       return {
         check: 'Latest Commit Fetch',
         status: 'error',
-        message: `GitHub API error: ${response.status}`
+        message: `GitHub API error: ${response.status}`,
       };
     }
 
@@ -50,13 +50,13 @@ async function fetchLatestCommit(): Promise<GitHubValidationResult> {
       check: 'Latest Commit Fetch',
       status: 'success',
       message: `Latest commit: ${colorize(latestCommit.slice(0, 12), 'blue')}...`,
-      data: { commit: latestCommit }
+      data: { commit: latestCommit },
     };
   } catch (error) {
     return {
       check: 'Latest Commit Fetch',
       status: 'error',
-      message: `Failed to fetch latest commit: ${error}`
+      message: `Failed to fetch latest commit: ${error}`,
     };
   }
 }
@@ -64,7 +64,7 @@ async function fetchLatestCommit(): Promise<GitHubValidationResult> {
 async function checkCommitExists(commitHash: string): Promise<GitHubValidationResult> {
   try {
     const response = await fetch(`https://github.com/oven-sh/bun/commit/${commitHash}`, {
-      method: 'HEAD'
+      method: 'HEAD',
     });
 
     const exists = response.status === 200;
@@ -77,27 +77,29 @@ async function checkCommitExists(commitHash: string): Promise<GitHubValidationRe
       check: 'Commit Existence Check',
       status,
       message,
-      data: { exists, commit: commitHash }
+      data: { exists, commit: commitHash },
     };
   } catch (error) {
     return {
       check: 'Commit Existence Check',
       status: 'error',
       message: `Failed to check commit: ${error}`,
-      data: { commit: commitHash }
+      data: { commit: commitHash },
     };
   }
 }
 
 async function getRawFileSnippet(): Promise<GitHubValidationResult> {
   try {
-    const response = await fetch("https://raw.githubusercontent.com/oven-sh/bun/main/packages/bun-types/bun.d.ts");
+    const response = await fetch(
+      'https://raw.githubusercontent.com/oven-sh/bun/main/packages/bun-types/bun.d.ts'
+    );
 
     if (!response.ok) {
       return {
         check: 'Raw File Content',
         status: 'error',
-        message: `Failed to fetch raw file: ${response.status}`
+        message: `Failed to fetch raw file: ${response.status}`,
       };
     }
 
@@ -109,13 +111,13 @@ async function getRawFileSnippet(): Promise<GitHubValidationResult> {
       check: 'Raw File Content',
       status: 'success',
       message: `bun.d.ts (${lines} lines): ${colorize(snippet.replace(/\s+/g, ' ').trim(), 'gray')}`,
-      data: { snippet, totalLines: lines }
+      data: { snippet, totalLines: lines },
     };
   } catch (error) {
     return {
       check: 'Raw File Content',
       status: 'error',
-      message: `Failed to fetch raw file: ${error}`
+      message: `Failed to fetch raw file: ${error}`,
     };
   }
 }
@@ -133,14 +135,14 @@ async function checkDocsUrl(url: string, name: string): Promise<GitHubValidation
       check: 'Documentation URL Check',
       status,
       message,
-      data: { url, name, status: response.status }
+      data: { url, name, status: response.status },
     };
   } catch (error) {
     return {
       check: 'Documentation URL Check',
       status: 'error',
       message: `${name}: ${colorize('error', 'red')} - ${error}`,
-      data: { url, name }
+      data: { url, name },
     };
   }
 }
@@ -153,7 +155,7 @@ function generateDeepLink(name: string, fragment: string): GitHubValidationResul
     check: 'Deep Link Generation',
     status: 'success',
     message: `${name}: ${colorize(deepLink, 'blue')}`,
-    data: { deepLink, fragment }
+    data: { deepLink, fragment },
   };
 }
 
@@ -167,13 +169,13 @@ async function runAdvancedValidation(): Promise<void> {
     { url: 'https://bun.com/docs/api/utils', name: 'API Utils' },
     { url: 'https://bun.com/docs/runtime/nodejs-apis', name: 'Node.js APIs' },
     { url: 'https://bun.com/docs/api/globals', name: 'Global APIs' },
-    { url: 'https://bun.com/docs/runtime/utils', name: 'Runtime Utils' }
+    { url: 'https://bun.com/docs/runtime/utils', name: 'Runtime Utils' },
   ];
 
   const deepLinks = [
     { name: 'node:zlib', fragment: 'node:zlib' },
     { name: 'Bun.env', fragment: 'Bun.env' },
-    { name: 'fetch API', fragment: 'fetch' }
+    { name: 'fetch API', fragment: 'fetch' },
   ];
 
   console.info(colorize('Running advanced validation checks...', 'yellow'));
@@ -233,9 +235,11 @@ async function runAdvancedValidation(): Promise<void> {
   if (errorCount > 0) {
     console.info();
     console.info(colorize('🔧 Failed checks:', 'red'));
-    results.filter(r => r.status === 'error').forEach(result => {
-      console.info(`  • ${result.check}: ${result.message}`);
-    });
+    results
+      .filter(r => r.status === 'error')
+      .forEach(result => {
+        console.info(`  • ${result.check}: ${result.message}`);
+      });
   }
 
   // Latest commit info
@@ -252,7 +256,7 @@ async function runAdvancedValidation(): Promise<void> {
 }
 
 // Run the validation
-runAdvancedValidation().catch((error) => {
+runAdvancedValidation().catch(error => {
   console.error(colorize(`Script failed: ${error}`, 'red'));
   process.exit(1);
 });

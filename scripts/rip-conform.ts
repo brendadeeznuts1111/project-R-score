@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * FACTORYWAGER RIPGREP v4.0 - Ripgrep Conform Script
- * 
+ *
  * Advanced purge rule generation with signature management
  */
 
@@ -17,17 +17,19 @@ class RipgrepConform {
   /**
    * Generate new purge rule with signature
    */
-  async generatePurgeRule(options: {
-    scope?: string;
-    type?: string;
-    pattern?: string;
-    description?: string;
-  } = {}) {
+  async generatePurgeRule(
+    options: {
+      scope?: string;
+      type?: string;
+      pattern?: string;
+      description?: string;
+    } = {}
+  ) {
     const {
       scope = 'PURGE',
       type = 'TRANS',
       pattern = '',
-      description = 'Auto-generated purge rule'
+      description = 'Auto-generated purge rule',
     } = options;
 
     console.info('⚡ FACTORYWAGER RIPGREP v4.0 - Conform Engine');
@@ -44,7 +46,7 @@ class RipgrepConform {
       const purge = await this.engine.purgeRipgrep({
         scope,
         type,
-        pattern
+        pattern,
       });
 
       console.info(`\n📋 Purge Rule Generated:`);
@@ -56,7 +58,7 @@ class RipgrepConform {
 
       // Generate rule file content
       const ruleContent = this.generateRuleFile(purge, pattern, description);
-      
+
       console.info(`\n📄 Rule File Content:`);
       console.info('```yaml');
       console.info(ruleContent);
@@ -65,7 +67,7 @@ class RipgrepConform {
       // Save rule file
       const ruleFileName = `rule-${purge.id.toLowerCase()}.yaml`;
       await Bun.write(`./rules/${ruleFileName}`, ruleContent);
-      
+
       console.info(`\n💾 Rule saved to: ./rules/${ruleFileName}`);
 
       // Generate grep command
@@ -74,7 +76,6 @@ class RipgrepConform {
       console.info(`   ${grepCommand}`);
 
       return purge;
-
     } catch (error) {
       console.error('❌ Failed to generate purge rule:', error.message);
       process.exit(1);
@@ -137,11 +138,11 @@ async function main() {
 
   // Parse command line arguments
   const options: any = {};
-  
+
   for (let i = 0; i < args.length; i++) {
     const arg = args[i];
     const next = args[i + 1];
-    
+
     switch (arg) {
       case '--scope':
         if (next) options.scope = next;
@@ -195,7 +196,7 @@ EXAMPLES:
   try {
     await spawn(['mkdir', '-p', './rules'], {
       stdout: 'ignore',
-      stderr: 'ignore'
+      stderr: 'ignore',
     });
   } catch (error) {
     // Directory creation failed, continue anyway

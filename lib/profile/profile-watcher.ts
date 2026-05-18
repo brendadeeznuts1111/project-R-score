@@ -10,7 +10,11 @@
 
 import { resolve } from 'node:path';
 import { unlink } from 'node:fs/promises';
-import { ProfileSessionUploader, type ProfileUploaderConfig, type ProfileEntry } from './session-uploader';
+import {
+  ProfileSessionUploader,
+  type ProfileUploaderConfig,
+  type ProfileEntry,
+} from './session-uploader';
 
 // ==================== Types ====================
 
@@ -86,7 +90,7 @@ export class ProfileWatcher {
 
   /** Resolve the list of directories to scan */
   private resolveDirs(): string[] {
-    const dirs = (this.config.watchDirs || ['./profiles']).map((d) => resolve(d));
+    const dirs = (this.config.watchDirs || ['./profiles']).map(d => resolve(d));
     if (this.config.scanRoot) {
       const root = resolve('.');
       if (!dirs.includes(root)) dirs.push(root);

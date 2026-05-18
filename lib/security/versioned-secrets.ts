@@ -35,7 +35,9 @@ export class VersionedSecretManager {
   private cache = new Map<string, VersionNode[]>();
   private readonly service: string;
 
-  constructor(service: string = Bun.env.FW_SECRETS_SERVICE || 'com.factorywager.versioned-secrets') {
+  constructor(
+    service: string = Bun.env.FW_SECRETS_SERVICE || 'com.factorywager.versioned-secrets'
+  ) {
     this.service = service;
   }
 
@@ -107,7 +109,9 @@ export class VersionedSecretManager {
     if (target === 'current') {
       const value = await getSecret({ service: this.service, name: key });
       const metadata = await this.getMetadata(key);
-      const currentVersion = (await this.getCurrentVersionFromHistory(key)) || metadata.tags?.['factorywager:current-version'];
+      const currentVersion =
+        (await this.getCurrentVersionFromHistory(key)) ||
+        metadata.tags?.['factorywager:current-version'];
       return { value, version: currentVersion, metadata };
     }
 

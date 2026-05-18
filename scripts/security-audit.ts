@@ -29,7 +29,7 @@ async function main() {
     includeVersions: args.includes('--include-versions'),
     days: parseInt(args.find(arg => arg.startsWith('--days='))?.split('=')[1] || '30'),
     output: (args.find(arg => arg.startsWith('--output='))?.split('=')[1] as any) || 'console',
-    criticalOnly: args.includes('--critical-only')
+    criticalOnly: args.includes('--critical-only'),
   };
 
   console.info(styled('🔒 FactoryWager Security Audit v5.1', 'accent'));
@@ -71,7 +71,6 @@ async function main() {
       console.info('');
       console.info(styled('✅ Audit passed - No critical security issues', 'success'));
     }
-
   } catch (error) {
     console.error(styled(`❌ Audit failed: ${error.message}`, 'error'));
     process.exit(1);
@@ -106,7 +105,7 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
           issue: 'No version history',
           severity: 'WARNING',
           description: 'Secret has no version history',
-          recommendation: 'Initialize versioning for this secret'
+          recommendation: 'Initialize versioning for this secret',
         });
       } else {
         // Check rotation frequency
@@ -121,7 +120,7 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
             description: `Last rotated ${Math.floor(daysSinceRotation)} days ago`,
             recommendation: 'Consider rotating this secret',
             lastRotated: history[0].timestamp,
-            versions: history.map(h => h.version)
+            versions: history.map(h => h.version),
           });
         }
       }
@@ -138,12 +137,16 @@ async function performSecurityAudit(options: AuditOptions): Promise<AuditResult[
         severity: expiration.daysLeft <= 3 ? 'CRITICAL' : 'WARNING',
         description: `Expires in ${expiration.daysLeft} days`,
         recommendation: 'Rotate before expiration',
-        expiresIn: expiration.daysLeft
+        expiresIn: expiration.daysLeft,
       });
     }
 
     // Skip INFO level issues if critical-only
-    if (options.criticalOnly && results.length > 0 && results[results.length - 1].severity === 'INFO') {
+    if (
+      options.criticalOnly &&
+      results.length > 0 &&
+      results[results.length - 1].severity === 'INFO'
+    ) {
       results.pop();
     }
   }
@@ -161,8 +164,12 @@ function outputConsoleReport(results: AuditResult[]) {
   console.info('');
 
   for (const result of results) {
-    const color = result.severity === 'CRITICAL' ? 'error' :
-                  result.severity === 'WARNING' ? 'warning' : 'muted';
+    const color =
+      result.severity === 'CRITICAL'
+        ? 'error'
+        : result.severity === 'WARNING'
+          ? 'warning'
+          : 'muted';
 
     console.info(styled(`${result.severity}: ${result.key}`, color));
     console.info(styled(`   Issue: ${result.issue}`, 'muted'));
@@ -208,7 +215,9 @@ async function outputHTMLReport(results: AuditResult[]) {
       </tr>
     </thead>
     <tbody>
-      ${results.map(result => `
+      ${results
+        .map(
+          result => `
         <tr class="${result.severity.toLowerCase()}">
           <td>${result.severity}</td>
           <td>${result.key}</td>
@@ -216,7 +225,9 @@ async function outputHTMLReport(results: AuditResult[]) {
           <td>${result.description}</td>
           <td>${result.recommendation}</td>
         </tr>
-      `).join('')}
+      `
+        )
+        .join('')}
     </tbody>
   </table>
 </body>
@@ -236,7 +247,7 @@ async function outputJSONReport(results: AuditResult[]) {
     critical: results.filter(r => r.severity === 'CRITICAL').length,
     warnings: results.filter(r => r.severity === 'WARNING').length,
     info: results.filter(r => r.severity === 'INFO').length,
-    results
+    results,
   };
 
   const filename = `.audit/security-audit-${Date.now()}.json`;
@@ -246,12 +257,12 @@ async function outputJSONReport(results: AuditResult[]) {
 }
 
 // Mock function - replace with actual implementation
-async function getAllSecrets(): Promise<Array<{key: string, value: string}>> {
+async function getAllSecrets(): Promise<Array<{ key: string; value: string }>> {
   // This would use Bun.secrets.list() or similar
   return [
     { key: 'API_KEY_V3', value: 'sk_live_123' },
     { key: 'DATABASE_URL', value: 'postgres://...' },
-    { key: 'JWT_SECRET', value: 'secret123' }
+    { key: 'JWT_SECRET', value: 'secret123' },
   ];
 }
 

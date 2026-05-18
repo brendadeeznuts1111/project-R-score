@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Bottleneck Analysis Script
- * 
+ *
  * Analyzes profile.md files using grep patterns to find:
  * - Function objects (type=Function)
  * - Large objects >= 10KB (size=[0-9]{5,})
@@ -10,11 +10,11 @@
 
 import { existsSync, readFileSync, readdirSync, statSync } from 'fs';
 import { join, dirname, basename } from 'path';
-import { 
-  createProfilingError, 
+import {
+  createProfilingError,
   handleProfilingError,
   ProfilingErrorCode,
-  type ProfilingError 
+  type ProfilingError,
 } from './profiling-errors.ts';
 
 interface BottleneckStats {
@@ -62,15 +62,17 @@ function findProfileFiles(rootDir: string): Array<{ path: string; name: string }
         try {
           if (entry.isDirectory()) {
             // Skip common directories
-            if (entry.name.startsWith('.') || 
-                entry.name === 'node_modules' ||
-                entry.name === 'dist' ||
-                entry.name === 'build') {
+            if (
+              entry.name.startsWith('.') ||
+              entry.name === 'node_modules' ||
+              entry.name === 'dist' ||
+              entry.name === 'build'
+            ) {
               continue;
             }
 
             const fullPath = join(dir, entry.name);
-            
+
             try {
               const profilePath = join(fullPath, 'profile.md');
 
@@ -103,7 +105,7 @@ function findProfileFiles(rootDir: string): Array<{ path: string; name: string }
   } catch (error) {
     // Fail safely - return profiles found so far
   }
-  
+
   return profiles;
 }
 
@@ -136,7 +138,9 @@ function analyzeProfile(profilePath: string, projectName: string): BottleneckSta
     const lines = content.split('\n');
 
     // Parse summary section for total metrics
-    const summaryMatch = content.match(/## Summary[\s\S]*?Total Heap Size.*?(\d+\.?\d*)\s*(KB|MB|bytes?)[\s\S]*?Total Objects.*?(\d{1,3}(?:,\d{3})*)[\s\S]*?GC Roots.*?(\d{1,3}(?:,\d{3})*)/i);
+    const summaryMatch = content.match(
+      /## Summary[\s\S]*?Total Heap Size.*?(\d+\.?\d*)\s*(KB|MB|bytes?)[\s\S]*?Total Objects.*?(\d{1,3}(?:,\d{3})*)[\s\S]*?GC Roots.*?(\d{1,3}(?:,\d{3})*)/i
+    );
     if (summaryMatch) {
       const heapSizeStr = summaryMatch[1];
       const heapUnit = summaryMatch[2]?.toLowerCase() || 'kb';
@@ -149,7 +153,9 @@ function analyzeProfile(profilePath: string, projectName: string): BottleneckSta
     }
 
     // Parse Top 50 Types table for Function retained size
-    const functionTypeMatch = content.match(/\|\s*\d+\s*\|\s*`Function`\s*\|\s*(\d{1,3}(?:,\d{3})*)\s*\|\s*[\d.]+\s*(KB|MB|bytes?)\s*\|\s*([\d.]+)\s*(KB|MB|bytes?)\s*\|/i);
+    const functionTypeMatch = content.match(
+      /\|\s*\d+\s*\|\s*`Function`\s*\|\s*(\d{1,3}(?:,\d{3})*)\s*\|\s*[\d.]+\s*(KB|MB|bytes?)\s*\|\s*([\d.]+)\s*(KB|MB|bytes?)\s*\|/i
+    );
     if (functionTypeMatch) {
       const retainedSizeStr = functionTypeMatch[3];
       const retainedUnit = functionTypeMatch[4]?.toLowerCase() || 'mb';
@@ -171,7 +177,7 @@ function analyzeProfile(profilePath: string, projectName: string): BottleneckSta
             stats.functionCount++;
           }
         }
-        
+
         // Also check for type=Function format (legacy)
         if (line.includes('type=Function')) {
           stats.functionCount++;
@@ -194,7 +200,7 @@ function analyzeProfile(profilePath: string, projectName: string): BottleneckSta
             continue;
           }
         }
-        
+
         // Also check markdown table format: | rank | Type | count | size | ...
         // Look for sizes >= 10KB (10000 bytes) in table cells
         const tableSizeMatch = line.match(/\|\s*\d+\s*\|\s*[^|]+\s*\|\s*\d+\s*\|\s*(\d{5,})\s*\|/);
@@ -224,11 +230,10 @@ function analyzeProfile(profilePath: string, projectName: string): BottleneckSta
     }
   } catch (error) {
     // Fail safely - return stats with what we have (likely zeros)
-    const profilingError = handleProfilingError(
-      error,
-      ProfilingErrorCode.PROFILE_PARSE_ERROR,
-      { profilePath, projectName }
-    );
+    const profilingError = handleProfilingError(error, ProfilingErrorCode.PROFILE_PARSE_ERROR, {
+      profilePath,
+      projectName,
+    });
     profilingError.log();
   }
 
@@ -254,7 +259,9 @@ function generateReport(result: AnalysisResult): string {
   lines.push(`| Total Projects | ${result.summary.totalProjects} |`);
   lines.push(`| Projects with Profiles | ${result.summary.projectsWithProfiles} |`);
   if (result.summary.totalHeapSize > 0) {
-    lines.push(`| Total Heap Size | ${(result.summary.totalHeapSize / 1024 / 1024).toFixed(2)} MB |`);
+    lines.push(
+      `| Total Heap Size | ${(result.summary.totalHeapSize / 1024 / 1024).toFixed(2)} MB |`
+    );
   }
   lines.push(`| Total Function Objects | ${result.summary.totalFunctions.toLocaleString()} |`);
   lines.push(`| Total Large Objects (>=10KB) | ${result.summary.totalLargeObjects} |`);
@@ -283,7 +290,9 @@ function generateReport(result: AnalysisResult): string {
     result.summary.topLargeObjects.slice(0, 30).forEach((obj, idx) => {
       const sizeKB = (obj.size / 1024).toFixed(2);
       const preview = obj.line.replace(/\|/g, '\\|').substring(0, 50);
-      lines.push(`| ${idx + 1} | ${obj.project} | ${obj.size.toLocaleString()} | ${sizeKB} | \`${preview}...\` |`);
+      lines.push(
+        `| ${idx + 1} | ${obj.project} | ${obj.size.toLocaleString()} | ${sizeKB} | \`${preview}...\` |`
+      );
     });
     lines.push('');
   }
@@ -303,11 +312,9 @@ function generateReport(result: AnalysisResult): string {
   // Detailed project breakdown
   lines.push('## Detailed Project Breakdown');
   lines.push('');
-  
-  const projectsWithIssues = result.projects.filter(p => 
-    p.functionCount > 100 || 
-    p.largeObjects.length > 0 || 
-    p.gcRootCount > 50
+
+  const projectsWithIssues = result.projects.filter(
+    p => p.functionCount > 100 || p.largeObjects.length > 0 || p.gcRootCount > 50
   );
 
   if (projectsWithIssues.length > 0) {
@@ -318,7 +325,7 @@ function generateReport(result: AnalysisResult): string {
       lines.push(`- **Function Objects**: ${project.functionCount.toLocaleString()}`);
       lines.push(`- **Large Objects (>=10KB)**: ${project.largeObjects.length}`);
       lines.push(`- **GC Roots**: ${project.gcRootCount.toLocaleString()}`);
-      
+
       if (project.largeObjects.length > 0) {
         lines.push('');
         lines.push('#### Large Objects:');
@@ -327,7 +334,7 @@ function generateReport(result: AnalysisResult): string {
           lines.push(`- ${sizeKB} KB: \`${obj.line.substring(0, 80)}...\``);
         });
       }
-      
+
       lines.push('');
     }
   } else {
@@ -338,10 +345,10 @@ function generateReport(result: AnalysisResult): string {
   // Recommendations
   lines.push('## Recommendations');
   lines.push('');
-  
+
   const highFunctionProjects = result.summary.topFunctionProjects.filter(p => p.count > 500);
   const highGCRootProjects = result.summary.topGCRootProjects.filter(p => p.count > 100);
-  
+
   if (highFunctionProjects.length > 0) {
     lines.push('### Function Object Optimization');
     lines.push('');
@@ -364,7 +371,7 @@ function generateReport(result: AnalysisResult): string {
       const current = projectGroups.get(obj.project) || 0;
       projectGroups.set(obj.project, current + obj.size);
     });
-    
+
     Array.from(projectGroups.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 10)
@@ -403,7 +410,7 @@ function generateReport(result: AnalysisResult): string {
 async function main() {
   try {
     console.info('🔍 Finding profile.md files...\n');
-    
+
     const profiles = findProfileFiles(ROOT_DIR);
     console.info(`Found ${profiles.length} profile.md files\n`);
 
@@ -415,7 +422,7 @@ async function main() {
       try {
         const projectDir = dirname(profile.path);
         const projectName = basename(projectDir);
-        
+
         const stat = analyzeProfile(profile.path, projectName);
         stats.push(stat);
 
@@ -438,11 +445,10 @@ async function main() {
         }
       } catch (error) {
         // Fail safely - continue with next profile
-        const profilingError = handleProfilingError(
-          error,
-          ProfilingErrorCode.ANALYSIS_FAILED,
-          { profile: profile.name, profilePath: profile.path }
-        );
+        const profilingError = handleProfilingError(error, ProfilingErrorCode.ANALYSIS_FAILED, {
+          profile: profile.name,
+          profilePath: profile.path,
+        });
         profilingError.log();
         continue;
       }
@@ -451,37 +457,39 @@ async function main() {
     // Calculate summary with error handling
     let summary;
     try {
-    summary = {
-      totalProjects: stats.length,
-      projectsWithProfiles: stats.filter(s => s.profileExists).length,
-      totalFunctions: stats.reduce((sum, s) => sum + s.functionCount, 0),
-      totalLargeObjects: stats.reduce((sum, s) => sum + s.largeObjects.length, 0),
-      totalGCRoots: stats.reduce((sum, s) => sum + s.gcRootCount, 0),
-      totalHeapSize: stats.reduce((sum, s) => sum + (s.totalHeapSize || 0), 0),
-      topFunctionProjects: stats
-        .map(s => ({ 
-          name: s.projectName, 
-          count: s.functionCount,
-          retainedSizeMB: s.topFunctionRetainedSize ? s.topFunctionRetainedSize / 1024 / 1024 : undefined
-        }))
-        .sort((a, b) => (b.retainedSizeMB || b.count) - (a.retainedSizeMB || a.count)),
+      summary = {
+        totalProjects: stats.length,
+        projectsWithProfiles: stats.filter(s => s.profileExists).length,
+        totalFunctions: stats.reduce((sum, s) => sum + s.functionCount, 0),
+        totalLargeObjects: stats.reduce((sum, s) => sum + s.largeObjects.length, 0),
+        totalGCRoots: stats.reduce((sum, s) => sum + s.gcRootCount, 0),
+        totalHeapSize: stats.reduce((sum, s) => sum + (s.totalHeapSize || 0), 0),
+        topFunctionProjects: stats
+          .map(s => ({
+            name: s.projectName,
+            count: s.functionCount,
+            retainedSizeMB: s.topFunctionRetainedSize
+              ? s.topFunctionRetainedSize / 1024 / 1024
+              : undefined,
+          }))
+          .sort((a, b) => (b.retainedSizeMB || b.count) - (a.retainedSizeMB || a.count)),
         topLargeObjects: stats
-          .flatMap(s => s.largeObjects.map(obj => ({
-            project: s.projectName,
-            size: obj.size,
-            line: obj.line,
-          })))
+          .flatMap(s =>
+            s.largeObjects.map(obj => ({
+              project: s.projectName,
+              size: obj.size,
+              line: obj.line,
+            }))
+          )
           .sort((a, b) => b.size - a.size),
         topGCRootProjects: stats
           .map(s => ({ name: s.projectName, count: s.gcRootCount }))
           .sort((a, b) => b.count - a.count),
       };
     } catch (error) {
-      const profilingError = handleProfilingError(
-        error,
-        ProfilingErrorCode.ANALYSIS_FAILED,
-        { phase: 'summary-calculation' }
-      );
+      const profilingError = handleProfilingError(error, ProfilingErrorCode.ANALYSIS_FAILED, {
+        phase: 'summary-calculation',
+      });
       profilingError.log();
       process.exit(1);
     }
@@ -496,29 +504,26 @@ async function main() {
     try {
       report = generateReport(result);
     } catch (error) {
-      const profilingError = handleProfilingError(
-        error,
-        ProfilingErrorCode.ANALYSIS_FAILED,
-        { phase: 'report-generation' }
-      );
+      const profilingError = handleProfilingError(error, ProfilingErrorCode.ANALYSIS_FAILED, {
+        phase: 'report-generation',
+      });
       profilingError.log();
       process.exit(1);
     }
 
     const reportPath = join(ROOT_DIR, 'BOTTLENECK_REPORT.md');
-    
+
     try {
       await Bun.write(reportPath, report);
     } catch (error) {
-      const profilingError = handleProfilingError(
-        error,
-        ProfilingErrorCode.FILE_WRITE_FAILED,
-        { reportPath, phase: 'report-writing' }
-      );
+      const profilingError = handleProfilingError(error, ProfilingErrorCode.FILE_WRITE_FAILED, {
+        reportPath,
+        phase: 'report-writing',
+      });
       profilingError.log();
       process.exit(1);
     }
-    
+
     console.info(`\n✅ Analysis complete!`);
     console.info(`📄 Report saved to: ${reportPath}`);
     console.info(`\n📈 Summary:`);
@@ -526,11 +531,9 @@ async function main() {
     console.info(`   Large Objects: ${summary.totalLargeObjects}`);
     console.info(`   GC Roots: ${summary.totalGCRoots.toLocaleString()}`);
   } catch (error) {
-    const profilingError = handleProfilingError(
-      error,
-      ProfilingErrorCode.ANALYSIS_FAILED,
-      { phase: 'main-execution' }
-    );
+    const profilingError = handleProfilingError(error, ProfilingErrorCode.ANALYSIS_FAILED, {
+      phase: 'main-execution',
+    });
     console.error(`\n❌ Fatal error:`);
     profilingError.log();
     process.exit(1);

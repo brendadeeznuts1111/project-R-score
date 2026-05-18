@@ -2,9 +2,9 @@
 
 /**
  * FactoryWager Docs CLI Tool
- * 
+ *
  * Interactive documentation search and learning system powered by Bun MCP
- * 
+ *
  * Usage:
  *   bun fw-docs search "Bun.secrets.get"
  *   bun fw-docs explain "some code snippet"
@@ -34,16 +34,23 @@ interface CLIOptions {
 class FWDocsCLI {
   private async authenticate(token?: string): Promise<boolean> {
     const authToken = token || process.env.MASTER_TOKEN;
-    
+
     if (!authToken) {
-      console.info(styled('🔒 Authentication required. Use --token or set MASTER_TOKEN environment variable.', 'warning'));
-      console.info(styled('💡 Get a token: bun run lib/security/master-token.ts create cli:user', 'info'));
+      console.info(
+        styled(
+          '🔒 Authentication required. Use --token or set MASTER_TOKEN environment variable.',
+          'warning'
+        )
+      );
+      console.info(
+        styled('💡 Get a token: bun run lib/security/master-token.ts create cli:user', 'info')
+      );
       return false;
     }
 
     const auth = await mcpAuthMiddleware.cliTools.authenticate(authToken, {
       ip: 'localhost',
-      userAgent: 'fw-docs-cli'
+      userAgent: 'fw-docs-cli',
     });
 
     if (!auth.success) {
@@ -66,36 +73,36 @@ class FWDocsCLI {
       switch (command) {
         case 'search':
           const searchOptions = this.parseOptions(commandArgs);
-          if (!await this.authenticate(searchOptions.token)) return;
+          if (!(await this.authenticate(searchOptions.token))) return;
           await this.handleSearch(commandArgs, searchOptions);
           break;
-          
+
         case 'explain':
           await this.handleExplain(commandArgs);
           break;
-          
+
         case 'validate':
           await this.handleValidate(commandArgs);
           break;
-          
+
         case 'learn':
           await this.handleLearn(commandArgs);
           break;
-          
+
         case 'generate':
           await this.handleGenerate(commandArgs);
           break;
-          
+
         case 'diagnose':
           await this.handleDiagnose(commandArgs);
           break;
-          
+
         case 'help':
         case '--help':
         case '-h':
           this.showHelp();
           break;
-          
+
         default:
           if (!command) {
             this.showHelp();
@@ -118,13 +125,15 @@ class FWDocsCLI {
 
     if (!query) {
       console.info(styled('❌ Search query is required', 'error'));
-      console.info(styled('Usage: fw-docs search "your query" [--version=v1.4] [--code-only]', 'muted'));
+      console.info(
+        styled('Usage: fw-docs search "your query" [--version=v1.4] [--code-only]', 'muted')
+      );
       return;
     }
 
     log.section('🔍 Searching Bun Documentation', 'primary');
     console.info(styled(`Query: ${query}`, 'accent'));
-    
+
     if (options.verbose) {
       console.info(styled(`Options: ${JSON.stringify(options)}`, 'muted'));
     }
@@ -138,7 +147,7 @@ class FWDocsCLI {
         codeOnly: options.codeOnly,
         apiReferenceOnly: options.apiReferenceOnly,
         context: options.context,
-        generateExample: options.generateExample
+        generateExample: options.generateExample,
       });
 
       spinner.stop();
@@ -150,32 +159,35 @@ class FWDocsCLI {
       }
 
       console.info(styled(`\n📚 Found ${results.length} results:\n`, 'success'));
-      
+
       results.forEach((result, index) => {
         const color = index === 0 ? 'accent' : 'primary';
         console.info(colorBar(color, 20));
         console.info(styled(`📖 ${result.title}`, color));
-        
+
         if (result.relevance > 0.8) {
-          console.info(styled(`   ⭐ High relevance (${Math.round(result.relevance * 100)}%)`, 'success'));
+          console.info(
+            styled(`   ⭐ High relevance (${Math.round(result.relevance * 100)}%)`, 'success')
+          );
         }
 
         // Show content preview
         const preview = result.content.slice(0, 200).replace(/\n/g, ' ');
         console.info(styled(`   ${preview}...`, 'muted'));
-        
+
         // Show links if available
         if (result.links.length > 0) {
           console.info(styled(`   🔗 ${result.links[0]}`, 'info'));
         }
 
         if (result.confidence) {
-          console.info(styled(`   🎯 Confidence: ${Math.round(result.confidence * 100)}%`, 'muted'));
+          console.info(
+            styled(`   🎯 Confidence: ${Math.round(result.confidence * 100)}%`, 'muted')
+          );
         }
-        
+
         console.info('');
       });
-
     } catch (error) {
       spinner.stop();
       throw error;
@@ -212,7 +224,7 @@ class FWDocsCLI {
       explanations.forEach((explanation, index) => {
         console.info(styled(`\n🔍 Explanation ${index + 1}:`, 'primary'));
         console.info(styled(explanation.content, 'muted'));
-        
+
         if (explanation.links.length > 0) {
           console.info(styled('\n📚 Related Documentation:', 'info'));
           explanation.links.forEach(link => {
@@ -220,7 +232,6 @@ class FWDocsCLI {
           });
         }
       });
-
     } catch (error) {
       spinner.stop();
       throw error;
@@ -238,7 +249,7 @@ class FWDocsCLI {
 
     try {
       const code = await Bun.file(filePath).text();
-      
+
       log.section('🔍 Validating Code', 'warning');
       console.info(styled(`File: ${filePath}`, 'muted'));
 
@@ -265,7 +276,6 @@ class FWDocsCLI {
           });
         }
       }
-
     } catch (error) {
       if (error.message.includes('No such file')) {
         console.info(styled(`❌ File not found: ${filePath}`, 'error'));
@@ -281,7 +291,9 @@ class FWDocsCLI {
 
     if (!topic) {
       console.info(styled('❌ Topic is required', 'error'));
-      console.info(styled('Usage: fw-docs learn --topic "Bun SQLite" [--generate-examples]', 'muted'));
+      console.info(
+        styled('Usage: fw-docs learn --topic "Bun SQLite" [--generate-examples]', 'muted')
+      );
       return;
     }
 
@@ -295,11 +307,11 @@ class FWDocsCLI {
     try {
       const docsResults = await mcp.searchBunDocs(topic, {
         generateExample: true,
-        context: 'learning'
+        context: 'learning',
       });
 
       const examples = await mcp.generateFactoryWagerExample(topic, 'learning');
-      
+
       spinner.stop();
 
       // Display documentation
@@ -318,7 +330,6 @@ class FWDocsCLI {
       console.info(styled('   • Try the examples in your own code', 'muted'));
       console.info(styled('   • Experiment with different options', 'muted'));
       console.info(styled('   • Check the official docs for complete reference', 'muted'));
-
     } catch (error) {
       spinner.stop();
       throw error;
@@ -355,7 +366,6 @@ class FWDocsCLI {
       console.info(styled('   • This code follows FactoryWager patterns', 'muted'));
       console.info(styled('   • Includes security best practices', 'muted'));
       console.info(styled('   • Optimized for performance', 'muted'));
-
     } catch (error) {
       spinner.stop();
       throw error;
@@ -376,11 +386,10 @@ class FWDocsCLI {
 
     try {
       const code = await Bun.file(filePath).text();
-      
+
       // This would integrate with the interactive docs workflow
       console.info(styled('🔧 Diagnosis feature coming soon!', 'accent'));
       console.info(styled('This will analyze errors and suggest fixes based on Bun docs', 'muted'));
-
     } catch (error) {
       if (error.message.includes('No such file')) {
         console.info(styled(`❌ File not found: ${filePath}`, 'error'));
@@ -392,7 +401,7 @@ class FWDocsCLI {
 
   private parseOptions(args: string[]): CLIOptions {
     const options: CLIOptions = {};
-    
+
     args.forEach(arg => {
       if (arg.startsWith('--version=')) {
         options.version = arg.split('=')[1];
@@ -433,35 +442,56 @@ class FWDocsCLI {
           clearInterval(interval);
           process.stdout.write('\r' + ' '.repeat(30) + '\r');
         }
-      }
+      },
     };
   }
 
   private showHelp(): void {
     console.info(styled('\n🚀 FactoryWager Docs CLI v5.0', 'accent'));
     console.info(colorBar('primary', 40));
-    
+
     console.info(styled('\n📚 Commands:', 'primary'));
-    console.info(styled('  search <query>      ', 'muted') + styled('Search Bun documentation', 'text'));
-    console.info(styled('  explain <code>      ', 'muted') + styled('Explain code snippets', 'text'));
-    console.info(styled('  validate <file>      ', 'muted') + styled('Validate code against best practices', 'text'));
-    console.info(styled('  learn --topic=<topic>', 'muted') + styled('Interactive learning mode', 'text'));
-    console.info(styled('  generate --api=<api> ', 'muted') + styled('Generate FactoryWager examples', 'text'));
-    console.info(styled('  diagnose <file>      ', 'muted') + styled('Diagnose errors in files', 'text'));
-    
+    console.info(
+      styled('  search <query>      ', 'muted') + styled('Search Bun documentation', 'text')
+    );
+    console.info(
+      styled('  explain <code>      ', 'muted') + styled('Explain code snippets', 'text')
+    );
+    console.info(
+      styled('  validate <file>      ', 'muted') +
+        styled('Validate code against best practices', 'text')
+    );
+    console.info(
+      styled('  learn --topic=<topic>', 'muted') + styled('Interactive learning mode', 'text')
+    );
+    console.info(
+      styled('  generate --api=<api> ', 'muted') + styled('Generate FactoryWager examples', 'text')
+    );
+    console.info(
+      styled('  diagnose <file>      ', 'muted') + styled('Diagnose errors in files', 'text')
+    );
+
     console.info(styled('\n⚙️  Options:', 'accent'));
-    console.info(styled('  --version=<ver>      ', 'muted') + styled('Specify Bun version', 'text'));
-    console.info(styled('  --context=<ctx>      ', 'muted') + styled('Set context (scanner, r2, etc.)', 'text'));
-    console.info(styled('  --generate-example   ', 'muted') + styled('Include code examples', 'text'));
-    console.info(styled('  --code-only          ', 'muted') + styled('Search code examples only', 'text'));
+    console.info(
+      styled('  --version=<ver>      ', 'muted') + styled('Specify Bun version', 'text')
+    );
+    console.info(
+      styled('  --context=<ctx>      ', 'muted') + styled('Set context (scanner, r2, etc.)', 'text')
+    );
+    console.info(
+      styled('  --generate-example   ', 'muted') + styled('Include code examples', 'text')
+    );
+    console.info(
+      styled('  --code-only          ', 'muted') + styled('Search code examples only', 'text')
+    );
     console.info(styled('  --verbose, -v        ', 'muted') + styled('Verbose output', 'text'));
-    
+
     console.info(styled('\n💡 Examples:', 'success'));
     console.info(styled('  fw-docs search "Bun.secrets.get"', 'info'));
     console.info(styled('  fw-docs explain "await Bun.file(\'test.txt\')"', 'info'));
     console.info(styled('  fw-docs learn --topic "Bun SQLite"', 'info'));
     console.info(styled('  fw-docs generate --api "Bun.serve" --context=scanner', 'info'));
-    
+
     console.info(styled('\n🔗 Powered by Bun MCP integration', 'muted'));
   }
 }

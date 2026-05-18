@@ -19,7 +19,7 @@ switch (command) {
       author: process.env.USER || 'cli',
       description,
       level: 'STANDARD',
-      tags: { source: 'cli' }
+      tags: { source: 'cli' },
     });
 
     console.info(`✅ Set ${key}`);
@@ -33,7 +33,7 @@ switch (command) {
     if (!historyKey) throw new Error('Usage: history <key> [limit]');
     const history = await versionedManager.getHistory(historyKey, limit);
     console.info(`📜 History for ${historyKey}`);
-    history.forEach((entry) => {
+    history.forEach(entry => {
       console.info(`• ${entry.version} | ${entry.timestamp} | ${entry.author || 'unknown'}`);
       if (entry.description) console.info(`  ${entry.description}`);
     });
@@ -45,7 +45,10 @@ switch (command) {
     const confirm = !args.includes('--force');
     if (!rollbackKey || !targetVersion) throw new Error('Usage: rollback <key> <version> [reason]');
 
-    const rollbackResult = await versionedManager.rollback(rollbackKey, targetVersion, { confirm, reason });
+    const rollbackResult = await versionedManager.rollback(rollbackKey, targetVersion, {
+      confirm,
+      reason,
+    });
     console.info(JSON.stringify(rollbackResult, null, 2));
     break;
   }
@@ -64,7 +67,7 @@ switch (command) {
     if (expiring.length === 0) {
       console.info('✅ No expiring secrets');
     } else {
-      expiring.forEach((secret) => {
+      expiring.forEach(secret => {
         const severity = secret.daysLeft <= 3 ? 'CRITICAL' : 'WARNING';
         console.info(`• ${secret.key} | ${secret.daysLeft} days left | ${severity}`);
       });

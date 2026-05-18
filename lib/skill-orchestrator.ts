@@ -1,9 +1,9 @@
 /**
  * SkillOrchestrator - Bridges Kimi Skills with Dynamic Domain APIs
- * 
+ *
  * Parses SKILL.md files, executes flow diagrams, and maps skill instructions
  * to domain methods. Core orchestration layer for domain-aware automation.
- * 
+ *
  * Features:
  * - Resilience policies (retries, timeouts, fallback nodes)
  * - Schema-declared error handling
@@ -99,7 +99,7 @@ const DEFAULT_RESILIENCE: ResiliencePolicy = {
   retryStrategy: 'exponential_backoff',
   timeoutMs: 5000,
   onFailure: 'escalate',
-  idempotent: false
+  idempotent: false,
 };
 
 /**
@@ -108,10 +108,10 @@ const DEFAULT_RESILIENCE: ResiliencePolicy = {
 function parseYamlFrontmatter(content: string): Record<string, any> {
   const match = content.match(/^---\n([\s\S]*?)\n---/);
   if (!match) return {};
-  
+
   const lines = match[1].split('\n');
   const result: Record<string, any> = {};
-  
+
   let i = 0;
   while (i < lines.length) {
     const line = lines[i];
@@ -119,13 +119,13 @@ function parseYamlFrontmatter(content: string): Record<string, any> {
       i++;
       continue;
     }
-    
+
     // Top-level key
     const topMatch = line.match(/^(\w+):\s*(.*)$/);
     if (topMatch) {
       const key = topMatch[1];
       const value = topMatch[2].trim();
-      
+
       if (value === '') {
         // Nested object - parse indented content
         const { obj, nextIndex } = parseIndentedBlock(lines, i + 1, 2);
@@ -139,34 +139,34 @@ function parseYamlFrontmatter(content: string): Record<string, any> {
       i++;
     }
   }
-  
+
   return result;
 }
 
 function parseIndentedBlock(
-  lines: string[], 
-  startIndex: number, 
+  lines: string[],
+  startIndex: number,
   minIndent: number
 ): { obj: any; nextIndex: number } {
   const obj: any = {};
   let i = startIndex;
-  
+
   while (i < lines.length) {
     const line = lines[i];
     const trimmed = line.trim();
-    
+
     if (!trimmed || trimmed.startsWith('#')) {
       i++;
       continue;
     }
-    
+
     const indent = line.match(/^(\s*)/)?.[1].length || 0;
-    
+
     // Check if we've exited this block
     if (indent < minIndent) {
       break;
     }
-    
+
     if (indent >= minIndent) {
       // Match key (supports quoted keys with spaces)
       const keyMatch = line.match(new RegExp(`^\\s{${minIndent}}([\\w"'][^:]*):\\s*(.*)$`));
@@ -175,7 +175,7 @@ function parseIndentedBlock(
         // Remove quotes from key
         const key = rawKey.replace(/^["']|["']$/g, '');
         const value = keyMatch[2].trim();
-        
+
         if (value === '') {
           // Deeper nesting
           const { obj: nestedObj, nextIndex } = parseIndentedBlock(lines, i + 1, indent + 2);
@@ -192,35 +192,38 @@ function parseIndentedBlock(
       i++;
     }
   }
-  
+
   return { obj, nextIndex: i };
 }
 
 function parseYamlValue(value: string): any {
   // Remove quotes
   value = value.replace(/^["']|["']$/g, '');
-  
+
   // Handle arrays
   if (value.startsWith('[') && value.endsWith(']')) {
-    return value.slice(1, -1).split(',').map(s => s.trim().replace(/^["']|["']$/g, ''));
+    return value
+      .slice(1, -1)
+      .split(',')
+      .map(s => s.trim().replace(/^["']|["']$/g, ''));
   }
-  
+
   // Handle numbers
   if (/^\d+$/.test(value)) return parseInt(value, 10);
   if (/^\d+\.\d+$/.test(value)) return parseFloat(value);
-  
+
   // Handle booleans
   if (value === 'true') return true;
   if (value === 'false') return false;
   if (value === 'null' || value === '~') return null;
-  
+
   return value;
 }
 
 export class SkillOrchestrator {
   private skillCache = new Map<string, { content: string; mtime: number }>();
   private defaultResilience: ResiliencePolicy = DEFAULT_RESILIENCE;
-  
+
   /**
    * Load a skill using kimi-cli discovery priority:
    * 1. Project-level (.agents/skills/)
@@ -229,7 +232,7 @@ export class SkillOrchestrator {
    */
   async loadSkill(skillName: string): Promise<string> {
     const cached = this.skillCache.get(skillName);
-    
+
     const paths = [
       join(process.cwd(), '.agents', 'skills', skillName, 'SKILL.md'),
       join(process.env.HOME || '~', '.config', 'agents', 'skills', skillName, 'SKILL.md'),
@@ -239,17 +242,17 @@ export class SkillOrchestrator {
     for (const path of paths) {
       if (existsSync(path)) {
         const stats = await import('fs').then(fs => fs.statSync(path));
-        
+
         if (cached && cached.mtime === stats.mtime.getTime()) {
           return cached.content;
         }
-        
+
         const content = await readFile(path, 'utf-8');
         this.skillCache.set(skillName, { content, mtime: stats.mtime.getTime() });
         return content;
       }
     }
-    
+
     throw new Error(`Skill "${skillName}" not found in any discovery path`);
   }
 
@@ -263,20 +266,17 @@ export class SkillOrchestrator {
   /**
    * Extract resilience policy for a specific step
    */
-  private getStepPolicy(
-    stepText: string, 
-    frontmatter: Record<string, any>
-  ): ResiliencePolicy {
+  private getStepPolicy(stepText: string, frontmatter: Record<string, any>): ResiliencePolicy {
     const defaultPolicy = frontmatter.resilience?.default_policy || this.defaultResilience;
     const stepPolicies = frontmatter.resilience?.step_policies || {};
-    
+
     // Find matching step policy (exact match or contains)
     for (const [stepName, policy] of Object.entries(stepPolicies)) {
       if (stepText.includes(stepName) || stepName === stepText) {
         return { ...defaultPolicy, ...policy };
       }
     }
-    
+
     return defaultPolicy;
   }
 
@@ -289,31 +289,31 @@ export class SkillOrchestrator {
     stepId: string
   ): Promise<{ result: T; attempts: number }> {
     let lastError: Error | undefined;
-    
+
     for (let attempt = 1; attempt <= policy.retries + 1; attempt++) {
       try {
         const result = await fn();
         return { result, attempts: attempt };
       } catch (error) {
         lastError = error instanceof Error ? error : new Error(String(error));
-        
+
         if (attempt <= policy.retries) {
           // Calculate backoff delay
           const delay = this.calculateBackoff(attempt, policy.retryStrategy);
-          
+
           this.logEvent('step_retry', {
             step: stepId,
             attempt,
             maxRetries: policy.retries,
             delayMs: delay,
-            error: lastError.message
+            error: lastError.message,
           });
-          
+
           await sleep(delay);
         }
       }
     }
-    
+
     throw lastError;
   }
 
@@ -322,7 +322,7 @@ export class SkillOrchestrator {
    */
   private calculateBackoff(attempt: number, strategy: string): number {
     const baseDelay = 1000; // 1 second base
-    
+
     switch (strategy) {
       case 'fixed':
         return baseDelay;
@@ -347,7 +347,7 @@ export class SkillOrchestrator {
         reject(new TimeoutError(`Step "${stepId}" timed out after ${timeoutMs}ms`));
       }, timeoutMs);
     });
-    
+
     return Promise.race([fn(), timeoutPromise]);
   }
 
@@ -357,34 +357,34 @@ export class SkillOrchestrator {
   async executeFlowSkill(skillName: string, targetDomain: Domain): Promise<StepResult[]> {
     const skillContent = await this.loadSkill(skillName);
     const frontmatter = this.parseFrontmatter(skillContent);
-    
+
     if (frontmatter.type !== 'flow') {
       throw new Error(`Skill "${skillName}" is not a flow skill`);
     }
 
     const flowSteps = this.parseFlowDiagram(skillContent);
     const results: StepResult[] = [];
-    
+
     for (const step of flowSteps) {
       const policy = this.getStepPolicy(step.text, frontmatter);
       const result = await this.executeResilientStep(step, targetDomain, policy);
       results.push(result);
-      
+
       // Handle flow control (jump to fallback, halt, etc.)
       if (result.jumpTo) {
         // Find and execute fallback node
         const fallbackStep = flowSteps.find(s => s.text.includes(result.jumpTo!));
         if (fallbackStep) {
           const fallbackResult = await this.executeResilientStep(
-            fallbackStep, 
-            targetDomain, 
+            fallbackStep,
+            targetDomain,
             { ...policy, onFailure: 'halt' } // Don't retry fallback
           );
           results.push(fallbackResult);
         }
         break;
       }
-      
+
       if (result.status === 'escalated' || result.status === 'halt') {
         break;
       }
@@ -402,7 +402,7 @@ export class SkillOrchestrator {
     policy: ResiliencePolicy
   ): Promise<StepResult> {
     const startTime = Date.now();
-    
+
     const executor = async () => {
       return await this.executeWithTimeout(
         () => this.executeFlowStep(step, domain),
@@ -412,35 +412,30 @@ export class SkillOrchestrator {
     };
 
     try {
-      const { result, attempts } = await this.executeWithRetry(
-        executor,
-        policy,
-        step.id
-      );
-      
+      const { result, attempts } = await this.executeWithRetry(executor, policy, step.id);
+
       this.logEvent('step_success', {
         step: step.text,
         attempts,
-        durationMs: Date.now() - startTime
+        durationMs: Date.now() - startTime,
       });
-      
+
       return {
         status: 'success',
         result,
         attempts,
-        durationMs: Date.now() - startTime
+        durationMs: Date.now() - startTime,
       };
-      
     } catch (error) {
       const err = error instanceof Error ? error : new Error(String(error));
       const durationMs = Date.now() - startTime;
-      
+
       this.logEvent('step_failed', {
         step: step.text,
         error: err.message,
-        durationMs
+        durationMs,
       });
-      
+
       // Handle failure according to policy
       return this.handleFailure(step, err, policy, durationMs);
     }
@@ -463,11 +458,11 @@ export class SkillOrchestrator {
             error,
             attempts: policy.retries + 1,
             durationMs,
-            jumpTo: policy.fallbackNode
+            jumpTo: policy.fallbackNode,
           };
         }
-        // Fall through to escalate if no fallback specified
-        
+      // Fall through to escalate if no fallback specified
+
       case 'escalate':
         this.notifyDomainCouncil(step.text, error);
         return {
@@ -475,23 +470,23 @@ export class SkillOrchestrator {
           error,
           attempts: policy.retries + 1,
           durationMs,
-          jumpTo: 'END'
+          jumpTo: 'END',
         };
-        
+
       case 'skip':
         return {
           status: 'skipped',
           error,
           attempts: policy.retries + 1,
           durationMs,
-          continueTo: step.next?.[0]
+          continueTo: step.next?.[0],
         };
-        
+
       case 'compensate':
         if (policy.compensationStep) {
           this.logEvent('compensation_triggered', {
             step: step.text,
-            compensation: policy.compensationStep
+            compensation: policy.compensationStep,
           });
         }
         return {
@@ -499,9 +494,9 @@ export class SkillOrchestrator {
           error,
           attempts: policy.retries + 1,
           durationMs,
-          jumpTo: 'END'
+          jumpTo: 'END',
         };
-        
+
       case 'halt':
       default:
         throw new FlowExecutionError(
@@ -522,34 +517,34 @@ export class SkillOrchestrator {
       text.includes('health') || text.includes('vital') || text.includes('status');
     const diagnosticIntent =
       text.includes('diagnose') || text.includes('diagnostic') || text.includes('diagnosis');
-    
+
     if (text.includes('check') && healthIntent) {
-      return await domain.checkHealth?.() ?? { healthy: true };
+      return (await domain.checkHealth?.()) ?? { healthy: true };
     }
-    
+
     if (diagnosticIntent) {
-      return await domain.autoDiagnose?.() ?? { found: false };
+      return (await domain.autoDiagnose?.()) ?? { found: false };
     }
-    
+
     if (text.includes('treatment') || text.includes('heal')) {
-      return await domain.applyTreatment?.() ?? false;
+      return (await domain.applyTreatment?.()) ?? false;
     }
-    
+
     if (text.includes('rebuild')) {
       await domain.fullRebuild?.();
       return { rebuilt: true };
     }
-    
+
     if (text.includes('optimize')) {
       await domain.optimize?.();
       return { optimized: true };
     }
-    
+
     if (text.includes('collapse')) {
       const property = text.match(/collapse ['"](\w+)['"]/)?.[1] ?? 'state';
       return domain.collapse?.(property);
     }
-    
+
     return { unmapped: true, text: step.text };
   }
 
@@ -562,23 +557,23 @@ export class SkillOrchestrator {
 
     const lines = flowMatch[1].split('\n');
     const nodes: FlowNode[] = [];
-    
+
     for (const line of lines) {
       const nodeMatch = line.match(/(\w+)\s*\[(.+?)\]/);
       if (nodeMatch) {
         nodes.push({
           id: nodeMatch[1],
           type: 'action',
-          text: nodeMatch[2]
+          text: nodeMatch[2],
         });
       }
-      
+
       const decisionMatch = line.match(/(\w+)\s*\{(.+?)\}/);
       if (decisionMatch) {
         nodes.push({
           id: decisionMatch[1],
           type: 'decision',
-          text: decisionMatch[2]
+          text: decisionMatch[2],
         });
       }
     }
@@ -624,7 +619,7 @@ export class SkillOrchestrator {
     this.logEvent('domain_council_escalation', {
       step: stepText,
       error: error.message,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 }
@@ -637,8 +632,11 @@ function sleep(ms: number): Promise<void> {
 // Lightweight performance monitor — logs structured JSON entries
 const DomainPerformanceMonitor = {
   recordEvent(type: string, data: any): void {
-    const entry = { timestamp: new Date().toISOString(), type,
-      ...(typeof data === 'object' ? data : { value: data }) };
+    const entry = {
+      timestamp: new Date().toISOString(),
+      type,
+      ...(typeof data === 'object' ? data : { value: data }),
+    };
     if (process.env.NODE_ENV !== 'test') {
       console.info(`[perf:${type}]`, JSON.stringify(entry));
     }

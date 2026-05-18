@@ -93,8 +93,16 @@ export interface PresenceUpdate {
 }
 
 export interface CollaborationEvent {
-  type: 'user-joined' | 'user-left' | 'cursor-update' | 'document-changed' | 
-        'comment-added' | 'comment-resolved' | 'section-locked' | 'section-unlocked' | 'presence-update';
+  type:
+    | 'user-joined'
+    | 'user-left'
+    | 'cursor-update'
+    | 'document-changed'
+    | 'comment-added'
+    | 'comment-resolved'
+    | 'section-locked'
+    | 'section-unlocked'
+    | 'presence-update';
   userId: string;
   documentId?: string;
   data: any;
@@ -118,7 +126,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
   constructor(config: Partial<CollaborationConfig> = {}) {
     super();
-    
+
     this.config = {
       port: 8080,
       enableAuthentication: true,
@@ -129,14 +137,14 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       enableComments: true,
       enableVersionControl: true,
       conflictResolution: 'operational-transform',
-      ...config
+      ...config,
     };
 
     this.cache = new AdvancedCacheManager({
       maxSize: 500,
       ttl: 60 * 60 * 1000, // 1 hour
       enableLRU: true,
-      enableMetrics: true
+      enableMetrics: true,
     });
 
     this.conflictResolver = new ConflictResolver(this.config.conflictResolution);
@@ -147,22 +155,22 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   public async start(): Promise<void> {
     try {
-      this.wsServer = new WebSocketServer({ 
+      this.wsServer = new WebSocketServer({
         port: this.config.port,
-        maxPayload: 1024 * 1024 // 1MB max payload
+        maxPayload: 1024 * 1024, // 1MB max payload
       });
 
       this.wsServer.on('connection', (ws, request) => {
         this.handleConnection(ws, request);
       });
 
-      this.wsServer.on('error', (error) => {
+      this.wsServer.on('error', error => {
         console.error('WebSocket server error:', error);
         this.emit('error', error);
       });
 
       this.startHeartbeat();
-      
+
       console.info(`Collaboration server started on port ${this.config.port}`);
       this.emit('started');
     } catch (error) {
@@ -194,9 +202,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
       this.connections.clear();
       this.userConnections.clear();
-      
+
       await this.cache.destroy();
-      
+
       console.info('Collaboration server stopped');
       this.emit('stopped');
     } catch (error) {
@@ -235,13 +243,13 @@ export class RealtimeWikiCollaboration extends EventEmitter {
           permissions: ['read', 'write'],
           joinedAt: Date.now(),
           lastSeen: Date.now(),
-          status: 'online'
+          status: 'online',
         };
       }
 
       // Register connection
       this.connections.set(ws, user.id);
-      
+
       if (!this.userConnections.has(user.id)) {
         this.userConnections.set(user.id, []);
       }
@@ -253,7 +261,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       this.users.set(user.id, user);
 
       // Set up WebSocket event handlers
-      ws.on('message', (data) => {
+      ws.on('message', data => {
         this.handleMessage(ws, user!, data);
       });
 
@@ -261,7 +269,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         this.handleDisconnection(ws, user!, code, reason);
       });
 
-      ws.on('error', (error) => {
+      ws.on('error', error => {
         console.error(`WebSocket error for user ${user.id}:`, error);
       });
 
@@ -269,16 +277,19 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       await this.sendInitialState(ws, user);
 
       // Broadcast user joined event
-      this.broadcastEvent({
-        type: 'user-joined',
-        userId: user.id,
-        data: {
-          name: user.name,
-          avatar: user.avatar,
-          role: user.role
+      this.broadcastEvent(
+        {
+          type: 'user-joined',
+          userId: user.id,
+          data: {
+            name: user.name,
+            avatar: user.avatar,
+            role: user.role,
+          },
+          timestamp: Date.now(),
         },
-        timestamp: Date.now()
-      }, user.id);
+        user.id
+      );
 
       this.emit('user-joined', user);
     } catch (error) {
@@ -293,9 +304,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   private async handleMessage(ws: WebSocket, user: User, data: Buffer): Promise<void> {
     try {
       const message = JSON.parse(data.toString());
-      
+
       user.lastSeen = Date.now();
-      
+
       switch (message.type) {
         case 'cursor-update':
           if (this.config.enableCursors) {
@@ -342,11 +353,13 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       }
     } catch (error) {
       console.error(`Error handling message from user ${user.id}:`, error);
-      ws.send(JSON.stringify({
-        type: 'error',
-        message: 'Failed to process message',
-        timestamp: Date.now()
-      }));
+      ws.send(
+        JSON.stringify({
+          type: 'error',
+          message: 'Failed to process message',
+          timestamp: Date.now(),
+        })
+      );
     }
   }
 
@@ -355,17 +368,21 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private async handleCursorUpdate(user: User, data: CursorPosition): Promise<void> {
     user.cursor = data;
-    
+
     // Update document state
     const document = this.documents.get(data.documentId);
     if (document) {
       // Broadcast cursor update to other users in the same document
-      this.broadcastToDocument(data.documentId, {
-        type: 'cursor-update',
-        userId: user.id,
-        data,
-        timestamp: Date.now()
-      }, user.id);
+      this.broadcastToDocument(
+        data.documentId,
+        {
+          type: 'cursor-update',
+          userId: user.id,
+          data,
+          timestamp: Date.now(),
+        },
+        user.id
+      );
     }
 
     this.emit('cursor-update', user, data);
@@ -389,7 +406,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
 
     // Apply operation to document
     const newContent = this.applyOperation(document.content, resolvedOperation);
-    
+
     // Update document state
     document.content = newContent;
     document.version++;
@@ -406,16 +423,20 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     await this.cache.set(`doc:${data.documentId}`, document);
 
     // Broadcast to other users
-    this.broadcastToDocument(data.documentId, {
-      type: 'document-changed',
-      userId: user.id,
-      data: {
-        operation: resolvedOperation,
-        version: document.version,
-        content: newContent
+    this.broadcastToDocument(
+      data.documentId,
+      {
+        type: 'document-changed',
+        userId: user.id,
+        data: {
+          operation: resolvedOperation,
+          version: document.version,
+          content: newContent,
+        },
+        timestamp: Date.now(),
       },
-      timestamp: Date.now()
-    }, user.id);
+      user.id
+    );
 
     this.emit('document-changed', user, data.documentId, resolvedOperation);
   }
@@ -434,7 +455,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       updatedAt: Date.now(),
       resolved: false,
       replies: [],
-      reactions: []
+      reactions: [],
     };
 
     const document = this.documents.get(data.documentId!);
@@ -447,7 +468,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         type: 'comment-added',
         userId: user.id,
         data: comment,
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       this.emit('comment-added', user, comment);
@@ -457,7 +478,10 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Handle comment resolution
    */
-  private async handleCommentResolve(user: User, data: { commentId: string; documentId: string }): Promise<void> {
+  private async handleCommentResolve(
+    user: User,
+    data: { commentId: string; documentId: string }
+  ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
 
@@ -465,7 +489,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     if (comment) {
       comment.resolved = true;
       comment.updatedAt = Date.now();
-      
+
       await this.cache.set(`doc:${data.documentId}`, document);
 
       // Broadcast comment resolution
@@ -473,7 +497,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         type: 'comment-resolved',
         userId: user.id,
         data: { commentId: data.commentId },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
 
       this.emit('comment-resolved', user, comment);
@@ -483,7 +507,10 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Handle section locking
    */
-  private async handleSectionLock(user: User, data: { documentId: string; section: string }): Promise<void> {
+  private async handleSectionLock(
+    user: User,
+    data: { documentId: string; section: string }
+  ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
 
@@ -494,7 +521,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       this.sendToUser(user.id, {
         type: 'section-lock-denied',
         data: { section: data.section, lockedBy: existingLock.userId },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
       return;
     }
@@ -503,7 +530,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     document.locks.push({
       userId: user.id,
       section: data.section,
-      lockedAt: Date.now()
+      lockedAt: Date.now(),
     });
 
     await this.cache.set(`doc:${data.documentId}`, document);
@@ -513,7 +540,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       type: 'section-locked',
       userId: user.id,
       data: { section: data.section },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('section-locked', user, data.documentId, data.section);
@@ -522,7 +549,10 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Handle section unlocking
    */
-  private async handleSectionUnlock(user: User, data: { documentId: string; section: string }): Promise<void> {
+  private async handleSectionUnlock(
+    user: User,
+    data: { documentId: string; section: string }
+  ): Promise<void> {
     const document = this.documents.get(data.documentId);
     if (!document) return;
 
@@ -538,7 +568,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       type: 'section-unlocked',
       userId: user.id,
       data: { section: data.section },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('section-unlocked', user, data.documentId, data.section);
@@ -558,9 +588,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       userId: user.id,
       data: {
         status: user.status,
-        documentId: data.documentId
+        documentId: data.documentId,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('presence-update', user, data);
@@ -572,13 +602,17 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   private applyOperation(content: string, operation: DocumentOperation): string {
     switch (operation.type) {
       case 'insert':
-        return content.slice(0, operation.position) + 
-               (operation.content || '') + 
-               content.slice(operation.position);
+        return (
+          content.slice(0, operation.position) +
+          (operation.content || '') +
+          content.slice(operation.position)
+        );
 
       case 'delete':
-        return content.slice(0, operation.position) + 
-               content.slice(operation.position + (operation.length || 0));
+        return (
+          content.slice(0, operation.position) +
+          content.slice(operation.position + (operation.length || 0))
+        );
 
       case 'retain':
         // Retain operations don't change content
@@ -594,7 +628,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private broadcastEvent(event: CollaborationEvent, excludeUserId?: string): void {
     const message = JSON.stringify(event);
-    
+
     for (const [ws, userId] of this.connections.entries()) {
       if (userId !== excludeUserId && ws.readyState === WebSocket.OPEN) {
         ws.send(message);
@@ -605,13 +639,19 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   /**
    * Broadcast event to users in a specific document
    */
-  private broadcastToDocument(documentId: string, event: CollaborationEvent, excludeUserId?: string): void {
+  private broadcastToDocument(
+    documentId: string,
+    event: CollaborationEvent,
+    excludeUserId?: string
+  ): void {
     const message = JSON.stringify(event);
-    
+
     for (const [ws, userId] of this.connections.entries()) {
-      if (userId !== excludeUserId && 
-          ws.readyState === WebSocket.OPEN && 
-          this.isUserInDocument(userId, documentId)) {
+      if (
+        userId !== excludeUserId &&
+        ws.readyState === WebSocket.OPEN &&
+        this.isUserInDocument(userId, documentId)
+      ) {
         ws.send(message);
       }
     }
@@ -644,15 +684,17 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         version: doc.version,
         activeUsers: doc.activeUsers,
         comments: doc.comments,
-        locks: doc.locks
-      }))
+        locks: doc.locks,
+      })),
     };
 
-    ws.send(JSON.stringify({
-      type: 'initial-state',
-      data: state,
-      timestamp: Date.now()
-    }));
+    ws.send(
+      JSON.stringify({
+        type: 'initial-state',
+        data: state,
+        timestamp: Date.now(),
+      })
+    );
   }
 
   /**
@@ -661,14 +703,14 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   private handleDisconnection(ws: WebSocket, user: User, code: number, reason: Buffer): void {
     // Remove connection
     this.connections.delete(ws);
-    
+
     const userConnections = this.userConnections.get(user.id);
     if (userConnections) {
       const index = userConnections.indexOf(ws);
       if (index > -1) {
         userConnections.splice(index, 1);
       }
-      
+
       // If user has no more connections, mark as offline
       if (userConnections.length === 0) {
         this.handleUserDisconnect(user.id);
@@ -692,7 +734,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       if (index > -1) {
         document.activeUsers.splice(index, 1);
       }
-      
+
       // Remove user's locks
       document.locks = document.locks.filter(lock => lock.userId !== userId);
     }
@@ -702,9 +744,9 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       type: 'user-left',
       userId,
       data: {
-        name: user.name
+        name: user.name,
       },
-      timestamp: Date.now()
+      timestamp: Date.now(),
     });
 
     this.emit('user-left', user);
@@ -725,15 +767,15 @@ export class RealtimeWikiCollaboration extends EventEmitter {
     // Try query parameter first
     const url = new URL(request.url || '', `http://localhost:${this.config.port}`);
     const token = url.searchParams.get('token');
-    
+
     if (token) return token;
-    
+
     // Try Authorization header
     const authHeader = request.headers.get('authorization');
     if (authHeader && authHeader.startsWith('Bearer ')) {
       return authHeader.substring(7);
     }
-    
+
     return null;
   }
 
@@ -742,7 +784,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
    */
   private async authenticateUser(token: string | null): Promise<User | null> {
     if (!token) return null;
-    
+
     try {
       // This would integrate with your authentication system
       // For now, return a mock user for demonstration
@@ -754,7 +796,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
         permissions: ['read', 'write'],
         joinedAt: Date.now(),
         lastSeen: Date.now(),
-        status: 'online'
+        status: 'online',
       };
     } catch (error) {
       console.error('Authentication error:', error);
@@ -768,23 +810,25 @@ export class RealtimeWikiCollaboration extends EventEmitter {
   private startHeartbeat(): void {
     this.heartbeatTimer = setInterval(() => {
       const now = Date.now();
-      
+
       for (const [ws, userId] of this.connections.entries()) {
         const user = this.users.get(userId);
-        
+
         // Check if user connection is stale
         if (user && now - user.lastSeen > this.config.heartbeatInterval * 2) {
           ws.terminate();
           this.handleUserDisconnect(userId);
           continue;
         }
-        
+
         // Send ping
         if (ws.readyState === WebSocket.OPEN) {
-          ws.send(JSON.stringify({
-            type: 'ping',
-            timestamp: now
-          }));
+          ws.send(
+            JSON.stringify({
+              type: 'ping',
+              timestamp: now,
+            })
+          );
         }
       }
     }, this.config.heartbeatInterval);
@@ -798,7 +842,7 @@ export class RealtimeWikiCollaboration extends EventEmitter {
       activeUsers: this.users.size,
       activeConnections: this.connections.size,
       activeDocuments: this.documents.size,
-      cacheStats: this.cache.getStats()
+      cacheStats: this.cache.getStats(),
     };
   }
 }
@@ -841,18 +885,21 @@ class ConflictResolver {
     // Simplified operational transform
     // In a real implementation, this would be more sophisticated
     let transformedOp = { ...operation };
-    
+
     for (const historicalOp of history) {
       if (historicalOp.timestamp > operation.timestamp) {
         // Transform against this historical operation
         if (historicalOp.type === 'insert' && historicalOp.position <= transformedOp.position) {
           transformedOp.position += historicalOp.content?.length || 0;
-        } else if (historicalOp.type === 'delete' && historicalOp.position < transformedOp.position) {
+        } else if (
+          historicalOp.type === 'delete' &&
+          historicalOp.position < transformedOp.position
+        ) {
           transformedOp.position -= historicalOp.length || 0;
         }
       }
     }
-    
+
     return transformedOp;
   }
 

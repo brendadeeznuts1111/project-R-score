@@ -8,12 +8,10 @@
  * Bun.spawn for network ops that benefit from parallelism.
  */
 
-const skipTests = Bun.argv.includes("--no-test");
+const skipTests = Bun.argv.includes('--no-test');
 
-const step = (n: number, msg: string) =>
-  console.info(`\x1b[36m[${n}/6]\x1b[0m ${msg}`);
-const warn = (msg: string) =>
-  console.warn(`\x1b[33m  ⚠ ${msg}\x1b[0m`);
+const step = (n: number, msg: string) => console.info(`\x1b[36m[${n}/6]\x1b[0m ${msg}`);
+const warn = (msg: string) => console.warn(`\x1b[33m  ⚠ ${msg}\x1b[0m`);
 const fail = (msg: string, recovery?: string): never => {
   console.error(`\n\x1b[31m${msg}\x1b[0m`);
   if (recovery) console.error(`\x1b[33m  Recovery: ${recovery}\x1b[0m`);
@@ -24,11 +22,11 @@ const fail = (msg: string, recovery?: string): never => {
 function run(...cmd: string[]): string {
   const { stdout, stderr, exitCode } = Bun.spawnSync({
     cmd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   if (exitCode !== 0) {
-    throw new Error(stderr.toString().trim() || `${cmd.join(" ")} exited ${exitCode}`);
+    throw new Error(stderr.toString().trim() || `${cmd.join(' ')} exited ${exitCode}`);
   }
   return stdout.toString().trim();
 }
@@ -37,8 +35,8 @@ function run(...cmd: string[]): string {
 function tryRun(...cmd: string[]) {
   const { stdout, stderr, exitCode } = Bun.spawnSync({
     cmd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   return {
     ok: exitCode === 0,
@@ -51,8 +49,8 @@ function tryRun(...cmd: string[]) {
 function spawnAsync(...cmd: string[]) {
   const proc = Bun.spawn({
     cmd,
-    stdout: "pipe",
-    stderr: "pipe",
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   return {
     async result() {
@@ -68,64 +66,92 @@ async function promote() {
   const t0 = performance.now();
 
   // 1. Pre-flight — all local, all sync, zero shell overhead
-  step(1, "Pre-flight...");
-  const dirty = run("git", "status", "--porcelain");
+  step(1, 'Pre-flight...');
+  const dirty = run('git', 'status', '--porcelain');
   if (dirty) {
-    console.error("\x1b[31mError: working tree is dirty. Stash or commit first.\x1b[0m");
+    console.error('\x1b[31mError: working tree is dirty. Stash or commit first.\x1b[0m');
     console.error(dirty);
     process.exit(1);
   }
 
-  const branch = run("git", "rev-parse", "--abbrev-ref", "HEAD");
-  if (branch !== "staging") fail(`Must be on 'staging', currently on '${branch}'.`);
+  const branch = run('git', 'rev-parse', '--abbrev-ref', 'HEAD');
+  if (branch !== 'staging') fail(`Must be on 'staging', currently on '${branch}'.`);
 
-  const ahead = run("git", "rev-list", "main..staging", "--count");
-  if (ahead === "0") fail("staging has no commits ahead of main.");
+  const ahead = run('git', 'rev-list', 'main..staging', '--count');
+  if (ahead === '0') fail('staging has no commits ahead of main.');
   console.info(`  ${ahead} commit(s) ahead of main`);
 
   // 2. Tests
   if (skipTests) {
-    step(2, "Skipping tests (--no-test)");
-    warn("Shipping without tests. You own whatever breaks.");
+    step(2, 'Skipping tests (--no-test)');
+    warn('Shipping without tests. You own whatever breaks.');
   } else {
-    step(2, "Running tests...");
-    const test = Bun.spawnSync({ cmd: ["bun", "test", "--bail"], stdout: "inherit", stderr: "inherit" });
-    if (test.exitCode !== 0) fail("Tests failed.");
+    step(2, 'Running tests...');
+    const test = Bun.spawnSync({
+      cmd: ['bun', 'test', '--bail'],
+      stdout: 'inherit',
+      stderr: 'inherit',
+    });
+    if (test.exitCode !== 0) fail('Tests failed.');
   }
 
   // 3. Push staging
-  step(3, "Pushing staging to origin...");
-  run("git", "push", "origin", "staging");
+  step(3, 'Pushing staging to origin...');
+  run('git', 'push', 'origin', 'staging');
 
   // 4. Create PR
-  step(4, "Creating PR...");
-  const subjects = run("git", "log", "main..staging", "--format=%s", "--reverse")
-    .split("\n")
-    .filter((s) => !/^(Merge |WIP)/i.test(s));
-  const title = subjects[0] ?? "Promote staging to main";
-  const body = run("git", "log", "main..staging", "--oneline", "--reverse");
+  step(4, 'Creating PR...');
+  const subjects = run('git', 'log', 'main..staging', '--format=%s', '--reverse')
+    .split('\n')
+    .filter(s => !/^(Merge |WIP)/i.test(s));
+  const title = subjects[0] ?? 'Promote staging to main';
+  const body = run('git', 'log', 'main..staging', '--oneline', '--reverse');
 
   let prNumber: string;
-  const create = tryRun("gh", "pr", "create", "--base", "main", "--head", "staging", "--title", title, "--body", body);
+  const create = tryRun(
+    'gh',
+    'pr',
+    'create',
+    '--base',
+    'main',
+    '--head',
+    'staging',
+    '--title',
+    title,
+    '--body',
+    body
+  );
 
   if (create.ok) {
     console.info(`  ${create.stdout}`);
-    prNumber = create.stdout.split("/").pop()!;
+    prNumber = create.stdout.split('/').pop()!;
   } else {
-    const existing = tryRun("gh", "pr", "list", "--head", "staging", "--base", "main", "--json", "number", "--jq", ".[0].number");
+    const existing = tryRun(
+      'gh',
+      'pr',
+      'list',
+      '--head',
+      'staging',
+      '--base',
+      'main',
+      '--json',
+      'number',
+      '--jq',
+      '.[0].number'
+    );
     if (!existing.ok || !existing.stdout) {
-      fail(`PR creation failed: ${create.stderr}`, "Check gh auth and retry.");
+      fail(`PR creation failed: ${create.stderr}`, 'Check gh auth and retry.');
     }
     prNumber = existing.stdout;
     console.info(`  Reusing existing PR #${prNumber}`);
   }
 
-  if (!/^\d+$/.test(prNumber)) fail("Could not extract PR number.");
+  if (!/^\d+$/.test(prNumber)) fail('Could not extract PR number.');
 
   // 5. Merge PR
-  step(5, "Merging PR...");
-  const merge = tryRun("gh", "pr", "merge", prNumber, "--merge");
-  if (!merge.ok && !merge.stderr.includes("already been merged")) {
+  step(5, 'Merging PR...');
+  const merge = tryRun('gh', 'pr', 'merge', prNumber, '--merge');
+  if (!merge.ok && !merge.stderr.includes('already been merged')) {
     fail(
       `Merge failed: ${merge.stderr}`,
       `Resolve manually, then: git checkout main && git pull && git branch -d staging && git checkout -b staging && git push -u origin staging`
@@ -133,27 +159,27 @@ async function promote() {
   }
 
   // 6. Cycle branches — parallel network ops, sync local ops
-  step(6, "Cycling branches...");
-  run("git", "checkout", "main");
+  step(6, 'Cycling branches...');
+  run('git', 'checkout', 'main');
 
   // Fire both network ops in parallel
-  const pullJob = spawnAsync("git", "pull", "origin", "main");
-  const deleteJob = spawnAsync("git", "push", "origin", "--delete", "staging");
+  const pullJob = spawnAsync('git', 'pull', 'origin', 'main');
+  const deleteJob = spawnAsync('git', 'push', 'origin', '--delete', 'staging');
 
   // Wait for both parallel network ops, then finish local cleanup
   const [pullRes, delRes] = await Promise.all([pullJob.result(), deleteJob.result()]);
   if (!pullRes.ok) fail(`Pull failed: ${pullRes.stderr}`);
   if (!delRes.ok) warn(`Remote delete: ${delRes.stderr}`);
 
-  tryRun("git", "branch", "-d", "staging");
-  run("git", "checkout", "-b", "staging");
-  run("git", "push", "-u", "origin", "staging");
+  tryRun('git', 'branch', '-d', 'staging');
+  run('git', 'checkout', '-b', 'staging');
+  run('git', 'push', '-u', 'origin', 'staging');
 
   const ms = (performance.now() - t0).toFixed(0);
   console.info(`\n\x1b[32mDone in ${ms}ms. On fresh staging, in sync with main.\x1b[0m`);
 }
 
-promote().catch((err) => {
+promote().catch(err => {
   console.error(`\n\x1b[31mPromote failed:\x1b[0m`, err.message ?? err);
   process.exit(1);
 });

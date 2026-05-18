@@ -2,7 +2,7 @@
 
 interface WorkerRequest {
   id: string;
-  action: "compress" | "decompress";
+  action: 'compress' | 'decompress';
   data: string;
 }
 
@@ -16,13 +16,13 @@ function handleMessage(msg: WorkerRequest): WorkerResponse {
   const { id, action, data } = msg;
 
   try {
-    if (action === "compress") {
+    if (action === 'compress') {
       const compressed = Bun.gzipSync(data);
-      return { id, result: Buffer.from(compressed).toString("base64") };
+      return { id, result: Buffer.from(compressed).toString('base64') };
     }
 
-    if (action === "decompress") {
-      const buf = Buffer.from(data, "base64");
+    if (action === 'decompress') {
+      const buf = Buffer.from(data, 'base64');
       const decompressed = Bun.gunzipSync(buf);
       return { id, result: Buffer.from(decompressed).toString() };
     }
@@ -34,10 +34,10 @@ function handleMessage(msg: WorkerRequest): WorkerResponse {
 }
 
 // IPC message handler — Bun.spawn({ ipc }) delivers messages here
-process.on("message", (msg: WorkerRequest) => {
+process.on('message', (msg: WorkerRequest) => {
   const response = handleMessage(msg);
   process.send!(response);
 });
 
 // Graceful shutdown
-process.on("SIGTERM", () => process.exit(0));
+process.on('SIGTERM', () => process.exit(0));

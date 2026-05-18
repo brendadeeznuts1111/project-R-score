@@ -13,7 +13,7 @@ interface Bun {
 
   write(
     destination: string | number | BunFile | URL,
-    input: string | Blob | ArrayBuffer | SharedArrayBuffer | TypedArray | Response,
+    input: string | Blob | ArrayBuffer | SharedArrayBuffer | TypedArray | Response
   ): Promise<number>;
 }
 
@@ -78,7 +78,7 @@ export class TypeSafeEnhancedZenDashboard {
       realSearchHistory: [],
       systemHealth: 'optimal',
       lastUpdate: new Date().toISOString(),
-      supportedMimeTypes: []
+      supportedMimeTypes: [],
     };
 
     this.searcher = new ZenStreamSearcher();
@@ -98,55 +98,57 @@ export class TypeSafeEnhancedZenDashboard {
       { ext: '.js', file: 'package.json', desc: 'JavaScript files' },
       { ext: '.css', file: 'package.json', desc: 'CSS stylesheets' },
       { ext: '.txt', file: 'bun-protocol-info.json', desc: 'Plain text files' },
-      { ext: '.csv', file: 'search-results.csv', desc: 'CSV data files' }
+      { ext: '.csv', file: 'search-results.csv', desc: 'CSV data files' },
     ];
 
     // Use official Bun interfaces with proper typing
     const bun = (globalThis as any).Bun as Bun;
-    
+
     this.metrics.supportedMimeTypes = await Promise.all(
       testFiles.map(async ({ ext: extension, file, desc: description }) => {
         try {
           const bunFile: BunFile = bun.file(file);
           const exists: boolean = await bunFile.exists();
-          
+
           if (exists) {
             const mimeType: string = bunFile.type;
             const size: number = bunFile.size;
-            
-            return { 
-              extension, 
-              mimeType, 
+
+            return {
+              extension,
+              mimeType,
               description,
               size,
-              detected: true
+              detected: true,
             };
           } else {
-            return { 
-              extension, 
-              mimeType: 'application/octet-stream', 
+            return {
+              extension,
+              mimeType: 'application/octet-stream',
               description,
               size: 0,
-              detected: false
+              detected: false,
             };
           }
         } catch {
-          return { 
-            extension, 
-            mimeType: 'application/octet-stream', 
+          return {
+            extension,
+            mimeType: 'application/octet-stream',
             description,
             size: 0,
-            detected: false
+            detected: false,
           };
         }
       })
     );
 
     console.info('🎯 Type-Safe MIME Type Detection Initialized:');
-    this.metrics.supportedMimeTypes.forEach(({ extension, mimeType, description, size, detected }) => {
-      const status = detected ? `✅ ${size} bytes` : '❌ not found';
-      console.info(`   ${extension} → ${mimeType} (${description}) ${status}`);
-    });
+    this.metrics.supportedMimeTypes.forEach(
+      ({ extension, mimeType, description, size, detected }) => {
+        const status = detected ? `✅ ${size} bytes` : '❌ not found';
+        console.info(`   ${extension} → ${mimeType} (${description}) ${status}`);
+      }
+    );
   }
 
   /**
@@ -154,31 +156,31 @@ export class TypeSafeEnhancedZenDashboard {
    */
   async startTypeSafeEnhancedDashboard(): Promise<void> {
     console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Official Bun Interfaces!');
-    
+
     // Start Bun server with type-safe MIME support
     const bun = (globalThis as any).Bun as any;
     this.server = bun.serve({
       port: 3005,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
-        
+
         // Serve type-safe dashboard HTML
         if (url.pathname === '/' || url.pathname === '/dashboard') {
           const html = await this.generateTypeSafeHTMLDashboard();
           return new Response(html, {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' }
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
           });
         }
-        
+
         // API for type-safe metrics
         if (url.pathname === '/api/type-safe-metrics') {
           return Response.json({
             ...this.metrics,
             bunInterfaces: 'Official Bun interfaces integrated',
-            typeSafety: '100% type-safe operations'
+            typeSafety: '100% type-safe operations',
           });
         }
-        
+
         // Enhanced MIME type API with official interfaces
         if (url.pathname === '/api/mime-types-official') {
           const bun = (globalThis as any).Bun as Bun;
@@ -189,11 +191,11 @@ export class TypeSafeEnhancedZenDashboard {
             interfaces: {
               BunFile: 'size, type, text(), stream(), arrayBuffer(), json(), writer(), exists()',
               FileSink: 'write(), flush(), end(), start(), ref(), unref()',
-              Bun: 'stdin, stdout, stderr, file(), write()'
-            }
+              Bun: 'stdin, stdout, stderr, file(), write()',
+            },
           });
         }
-        
+
         // Advanced file analysis with official Bun interfaces
         if (url.pathname === '/api/analyze-file-typesafe') {
           const filename = url.searchParams.get('file');
@@ -202,31 +204,37 @@ export class TypeSafeEnhancedZenDashboard {
             return Response.json(analysis);
           }
         }
-        
+
         // Perform REAL search
         if (url.pathname === '/api/search') {
           const query = url.searchParams.get('query') || 'bun';
           const result = await this.performRealSearch(query);
           return Response.json(result);
         }
-        
+
         // Serve files using official Bun.write with proper typing
         if (url.pathname.startsWith('/static/')) {
           const filename = url.pathname.substring(8);
           return await this.serveFileWithTypeSafety(filename);
         }
-        
+
         return new Response('Not Found', { status: 404 });
       },
     });
 
     console.info('🌐 Type-Safe Enhanced REAL Zen Dashboard Server Started!');
-    console.info('=' .repeat(80));
+    console.info('='.repeat(80));
     console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
     console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
-    console.info(`📊 Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
-    console.info(`🎭 Official MIME Types: http://localhost:${this.server.port}/api/mime-types-official`);
-    console.info(`📁 Type-Safe Analysis: http://localhost:${this.server.port}/api/analyze-file-typesafe?file=package.json`);
+    console.info(
+      `📊 Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`
+    );
+    console.info(
+      `🎭 Official MIME Types: http://localhost:${this.server.port}/api/mime-types-official`
+    );
+    console.info(
+      `📁 Type-Safe Analysis: http://localhost:${this.server.port}/api/analyze-file-typesafe?file=package.json`
+    );
     console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
     console.info('');
     console.info('🛡️ Type-Safe Features:');
@@ -235,10 +243,10 @@ export class TypeSafeEnhancedZenDashboard {
     console.info('   ✅ Proper BunFile and FileSink usage');
     console.info('   ✅ Type-checked MIME detection');
     console.info('   ✅ Safe async/await patterns');
-    
+
     // Start performing real searches
     this.startRealSearches();
-    
+
     // Generate type-safe static dashboard
     await this.generateTypeSafeStaticDashboard();
   }
@@ -251,13 +259,13 @@ export class TypeSafeEnhancedZenDashboard {
       const bun = (globalThis as any).Bun as Bun;
       const bunFile: BunFile = bun.file(filename);
       const exists: boolean = await bunFile.exists();
-      
+
       if (!exists) {
         return {
           error: 'File not found',
           filename,
           exists: false,
-          typeSafe: false
+          typeSafe: false,
         };
       }
 
@@ -266,11 +274,11 @@ export class TypeSafeEnhancedZenDashboard {
       const mimeType: string = bunFile.type;
       const text: string = await bunFile.text();
       const arrayBuffer: ArrayBuffer = await bunFile.arrayBuffer();
-      
+
       // Try JSON parsing if it's JSON
       let jsonData: any = null;
       let jsonError: string | null = null;
-      
+
       if (mimeType.includes('json')) {
         try {
           jsonData = await bunFile.json();
@@ -296,17 +304,16 @@ export class TypeSafeEnhancedZenDashboard {
           BunFile: '✅ Used',
           text: '✅ Called',
           arrayBuffer: '✅ Called',
-          json: jsonData !== null ? '✅ Success' : (jsonError ? '❌ Error' : '⏭️ Skipped'),
-          exists: '✅ Called'
-        }
+          json: jsonData !== null ? '✅ Success' : jsonError ? '❌ Error' : '⏭️ Skipped',
+          exists: '✅ Called',
+        },
       };
-      
     } catch (error) {
       return {
         error: error instanceof Error ? error.message : 'Unknown error',
         filename,
         exists: false,
-        typeSafe: false
+        typeSafe: false,
       };
     }
   }
@@ -320,40 +327,40 @@ export class TypeSafeEnhancedZenDashboard {
         'Parse with BunFile.json()',
         'Validate structure',
         'Extract metadata',
-        'Type-safe access'
+        'Type-safe access',
       ],
       'text/html': [
         'Parse with BunFile.text()',
         'Extract DOM elements',
         'Analyze structure',
-        'Safe string handling'
+        'Safe string handling',
       ],
       'text/markdown': [
         'Parse with BunFile.text()',
         'Render to HTML',
         'Extract headers',
-        'Process code blocks'
+        'Process code blocks',
       ],
       'text/plain': [
         'Read with BunFile.text()',
         'Line counting',
         'Search content',
-        'Encoding detection'
+        'Encoding detection',
       ],
       'text/javascript;charset=utf-8': [
         'Parse with BunFile.text()',
         'Syntax validation',
         'AST analysis',
-        'Import detection'
+        'Import detection',
       ],
       'text/csv': [
         'Parse with BunFile.text()',
         'Data analysis',
         'Table conversion',
-        'Chart generation'
-      ]
+        'Chart generation',
+      ],
     };
-    
+
     return capabilities[mimeType] || ['Generic file handling with BunFile interface'];
   }
 
@@ -365,24 +372,26 @@ export class TypeSafeEnhancedZenDashboard {
       const bun = (globalThis as any).Bun as Bun;
       const bunFile: BunFile = bun.file(filename);
       const exists: boolean = await bunFile.exists();
-      
+
       if (!exists) {
         return new Response('File not found', { status: 404 });
       }
 
       const mimeType: string = bunFile.type || 'application/octet-stream';
       const arrayBuffer: ArrayBuffer = await bunFile.arrayBuffer();
-      
+
       return new Response(arrayBuffer, {
-        headers: { 
+        headers: {
           'Content-Type': mimeType,
           'Cache-Control': 'public, max-age=3600',
-          'X-Type-Safe': 'official-bun-interfaces'
-        }
+          'X-Type-Safe': 'official-bun-interfaces',
+        },
       });
-      
     } catch (error) {
-      return new Response(`Type-safe error: ${error instanceof Error ? error.message : 'Unknown error'}`, { status: 500 });
+      return new Response(
+        `Type-safe error: ${error instanceof Error ? error.message : 'Unknown error'}`,
+        { status: 500 }
+      );
     }
   }
 
@@ -402,12 +411,12 @@ export class TypeSafeEnhancedZenDashboard {
    */
   private async performRealSearch(query: string): Promise<any> {
     console.info(`🔍 Performing REAL search: "${query}"`);
-    
+
     try {
       const startTime = performance.now();
       const results = await this.searcher.streamSearch({
         query,
-        cachePath: '/Users/nolarose/Projects/.cache'
+        cachePath: '/Users/nolarose/Projects/.cache',
       });
       const searchTime = performance.now() - startTime;
 
@@ -416,7 +425,7 @@ export class TypeSafeEnhancedZenDashboard {
         matches: results.matchesFound,
         time: searchTime,
         memory: results.memoryUsage / 1024 / 1024,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       this.metrics.realSearchHistory.unshift(realSearch);
@@ -428,8 +437,10 @@ export class TypeSafeEnhancedZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
-      
+      console.info(
+        `✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`
+      );
+
       return {
         success: true,
         query,
@@ -437,16 +448,17 @@ export class TypeSafeEnhancedZenDashboard {
         time: searchTime,
         memory: realSearch.memory,
         totalSearches: this.metrics.totalSearches,
-        typeSafe: true
+        typeSafe: true,
       };
-      
     } catch (error) {
-      console.error(`❌ Real search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
+      console.error(
+        `❌ Real search failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         query,
-        typeSafe: false
+        typeSafe: false,
       };
     }
   }
@@ -460,8 +472,12 @@ export class TypeSafeEnhancedZenDashboard {
       return;
     }
 
-    const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-    const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+    const avgTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+      this.metrics.realSearchHistory.length;
+    const avgMemory =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+      this.metrics.realSearchHistory.length;
 
     if (avgTime > 100 || avgMemory > 50) {
       this.metrics.systemHealth = 'critical';
@@ -489,9 +505,19 @@ export class TypeSafeEnhancedZenDashboard {
    * Perform random real search
    */
   private async performRandomRealSearch(): Promise<void> {
-    const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch', 'spawn', 'ripgrep', 'mime', 'typescript'];
+    const queries = [
+      'bun',
+      'performance',
+      'streaming',
+      'zen',
+      'fetch',
+      'spawn',
+      'ripgrep',
+      'mime',
+      'typescript',
+    ];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-    
+
     await this.performRealSearch(randomQuery);
   }
 
@@ -499,12 +525,16 @@ export class TypeSafeEnhancedZenDashboard {
    * Generate type-safe HTML dashboard
    */
   private async generateTypeSafeHTMLDashboard(): Promise<string> {
-    const avgTime = this.metrics.realSearchHistory.length > 0 
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length 
-      : 0;
-    const avgMemory = this.metrics.realSearchHistory.length > 0
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length
-      : 0;
+    const avgTime =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
+    const avgMemory =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
     const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
     const html = `
@@ -694,13 +724,17 @@ export class TypeSafeEnhancedZenDashboard {
             <h3>🎭 Type-Safe MIME Detection</h3>
             <p>Using official BunFile.type property with proper typing</p>
             <div class="mime-grid">
-                ${this.metrics.supportedMimeTypes.map(({ extension, mimeType, description, size, detected }) => `
+                ${this.metrics.supportedMimeTypes
+                  .map(
+                    ({ extension, mimeType, description, size, detected }) => `
                     <div class="mime-item">
                         <div class="mime-ext">${extension}</div>
                         <div class="mime-type">${mimeType}</div>
                         <div class="mime-size">${description} ${detected ? `✅ ${this.formatBytes(size)}` : '❌ not found'}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
         </div>
         
@@ -761,7 +795,7 @@ export class TypeSafeEnhancedZenDashboard {
     </script>
 </body>
 </html>`;
-    
+
     return html;
   }
 
@@ -771,11 +805,13 @@ export class TypeSafeEnhancedZenDashboard {
   private async generateTypeSafeStaticDashboard(): Promise<void> {
     const html = await this.generateTypeSafeHTMLDashboard();
     const bun = (globalThis as any).Bun as Bun;
-    const staticFile: BunFile = bun.file('type-safe-enhanced-zen-dashboard.html', { type: 'text/html' });
-    
+    const staticFile: BunFile = bun.file('type-safe-enhanced-zen-dashboard.html', {
+      type: 'text/html',
+    });
+
     // Use official Bun.write with proper typing
     await bun.write(staticFile, html);
-    
+
     console.info('📄 Type-safe static dashboard saved: type-safe-enhanced-zen-dashboard.html');
     console.info('🛡️ Open with: open type-safe-enhanced-zen-dashboard.html');
   }
@@ -799,9 +835,9 @@ export class TypeSafeEnhancedZenDashboard {
 // Run type-safe enhanced dashboard
 if (import.meta.url === `file://${process.argv[1]}`) {
   const typeSafeDashboard = new TypeSafeEnhancedZenDashboard();
-  
+
   typeSafeDashboard.startTypeSafeEnhancedDashboard().catch(console.error);
-  
+
   process.on('SIGINT', () => {
     console.info('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard...');
     typeSafeDashboard.stopDashboard();

@@ -21,7 +21,11 @@ function isLocalMode(): boolean {
 /**
  * Upload data to R2 storage
  */
-export async function uploadToR2(key: string, data: unknown, options: R2UploadOptions = {}): Promise<void> {
+export async function uploadToR2(
+  key: string,
+  data: unknown,
+  options: R2UploadOptions = {}
+): Promise<void> {
   try {
     console.info(`📤 Uploading to R2: ${key}`);
 
@@ -60,7 +64,6 @@ export async function uploadToR2(key: string, data: unknown, options: R2UploadOp
     }
 
     console.info(`✅ Successfully uploaded to R2: ${key}`);
-
   } catch (error) {
     console.error(`❌ Failed to upload to R2: ${key}`, error);
     throw error;
@@ -109,7 +112,6 @@ export async function listR2Objects(prefix: string): Promise<string[]> {
       keys.push(match[1]);
     }
     return keys;
-
   } catch (error) {
     console.error(`❌ Failed to list R2 objects: ${prefix}`, error);
     return [];
@@ -150,7 +152,6 @@ export async function downloadFromR2(key: string): Promise<any> {
     }
 
     return response.json();
-
   } catch (error) {
     console.error(`❌ Failed to download from R2: ${key}`, error);
     throw error;

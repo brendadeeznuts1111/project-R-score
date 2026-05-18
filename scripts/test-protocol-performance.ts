@@ -22,7 +22,7 @@ async function waitForServer(url: string, timeoutMs = 2000): Promise<void> {
 async function testProtocolPerformance() {
   const protocols = ['http', 'https', 'http2', 'http3'] as const;
   let port = TEST_PORT_START;
-  
+
   for (const protocol of protocols) {
     console.info(`\n🧪 Testing ${protocol} protocol...`);
 
@@ -34,16 +34,16 @@ async function testProtocolPerformance() {
         protocol,
         fetch(req) {
           const url = new URL(req.url);
-          
+
           // Test different response types
           if (url.pathname === '/large') {
             return new Response('x'.repeat(1024 * 1024)); // 1MB
           }
-          
+
           if (url.pathname === '/json') {
             return Response.json({ message: 'Hello', timestamp: Date.now() });
           }
-          
+
           return new Response(`Protocol: ${protocol}\nTime: ${Date.now()}`);
         },
       });
@@ -58,12 +58,14 @@ async function testProtocolPerformance() {
       console.info(`  Final Protocol: ${server.protocol}`);
       console.info(`  Requests/sec: ${server.performance.requestsPerSecond?.toFixed(2)}`);
       console.info(`  Avg Response Time: ${server.performance.avgResponseTime?.toFixed(2)}ms`);
-      console.info(`  Compression Ratio: ${((server.performance.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`);
-      
+      console.info(
+        `  Compression Ratio: ${((server.performance.bytesTransferred?.compressionRatio || 0) * 100).toFixed(1)}%`
+      );
+
       // Test protocol optimizer
       const optimizer = new ProtocolOptimizer(server);
       optimizer.optimizeForProtocol();
-      
+
       const recommendations = optimizer.getProtocolRecommendations();
       if (recommendations.length > 0) {
         console.info('💡 Recommendations:');
@@ -89,17 +91,17 @@ async function testProtocolPerformance() {
 async function runLoadTest(url: string, protocol: string) {
   const requests = 10; // Reduced for demo
   const start = Date.now();
-  
+
   const promises = Array.from({ length: requests }, (_, i) =>
     fetch(`${url}test-${i}`, { signal: AbortSignal.timeout(1200) })
       .then(res => res.text())
       .catch(err => `Error: ${err.message}`)
   );
-  
+
   const results = await Promise.all(promises);
   const duration = Date.now() - start;
   const rps = (requests / (duration / 1000)).toFixed(2);
-  
+
   console.info(`  Load test: ${requests} requests in ${duration}ms (${rps} req/sec)`);
   console.info(`  Success rate: ${results.filter(r => !r.startsWith('Error')).length}/${requests}`);
 }
@@ -107,7 +109,7 @@ async function runLoadTest(url: string, protocol: string) {
 // Run the test
 testProtocolPerformance()
   .then(() => process.exit(0))
-  .catch((error) => {
+  .catch(error => {
     console.error(error instanceof Error ? error.message : String(error));
     process.exit(1);
   });

@@ -46,7 +46,12 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
   const rssPath = resolve(input.rssPath);
 
   if (!existsSync(latestPath)) {
-    checks.push({ id: 'latest_exists', ok: false, detail: `missing ${latestPath}`, status: 'fail' });
+    checks.push({
+      id: 'latest_exists',
+      ok: false,
+      detail: `missing ${latestPath}`,
+      status: 'fail',
+    });
   } else {
     checks.push({ id: 'latest_exists', ok: true, detail: latestPath, status: 'ok' });
   }
@@ -60,7 +65,7 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
   } else {
     checks.push({ id: 'rss_exists', ok: true, detail: rssPath, status: 'ok' });
   }
-  if (checks.some((c) => !c.ok)) {
+  if (checks.some(c => !c.ok)) {
     return {
       ok: false,
       checks,
@@ -84,10 +89,10 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
   });
 
   const latestWarnings = Array.isArray(latest?.warnings)
-    ? [...latest.warnings].map((code) => normalizeWarningCode(code)).sort()
+    ? [...latest.warnings].map(code => normalizeWarningCode(code)).sort()
     : [];
   const loopWarnings = Array.isArray(loop?.warnings)
-    ? [...loop.warnings].map((code) => normalizeWarningCode(code)).sort()
+    ? [...loop.warnings].map(code => normalizeWarningCode(code)).sort()
     : [];
   checks.push({
     id: 'latest_loop_warning_alignment',
@@ -112,7 +117,7 @@ export async function runSearchStatusContract(input: ContractInput): Promise<Con
     status: latestId && rssFirstGuid && latestId === rssFirstGuid ? 'ok' : 'fail',
   });
 
-  const ok = checks.every((c) => c.ok);
+  const ok = checks.every(c => c.ok);
   return {
     ok,
     checks,

@@ -48,14 +48,14 @@ function maskSecret(value: string): string {
 function showSecret(key: string, value: string, level: SecurityLevel) {
   const config = SECURITY_LEVELS[level];
   const masked = maskSecret(value);
-  
+
   console.info(styled(`🔑 ${key}`, config.color));
   console.info(styled(`   Level: ${level}`, 'muted'));
   console.info(styled(`   Value: ${masked}`, 'primary'));
   console.info(styled(`   Length: ${value.length} chars`, 'dim'));
   console.info(styled(`   TTL: ${config.ttl}s`, 'dim'));
   console.info(styled(`   Cached: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
-  
+
   // Show documentation reference
   const docRef = refs.get(config.doc, 'com');
   if (docRef) {
@@ -67,62 +67,64 @@ function showSecret(key: string, value: string, level: SecurityLevel) {
 async function handleGet() {
   const key = args[1];
   const level = (args[2] as SecurityLevel) || 'STANDARD';
-  
+
   if (!key) {
     showError('Missing secret key. Usage: bun secret-helper.ts get <key> [level]');
     process.exit(1);
   }
-  
+
   if (!Object.keys(SECURITY_LEVELS).includes(level)) {
     showError(`Invalid security level: ${level}`);
     showInfo(`Valid levels: ${Object.keys(SECURITY_LEVELS).join(', ')}`);
     process.exit(1);
   }
-  
+
   try {
     showHeader();
     showInfo(`Retrieving secret: ${key} (Level: ${level})`);
-    
+
     const value = await secretManager.get(key, level);
     showSecret(key, value, level);
-    
   } catch (error) {
-    showError(`Failed to retrieve secret: ${error instanceof Error ? error.message : String(error)}`);
+    showError(
+      `Failed to retrieve secret: ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   }
 }
 
 async function handleGetAll() {
   const keys = args.slice(1);
-  const level = (args[args.length - 1] as SecurityLevel);
-  
+  const level = args[args.length - 1] as SecurityLevel;
+
   // Check if last argument is a valid level
   const actualLevel = Object.keys(SECURITY_LEVELS).includes(level) ? level : 'STANDARD';
   const actualKeys = Object.keys(SECURITY_LEVELS).includes(level) ? keys.slice(0, -1) : keys;
-  
+
   if (actualKeys.length === 0) {
     showError('Missing secret keys. Usage: bun secret-helper.ts get-all <key1> <key2> ... [level]');
     process.exit(1);
   }
-  
+
   try {
     showHeader();
     showInfo(`Retrieving ${actualKeys.length} secrets (Level: ${actualLevel})`);
-    
+
     const secrets = await secretManager.getAll(actualKeys, actualLevel);
-    
+
     console.info(styled('\n📊 Results:', 'primary'));
     console.info(styled('─'.repeat(40), 'muted'));
-    
+
     for (const [key, value] of secrets) {
       showSecret(key, value, actualLevel);
       console.info('');
     }
-    
+
     showSuccess(`Retrieved ${secrets.size}/${actualKeys.length} secrets successfully`);
-    
   } catch (error) {
-    showError(`Failed to retrieve secrets: ${error instanceof Error ? error.message : String(error)}`);
+    showError(
+      `Failed to retrieve secrets: ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   }
 }
@@ -130,17 +132,16 @@ async function handleGetAll() {
 async function handleRotate() {
   const key = args[1];
   const level = (args[2] as SecurityLevel) || 'HIGH';
-  
+
   if (!key) {
     showError('Missing secret key. Usage: bun secret-helper.ts rotate <key> [level]');
     process.exit(1);
   }
-  
+
   try {
     showHeader();
     await secretManager.rotate(key, level);
     showSuccess(`Secret rotation queued: ${key}`);
-    
   } catch (error) {
     showError(`Failed to rotate secret: ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
@@ -150,40 +151,41 @@ async function handleRotate() {
 async function handleInvalidate() {
   const key = args[1];
   const level = (args[2] as SecurityLevel) || 'HIGH';
-  
+
   if (!key) {
     showError('Missing secret key. Usage: bun secret-helper.ts invalidate <key> [level]');
     process.exit(1);
   }
-  
+
   try {
     showHeader();
     await secretManager.invalidate(key, level);
     showSuccess(`Secret invalidated: ${key}`);
-    
   } catch (error) {
-    showError(`Failed to invalidate secret: ${error instanceof Error ? error.message : String(error)}`);
+    showError(
+      `Failed to invalidate secret: ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   }
 }
 
 function handleCache() {
   const subcommand = args[1];
-  
+
   if (subcommand === 'stats') {
     showHeader();
     showInfo('Cache Statistics:');
-    
+
     const stats = secretManager.getCacheStats();
-    
+
     if (stats.size === 0) {
       showInfo('Cache is empty');
       return;
     }
-    
+
     console.info(styled(`\n📊 Cache Size: ${stats.size} entries`, 'primary'));
     console.info(styled('─'.repeat(50), 'muted'));
-    
+
     stats.entries.forEach(entry => {
       const ttlMinutes = Math.floor(entry.ttl / 60000);
       console.info(styled(`   🔑 ${entry.key}`, 'primary'));
@@ -191,12 +193,10 @@ function handleCache() {
       console.info(styled(`      TTL: ${ttlMinutes}m`, 'dim'));
       console.info('');
     });
-    
   } else if (subcommand === 'clear') {
     showHeader();
     secretManager.clearCache();
     showSuccess('Cache cleared successfully');
-    
   } else {
     showError('Invalid cache subcommand. Use: stats | clear');
     process.exit(1);
@@ -205,28 +205,34 @@ function handleCache() {
 
 function handleDocs() {
   const domain = (args[1] as 'sh' | 'com') || 'com';
-  
+
   if (!['sh', 'com'].includes(domain)) {
     showError('Invalid domain. Use: sh | com');
     process.exit(1);
   }
-  
+
   showHeader();
   console.info(styled('📚 Bun Secrets Documentation', 'accent'));
   console.info(styled('────────────────────────────', 'muted'));
-  
+
   const docs = refs.getSecretsDocs(domain);
-  
+
   Object.entries(docs).forEach(([key, doc]) => {
     if (doc) {
-      const icon = key === 'overview' ? '📖' : 
-                   key === 'api' ? '🔧' : 
-                   key === 'getOptions' ? '⚙️' : 
-                   key === 'examples' ? '💡' : '🔒';
+      const icon =
+        key === 'overview'
+          ? '📖'
+          : key === 'api'
+            ? '🔧'
+            : key === 'getOptions'
+              ? '⚙️'
+              : key === 'examples'
+                ? '💡'
+                : '🔒';
       console.info(styled(`${icon} ${key}:`, 'primary'), styled(doc.url, 'accent'));
     }
   });
-  
+
   console.info('');
   console.info(styled('🌐 Domain-specific URLs:', 'muted'));
   console.info(styled(`   sh (stable): ${BUN_DOCS.secrets.overview}`, 'dim'));
@@ -237,7 +243,7 @@ function handleLevels() {
   showHeader();
   console.info(styled('🛡️ Security Levels', 'accent'));
   console.info(styled('─────────────────', 'muted'));
-  
+
   Object.entries(SECURITY_LEVELS).forEach(([level, config]) => {
     console.info(styled(`${level}:`, config.color));
     console.info(styled(`   Color: ${config.color}`, 'dim'));
@@ -245,7 +251,7 @@ function handleLevels() {
     console.info(styled(`   Audit: ${config.audit ? 'Yes' : 'No'}`, 'dim'));
     console.info(styled(`   Cache: ${config.cache ? 'Yes' : 'No'}`, 'dim'));
     console.info(styled(`   Region: ${config.region}`, 'dim'));
-    
+
     const docRef = refs.get(config.doc, 'com');
     if (docRef) {
       console.info(styled(`   Docs: ${docRef.url}`, 'accent'));
@@ -257,17 +263,17 @@ function handleLevels() {
 function handleBenchmark() {
   showHeader();
   showInfo('Running performance benchmark...');
-  
+
   const testKey = 'BENCHMARK_SECRET';
   const iterations = 100;
-  
+
   // Warm up
   try {
     await secretManager.get(testKey, 'STANDARD');
   } catch {
     // Ignore warmup errors
   }
-  
+
   // Benchmark cache hits
   const cacheStart = performance.now();
   for (let i = 0; i < iterations; i++) {
@@ -278,15 +284,15 @@ function handleBenchmark() {
     }
   }
   const cacheEnd = performance.now();
-  
+
   const cacheAvg = ((cacheEnd - cacheStart) / iterations) * 1000; // Convert to microseconds
-  
+
   console.info(styled('📊 Benchmark Results:', 'primary'));
   console.info(styled('─'.repeat(30), 'muted'));
   console.info(styled(`   Iterations: ${iterations}`, 'dim'));
   console.info(styled(`   Cache Hit Avg: ${cacheAvg.toFixed(0)}μs`, 'success'));
   console.info(styled(`   Target: <300μs`, cacheAvg < 300 ? 'success' : 'warning'));
-  
+
   if (cacheAvg < 300) {
     showSuccess('Performance benchmark passed!');
   } else {
@@ -330,41 +336,41 @@ async function main() {
       case 'get':
         await handleGet();
         break;
-        
+
       case 'get-all':
         await handleGetAll();
         break;
-        
+
       case 'rotate':
         await handleRotate();
         break;
-        
+
       case 'invalidate':
         await handleInvalidate();
         break;
-        
+
       case 'cache':
         handleCache();
         break;
-        
+
       case 'docs':
         handleDocs();
         break;
-        
+
       case 'levels':
         handleLevels();
         break;
-        
+
       case 'benchmark':
         handleBenchmark();
         break;
-        
+
       case 'help':
       case '--help':
       case '-h':
         handleHelp();
         break;
-        
+
       default:
         showError(`Unknown command: ${command}`);
         showInfo('Use "bun secret-helper.ts help" for usage information');

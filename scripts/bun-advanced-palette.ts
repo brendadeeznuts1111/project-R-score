@@ -13,7 +13,7 @@ import {
   getDynamicStatusColor,
   perceivedBrightness,
   ensureContrast,
-  demoAdvancedHSL
+  demoAdvancedHSL,
 } from '../lib/utils/advanced-hsl-system.ts';
 import { colorize } from '../lib/utils/color-system.ts';
 
@@ -37,7 +37,6 @@ if (command === 'demo') {
     console.info(`${i + 1}. ${colorize(color.hex, 'white')} ${color.hsl}`);
     console.info(`   RGB: ${color.rgb} | Perceived Brightness: ${(brightness * 100).toFixed(1)}%`);
   });
-
 } else if (command === 'tints') {
   const baseHue = parseInt(args[1]) || 135;
   const baseSaturation = parseInt(args[2]) || 90;
@@ -47,7 +46,11 @@ if (command === 'demo') {
   console.info(colorize(`Base: hsl(${baseHue}, ${baseSaturation}%, ${baseLightness}%)`, 'gray'));
   console.info();
 
-  const { tints, shades } = generateTintsAndShades({ h: baseHue, s: baseSaturation, l: baseLightness });
+  const { tints, shades } = generateTintsAndShades({
+    h: baseHue,
+    s: baseSaturation,
+    l: baseLightness,
+  });
 
   console.info(colorize('Tints (lighter):', 'cyan'));
   tints.forEach((tint, i) => {
@@ -59,7 +62,6 @@ if (command === 'demo') {
   shades.forEach((shade, i) => {
     console.info(`  ${i + 1}. ${shade}`);
   });
-
 } else if (command === 'status') {
   const status = (args[1] as 'success' | 'warning' | 'error' | 'info') || 'success';
   const severity = (args[2] as 'low' | 'medium' | 'high' | 'critical') || 'medium';
@@ -69,7 +71,7 @@ if (command === 'demo') {
   console.info();
 
   const hslString = getDynamicStatusColor(status, severity, 'dark');
-  const hex = Bun.color(hslString, "hex");
+  const hex = Bun.color(hslString, 'hex');
   const brightness = perceivedBrightness(
     parseInt(hslString.match(/hsl\((\d+)/)?.[1] || '0'),
     parseInt(hslString.match(/,\s*(\d+)%/)?.[1] || '0'),
@@ -85,10 +87,9 @@ if (command === 'demo') {
   console.info(colorize('All Severities:', 'yellow'));
   ['low', 'medium', 'high', 'critical'].forEach(sev => {
     const sevHsl = getDynamicStatusColor(status, sev as any, 'dark');
-    const sevHex = Bun.color(sevHsl, "hex");
+    const sevHex = Bun.color(sevHsl, 'hex');
     console.info(`  ${sev}: ${sevHex} (${sevHsl})`);
   });
-
 } else if (command === 'contrast') {
   const fgHue = parseInt(args[1]) || 0;
   const fgSat = parseInt(args[2]) || 95;
@@ -111,7 +112,6 @@ if (command === 'demo') {
   console.info(`Contrast Ratio: ${result.ratio.toFixed(2)}:1`);
   console.info(`WCAG AA Compliant: ${result.compliant ? '✅ YES' : '❌ NO'}`);
   console.info(`WCAG AAA Compliant: ${result.ratio >= 7 ? '✅ YES' : '❌ NO'}`);
-
 } else {
   console.info(colorize('🎨 Advanced HSL Palette Generator', 'cyan', true));
   console.info(colorize('Usage:', 'yellow'));

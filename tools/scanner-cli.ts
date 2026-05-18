@@ -1,45 +1,45 @@
 #!/usr/bin/env bun
 // tools/scanner-cli.ts — Tier-1380 production CLI for FactoryWager
 
-import { readFileSync } from 'fs'
+import { readFileSync } from 'fs';
 
 interface ScannerConfig {
-  projectId: string
-  sessionId: string
-  theme: string
-  tier: string
-  r2Bucket: string
-  environment: string
+  projectId: string;
+  sessionId: string;
+  theme: string;
+  tier: string;
+  r2Bucket: string;
+  environment: string;
 }
 
 interface ScannerData {
-  cookies: Array<[string, string]>
-  scripts: string[]
-  logs: number
-  unicodeWidth: number
-  checksum: string
-  compressedSize: number
-  rawSize: number
-  compressionRatio: number
+  cookies: Array<[string, string]>;
+  scripts: string[];
+  logs: number;
+  unicodeWidth: number;
+  checksum: string;
+  compressedSize: number;
+  rawSize: number;
+  compressionRatio: number;
 }
 
 export class Tier1380ScannerCLI {
-  private config: ScannerConfig
-  private data: ScannerData
+  private config: ScannerConfig;
+  private data: ScannerData;
 
   constructor(projectId?: string, sessionId?: string) {
     // Load configuration
-    this.loadConfig(projectId, sessionId)
+    this.loadConfig(projectId, sessionId);
 
     // Initialize data (async)
-    this.data = {} as ScannerData
+    this.data = {} as ScannerData;
   }
 
   /**
    * Initialize scanner data (must be called after constructor)
    */
   async initialize(): Promise<void> {
-    await this.initializeData()
+    await this.initializeData();
   }
 
   /**
@@ -47,8 +47,8 @@ export class Tier1380ScannerCLI {
    */
   private loadConfig(projectId?: string, sessionId?: string): void {
     // Argument parsing
-    const args = process.argv.slice(2)
-    const getArg = (i: number, fallback = '') => args[i] ?? fallback
+    const args = process.argv.slice(2);
+    const getArg = (i: number, fallback = '') => args[i] ?? fallback;
 
     this.config = {
       projectId: projectId || getArg(0, process.env.PROJECT_ID || 'default'),
@@ -56,8 +56,8 @@ export class Tier1380ScannerCLI {
       theme: process.env.SCANNER_THEME || 'dark',
       tier: process.env.TIER || '1380',
       r2Bucket: process.env.R2_BUCKET || 'scanner-cookies',
-      environment: process.env.NODE_ENV || 'development'
-    }
+      environment: process.env.NODE_ENV || 'development',
+    };
   }
 
   /**
@@ -66,23 +66,23 @@ export class Tier1380ScannerCLI {
   private async initializeData(): Promise<void> {
     try {
       // Load package.json
-      let pkg: any = { scripts: {} }
+      let pkg: any = { scripts: {} };
       try {
-        const pkgContent = readFileSync('package.json', 'utf8')
-        pkg = JSON.parse(pkgContent)
+        const pkgContent = readFileSync('package.json', 'utf8');
+        pkg = JSON.parse(pkgContent);
       } catch {
         // Use default if package.json doesn't exist
-        pkg = { scripts: {} }
+        pkg = { scripts: {} };
       }
 
       // Parse logs (if available)
-      let logs = 0
+      let logs = 0;
       try {
-        const logData = await Bun.file('scanner.log').text()
-        const logLines = logData.trim().split('\n')
-        logs = logLines.length
+        const logData = await Bun.file('scanner.log').text();
+        const logLines = logData.trim().split('\n');
+        logs = logLines.length;
       } catch {
-        logs = 0
+        logs = 0;
       }
 
       // Cookie data
@@ -92,26 +92,26 @@ export class Tier1380ScannerCLI {
         ['theme', this.config.theme],
         ['tier', this.config.tier],
         ['environment', this.config.environment],
-        ['timestamp', Date.now().toString()]
-      ])
+        ['timestamp', Date.now().toString()],
+      ]);
 
       // Buffer performance demo
-      const arrayData = [...cookies.entries()]
-      const rawBuffer = Buffer.from(arrayData) // 50% faster in v1.3.6
-      const checksum = Bun.hash.crc32(rawBuffer)
+      const arrayData = [...cookies.entries()];
+      const rawBuffer = Buffer.from(arrayData); // 50% faster in v1.3.6
+      const checksum = Bun.hash.crc32(rawBuffer);
 
       // Prepare data for compression
       const data = {
         cookies: arrayData,
         scripts: Object.keys(pkg.scripts || {}),
         logs,
-        unicodeWidth: Bun.stringWidth('क्ष') // GB9c support
-      }
+        unicodeWidth: Bun.stringWidth('क्ष'), // GB9c support
+      };
 
       // Compress for R2
-      const jsonString = JSON.stringify(data)
-      const compressed = Bun.zstdCompressSync(jsonString)
-      const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
+      const jsonString = JSON.stringify(data);
+      const compressed = Bun.zstdCompressSync(jsonString);
+      const prefixed = Buffer.concat([Buffer.from([0x01]), compressed]);
 
       this.data = {
         cookies: arrayData,
@@ -121,11 +121,11 @@ export class Tier1380ScannerCLI {
         checksum: checksum.toString(16),
         compressedSize: prefixed.length,
         rawSize: rawBuffer.length,
-        compressionRatio: prefixed.length / rawBuffer.length
-      }
+        compressionRatio: prefixed.length / rawBuffer.length,
+      };
     } catch (error) {
-      console.error('❌ Failed to initialize scanner data:', error.message)
-      process.exit(1)
+      console.error('❌ Failed to initialize scanner data:', error.message);
+      process.exit(1);
     }
   }
 
@@ -135,14 +135,14 @@ export class Tier1380ScannerCLI {
   display(): void {
     const wrapped = Bun.wrapAnsi(
       `▵ Tier-1380 CLI v2.3\n` +
-      `🆔 ${this.config.projectId} 📊 ${this.config.sessionId.slice(0, 8)}... 📦 ${this.data.compressedSize}B\n` +
-      `🔒 ${this.data.checksum} ⏱️ TTL:5s 🗜️ ${this.data.compressionRatio.toFixed(1)}x\n` +
-      `📄 Scripts: ${this.data.scripts.length} | Logs: ${this.data.logs} | Unicode: ${this.data.unicodeWidth}`,
+        `🆔 ${this.config.projectId} 📊 ${this.config.sessionId.slice(0, 8)}... 📦 ${this.data.compressedSize}B\n` +
+        `🔒 ${this.data.checksum} ⏱️ TTL:5s 🗜️ ${this.data.compressionRatio.toFixed(1)}x\n` +
+        `📄 Scripts: ${this.data.scripts.length} | Logs: ${this.data.logs} | Unicode: ${this.data.unicodeWidth}`,
       120,
       { hard: true, trim: false }
-    )
+    );
 
-    console.info(wrapped)
+    console.info(wrapped);
   }
 
   /**
@@ -159,73 +159,73 @@ export class Tier1380ScannerCLI {
       unicode: this.data.unicodeWidth,
       r2Bucket: this.config.r2Bucket,
       environment: this.config.environment,
-      status: '✅ READY'
-    })
+      status: '✅ READY',
+    });
   }
 
   /**
    * Get configuration
    */
   getConfig(): ScannerConfig {
-    return { ...this.config }
+    return { ...this.config };
   }
 
   /**
    * Get data
    */
   getData(): ScannerData {
-    return { ...this.data }
+    return { ...this.data };
   }
 
   /**
    * Validate scanner state
    */
 
-/**
- * 🚀 Prefetch Optimizations
- *
- * This file includes prefetch hints for optimal performance:
- * - DNS prefetching for external domains
- * - Preconnect for faster handshakes
- * - Resource preloading for critical assets
- *
- * Generated automatically by optimize-examples-prefetch.ts
- */
+  /**
+   * 🚀 Prefetch Optimizations
+   *
+   * This file includes prefetch hints for optimal performance:
+   * - DNS prefetching for external domains
+   * - Preconnect for faster handshakes
+   * - Resource preloading for critical assets
+   *
+   * Generated automatically by optimize-examples-prefetch.ts
+   */
   validate(): { valid: boolean; errors: string[] } {
-    const errors: string[] = []
+    const errors: string[] = [];
 
     if (!this.config.projectId) {
-      errors.push('Project ID is required')
+      errors.push('Project ID is required');
     }
 
     if (!this.config.sessionId) {
-      errors.push('Session ID is required')
+      errors.push('Session ID is required');
     }
 
     if (!this.config.r2Bucket) {
-      errors.push('R2 bucket is required')
+      errors.push('R2 bucket is required');
     }
 
     if (!this.data.checksum) {
-      errors.push('Checksum is missing')
+      errors.push('Checksum is missing');
     }
 
     // Compression validation - small data might not compress well
     if (this.data.rawSize > 100 && this.data.compressionRatio >= 1) {
-      errors.push('Compression ratio should be < 1 for larger data')
+      errors.push('Compression ratio should be < 1 for larger data');
     }
 
     return {
       valid: errors.length === 0,
-      errors
-    }
+      errors,
+    };
   }
 
   /**
    * Export data for R2 storage
    */
   exportForR2(): { key: string; data: Buffer; metadata: Record<string, string> } {
-    const key = `scanner/${this.config.projectId}/${this.config.sessionId}.tier1380.zst`
+    const key = `scanner/${this.config.projectId}/${this.config.sessionId}.tier1380.zst`;
 
     // Recreate compressed data
     const jsonString = JSON.stringify({
@@ -234,65 +234,68 @@ export class Tier1380ScannerCLI {
       logs: this.data.logs,
       unicodeWidth: this.data.unicodeWidth,
       timestamp: Date.now(),
-      environment: this.config.environment
-    })
+      environment: this.config.environment,
+    });
 
-    const compressed = Bun.zstdCompressSync(jsonString)
-    const prefixed = Buffer.concat([Buffer.from([0x01]), compressed])
+    const compressed = Bun.zstdCompressSync(jsonString);
+    const prefixed = Buffer.concat([Buffer.from([0x01]), compressed]);
 
     const metadata = {
       'project-id': this.config.projectId,
       'session-id': this.config.sessionId,
-      'checksum': this.data.checksum,
+      checksum: this.data.checksum,
       'compression-ratio': this.data.compressionRatio.toFixed(2),
-      'environment': this.config.environment,
-      'tier': this.config.tier,
+      environment: this.config.environment,
+      tier: this.config.tier,
       'scripts-count': this.data.scripts.length.toString(),
       'logs-count': this.data.logs.toString(),
-      'created-at': new Date().toISOString()
-    }
+      'created-at': new Date().toISOString(),
+    };
 
-    return { key, data: prefixed, metadata }
+    return { key, data: prefixed, metadata };
   }
 }
 
 // CLI execution
 if (import.meta.path === Bun.main) {
-  const projectId = process.argv[2]
-  const sessionId = process.argv[3]
+  const projectId = process.argv[2];
+  const sessionId = process.argv[3];
 
-  const scanner = new Tier1380ScannerCLI(projectId, sessionId)
+  const scanner = new Tier1380ScannerCLI(projectId, sessionId);
 
   // Initialize async data
-  scanner.initialize().then(() => {
-    // Validate
-    const validation = scanner.validate()
-    if (!validation.valid) {
-      console.error('❌ Validation failed:')
-      validation.errors.forEach(error => console.error(`   - ${error}`))
-      process.exit(1)
-    }
-
-    // Display output
-    scanner.display()
-    scanner.displaySummary()
-
-    // Optional: Export for R2
-    if (process.env.SCANNER_EXPORT_R2 === 'true') {
-      try {
-        const r2Data = scanner.exportForR2()
-        console.info('\n📦 R2 Export Data:')
-        console.info(`   Key: ${r2Data.key}`)
-        console.info(`   Size: ${r2Data.data.length}B`)
-        console.info(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`)
-      } catch (error) {
-        console.error('❌ R2 export failed:', error.message)
+  scanner
+    .initialize()
+    .then(() => {
+      // Validate
+      const validation = scanner.validate();
+      if (!validation.valid) {
+        console.error('❌ Validation failed:');
+        validation.errors.forEach(error => console.error(`   - ${error}`));
+        process.exit(1);
       }
-    }
-  }).catch(error => {
-    console.error('❌ Scanner initialization failed:', error.message)
-    process.exit(1)
-  })
+
+      // Display output
+      scanner.display();
+      scanner.displaySummary();
+
+      // Optional: Export for R2
+      if (process.env.SCANNER_EXPORT_R2 === 'true') {
+        try {
+          const r2Data = scanner.exportForR2();
+          console.info('\n📦 R2 Export Data:');
+          console.info(`   Key: ${r2Data.key}`);
+          console.info(`   Size: ${r2Data.data.length}B`);
+          console.info(`   Metadata: ${Object.keys(r2Data.metadata).length} fields`);
+        } catch (error) {
+          console.error('❌ R2 export failed:', error.message);
+        }
+      }
+    })
+    .catch(error => {
+      console.error('❌ Scanner initialization failed:', error.message);
+      process.exit(1);
+    });
 }
 
-export default Tier1380ScannerCLI
+export default Tier1380ScannerCLI;

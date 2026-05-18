@@ -10,13 +10,15 @@
 
 import { SecretLifecycleManager } from '../lib/security/secret-lifecycle.ts';
 import { styled } from '../lib/theme/colors.ts';
-import { YAML } from "bun"; // Assuming yaml library is available
+import { YAML } from 'bun'; // Assuming yaml library is available
 
 const lifecycleManager = new SecretLifecycleManager();
 
 async function main() {
   const args = Bun.argv.slice(2);
-  const configFile = args.find(arg => arg.startsWith('--config='))?.split('=')[1] || 'factorywager-secrets-lifecycle.yaml';
+  const configFile =
+    args.find(arg => arg.startsWith('--config='))?.split('=')[1] ||
+    'factorywager-secrets-lifecycle.yaml';
   const dryRun = args.includes('--dry-run');
   const verbose = args.includes('--verbose');
 
@@ -55,7 +57,7 @@ async function main() {
           key: rule.key,
           schedule: rule.schedule,
           action: rule.action || 'rotate',
-          metadata: rule.metadata || {}
+          metadata: rule.metadata || {},
         });
 
         if (!dryRun) {
@@ -66,7 +68,6 @@ async function main() {
           console.info(styled(`   🔍 Would schedule (dry run)`, 'warning'));
           scheduled++;
         }
-
       } catch (error) {
         console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
@@ -93,7 +94,9 @@ async function main() {
 
       if (config.documentation.autoGenerate) {
         console.info(styled('   ✅ Auto-generation enabled', 'success'));
-        console.info(styled(`   Include in audit: ${config.documentation.includeInAudit}`, 'muted'));
+        console.info(
+          styled(`   Include in audit: ${config.documentation.includeInAudit}`, 'muted')
+        );
         console.info(styled(`   Domains: ${config.documentation.domains.join(', ')}`, 'muted'));
       }
     }
@@ -107,9 +110,10 @@ async function main() {
     if (!dryRun && scheduled > 0) {
       console.info('');
       console.info(styled('🎉 Lifecycle setup complete!', 'success'));
-      console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/lifecycle-management', 'accent'));
+      console.info(
+        styled('📖 Docs: https://bun.com/docs/runtime/secrets/lifecycle-management', 'accent')
+      );
     }
-
   } catch (error) {
     console.error(styled(`❌ Setup failed: ${error.message}`, 'error'));
     process.exit(1);

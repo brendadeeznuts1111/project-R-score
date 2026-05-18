@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // tools/modular-ab-testing-server.ts — Modular A/B testing server with cookie manager
 
-import { serve } from "bun";
+import { serve } from 'bun';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -13,7 +13,7 @@ import { serve } from "bun";
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestingManager } from "@fw/ab-testing";
+import { ABTestingManager } from '@fw/ab-testing';
 
 // Create global A/B testing manager instance
 const abManager = new ABTestingManager();
@@ -21,31 +21,31 @@ const abManager = new ABTestingManager();
 // Register multiple A/B tests
 function registerTests() {
   // Test 1: URL Structure (50/50 split)
-  abManager.registerTest("url_structure", ["direct", "fragments"], {
+  abManager.registerTest('url_structure', ['direct', 'fragments'], {
     weights: [50, 50],
-    cookieName: "url_test_group",
-    expiryDays: 30
+    cookieName: 'url_test_group',
+    expiryDays: 30,
   });
 
   // Test 2: Documentation Layout (60/40 split favoring new layout)
-  abManager.registerTest("doc_layout", ["sidebar", "topnav"], {
+  abManager.registerTest('doc_layout', ['sidebar', 'topnav'], {
     weights: [60, 40],
-    cookieName: "layout_test_group",
-    expiryDays: 14
+    cookieName: 'layout_test_group',
+    expiryDays: 14,
   });
 
   // Test 3: Call-to-Action Button (33/33/34 split)
-  abManager.registerTest("cta_button", ["blue", "green", "orange"], {
+  abManager.registerTest('cta_button', ['blue', 'green', 'orange'], {
     weights: [33, 33, 34],
-    cookieName: "cta_test_group",
-    expiryDays: 7
+    cookieName: 'cta_test_group',
+    expiryDays: 7,
   });
 
   // Test 4: Content Density (weighted toward balanced)
-  abManager.registerTest("content_density", ["compact", "balanced", "spacious"], {
+  abManager.registerTest('content_density', ['compact', 'balanced', 'spacious'], {
     weights: [20, 60, 20],
-    cookieName: "density_test_group",
-    expiryDays: 21
+    cookieName: 'density_test_group',
+    expiryDays: 21,
   });
 }
 
@@ -53,91 +53,99 @@ function registerTests() {
 const contentConfigs = {
   url_structure: {
     direct: {
-      title: "Direct URLs - Clean & Modern",
-      description: "Experience our streamlined direct URL structure with better SEO and navigation",
+      title: 'Direct URLs - Clean & Modern',
+      description: 'Experience our streamlined direct URL structure with better SEO and navigation',
       features: [
-        "Clean URLs like /docs/api/utils/readfile",
-        "Improved search engine optimization",
-        "Better bookmarking and sharing",
-        "Enhanced navigation experience"
+        'Clean URLs like /docs/api/utils/readfile',
+        'Improved search engine optimization',
+        'Better bookmarking and sharing',
+        'Enhanced navigation experience',
       ],
-      color: "#3b82f6",
-      example: "/docs/api/utils/readfile"
+      color: '#3b82f6',
+      example: '/docs/api/utils/readfile',
     },
     fragments: {
-      title: "Fragment URLs - Classic & Familiar",
-      description: "Stick with our proven fragment-based URL structure for consistency",
+      title: 'Fragment URLs - Classic & Familiar',
+      description: 'Stick with our proven fragment-based URL structure for consistency',
       features: [
-        "Traditional URLs like /docs/api/utils#readfile",
-        "Single-page navigation experience",
-        "Consistent with current docs",
-        "Familiar to existing users"
+        'Traditional URLs like /docs/api/utils#readfile',
+        'Single-page navigation experience',
+        'Consistent with current docs',
+        'Familiar to existing users',
       ],
-      color: "#22c55e",
-      example: "/docs/api/utils#readfile"
-    }
+      color: '#22c55e',
+      example: '/docs/api/utils#readfile',
+    },
   },
   doc_layout: {
     sidebar: {
-      title: "Sidebar Navigation",
-      description: "Traditional sidebar layout with expandable sections",
-      features: ["Hierarchical navigation", "Quick section access", "Expandable tree view"]
+      title: 'Sidebar Navigation',
+      description: 'Traditional sidebar layout with expandable sections',
+      features: ['Hierarchical navigation', 'Quick section access', 'Expandable tree view'],
     },
     topnav: {
-      title: "Top Navigation Bar",
-      description: "Modern horizontal navigation with dropdown menus",
-      features: ["Clean header design", "Dropdown menus", "More content space"]
-    }
+      title: 'Top Navigation Bar',
+      description: 'Modern horizontal navigation with dropdown menus',
+      features: ['Clean header design', 'Dropdown menus', 'More content space'],
+    },
   },
   cta_button: {
     blue: {
-      title: "Blue Action Button",
-      color: "#3b82f6",
-      description: "Professional blue call-to-action buttons"
+      title: 'Blue Action Button',
+      color: '#3b82f6',
+      description: 'Professional blue call-to-action buttons',
     },
     green: {
-      title: "Green Action Button",
-      color: "#22c55e",
-      description: "Friendly green call-to-action buttons"
+      title: 'Green Action Button',
+      color: '#22c55e',
+      description: 'Friendly green call-to-action buttons',
     },
     orange: {
-      title: "Orange Action Button",
-      color: "#f97316",
-      description: "Energetic orange call-to-action buttons"
-    }
+      title: 'Orange Action Button',
+      color: '#f97316',
+      description: 'Energetic orange call-to-action buttons',
+    },
   },
   content_density: {
     compact: {
-      title: "Compact Layout",
-      description: "Information-dense layout for power users",
-      padding: "12px",
-      fontSize: "14px"
+      title: 'Compact Layout',
+      description: 'Information-dense layout for power users',
+      padding: '12px',
+      fontSize: '14px',
     },
     balanced: {
-      title: "Balanced Layout",
-      description: "Optimal balance of content and whitespace",
-      padding: "20px",
-      fontSize: "16px"
+      title: 'Balanced Layout',
+      description: 'Optimal balance of content and whitespace',
+      padding: '20px',
+      fontSize: '16px',
     },
     spacious: {
-      title: "Spacious Layout",
-      description: "Clean, breathable layout with ample whitespace",
-      padding: "32px",
-      fontSize: "18px"
-    }
-  }
+      title: 'Spacious Layout',
+      description: 'Clean, breathable layout with ample whitespace',
+      padding: '32px',
+      fontSize: '18px',
+    },
+  },
 };
 
 // Metrics tracking
 const metrics = {
   url_structure: { direct: { views: 0, clicks: 0 }, fragments: { views: 0, clicks: 0 } },
   doc_layout: { sidebar: { views: 0, clicks: 0 }, topnav: { views: 0, clicks: 0 } },
-  cta_button: { blue: { views: 0, clicks: 0 }, green: { views: 0, clicks: 0 }, orange: { views: 0, clicks: 0 } },
-  content_density: { compact: { views: 0, clicks: 0 }, balanced: { views: 0, clicks: 0 }, spacious: { views: 0, clicks: 0 } }
+  cta_button: {
+    blue: { views: 0, clicks: 0 },
+    green: { views: 0, clicks: 0 },
+    orange: { views: 0, clicks: 0 },
+  },
+  content_density: {
+    compact: { views: 0, clicks: 0 },
+    balanced: { views: 0, clicks: 0 },
+    spacious: { views: 0, clicks: 0 },
+  },
 };
 
 // Track metrics
-function trackMetric(testId: string, variant: string, action: "view" | "click") {
+function trackMetric(testId: string, variant: string, action: 'view' | 'click') {
   if (metrics[testId] && metrics[testId][variant]) {
     metrics[testId][variant][action]++;
     console.info(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
@@ -146,10 +154,10 @@ function trackMetric(testId: string, variant: string, action: "view" | "click") 
 
 // Generate HTML page with all A/B tests
 function generateTestPage(assignments: Record<string, string>): string {
-  const urlVariant = assignments.url_structure || "direct";
-  const layoutVariant = assignments.doc_layout || "sidebar";
-  const ctaVariant = assignments.cta_button || "blue";
-  const densityVariant = assignments.content_density || "balanced";
+  const urlVariant = assignments.url_structure || 'direct';
+  const layoutVariant = assignments.doc_layout || 'sidebar';
+  const ctaVariant = assignments.cta_button || 'blue';
+  const densityVariant = assignments.content_density || 'balanced';
 
   const urlConfig = contentConfigs.url_structure[urlVariant];
   const layoutConfig = contentConfigs.doc_layout[layoutVariant];
@@ -402,27 +410,39 @@ function generateTestPage(assignments: Record<string, string>): string {
 
             <div class="assignments">
                 <h3>🎲 Your Test Assignments</h3>
-                ${Object.entries(assignments).map(([testId, variant]) => `
+                ${Object.entries(assignments)
+                  .map(
+                    ([testId, variant]) => `
                     <div class="assignment-item">
                         <span class="test-name">${testId.replace('_', ' ').toUpperCase()}</span>
                         <span class="variant-name">${variant.toUpperCase()}</span>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
 
             <div class="metrics">
                 <h3>📊 Live Metrics</h3>
-                ${Object.entries(metrics).map(([testId, testMetrics]) => `
+                ${Object.entries(metrics)
+                  .map(
+                    ([testId, testMetrics]) => `
                     <div style="margin-bottom: 16px;">
                         <strong>${testId.replace('_', ' ').toUpperCase()}:</strong>
-                        ${Object.entries(testMetrics).map(([variant, variantMetrics]) => `
+                        ${Object.entries(testMetrics)
+                          .map(
+                            ([variant, variantMetrics]) => `
                             <div class="metric-item">
                                 <span>${variant}:</span>
                                 <span>${variantMetrics.views} views, ${variantMetrics.clicks} clicks</span>
                             </div>
-                        `).join('')}
+                        `
+                          )
+                          .join('')}
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
 
             <div class="admin-link">
@@ -488,10 +508,14 @@ function generateAdminDashboard(): string {
         <h1>🧪 A/B Testing Admin Dashboard</h1>
 
         <div class="test-grid">
-            ${Object.entries(metrics).map(([testId, testMetrics]) => `
+            ${Object.entries(metrics)
+              .map(
+                ([testId, testMetrics]) => `
                 <div class="test-card">
                     <h3>${testId.replace('_', ' ').toUpperCase()}</h3>
-                    ${Object.entries(testMetrics).map(([variant, variantMetrics]) => `
+                    ${Object.entries(testMetrics)
+                      .map(
+                        ([variant, variantMetrics]) => `
                         <div class="variant">
                             <div class="variant-name">${variant.toUpperCase()}</div>
                             <div class="metrics">
@@ -500,9 +524,13 @@ function generateAdminDashboard(): string {
                                 CTR: ${variantMetrics.views > 0 ? ((variantMetrics.clicks / variantMetrics.views) * 100).toFixed(2) : '0.00'}%
                             </div>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
 
         <div class="controls">
@@ -537,7 +565,7 @@ const server = serve({
 
     try {
       // Create ABTestingManager for this request
-      const cookieString = req.headers.get("cookie") || undefined;
+      const cookieString = req.headers.get('cookie') || undefined;
       const requestAbManager = new ABTestingManager(cookieString);
 
       // Re-register tests (in production, this would be done once globally)
@@ -547,13 +575,13 @@ const server = serve({
       }
 
       // Main test page
-      if (url.pathname === "/" && req.method === "GET") {
+      if (url.pathname === '/' && req.method === 'GET') {
         // Get all assignments for this user
         const assignments = requestAbManager.getAllAssignments();
 
         // Track views for all assigned tests
         Object.entries(assignments).forEach(([testId, variant]) => {
-          trackMetric(testId, variant, "view");
+          trackMetric(testId, variant, 'view');
         });
 
         // Get response headers (including cookies)
@@ -563,29 +591,29 @@ const server = serve({
         const html = generateTestPage(assignments);
 
         const headers: Record<string, string> = {
-          "Content-Type": "text/html",
-          "Cache-Control": "no-cache, no-store, must-revalidate"
+          'Content-Type': 'text/html',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
         };
 
         // Add cookie headers if any
         if (cookieHeaders.length > 0) {
-          headers["Set-Cookie"] = cookieHeaders[0]; // Simplified for single cookie
+          headers['Set-Cookie'] = cookieHeaders[0]; // Simplified for single cookie
         }
 
         return new Response(html, { headers });
       }
 
       // Metrics tracking
-      if (url.pathname === "/track" && req.method === "POST") {
+      if (url.pathname === '/track' && req.method === 'POST') {
         const body = await req.json();
 
-        if (body.action === "view") {
+        if (body.action === 'view') {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
-            trackMetric(testId, variant, "view");
+            trackMetric(testId, variant, 'view');
           });
-        } else if (body.action === "click") {
+        } else if (body.action === 'click') {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
-            trackMetric(testId, variant, "click");
+            trackMetric(testId, variant, 'click');
           });
         }
 
@@ -593,68 +621,81 @@ const server = serve({
       }
 
       // Admin dashboard
-      if (url.pathname === "/admin" && req.method === "GET") {
+      if (url.pathname === '/admin' && req.method === 'GET') {
         const html = generateAdminDashboard();
         return new Response(html, {
-          headers: { "Content-Type": "text/html" }
+          headers: { 'Content-Type': 'text/html' },
         });
       }
 
       // Reset metrics
-      if (url.pathname === "/reset" && req.method === "POST") {
+      if (url.pathname === '/reset' && req.method === 'POST') {
         Object.keys(metrics).forEach(testId => {
           Object.keys(metrics[testId as keyof typeof metrics]).forEach(variant => {
-            metrics[testId as keyof typeof metrics][variant as keyof typeof metrics[testId]] = { views: 0, clicks: 0 };
+            metrics[testId as keyof typeof metrics][variant as keyof (typeof metrics)[testId]] = {
+              views: 0,
+              clicks: 0,
+            };
           });
         });
 
-        return Response.json({ success: true, message: "Metrics reset" });
+        return Response.json({ success: true, message: 'Metrics reset' });
       }
 
       // Force assignment endpoint (for testing)
-      if (url.pathname.startsWith("/force/") && req.method === "POST") {
-        const [, testId, variant] = url.pathname.split("/");
-        const cookieString = req.headers.get("cookie") || undefined;
+      if (url.pathname.startsWith('/force/') && req.method === 'POST') {
+        const [, testId, variant] = url.pathname.split('/');
+        const cookieString = req.headers.get('cookie') || undefined;
         const testAbManager = new ABTestingManager(cookieString);
 
         try {
           testAbManager.forceAssignVariant(testId, variant);
           const cookieHeaders = testAbManager.getResponseHeaders();
 
-          return Response.json({
-            success: true,
-            message: `Forced ${testId} = ${variant}`,
-            headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders[0] } : {}
-          }, {
-            headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders[0] } : {}
-          });
+          return Response.json(
+            {
+              success: true,
+              message: `Forced ${testId} = ${variant}`,
+              headers: cookieHeaders.length > 0 ? { 'Set-Cookie': cookieHeaders[0] } : {},
+            },
+            {
+              headers: cookieHeaders.length > 0 ? { 'Set-Cookie': cookieHeaders[0] } : {},
+            }
+          );
         } catch (error) {
-          return Response.json({
-            success: false,
-            error: error.message
-          }, { status: 400 });
+          return Response.json(
+            {
+              success: false,
+              error: error.message,
+            },
+            { status: 400 }
+          );
         }
       }
 
-      return new Response("Not found", { status: 404 });
-
+      return new Response('Not found', { status: 404 });
     } catch (error) {
-      console.error("Server error:", error);
-      return new Response("Internal server error", { status: 500 });
+      console.error('Server error:', error);
+      return new Response('Internal server error', { status: 500 });
     }
   },
 });
 
-const MODULAR_AB_TESTING_HOST = process.env.MODULAR_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
-console.info(`🧪 Modular A/B Testing Server running on http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}`);
-console.info(`📊 Admin Dashboard: http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}/admin`);
-console.info("🎲 Force assignment: POST /force/{testId}/{variant}");
-console.info("");
-console.info("Active Tests:");
-console.info("  • url_structure: direct vs fragments (50/50)");
-console.info("  • doc_layout: sidebar vs topnav (60/40)");
-console.info("  • cta_button: blue vs green vs orange (33/33/34)");
-console.info("  • content_density: compact vs balanced vs spacious (20/60/20)");
+const MODULAR_AB_TESTING_HOST =
+  process.env.MODULAR_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
+console.info(
+  `🧪 Modular A/B Testing Server running on http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}`
+);
+console.info(
+  `📊 Admin Dashboard: http://${MODULAR_AB_TESTING_HOST}:${MODULAR_AB_TESTING_PORT}/admin`
+);
+console.info('🎲 Force assignment: POST /force/{testId}/{variant}');
+console.info('');
+console.info('Active Tests:');
+console.info('  • url_structure: direct vs fragments (50/50)');
+console.info('  • doc_layout: sidebar vs topnav (60/40)');
+console.info('  • cta_button: blue vs green vs orange (33/33/34)');
+console.info('  • content_density: compact vs balanced vs spacious (20/60/20)');
 
 /**
  * 💡 Performance Tip: For better performance, consider:

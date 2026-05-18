@@ -3,7 +3,7 @@ import {
   applyDashboardTestEnv,
   getDashboardTestConfig,
   withDashboardServer,
-} from "./lib/dashboard-test-server";
+} from './lib/dashboard-test-server';
 
 type CheckResult = {
   name: string;
@@ -12,7 +12,7 @@ type CheckResult = {
 };
 
 function isObject(value: unknown): value is Record<string, unknown> {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
+  return value !== null && typeof value === 'object' && !Array.isArray(value);
 }
 
 async function fetchJson(path: string) {
@@ -28,12 +28,7 @@ async function fetchJson(path: string) {
   return { res, json, text };
 }
 
-function checkEquals(
-  checks: CheckResult[],
-  name: string,
-  actual: unknown,
-  expected: unknown
-) {
+function checkEquals(checks: CheckResult[], name: string, actual: unknown, expected: unknown) {
   const ok = actual === expected;
   checks.push({
     name,
@@ -46,18 +41,18 @@ async function run(): Promise<number> {
   const checks: CheckResult[] = [];
 
   try {
-    const mini = await fetchJson("/api/dashboard/mini");
+    const mini = await fetchJson('/api/dashboard/mini');
     const miniJson = mini.json || {};
     checks.push({
-      name: "mini-status",
+      name: 'mini-status',
       ok: mini.res.status === 200,
       details: `status=${mini.res.status}`,
     });
     checks.push({
-      name: "mini-shape-core",
+      name: 'mini-shape-core',
       ok:
         isObject(miniJson) &&
-        typeof miniJson.generatedAt === "string" &&
+        typeof miniJson.generatedAt === 'string' &&
         Number.isFinite(miniJson.port) &&
         isObject(miniJson.bottleneck) &&
         isObject(miniJson.capacity) &&
@@ -73,33 +68,34 @@ async function run(): Promise<number> {
       })}`,
     });
     checks.push({
-      name: "mini-has-capacity",
-      ok: typeof miniJson?.capacity?.summary === "string" &&
+      name: 'mini-has-capacity',
+      ok:
+        typeof miniJson?.capacity?.summary === 'string' &&
         Number.isFinite(miniJson?.capacity?.connectionsPct) &&
         Number.isFinite(miniJson?.capacity?.workersPct) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.capacity?.severity || "")),
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.capacity?.severity || '')),
       details: `capacity=${JSON.stringify(miniJson?.capacity ?? null)}`,
     });
     checks.push({
-      name: "mini-has-headroom",
+      name: 'mini-has-headroom',
       ok:
         Number.isFinite(miniJson?.headroom?.connections?.pct) &&
         Number.isFinite(miniJson?.headroom?.workers?.pct) &&
         Number.isFinite(miniJson?.headroom?.connections?.available) &&
         Number.isFinite(miniJson?.headroom?.workers?.available) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.headroom?.connections?.severity || "")) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.headroom?.workers?.severity || "")),
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.headroom?.connections?.severity || '')) &&
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.headroom?.workers?.severity || '')),
       details: `headroom=${JSON.stringify(miniJson?.headroom ?? null)}`,
     });
     checks.push({
-      name: "mini-has-bottleneck",
+      name: 'mini-has-bottleneck',
       ok:
-        typeof miniJson?.bottleneck?.kind === "string" &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.bottleneck?.severity || "")),
+        typeof miniJson?.bottleneck?.kind === 'string' &&
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.bottleneck?.severity || '')),
       details: `bottleneck=${JSON.stringify(miniJson?.bottleneck ?? null)}`,
     });
     checks.push({
-      name: "mini-pooling-live-shape",
+      name: 'mini-pooling-live-shape',
       ok:
         Number.isFinite(miniJson?.pooling?.live?.connections?.inFlight) &&
         Number.isFinite(miniJson?.pooling?.live?.connections?.max) &&
@@ -110,56 +106,58 @@ async function run(): Promise<number> {
       details: `poolingLive=${JSON.stringify(miniJson?.pooling?.live ?? null)}`,
     });
     checks.push({
-      name: "mini-worker-hardening-shape",
+      name: 'mini-worker-hardening-shape',
       ok:
         Number.isFinite(miniJson?.workerQueue?.queuedTasks) &&
         Number.isFinite(miniJson?.workerQueue?.inFlightTasks) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.workerQueue?.severity || "")) &&
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.workerQueue?.severity || '')) &&
         Number.isFinite(miniJson?.workerHardening?.timedOutTasks) &&
         Number.isFinite(miniJson?.workerHardening?.rejectedTasks) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.workerHardening?.timedOutSeverity || "")) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.workerHardening?.rejectedSeverity || "")),
+        ['ok', 'warn', 'fail'].includes(
+          String(miniJson?.workerHardening?.timedOutSeverity || '')
+        ) &&
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.workerHardening?.rejectedSeverity || '')),
       details: `workerHardening=${JSON.stringify({
         workerQueue: miniJson?.workerQueue ?? null,
         workerHardening: miniJson?.workerHardening ?? null,
       })}`,
     });
     checks.push({
-      name: "mini-process-socket-shape",
+      name: 'mini-process-socket-shape',
       ok:
         Number.isFinite(miniJson?.process?.pid) &&
-        typeof miniJson?.process?.shuttingDown === "boolean" &&
+        typeof miniJson?.process?.shuttingDown === 'boolean' &&
         Number.isFinite(miniJson?.sockets?.connectedClients) &&
         Number.isFinite(miniJson?.sockets?.broadcastCount) &&
-        ["ok", "warn", "fail"].includes(String(miniJson?.sockets?.severity || "")),
+        ['ok', 'warn', 'fail'].includes(String(miniJson?.sockets?.severity || '')),
       details: `process=${JSON.stringify(miniJson?.process ?? null)} sockets=${JSON.stringify(miniJson?.sockets ?? null)}`,
     });
 
-    const sev85 = await fetchJson("/api/dashboard/severity-test?load=85");
-    checkEquals(checks, "severity-85-utilization", sev85.json?.severity?.utilization, "fail");
-    checkEquals(checks, "severity-85-capacity", sev85.json?.severity?.capacity, "fail");
-    checkEquals(checks, "severity-85-headroom", sev85.json?.severity?.headroom, "warn");
+    const sev85 = await fetchJson('/api/dashboard/severity-test?load=85');
+    checkEquals(checks, 'severity-85-utilization', sev85.json?.severity?.utilization, 'fail');
+    checkEquals(checks, 'severity-85-capacity', sev85.json?.severity?.capacity, 'fail');
+    checkEquals(checks, 'severity-85-headroom', sev85.json?.severity?.headroom, 'warn');
 
-    const sev60 = await fetchJson("/api/dashboard/severity-test?load=60");
-    checkEquals(checks, "severity-60-utilization", sev60.json?.severity?.utilization, "warn");
-    checkEquals(checks, "severity-60-capacity", sev60.json?.severity?.capacity, "warn");
-    checkEquals(checks, "severity-60-headroom", sev60.json?.severity?.headroom, "ok");
+    const sev60 = await fetchJson('/api/dashboard/severity-test?load=60');
+    checkEquals(checks, 'severity-60-utilization', sev60.json?.severity?.utilization, 'warn');
+    checkEquals(checks, 'severity-60-capacity', sev60.json?.severity?.capacity, 'warn');
+    checkEquals(checks, 'severity-60-headroom', sev60.json?.severity?.headroom, 'ok');
 
-    const sev30 = await fetchJson("/api/dashboard/severity-test?load=30");
-    checkEquals(checks, "severity-30-utilization", sev30.json?.severity?.utilization, "ok");
-    checkEquals(checks, "severity-30-capacity", sev30.json?.severity?.capacity, "ok");
-    checkEquals(checks, "severity-30-headroom", sev30.json?.severity?.headroom, "ok");
+    const sev30 = await fetchJson('/api/dashboard/severity-test?load=30');
+    checkEquals(checks, 'severity-30-utilization', sev30.json?.severity?.utilization, 'ok');
+    checkEquals(checks, 'severity-30-capacity', sev30.json?.severity?.capacity, 'ok');
+    checkEquals(checks, 'severity-30-headroom', sev30.json?.severity?.headroom, 'ok');
   } catch (error) {
     checks.push({
-      name: "runner",
+      name: 'runner',
       ok: false,
       details: error instanceof Error ? error.message : String(error),
     });
   }
 
-  const failed = checks.filter((c) => !c.ok);
+  const failed = checks.filter(c => !c.ok);
   for (const check of checks) {
-    console.info(`[${check.ok ? "PASS" : "FAIL"}] ${check.name} :: ${check.details}`);
+    console.info(`[${check.ok ? 'PASS' : 'FAIL'}] ${check.name} :: ${check.details}`);
   }
   const { base } = getDashboardTestConfig();
   console.info(`Checked ${checks.length} dashboard mini assertions against ${base}`);

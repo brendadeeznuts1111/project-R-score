@@ -64,13 +64,21 @@ export function safeHexColor(input: unknown): SafeResult<string> {
 
   const trimmed = input.trim();
   if (!HEX_COLOR_RE.test(trimmed)) {
-    return { ok: false, value: '', error: 'Invalid hex color format (expected #RGB, #RGBA, #RRGGBB, or #RRGGBBAA)' };
+    return {
+      ok: false,
+      value: '',
+      error: 'Invalid hex color format (expected #RGB, #RGBA, #RRGGBB, or #RRGGBBAA)',
+    };
   }
 
   // Validate digit count: 3, 4, 6, or 8 hex digits after #
   const digits = trimmed.length - 1;
   if (![3, 4, 6, 8].includes(digits)) {
-    return { ok: false, value: '', error: 'Invalid hex color length (expected 3, 4, 6, or 8 hex digits)' };
+    return {
+      ok: false,
+      value: '',
+      error: 'Invalid hex color length (expected 3, 4, 6, or 8 hex digits)',
+    };
   }
 
   return { ok: true, value: trimmed };
@@ -91,7 +99,11 @@ export function safeServiceName(input: unknown): SafeResult<string> {
   }
 
   if (!SERVICE_NAME_RE.test(trimmed)) {
-    return { ok: false, value: '', error: 'Invalid service name format (expected reverse-DNS like com.example.service)' };
+    return {
+      ok: false,
+      value: '',
+      error: 'Invalid service name format (expected reverse-DNS like com.example.service)',
+    };
   }
 
   return { ok: true, value: trimmed };

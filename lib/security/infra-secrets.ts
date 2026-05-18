@@ -45,11 +45,13 @@ async function resolveSecretField(
   return fallback;
 }
 
-export async function resolveR2InfraConfig(options: {
-  services?: string[];
-  bucketFallback?: string;
-  endpointOptional?: boolean;
-} = {}): Promise<ResolvedR2Config> {
+export async function resolveR2InfraConfig(
+  options: {
+    services?: string[];
+    bucketFallback?: string;
+    endpointOptional?: boolean;
+  } = {}
+): Promise<ResolvedR2Config> {
   const requestedServices = options.services || DEFAULT_INFRA_SERVICES;
   const services = uniq(
     ALLOW_GENERIC_SECRET_SERVICE ? [...requestedServices, 'default'] : requestedServices

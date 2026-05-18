@@ -10,10 +10,7 @@ import {
   configureAlert,
   getErrorAggregation,
 } from './error-metrics';
-import {
-  createValidationError,
-  EnterpriseErrorCode,
-} from './core-errors';
+import { createValidationError, EnterpriseErrorCode } from './core-errors';
 import { SecurityRiskLevel } from './core-types';
 
 describe('ErrorMetricsCollector', () => {

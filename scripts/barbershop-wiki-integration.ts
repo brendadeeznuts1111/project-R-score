@@ -2,7 +2,7 @@
 
 /**
  * 🏗️ Barbershop WikiMode Integration Module
- * 
+ *
  * Provides seamless integration between Enhanced WikiMode and the Barbershop demo system,
  * enabling advanced wiki generation with dashboard widgets, analytics, and collaborative features.
  */
@@ -53,7 +53,7 @@ export class BarbershopWikiIntegration {
       enableDashboardWidgets: config.enableDashboardWidgets ?? true,
       enableAnalytics: config.enableAnalytics ?? true,
       enableCollaboration: config.enableCollaboration ?? true,
-      ...config
+      ...config,
     };
     this.isConnected = false;
     this.connectionHealth = 'unknown';
@@ -66,10 +66,10 @@ export class BarbershopWikiIntegration {
   async initialize(): Promise<void> {
     try {
       console.info('🏗️ Connecting to Barbershop system...');
-      
+
       // Test connection
       const healthCheck = await this.testConnection();
-      
+
       if (healthCheck) {
         this.isConnected = true;
         this.connectionHealth = 'healthy';
@@ -94,7 +94,7 @@ export class BarbershopWikiIntegration {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          ...(this.config.apiKey && { 'Authorization': `Bearer ${this.config.apiKey}` }),
+          ...(this.config.apiKey && { Authorization: `Bearer ${this.config.apiKey}` }),
         },
         timeout: 5000,
       });
@@ -162,23 +162,26 @@ export class BarbershopWikiIntegration {
   /**
    * Create individual dashboard widget
    */
-  private async createWidget(widgetConfig: BarbershopWidget, result: WikiGenerationResult): Promise<any> {
+  private async createWidget(
+    widgetConfig: BarbershopWidget,
+    result: WikiGenerationResult
+  ): Promise<any> {
     switch (widgetConfig.type) {
       case 'wiki-stats':
         return this.createWikiStatsWidget(widgetConfig, result);
-      
+
       case 'performance':
         return this.createPerformanceWidget(widgetConfig, result);
-      
+
       case 'collaboration':
         return this.createCollaborationWidget(widgetConfig, result);
-      
+
       case 'analytics':
         return this.createAnalyticsWidget(widgetConfig, result);
-      
+
       case 'custom':
         return this.createCustomWidget(widgetConfig, result);
-      
+
       default:
         throw new Error(`Unknown widget type: ${widgetConfig.type}`);
     }
@@ -216,7 +219,10 @@ export class BarbershopWikiIntegration {
   /**
    * Create performance widget
    */
-  private createPerformanceWidget(widgetConfig: BarbershopWidget, result: WikiGenerationResult): any {
+  private createPerformanceWidget(
+    widgetConfig: BarbershopWidget,
+    result: WikiGenerationResult
+  ): any {
     const performanceData = {
       generationTime: result.metadata.generationTime,
       optimizationScore: result.performance?.optimizationScore || 0,
@@ -247,7 +253,10 @@ export class BarbershopWikiIntegration {
   /**
    * Create collaboration widget
    */
-  private createCollaborationWidget(widgetConfig: BarbershopWidget, result: WikiGenerationResult): any {
+  private createCollaborationWidget(
+    widgetConfig: BarbershopWidget,
+    result: WikiGenerationResult
+  ): any {
     const collaborationData = {
       activeContributors: Math.floor(Math.random() * 8) + 2, // Mock data
       recentEdits: Math.floor(Math.random() * 25) + 5,
@@ -421,17 +430,17 @@ export class BarbershopWikiIntegration {
   private generateVersionHistory(result: WikiGenerationResult): any[] {
     const history = [];
     const versions = Math.floor(Math.random() * 5) + 3; // 3-7 versions
-    
+
     for (let i = 0; i < versions; i++) {
       history.push({
         version: `v${versions - i}`,
-        timestamp: new Date(Date.now() - (i * 3600000)).toISOString(), // Each version 1 hour apart
+        timestamp: new Date(Date.now() - i * 3600000).toISOString(), // Each version 1 hour apart
         author: `Contributor ${i + 1}`,
         changes: Math.floor(Math.random() * 50) + 10, // words changed
         message: `Version ${versions - i} changes and improvements`,
       });
     }
-    
+
     return history;
   }
 
@@ -448,7 +457,7 @@ export class BarbershopWikiIntegration {
   private calculateComplexity(content: string): 'low' | 'medium' | 'high' {
     const sentences = content.split(/[.!?]+/).length;
     const avgWordsPerSentence = content.split(/\s+/).length / sentences;
-    
+
     if (avgWordsPerSentence < 15) return 'low';
     if (avgWordsPerSentence < 25) return 'medium';
     return 'high';
@@ -458,12 +467,10 @@ export class BarbershopWikiIntegration {
     // Simple sentiment analysis based on keywords
     const positiveWords = ['excellent', 'great', 'amazing', 'wonderful', 'fantastic'];
     const negativeWords = ['bad', 'poor', 'terrible', 'awful', 'horrible'];
-    
-    const positiveCount = positiveWords.filter(word => 
-      content.toLowerCase().includes(word)).length;
-    const negativeCount = negativeWords.filter(word => 
-      content.toLowerCase().includes(word)).length;
-    
+
+    const positiveCount = positiveWords.filter(word => content.toLowerCase().includes(word)).length;
+    const negativeCount = negativeWords.filter(word => content.toLowerCase().includes(word)).length;
+
     if (positiveCount > negativeCount) return 'positive';
     if (negativeCount > positiveCount) return 'negative';
     return 'neutral';
@@ -473,7 +480,7 @@ export class BarbershopWikiIntegration {
     const baseEfficiency = 100;
     const timePenalty = Math.max(0, result.metadata.generationTime - 100) * 0.5;
     const optimizationBonus = (result.performance?.optimizationScore || 0) * 0.3;
-    
+
     return Math.max(0, Math.min(100, baseEfficiency - timePenalty + optimizationBonus));
   }
 
@@ -486,19 +493,19 @@ export class BarbershopWikiIntegration {
 
   private identifyImprovementAreas(result: WikiGenerationResult): string[] {
     const areas = [];
-    
+
     if (result.metadata.generationTime > 150) {
       areas.push('generation-speed');
     }
-    
+
     if ((result.performance?.optimizationScore || 0) < 80) {
       areas.push('content-optimization');
     }
-    
+
     if (result.content.length < 1000) {
       areas.push('content-depth');
     }
-    
+
     return areas;
   }
 
@@ -515,8 +522,11 @@ export class BarbershopWikiIntegration {
     return {
       sections: (content.match(/^#+\s/gm) || []).length,
       subsections: (content.match(/^##\s/gm) || []).length,
-      hasTableOfContents: content.includes('## Table of Contents') || content.includes('# Table of Contents'),
-      hasIntroduction: content.substring(0, 500).includes('intro') || content.substring(0, 500).includes('overview'),
+      hasTableOfContents:
+        content.includes('## Table of Contents') || content.includes('# Table of Contents'),
+      hasIntroduction:
+        content.substring(0, 500).includes('intro') ||
+        content.substring(0, 500).includes('overview'),
       hasConclusion: content.includes('## Conclusion') || content.includes('# Conclusion'),
       balanceScore: Math.floor(Math.random() * 20) + 80, // 80-100
     };
@@ -534,19 +544,19 @@ export class BarbershopWikiIntegration {
 
   private generateContentSuggestions(content: string): string[] {
     const suggestions = [];
-    
+
     if (!content.includes('```')) {
       suggestions.push('Add code examples for better understanding');
     }
-    
+
     if ((content.match(/\[.*?\]\(.*?\)/g) || []).length < 3) {
       suggestions.push('Add more internal links for better navigation');
     }
-    
+
     if (!content.includes('![alt text]')) {
       suggestions.push('Add images or diagrams to improve visual appeal');
     }
-    
+
     return suggestions;
   }
 
@@ -571,38 +581,51 @@ export class BarbershopWikiIntegration {
   private processCustomData(content: string, config: Record<string, any>): any {
     // Process content based on custom widget configuration
     const processed: any = {};
-    
+
     if (config.extractKeywords) {
       processed.keywords = this.extractKeywords(content);
     }
-    
+
     if (config.extractEntities) {
       processed.entities = this.extractEntities(content);
     }
-    
+
     if (config.summarize) {
       processed.summary = this.generateSummary(content);
     }
-    
+
     return processed;
   }
 
   private extractKeywords(content: string): string[] {
     // Simple keyword extraction
     const words = content.toLowerCase().split(/\s+/);
-    const stopWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
-    const keywords = words.filter(word => 
-      word.length > 3 && !stopWords.includes(word)
-    );
-    
+    const stopWords = [
+      'the',
+      'a',
+      'an',
+      'and',
+      'or',
+      'but',
+      'in',
+      'on',
+      'at',
+      'to',
+      'for',
+      'of',
+      'with',
+      'by',
+    ];
+    const keywords = words.filter(word => word.length > 3 && !stopWords.includes(word));
+
     // Count frequency and return top keywords
     const frequency: Record<string, number> = {};
     keywords.forEach(word => {
       frequency[word] = (frequency[word] || 0) + 1;
     });
-    
+
     return Object.entries(frequency)
-      .sort(([,a], [,b]) => b - a)
+      .sort(([, a], [, b]) => b - a)
       .slice(0, 10)
       .map(([word]) => word);
   }

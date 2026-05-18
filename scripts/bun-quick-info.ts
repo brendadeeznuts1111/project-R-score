@@ -15,7 +15,7 @@ const colors = {
   green: '\x1b[32m',
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
-  cyan: '\x1b[36m'
+  cyan: '\x1b[36m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -39,7 +39,9 @@ async function runQuickInfo(): Promise<void> {
   const currentRevision = Bun.revision.slice(0, 8);
   const latestStable = 'b64edcb4';
   const isLatest = currentRevision === latestStable;
-  console.info(`  Status: ${isLatest ? colorize('Latest stable', 'green') : colorize('Canary build', 'yellow')}`);
+  console.info(
+    `  Status: ${isLatest ? colorize('Latest stable', 'green') : colorize('Canary build', 'yellow')}`
+  );
   console.info();
 
   // Git File Check
@@ -48,11 +50,13 @@ async function runQuickInfo(): Promise<void> {
     try {
       const proc = Bun.spawn(['git', 'ls-files', '--error-unmatch', filename], {
         stdout: 'pipe',
-        stderr: 'pipe'
+        stderr: 'pipe',
       });
       const exitCode = await proc.exited;
       const isTracked = exitCode === 0;
-      console.info(`  ${filename}: ${isTracked ? colorize('tracked', 'green') : colorize('untracked', 'yellow')}`);
+      console.info(
+        `  ${filename}: ${isTracked ? colorize('tracked', 'green') : colorize('untracked', 'yellow')}`
+      );
     } catch {
       console.info(`  ${filename}: ${colorize('git check failed', 'yellow')}`);
     }
@@ -70,7 +74,7 @@ async function runQuickInfo(): Promise<void> {
 }
 
 // Run the quick info
-runQuickInfo().catch((error) => {
+runQuickInfo().catch(error => {
   console.error(colorize(`Failed: ${error}`, 'yellow'));
   process.exit(1);
 });

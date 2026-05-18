@@ -1,24 +1,30 @@
 #!/usr/bin/env bun
 
-import { readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
 
 const ROOT = process.cwd();
-const CONTRACT_PATH = join(ROOT, "scratch", "bun-v1.3.9-examples", "playground-web", "demo-module-contract.json");
+const CONTRACT_PATH = join(
+  ROOT,
+  'scratch',
+  'bun-v1.3.9-examples',
+  'playground-web',
+  'demo-module-contract.json'
+);
 
 function parseId(): string {
-  const eq = Bun.argv.find((arg) => arg.startsWith("--id="));
-  if (eq) return eq.split("=")[1];
-  const idx = Bun.argv.findIndex((arg) => arg === "--id");
-  if (idx >= 0) return String(Bun.argv[idx + 1] || "");
-  return "";
+  const eq = Bun.argv.find(arg => arg.startsWith('--id='));
+  if (eq) return eq.split('=')[1];
+  const idx = Bun.argv.findIndex(arg => arg === '--id');
+  if (idx >= 0) return String(Bun.argv[idx + 1] || '');
+  return '';
 }
 
 async function run(cmd: string) {
   const proc = Bun.spawn({
-    cmd: ["zsh", "-lc", cmd],
-    stdout: "pipe",
-    stderr: "pipe",
+    cmd: ['zsh', '-lc', cmd],
+    stdout: 'pipe',
+    stderr: 'pipe',
   });
   const [stdout, stderr, exitCode] = await Promise.all([
     new Response(proc.stdout).text(),
@@ -31,11 +37,11 @@ async function run(cmd: string) {
 async function main() {
   const id = parseId();
   if (!id) {
-    console.error("[validate:demo] missing --id=<demo-id>");
+    console.error('[validate:demo] missing --id=<demo-id>');
     process.exit(1);
   }
 
-  const contract = JSON.parse(readFileSync(CONTRACT_PATH, "utf8")) as {
+  const contract = JSON.parse(readFileSync(CONTRACT_PATH, 'utf8')) as {
     modules: Record<string, { testCommand: string; benchCommand: string }>;
   };
   const module = contract.modules[id];
@@ -60,4 +66,3 @@ async function main() {
 }
 
 await main();
-

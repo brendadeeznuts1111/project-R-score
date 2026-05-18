@@ -33,7 +33,7 @@ export class RealZenDashboard {
       totalSearches: 0,
       realSearchHistory: [],
       systemHealth: 'optimal',
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
 
     this.searcher = new ZenStreamSearcher();
@@ -45,7 +45,7 @@ export class RealZenDashboard {
    */
   startRealMonitoring(): void {
     console.info('🎯 Starting REAL Zen Dashboard - Live Search Data!');
-    
+
     // Perform actual searches every 10 seconds
     this.updateInterval = setInterval(async () => {
       await this.performRealSearch();
@@ -62,14 +62,14 @@ export class RealZenDashboard {
   private async performRealSearch(): Promise<void> {
     const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch'];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-    
+
     console.info(`🔍 Performing REAL search: "${randomQuery}"`);
-    
+
     try {
       const startTime = performance.now();
       const results = await this.searcher.streamSearch({
         query: randomQuery,
-        cachePath: '/Users/nolarose/Projects/.cache'
+        cachePath: '/Users/nolarose/Projects/.cache',
       });
       const searchTime = performance.now() - startTime;
 
@@ -79,7 +79,7 @@ export class RealZenDashboard {
         matches: results.matchesFound,
         time: searchTime,
         memory: results.memoryUsage / 1024 / 1024, // MB
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       this.metrics.realSearchHistory.unshift(realSearch);
@@ -91,8 +91,9 @@ export class RealZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
-      
+      console.info(
+        `✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`
+      );
     } catch (error) {
       console.error(`❌ Real search failed: ${error.message}`);
     }
@@ -107,8 +108,12 @@ export class RealZenDashboard {
       return;
     }
 
-    const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-    const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+    const avgTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+      this.metrics.realSearchHistory.length;
+    const avgMemory =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+      this.metrics.realSearchHistory.length;
 
     if (avgTime > 100 || avgMemory > 50) {
       this.metrics.systemHealth = 'critical';
@@ -127,19 +132,25 @@ export class RealZenDashboard {
   private renderRealDashboard(): void {
     console.clear();
     console.info('🎯 REAL Zen Dashboard - Live Search Data');
-    console.info('=' .repeat(70));
-    
+    console.info('='.repeat(70));
+
     // System Health
     const healthIcons = { optimal: '🟢', good: '🟡', warning: '🟠', critical: '🔴' };
-    console.info(`${healthIcons[this.metrics.systemHealth]} System Health: ${this.metrics.systemHealth.toUpperCase()}`);
+    console.info(
+      `${healthIcons[this.metrics.systemHealth]} System Health: ${this.metrics.systemHealth.toUpperCase()}`
+    );
     console.info(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
     console.info('');
-    
+
     // REAL Metrics
     if (this.metrics.realSearchHistory.length > 0) {
       const latest = this.metrics.realSearchHistory[0];
-      const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-      const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+      const avgTime =
+        this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+        this.metrics.realSearchHistory.length;
+      const avgMemory =
+        this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+        this.metrics.realSearchHistory.length;
       const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
       console.info('📊 REAL Search Metrics:');
@@ -157,7 +168,9 @@ export class RealZenDashboard {
       console.info('   No searches performed yet.');
     } else {
       this.metrics.realSearchHistory.forEach((search, index) => {
-        console.info(`   ${index + 1}. 🔍 "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms (${search.memory.toFixed(2)}MB)`);
+        console.info(
+          `   ${index + 1}. 🔍 "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms (${search.memory.toFixed(2)}MB)`
+        );
       });
     }
     console.info('');
@@ -167,13 +180,15 @@ export class RealZenDashboard {
     if (this.metrics.realSearchHistory.length > 0) {
       const maxTime = Math.max(...this.metrics.realSearchHistory.map(s => s.time));
       const graphWidth = 40;
-      
+
       this.metrics.realSearchHistory.slice(0, 8).forEach((search, index) => {
         const barLength = Math.round((search.time / maxTime) * graphWidth);
         const bar = '█'.repeat(barLength) + '░'.repeat(graphWidth - barLength);
         const query = search.query.substring(0, 10).padEnd(10);
-        
-        console.info(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms (${search.matches} matches)`);
+
+        console.info(
+          `   ${query} │${bar}│ ${search.time.toFixed(0)}ms (${search.matches} matches)`
+        );
       });
     }
     console.info('');
@@ -197,12 +212,16 @@ export class RealZenDashboard {
    * Generate REAL HTML dashboard
    */
   async generateRealHTMLDashboard(): Promise<string> {
-    const avgTime = this.metrics.realSearchHistory.length > 0 
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length 
-      : 0;
-    const avgMemory = this.metrics.realSearchHistory.length > 0
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length
-      : 0;
+    const avgTime =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
+    const avgMemory =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
     const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
     const html = `
@@ -246,12 +265,16 @@ export class RealZenDashboard {
     
     <div class="metric-card">
         <h3>📜 REAL Search History</h3>
-        ${this.metrics.realSearchHistory.map(search => `
+        ${this.metrics.realSearchHistory
+          .map(
+            search => `
             <div class="search-item">
                 <span>🔍 "${search.query}"</span>
                 <span>${search.matches} matches • ${search.time.toFixed(2)}ms</span>
             </div>
-        `).join('')}
+        `
+          )
+          .join('')}
     </div>
     
     <p style="text-align: center; margin-top: 40px; color: #64748b;">
@@ -260,7 +283,7 @@ export class RealZenDashboard {
     </p>
 </body>
 </html>`;
-    
+
     return html;
   }
 }
@@ -269,9 +292,12 @@ export class RealZenDashboard {
 if (import.meta.url === `file://${process.argv[1]}`) {
   const realDashboard = new RealZenDashboard();
   realDashboard.startRealMonitoring();
-  
+
   // Stop after 5 minutes
-  setTimeout(() => {
-    realDashboard.stopMonitoring();
-  }, 5 * 60 * 1000);
+  setTimeout(
+    () => {
+      realDashboard.stopMonitoring();
+    },
+    5 * 60 * 1000
+  );
 }

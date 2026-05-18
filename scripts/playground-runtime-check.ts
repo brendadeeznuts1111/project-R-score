@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { RuntimeEnv } from "../lib/env/runtime";
+import { RuntimeEnv } from '../lib/env/runtime';
 
 async function main() {
   const runtime = RuntimeEnv.validate();
@@ -11,7 +11,7 @@ async function main() {
   ];
 
   const results = await Promise.all(
-    endpoints.map(async (url) => {
+    endpoints.map(async url => {
       const started = performance.now();
       try {
         const response = await fetch(url, { signal: AbortSignal.timeout(5000) });
@@ -33,7 +33,7 @@ async function main() {
     })
   );
 
-  const failed = results.filter((row) => !row.ok);
+  const failed = results.filter(row => !row.ok);
   console.info(JSON.stringify({ base, host: runtime.host, port: runtime.port, results }, null, 2));
   if (failed.length > 0) {
     process.exit(1);

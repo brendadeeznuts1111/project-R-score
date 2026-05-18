@@ -1,10 +1,7 @@
 // lib/core/global-error-handler-perf.ts — Performance-optimized global error handler
 // Optimizations: parallel shutdown, handler management, atomic output
 
-import {
-  GlobalErrorHandler,
-  type GlobalErrorConfig,
-} from './global-error-handler';
+import { GlobalErrorHandler, type GlobalErrorConfig } from './global-error-handler';
 
 interface ShutdownHandler {
   id: string;
@@ -31,7 +28,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
   constructor(config?: Partial<GlobalErrorConfig>) {
     // Create with minimal config, we'll override methods
     super(config);
-    
+
     // Store original methods
     this.originalInitialize = (this as any).initialize.bind(this);
     this.originalGracefulShutdown = (this as any).gracefulShutdown.bind(this);
@@ -65,9 +62,9 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
   ): () => void {
     const id = `handler-${++this.handlerCounter}-${Date.now()}`;
     const name = options.name || `anonymous-${id}`;
-    
+
     this.shutdownHandlers.set(id, { id, name, handler });
-    
+
     // Return unregister function
     return () => {
       const existed = this.shutdownHandlers.delete(id);
@@ -92,7 +89,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     if (state) state.isShuttingDown = true;
 
     const shutdownTimeout = (this as any).config?.shutdownTimeout || 5000;
-    
+
     const timeoutId = setTimeout(() => {
       process.stderr.write('\n⏱️  Shutdown timeout exceeded, forcing exit\n');
       process.exit(exitCode);
@@ -100,19 +97,19 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
 
     try {
       const handlers = Array.from(this.shutdownHandlers.values());
-      
+
       if (handlers.length === 0) {
         console.info('✅ No shutdown handlers registered');
         clearTimeout(timeoutId);
         process.exit(exitCode);
         return;
       }
-      
+
       console.info(`🔄 Running ${handlers.length} shutdown handlers in parallel...`);
-      
+
       // Calculate per-handler timeout with minimum guarantee
       const perHandlerTimeout = Math.max(
-        1000,  // Minimum 1 second per handler
+        1000, // Minimum 1 second per handler
         Math.floor(shutdownTimeout / Math.max(handlers.length, 1)) - 100 // Buffer
       );
 
@@ -120,27 +117,27 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
       const results = await Promise.allSettled(
         handlers.map(async ({ name, handler }) => {
           const startTime = performance.now();
-          
+
           try {
             await Promise.race([
               handler(),
-              new Promise<void>((_, reject) => 
+              new Promise<void>((_, reject) =>
                 setTimeout(
                   () => reject(new Error(`Timeout after ${perHandlerTimeout}ms`)),
                   perHandlerTimeout
                 )
-              )
+              ),
             ]);
-            
+
             const duration = Date.now() - startTime;
             return { name, success: true, duration };
           } catch (error) {
             const duration = Date.now() - startTime;
-            return { 
-              name, 
-              success: false, 
+            return {
+              name,
+              success: false,
               duration,
-              error: error instanceof Error ? error.message : String(error)
+              error: error instanceof Error ? error.message : String(error),
             };
           }
         })
@@ -149,11 +146,11 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
       // Report results
       const succeeded = results.filter(r => r.status === 'fulfilled' && (r.value as any).success);
       const failed = results.filter(r => r.status === 'rejected' || !(r.value as any).success);
-      
+
       console.info(`\n📊 Shutdown Results:`);
       console.info(`  ✅ ${succeeded.length} succeeded`);
       console.info(`  ❌ ${failed.length} failed`);
-      
+
       for (const result of results) {
         if (result.status === 'fulfilled') {
           const info = result.value as any;
@@ -164,7 +161,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
           console.info(`  ❌ Unknown handler failed: ${result.reason}`);
         }
       }
-      
+
       if (failed.length === 0) {
         console.info('\n✅ Graceful shutdown complete');
       } else {
@@ -189,7 +186,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
     }
 
     const enhancedError = this.enhanceErrorAtomic(error, 'UNCAUGHT_EXCEPTION');
-    
+
     // Build single message for atomic output
     const output = [
       '',
@@ -207,7 +204,7 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
 
     // Async handler (don't await to avoid blocking)
     this.handleErrorAsync(enhancedError);
-    
+
     const config = (this as any).config;
     if (config?.exitOnUncaughtException) {
       this.gracefulShutdown(1);
@@ -220,20 +217,20 @@ export class OptimizedGlobalErrorHandler extends GlobalErrorHandler {
   private enhanceErrorAtomic(error: Error, type: string): Error {
     // Augment existing error to preserve stack trace
     const originalMessage = error.message;
-    
+
     // Add metadata
     (error as any).errorType = type;
     (error as any).timestamp = new Date().toISOString();
     (error as any).processUptime = process.uptime();
     (error as any).originalMessage = originalMessage;
-    
+
     // Modify message for display
     Object.defineProperty(error, 'message', {
       value: `[${type}] ${originalMessage}`,
       writable: true,
       configurable: true,
     });
-    
+
     return error;
   }
 
@@ -259,25 +256,31 @@ export function onShutdownWithCleanup(
 // Benchmark comparison
 export function benchmarkShutdown(): void {
   console.info('🔬 Testing parallel shutdown performance\n');
-  
+
   const handler = new OptimizedGlobalErrorHandler({
     shutdownTimeout: 10000,
   });
-  
+
   // Register test handlers with varying delays
   handler.registerShutdownHandler(
-    async () => { await new Promise(r => setTimeout(r, 100)); },
+    async () => {
+      await new Promise(r => setTimeout(r, 100));
+    },
     { name: 'fast-handler' }
   );
   handler.registerShutdownHandler(
-    async () => { await new Promise(r => setTimeout(r, 500)); },
+    async () => {
+      await new Promise(r => setTimeout(r, 500));
+    },
     { name: 'medium-handler' }
   );
   handler.registerShutdownHandler(
-    async () => { await new Promise(r => setTimeout(r, 1000)); },
+    async () => {
+      await new Promise(r => setTimeout(r, 1000));
+    },
     { name: 'slow-handler' }
   );
-  
+
   console.info('Registered 3 handlers (100ms, 500ms, 1000ms)');
   console.info('With parallel execution, total time should be ~1000ms (not 1600ms)');
   console.info('');

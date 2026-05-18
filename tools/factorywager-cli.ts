@@ -17,23 +17,23 @@ import { spawn } from 'child_process';
 import { join } from 'path';
 
 const COMMANDS = {
-  'cpu': {
+  cpu: {
     description: 'Run CPU profiling with color-coded output',
     script: 'factorywager-cpu-profile.ts',
   },
-  'heap': {
+  heap: {
     description: 'Run heap profiling with R2 metadata',
     script: 'factorywager-heap-profile.ts',
   },
-  'diagnose': {
+  diagnose: {
     description: 'Run complete system diagnostics',
     script: 'factorywager-diagnose.ts',
   },
-  'realtime': {
+  realtime: {
     description: 'Start real-time profiling with animations',
     script: 'factorywager-realtime.ts',
   },
-  'dual': {
+  dual: {
     description: 'Run dual CPU + heap profiling',
     script: 'factorywager-profile.sh',
   },
@@ -82,7 +82,7 @@ async function runCommand(command: Command) {
         cwd: import.meta.dir,
       });
 
-      proc.on('exit', (code) => {
+      proc.on('exit', code => {
         if (code === 0) {
           console.info(styled('\n✅ Command completed successfully', 'success'));
         } else {
@@ -97,7 +97,7 @@ async function runCommand(command: Command) {
         cwd: import.meta.dir,
       });
 
-      proc.on('exit', (code) => {
+      proc.on('exit', code => {
         if (code === 0) {
           console.info(styled('\n✅ Command completed successfully', 'success'));
         } else {

@@ -136,7 +136,9 @@ async function runFixedAudit() {
       }
     }
 
-    console.info(`   All 6 buffering methods: ${allMethodsFound ? '✅ IMPLEMENTED' : '❌ MISSING'}`);
+    console.info(
+      `   All 6 buffering methods: ${allMethodsFound ? '✅ IMPLEMENTED' : '❌ MISSING'}`
+    );
     if (allMethodsFound) {
       passedChecks++;
       results.push('✅ All 6 Response Buffering Methods');

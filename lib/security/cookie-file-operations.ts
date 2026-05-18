@@ -2,7 +2,7 @@
 
 /**
  * Cookie File Operations v1.3.1 Integration
- * 
+ *
  * Leveraging Bun v1.3.1's FileHandle.readLines() for efficient
  * cookie logging, audit trail processing, and batch analysis.
  */
@@ -58,11 +58,11 @@ export class CookieFileLogger {
   async log(entry: Omit<CookieLogEntry, 'timestamp'>): Promise<void> {
     const logEntry: CookieLogEntry = {
       timestamp: new Date().toISOString(),
-      ...entry
+      ...entry,
     };
 
     const logLine = JSON.stringify(logEntry) + '\n';
-    
+
     try {
       const file = await open(this.logPath, 'a');
       try {
@@ -83,13 +83,13 @@ export class CookieFileLogger {
    */
   async logParse(header: string, sessionId?: string): Promise<Cookie | null> {
     const startTime = performance.now();
-    
+
     try {
       const cookie = Cookie.parse(header);
       const processingTime = performance.now() - startTime;
-      
+
       const validation = CookieInspector.validate(cookie);
-      
+
       await this.log({
         level: validation.valid ? 'info' : 'warn',
         sessionId,
@@ -98,13 +98,13 @@ export class CookieFileLogger {
         result: 'success',
         details: `Parsed successfully with score ${validation.score}/100`,
         securityScore: validation.score,
-        processingTime
+        processingTime,
       });
 
       return cookie;
     } catch (error) {
       const processingTime = performance.now() - startTime;
-      
+
       await this.log({
         level: 'error',
         sessionId,
@@ -112,7 +112,7 @@ export class CookieFileLogger {
         action: 'parse',
         result: 'failure',
         details: `Parse failed: ${error}`,
-        processingTime
+        processingTime,
       });
 
       return null;
@@ -124,11 +124,11 @@ export class CookieFileLogger {
    */
   async logValidation(cookie: Cookie, sessionId?: string): Promise<boolean> {
     const startTime = performance.now();
-    
+
     try {
       const validation = CookieInspector.validate(cookie);
       const processingTime = performance.now() - startTime;
-      
+
       await this.log({
         level: validation.valid ? 'info' : 'warn',
         sessionId,
@@ -137,13 +137,13 @@ export class CookieFileLogger {
         result: validation.valid ? 'success' : 'failure',
         details: `Validation score: ${validation.score}/100. Issues: ${validation.issues.join(', ')}`,
         securityScore: validation.score,
-        processingTime
+        processingTime,
       });
 
       return validation.valid;
     } catch (error) {
       const processingTime = performance.now() - startTime;
-      
+
       await this.log({
         level: 'error',
         sessionId,
@@ -151,7 +151,7 @@ export class CookieFileLogger {
         action: 'validate',
         result: 'failure',
         details: `Validation failed: ${error}`,
-        processingTime
+        processingTime,
       });
 
       return false;
@@ -168,12 +168,12 @@ export class CookieFileLogger {
 
     try {
       const file = await open(this.logPath, 'r');
-      
+
       try {
         // 🚀 Using Bun v1.3.1's FileHandle.readLines() for efficient iteration
         for await (const line of file.readLines({ encoding: 'utf8' })) {
           if (limit && lineCount >= limit) break;
-          
+
           try {
             const entry = JSON.parse(line) as CookieLogEntry;
             entries.push(entry);
@@ -199,7 +199,7 @@ export class CookieFileLogger {
    */
   async monitorLogFile(callback: (entry: CookieLogEntry) => void): Promise<void> {
     let lastPosition = 0;
-    
+
     // Get current file size
     try {
       const file = await open(this.logPath, 'r');
@@ -218,10 +218,10 @@ export class CookieFileLogger {
     const monitor = async () => {
       try {
         const file = await open(this.logPath, 'r');
-        
+
         try {
           await file.read(lastPosition, new Uint8Array(0)); // Seek to position
-          
+
           for await (const line of file.readLines({ encoding: 'utf8' })) {
             try {
               const entry = JSON.parse(line) as CookieLogEntry;
@@ -248,10 +248,10 @@ export class CookieFileLogger {
    */
   async exportLogs(format: 'json' | 'csv' | 'markdown' = 'json'): Promise<string> {
     const entries: CookieLogEntry[] = [];
-    
+
     try {
       const file = await open(this.logPath, 'r');
-      
+
       try {
         for await (const line of file.readLines({ encoding: 'utf8' })) {
           try {
@@ -272,38 +272,52 @@ export class CookieFileLogger {
     switch (format) {
       case 'json':
         return JSON.stringify(entries, null, 2);
-      
+
       case 'csv':
-        const headers = ['timestamp', 'level', 'sessionId', 'userId', 'cookieName', 'action', 'result', 'details', 'securityScore', 'processingTime'];
+        const headers = [
+          'timestamp',
+          'level',
+          'sessionId',
+          'userId',
+          'cookieName',
+          'action',
+          'result',
+          'details',
+          'securityScore',
+          'processingTime',
+        ];
         const csvRows = [
           headers.join(','),
-          ...entries.map(entry => [
-            entry.timestamp,
-            entry.level,
-            entry.sessionId || '',
-            entry.userId || '',
-            entry.cookieName,
-            entry.action,
-            entry.result,
-            `"${entry.details.replace(/"/g, '""')}"`,
-            entry.securityScore || '',
-            entry.processingTime || ''
-          ].join(','))
+          ...entries.map(entry =>
+            [
+              entry.timestamp,
+              entry.level,
+              entry.sessionId || '',
+              entry.userId || '',
+              entry.cookieName,
+              entry.action,
+              entry.result,
+              `"${entry.details.replace(/"/g, '""')}"`,
+              entry.securityScore || '',
+              entry.processingTime || '',
+            ].join(',')
+          ),
         ];
         return csvRows.join('\n');
-      
+
       case 'markdown':
         const mdLines = [
           '# Cookie Security Log',
           '',
           '| Timestamp | Level | Cookie | Action | Result | Score | Time |',
           '|-----------|-------|--------|--------|--------|-------|------|',
-          ...entries.map(entry => 
-            `| ${entry.timestamp} | ${entry.level} | ${entry.cookieName} | ${entry.action} | ${entry.result} | ${entry.securityScore || 'N/A'} | ${entry.processingTime || 'N/A'}ms |`
-          )
+          ...entries.map(
+            entry =>
+              `| ${entry.timestamp} | ${entry.level} | ${entry.cookieName} | ${entry.action} | ${entry.result} | ${entry.securityScore || 'N/A'} | ${entry.processingTime || 'N/A'}ms |`
+          ),
         ];
         return mdLines.join('\n');
-      
+
       default:
         return '';
     }
@@ -312,12 +326,12 @@ export class CookieFileLogger {
   private async rotateLogIfNeeded(): Promise<void> {
     try {
       const file = await open(this.logPath, 'r');
-      
+
       try {
         const stats = await file.stat();
         if (stats.size > this.maxFileSize) {
           await file.close();
-          
+
           // Rotate log
           const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
           const rotatedPath = `${this.logPath}.${timestamp}`;
@@ -340,30 +354,32 @@ export class CookieFileLogger {
     const timestamps = entries.map(e => new Date(e.timestamp).getTime());
     const timeRange = {
       start: new Date(Math.min(...timestamps)).toISOString(),
-      end: new Date(Math.max(...timestamps)).toISOString()
+      end: new Date(Math.max(...timestamps)).toISOString(),
     };
 
     const securityScores = entries
       .filter(e => e.securityScore !== undefined)
       .map(e => e.securityScore!);
-    
-    const averageScore = securityScores.length > 0 
-      ? securityScores.reduce((sum, score) => sum + score, 0) / securityScores.length
-      : 0;
+
+    const averageScore =
+      securityScores.length > 0
+        ? securityScores.reduce((sum, score) => sum + score, 0) / securityScores.length
+        : 0;
 
     const failedValidations = entries.filter(e => e.result === 'failure').length;
-    
+
     const processingTimes = entries
       .filter(e => e.processingTime !== undefined)
       .map(e => e.processingTime!);
 
-    const averageProcessingTime = processingTimes.length > 0
-      ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length
-      : 0;
+    const averageProcessingTime =
+      processingTimes.length > 0
+        ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length
+        : 0;
 
     // Cookie frequency analysis
     const cookieStats = new Map<string, { count: number; scores: number[] }>();
-    
+
     for (const entry of entries) {
       if (!cookieStats.has(entry.cookieName)) {
         cookieStats.set(entry.cookieName, { count: 0, scores: [] });
@@ -379,9 +395,10 @@ export class CookieFileLogger {
       .map(([name, stats]) => ({
         name,
         count: stats.count,
-        avgScore: stats.scores.length > 0 
-          ? stats.scores.reduce((sum, score) => sum + score, 0) / stats.scores.length
-          : 0
+        avgScore:
+          stats.scores.length > 0
+            ? stats.scores.reduce((sum, score) => sum + score, 0) / stats.scores.length
+            : 0,
       }))
       .sort((a, b) => b.count - a.count)
       .slice(0, 10);
@@ -392,7 +409,12 @@ export class CookieFileLogger {
       .filter((detail, index, arr) => arr.indexOf(detail) === index) // Unique
       .slice(0, 5);
 
-    const recommendations = this.generateRecommendations(averageScore, failedValidations, entries.length, criticalIssues);
+    const recommendations = this.generateRecommendations(
+      averageScore,
+      failedValidations,
+      entries.length,
+      criticalIssues
+    );
 
     return {
       totalEntries: entries.length,
@@ -400,19 +422,24 @@ export class CookieFileLogger {
       securityMetrics: {
         averageScore,
         failedValidations,
-        criticalIssues
+        criticalIssues,
       },
       performanceMetrics: {
         averageProcessingTime,
         slowestOperation: processingTimes.length > 0 ? 'unknown' : 'N/A',
-        fastestOperation: processingTimes.length > 0 ? 'unknown' : 'N/A'
+        fastestOperation: processingTimes.length > 0 ? 'unknown' : 'N/A',
       },
       topCookies,
-      recommendations
+      recommendations,
     };
   }
 
-  private generateRecommendations(avgScore: number, failures: number, totalEntries: number, issues: string[]): string[] {
+  private generateRecommendations(
+    avgScore: number,
+    failures: number,
+    totalEntries: number,
+    issues: string[]
+  ): string[] {
     const recommendations: string[] = [];
 
     if (avgScore < 80) {
@@ -437,15 +464,15 @@ export class CookieFileLogger {
       securityMetrics: {
         averageScore: 0,
         failedValidations: 0,
-        criticalIssues: []
+        criticalIssues: [],
       },
       performanceMetrics: {
         averageProcessingTime: 0,
         slowestOperation: 'N/A',
-        fastestOperation: 'N/A'
+        fastestOperation: 'N/A',
       },
       topCookies: [],
-      recommendations: []
+      recommendations: [],
     };
   }
 }
@@ -461,7 +488,10 @@ export class CookieBatchProcessor {
   /**
    * Process multiple cookie headers from file
    */
-  async processCookieHeaders(filePath: string, sessionId?: string): Promise<{
+  async processCookieHeaders(
+    filePath: string,
+    sessionId?: string
+  ): Promise<{
     processed: number;
     successful: number;
     failed: number;
@@ -474,7 +504,7 @@ export class CookieBatchProcessor {
 
     try {
       const file = await open(filePath, 'r');
-      
+
       try {
         // 🚀 Using Bun v1.3.1's FileHandle.readLines() for batch processing
         for await (const line of file.readLines({ encoding: 'utf8' })) {
@@ -482,7 +512,7 @@ export class CookieBatchProcessor {
           if (!header) continue;
 
           processed++;
-          
+
           try {
             const cookie = await this.logger.logParse(header, sessionId);
             if (cookie) {
@@ -513,7 +543,7 @@ export class CookieBatchProcessor {
    */
   async generateSecurityReport(): Promise<string> {
     const analysis = await this.logger.analyzeLogFile();
-    
+
     return `
 # Cookie Security Report
 
@@ -525,20 +555,25 @@ export class CookieBatchProcessor {
 - **Average Processing Time**: ${analysis.performanceMetrics.averageProcessingTime.toFixed(2)}ms
 
 ## Top Cookies
-${analysis.topCookies.map(cookie => 
-  `- **${cookie.name}**: ${cookie.count} occurrences (avg score: ${cookie.avgScore.toFixed(1)})`
-).join('\n')}
+${analysis.topCookies
+  .map(
+    cookie =>
+      `- **${cookie.name}**: ${cookie.count} occurrences (avg score: ${cookie.avgScore.toFixed(1)})`
+  )
+  .join('\n')}
 
 ## Critical Issues
-${analysis.securityMetrics.criticalIssues.length > 0 
-  ? analysis.securityMetrics.criticalIssues.map(issue => `- ${issue}`).join('\n')
-  : 'No critical issues detected'
+${
+  analysis.securityMetrics.criticalIssues.length > 0
+    ? analysis.securityMetrics.criticalIssues.map(issue => `- ${issue}`).join('\n')
+    : 'No critical issues detected'
 }
 
 ## Recommendations
-${analysis.recommendations.length > 0
-  ? analysis.recommendations.map(rec => `- ${rec}`).join('\n')
-  : 'No recommendations at this time'
+${
+  analysis.recommendations.length > 0
+    ? analysis.recommendations.map(rec => `- ${rec}`).join('\n')
+    : 'No recommendations at this time'
 }
 
 ---
@@ -550,9 +585,9 @@ ${analysis.recommendations.length > 0
 // 🚀 DEMO FUNCTIONS
 export async function demonstrateFileHandleReadLines() {
   console.info('🚀 Demonstrating Bun v1.3.1 FileHandle.readLines() for Cookie Security');
-  
+
   const logger = new CookieFileLogger('./demo-cookie.log');
-  
+
   // Create some sample log entries
   await logger.log({
     level: 'info',
@@ -562,7 +597,7 @@ export async function demonstrateFileHandleReadLines() {
     result: 'success',
     details: 'Successfully parsed session cookie',
     securityScore: 95,
-    processingTime: 0.5
+    processingTime: 0.5,
   });
 
   await logger.log({
@@ -573,28 +608,28 @@ export async function demonstrateFileHandleReadLines() {
     result: 'failure',
     details: 'Missing secure flag on analytics cookie',
     securityScore: 65,
-    processingTime: 0.3
+    processingTime: 0.3,
   });
 
   // Analyze the log using FileHandle.readLines()
   console.info('\n📊 Analyzing log file with FileHandle.readLines():');
   const analysis = await logger.analyzeLogFile();
-  
+
   console.info(`Total entries: ${analysis.totalEntries}`);
   console.info(`Average security score: ${analysis.securityMetrics.averageScore.toFixed(1)}/100`);
   console.info(`Failed validations: ${analysis.securityMetrics.failedValidations}`);
-  
+
   // Export to different formats
   console.info('\n📄 Exporting logs:');
   const jsonExport = await logger.exportLogs('json');
   console.info('JSON export length:', jsonExport.length);
-  
+
   const csvExport = await logger.exportLogs('csv');
   console.info('CSV export length:', csvExport.length);
-  
+
   const mdExport = await logger.exportLogs('markdown');
   console.info('Markdown export length:', mdExport.length);
-  
+
   console.info('\n✅ FileHandle.readLines() demo completed successfully!');
 }
 
@@ -606,5 +641,5 @@ if (import.meta.main) {
 export default {
   CookieFileLogger,
   CookieBatchProcessor,
-  demonstrateFileHandleReadLines
+  demonstrateFileHandleReadLines,
 };

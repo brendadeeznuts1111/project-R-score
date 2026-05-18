@@ -133,7 +133,10 @@ function printStructuredError(
   }
 }
 
-async function runBunSecretsSet(key: string, token: string): Promise<{ ok: boolean; detail: string }> {
+async function runBunSecretsSet(
+  key: string,
+  token: string
+): Promise<{ ok: boolean; detail: string }> {
   const proc = Bun.spawn(['bun', 'secrets', 'set', key, token], {
     cwd: process.cwd(),
     stdout: 'pipe',
@@ -160,12 +163,9 @@ async function main(): Promise<void> {
   const token = normalizeText(options.token || Bun.env.FACTORY_WAGER_TOKEN);
 
   if (!token) {
-    printStructuredError(
-      'missing_token',
-      'No token provided.',
-      options,
-      { hint: 'Pass --token <value> or set FACTORY_WAGER_TOKEN.' }
-    );
+    printStructuredError('missing_token', 'No token provided.', options, {
+      hint: 'Pass --token <value> or set FACTORY_WAGER_TOKEN.',
+    });
   }
   if (isPlaceholderToken(token)) {
     printStructuredError(
@@ -195,13 +195,15 @@ async function main(): Promise<void> {
     );
   }
 
-  const bunCommands = tokenEnvVars.map((key) => `bun secrets set ${key} <token>`);
-  const wranglerCommands = tokenEnvVars.map((key) => `wrangler secret put ${key}`);
+  const bunCommands = tokenEnvVars.map(key => `bun secrets set ${key} <token>`);
+  const wranglerCommands = tokenEnvVars.map(key => `wrangler secret put ${key}`);
 
   const applied = options.applyBunSecrets
-    ? await Promise.all(tokenEnvVars.map(async (key) => ({ key, ...(await runBunSecretsSet(key, token)) })))
+    ? await Promise.all(
+        tokenEnvVars.map(async key => ({ key, ...(await runBunSecretsSet(key, token)) }))
+      )
     : [];
-  const appliedFailures = applied.filter((row) => !row.ok);
+  const appliedFailures = applied.filter(row => !row.ok);
 
   const result: SyncResult = {
     registryPath,
@@ -210,7 +212,7 @@ async function main(): Promise<void> {
     tokenPreview: maskToken(token),
     applyBunSecrets: options.applyBunSecrets,
     applyBunSecretsEnabled: options.applyBunSecrets,
-    appliedSuccess: applied.filter((row) => row.ok).length,
+    appliedSuccess: applied.filter(row => row.ok).length,
     appliedFailed: appliedFailures.length,
     failures: appliedFailures,
     commands: {
@@ -243,7 +245,7 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
+  main().catch(error => {
     console.error(`[domain-token-sync] ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   });

@@ -2,12 +2,12 @@
 
 /**
  * 🎯 FactoryWager Wiki Template Matrix CLI - STANDALONE VERSION
- * 
+ *
  * Uses Bun's native inspect.table with proper API for displaying formatted matrix
  * of all wiki templates and their properties.
- * 
+ *
  * This standalone version includes mock data to demonstrate the improved implementation.
- * 
+ *
  * Fixes from code review:
  * - Proper async factory pattern
  * - Input validation and error handling
@@ -80,9 +80,9 @@ class WikiMatrixCLI {
     process.on('SIGINT', cleanup);
     process.on('SIGTERM', cleanup);
     process.on('SIGHUP', cleanup);
-    
+
     // Handle uncaught exceptions
-    process.on('uncaughtException', (error) => {
+    process.on('uncaughtException', error => {
       const message = error instanceof Error ? error.message : String(error);
       console.error(styled(`\n❌ Uncaught error: ${message}`, 'error'));
       this.cleanup();
@@ -90,7 +90,7 @@ class WikiMatrixCLI {
     });
 
     // Handle unhandled promise rejections
-    process.on('unhandledRejection', (reason) => {
+    process.on('unhandledRejection', reason => {
       const message = reason instanceof Error ? reason.message : String(reason);
       console.error(styled(`\n❌ Unhandled promise rejection: ${message}`, 'error'));
       this.cleanup();
@@ -173,9 +173,9 @@ class WikiMatrixCLI {
           format: 'html',
           includeExamples: false,
           customSections: ['## Quick Start'],
-        }
+        },
       ];
-      
+
       this.templates = wikiTemplates.map(template => ({
         name: template.name,
         description: template.description,
@@ -186,7 +186,7 @@ class WikiMatrixCLI {
         sections: (template.customSections?.length || 0) + BASE_SECTION_COUNT,
         useCase: this.determineUseCase(template.name),
         complexity: this.determineComplexity(template),
-        integration: this.determineIntegration(template.format)
+        integration: this.determineIntegration(template.format),
       }));
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
@@ -210,7 +210,7 @@ class WikiMatrixCLI {
     if (template.format === 'json') score += 1;
     if (!template.includeExamples) score += 1;
     if (template.baseUrl.includes('atlassian')) score += 1;
-    
+
     if (score <= 1) return 'Simple';
     if (score <= 3) return 'Medium';
     return 'Advanced';
@@ -218,10 +218,14 @@ class WikiMatrixCLI {
 
   private determineIntegration(format: string): string {
     switch (format) {
-      case 'markdown': return 'Direct Import';
-      case 'html': return 'Embed/IFrame';
-      case 'json': return 'API Integration';
-      default: return 'Manual';
+      case 'markdown':
+        return 'Direct Import';
+      case 'html':
+        return 'Embed/IFrame';
+      case 'json':
+        return 'API Integration';
+      default:
+        return 'Manual';
     }
   }
 
@@ -261,15 +265,15 @@ class WikiMatrixCLI {
     // Create matrix data for Bun.inspect.table
     const matrixData = this.templates.map((template, index) => ({
       '#': index + 1,
-      'Template': template.name,
-      'Format': template.format.toUpperCase(),
+      Template: template.name,
+      Format: template.format.toUpperCase(),
       'Use Case': template.useCase,
-      'Complexity': template.complexity,
-      'Examples': template.examples ? '✅' : '❌',
-      'Sections': template.sections,
-      'Integration': template.integration,
+      Complexity: template.complexity,
+      Examples: template.examples ? '✅' : '❌',
+      Sections: template.sections,
+      Integration: template.integration,
       'Base URL': this.formatUrl(template.baseUrl),
-      'Workspace': this.formatWorkspace(template.workspace)
+      Workspace: this.formatWorkspace(template.workspace),
     }));
 
     // Use Bun.inspect.table with proper API
@@ -279,7 +283,7 @@ class WikiMatrixCLI {
 
     // Display enhanced formatted table using custom implementation
     this.displayCustomTable(matrixData);
-    
+
     // Display summary statistics
     this.displayStatistics();
   }
@@ -297,7 +301,7 @@ class WikiMatrixCLI {
     // Calculate column widths using Bun.stringWidth
     const headers = Object.keys(data[0]);
     const colWidths: number[] = [];
-    
+
     headers.forEach((header, i) => {
       let maxWidth = Bun.stringWidth(header);
       data.forEach(row => {
@@ -324,7 +328,7 @@ class WikiMatrixCLI {
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
     console.info(styled(topBorder, 'muted'));
-    
+
     // Print header row
     let headerRow = '│';
     headers.forEach((header, i) => {
@@ -332,7 +336,7 @@ class WikiMatrixCLI {
       headerRow += ` ${styled(paddedHeader, 'accent')} │`;
     });
     console.info(headerRow);
-    
+
     console.info(styled(headerSeparator, 'muted'));
 
     // Print data rows
@@ -353,7 +357,11 @@ class WikiMatrixCLI {
         } else if (header === 'Complexity') {
           const icon = value === 'Simple' ? '🟢' : value === 'Medium' ? '🟡' : '🔴';
           value = `${icon} ${value}`;
-          color = value.includes('Simple') ? 'success' : value.includes('Medium') ? 'warning' : 'error';
+          color = value.includes('Simple')
+            ? 'success'
+            : value.includes('Medium')
+              ? 'warning'
+              : 'error';
         } else if (header === 'Examples') {
           color = value.includes('✅') ? 'success' : 'error';
         } else if (header === 'Use Case') {
@@ -370,7 +378,7 @@ class WikiMatrixCLI {
         dataRow += ` ${styled(paddedValue, color)} │`;
       });
       console.info(dataRow);
-      
+
       // Add row separator (except for last row)
       if (rowIndex < data.length - 1) {
         console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
@@ -390,7 +398,7 @@ class WikiMatrixCLI {
     // Calculate column widths using Bun.stringWidth
     const headers = Object.keys(data[0]);
     const colWidths: number[] = [];
-    
+
     headers.forEach((header, i) => {
       let maxWidth = Bun.stringWidth(header);
       data.forEach(row => {
@@ -416,7 +424,7 @@ class WikiMatrixCLI {
     const bottomBorder = createSeparator('└', '┴', '┘', '┴');
 
     console.info(styled(topBorder, 'muted'));
-    
+
     // Header row
     let headerRow = '│';
     headers.forEach((header, i) => {
@@ -425,7 +433,7 @@ class WikiMatrixCLI {
       headerRow += ` ${styled(paddedHeader, color)} │`;
     });
     console.info(headerRow);
-    
+
     console.info(styled(createSeparator('├', '┼', '┤', '┼'), 'muted'));
 
     // Data rows
@@ -453,7 +461,9 @@ class WikiMatrixCLI {
       complexities: {} as Record<string, number>,
       useCases: {} as Record<string, number>,
       withExamples: this.templates.filter(t => t.examples).length,
-      avgSections: Math.round(this.templates.reduce((sum, t) => sum + t.sections, 0) / this.templates.length)
+      avgSections: Math.round(
+        this.templates.reduce((sum, t) => sum + t.sections, 0) / this.templates.length
+      ),
     };
 
     // Calculate format distribution
@@ -468,12 +478,28 @@ class WikiMatrixCLI {
       { Metric: 'Total Templates', Value: stats.total.toString(), Type: 'Count' },
       { Metric: 'With Examples', Value: `${stats.withExamples}/${stats.total}`, Type: 'Ratio' },
       { Metric: 'Avg Sections', Value: stats.avgSections.toString(), Type: 'Average' },
-      { Metric: 'Markdown Format', Value: (stats.formats.markdown || 0).toString(), Type: 'Format' },
+      {
+        Metric: 'Markdown Format',
+        Value: (stats.formats.markdown || 0).toString(),
+        Type: 'Format',
+      },
       { Metric: 'HTML Format', Value: (stats.formats.html || 0).toString(), Type: 'Format' },
       { Metric: 'JSON Format', Value: (stats.formats.json || 0).toString(), Type: 'Format' },
-      { Metric: 'Simple Complexity', Value: (stats.complexities.Simple || 0).toString(), Type: 'Level' },
-      { Metric: 'Medium Complexity', Value: (stats.complexities.Medium || 0).toString(), Type: 'Level' },
-      { Metric: 'Advanced Complexity', Value: (stats.complexities.Advanced || 0).toString(), Type: 'Level' }
+      {
+        Metric: 'Simple Complexity',
+        Value: (stats.complexities.Simple || 0).toString(),
+        Type: 'Level',
+      },
+      {
+        Metric: 'Medium Complexity',
+        Value: (stats.complexities.Medium || 0).toString(),
+        Type: 'Level',
+      },
+      {
+        Metric: 'Advanced Complexity',
+        Value: (stats.complexities.Advanced || 0).toString(),
+        Type: 'Level',
+      },
     ];
 
     // Create statistics table using custom formatting
@@ -486,8 +512,11 @@ class WikiMatrixCLI {
     Object.entries(stats.complexities).forEach(([complexity, count]) => {
       const percentage = Math.round((count / stats.total) * 100);
       const bar = '█'.repeat(Math.round(percentage / 10));
-      const color = complexity === 'Simple' ? 'success' : complexity === 'Medium' ? 'warning' : 'error';
-      console.info(styled(`   ${complexity}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
+      const color =
+        complexity === 'Simple' ? 'success' : complexity === 'Medium' ? 'warning' : 'error';
+      console.info(
+        styled(`   ${complexity}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted')
+      );
     });
 
     console.info('');
@@ -498,7 +527,10 @@ class WikiMatrixCLI {
       const percentage = Math.round((count / stats.total) * 100);
       const bar = '█'.repeat(Math.round(percentage / 10));
       const color = format === 'markdown' ? 'success' : format === 'html' ? 'warning' : 'error';
-      console.info(styled(`   ${format.toUpperCase()}:`, color) + styled(` ${bar} ${count} (${percentage}%)`, 'muted'));
+      console.info(
+        styled(`   ${format.toUpperCase()}:`, color) +
+          styled(` ${bar} ${count} (${percentage}%)`, 'muted')
+      );
     });
   }
 
@@ -511,7 +543,7 @@ class WikiMatrixCLI {
     }
 
     const template = this.templates[index - 1];
-    
+
     console.info(styled(`\n🔍 Detailed View: ${template.name}`, 'accent'));
     console.info(colorBar('accent', 50));
 
@@ -525,7 +557,7 @@ class WikiMatrixCLI {
       { Property: 'Complexity', Value: template.complexity },
       { Property: 'Examples', Value: template.examples ? 'Yes' : 'No' },
       { Property: 'Sections', Value: template.sections.toString() },
-      { Property: 'Integration', Value: template.integration }
+      { Property: 'Integration', Value: template.integration },
     ];
 
     this.displayStatsTable(details);
@@ -546,13 +578,19 @@ class WikiMatrixCLI {
     }
 
     // Create feature comparison data
-    const features = ['Examples', 'Custom Sections', 'API Ready', 'Easy Import', 'Enterprise Ready'];
+    const features = [
+      'Examples',
+      'Custom Sections',
+      'API Ready',
+      'Easy Import',
+      'Enterprise Ready',
+    ];
     const comparisonData = features.map(feature => {
       const row: any = { Feature: feature };
-      
+
       this.templates.forEach(template => {
         let hasFeature = false;
-        
+
         switch (feature) {
           case 'Examples':
             hasFeature = template.examples;
@@ -567,13 +605,14 @@ class WikiMatrixCLI {
             hasFeature = template.format === 'markdown';
             break;
           case 'Enterprise Ready':
-            hasFeature = template.complexity === 'Advanced' || template.baseUrl.includes('atlassian');
+            hasFeature =
+              template.complexity === 'Advanced' || template.baseUrl.includes('atlassian');
             break;
         }
-        
+
         row[template.name.substring(0, 15)] = hasFeature ? '✅' : '❌';
       });
-      
+
       return row;
     });
 
@@ -614,13 +653,15 @@ class WikiMatrixCLI {
           this.showHelp();
           return;
         }
-        
+
         const index = parseInt(indexStr);
         if (isNaN(index) || index < 1) {
-          console.info(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
+          console.info(
+            styled('❌ Invalid index. Please provide a valid positive number.', 'error')
+          );
           return;
         }
-        
+
         this.displayDetailedView(index);
         break;
 
@@ -664,17 +705,17 @@ class WikiMatrixCLI {
 
     const rl = readline.createInterface({
       input: process.stdin,
-      output: process.stdout
+      output: process.stdout,
     });
 
     try {
       while (this.isRunning) {
         const command = await rl.question(styled('wiki-matrix> ', 'primary'));
-        
+
         if (!this.isRunning) break;
-        
+
         const trimmedCommand = command.trim().toLowerCase();
-        
+
         if (trimmedCommand === 'exit' || trimmedCommand === 'quit') {
           console.info(styled('👋 Goodbye!', 'success'));
           break;
@@ -688,13 +729,15 @@ class WikiMatrixCLI {
             console.info(styled('❌ Please provide a template index', 'error'));
             continue;
           }
-          
+
           const index = parseInt(indexStr);
           if (isNaN(index) || index < 1) {
-            console.info(styled('❌ Invalid index. Please provide a valid positive number.', 'error'));
+            console.info(
+              styled('❌ Invalid index. Please provide a valid positive number.', 'error')
+            );
             continue;
           }
-          
+
           this.displayDetailedView(index);
         } else if (trimmedCommand === 'compare') {
           this.displayComparisonMatrix();
@@ -761,7 +804,7 @@ class WikiMatrixCLI {
 if (import.meta.main) {
   WikiMatrixCLI.create()
     .then(cli => cli.run())
-    .catch((error) => {
+    .catch(error => {
       const message = error instanceof Error ? error.message : String(error);
       console.error(styled(`❌ Failed to initialize CLI: ${message}`, 'error'));
       exitWithCode(EXIT_CODES.SYSTEM_ERROR);

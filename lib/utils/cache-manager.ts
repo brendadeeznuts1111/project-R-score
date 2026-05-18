@@ -39,7 +39,7 @@ export class AdvancedCacheManager<T> {
       defaultTTL: 30 * 60 * 1000, // 30 minutes
       enableMetrics: true,
       cleanupInterval: 5 * 60 * 1000, // 5 minutes
-      ...options
+      ...options,
     };
 
     if (this.options.cleanupInterval && this.options.cleanupInterval > 0) {
@@ -57,7 +57,7 @@ export class AdvancedCacheManager<T> {
       timestamp: now,
       ttl: ttl || this.options.defaultTTL,
       accessCount: 0,
-      lastAccessed: now
+      lastAccessed: now,
     };
 
     // Check if we need to evict (LRU)
@@ -75,7 +75,7 @@ export class AdvancedCacheManager<T> {
    */
   get(key: string): T | undefined {
     const entry = this.cache.get(key);
-    
+
     if (!entry) {
       if (this.options.enableMetrics) this.metrics.misses++;
       return undefined;
@@ -92,7 +92,7 @@ export class AdvancedCacheManager<T> {
     entry.accessCount++;
     entry.lastAccessed = Date.now();
     this.accessOrder.set(key, ++this.accessCounter);
-    
+
     if (this.options.enableMetrics) this.metrics.hits++;
     return entry.value;
   }
@@ -103,12 +103,12 @@ export class AdvancedCacheManager<T> {
   has(key: string): boolean {
     const entry = this.cache.get(key);
     if (!entry) return false;
-    
+
     if (this.isExpired(entry)) {
       this.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -173,14 +173,14 @@ export class AdvancedCacheManager<T> {
   cleanup(): number {
     let cleaned = 0;
     const now = Date.now();
-    
+
     for (const [key, entry] of this.cache.entries()) {
       if (this.isExpired(entry)) {
         this.delete(key);
         cleaned++;
       }
     }
-    
+
     return cleaned;
   }
 
@@ -209,14 +209,14 @@ export class AdvancedCacheManager<T> {
   private evictLRU(): void {
     let oldestKey: string | undefined;
     let oldestAccess = Infinity;
-    
+
     for (const [key, accessTime] of this.accessOrder.entries()) {
       if (accessTime < oldestAccess) {
         oldestAccess = accessTime;
         oldestKey = key;
       }
     }
-    
+
     if (oldestKey) {
       this.delete(oldestKey);
       if (this.options.enableMetrics) this.metrics.evictions++;
@@ -228,7 +228,7 @@ export class AdvancedCacheManager<T> {
    */
   private updateMetrics(): void {
     if (!this.options.enableMetrics) return;
-    
+
     this.metrics.size = this.cache.size;
     const total = this.metrics.hits + this.metrics.misses;
     this.metrics.hitRate = total > 0 ? this.metrics.hits / total : 0;
@@ -259,7 +259,7 @@ export function createTemplateCache(): AdvancedCacheManager<any> {
     maxSize: 500,
     defaultTTL: 60 * 60 * 1000, // 1 hour
     enableMetrics: true,
-    cleanupInterval: 10 * 60 * 1000 // 10 minutes
+    cleanupInterval: 10 * 60 * 1000, // 10 minutes
   });
 }
 
@@ -271,6 +271,6 @@ export function createMetricsCache(): AdvancedCacheManager<any> {
     maxSize: 1000,
     defaultTTL: 24 * 60 * 60 * 1000, // 24 hours
     enableMetrics: true,
-    cleanupInterval: 30 * 60 * 1000 // 30 minutes
+    cleanupInterval: 30 * 60 * 1000, // 30 minutes
   });
 }

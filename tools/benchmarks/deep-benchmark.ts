@@ -96,7 +96,7 @@ export class DeepBenchmark {
     }
 
     const totalTimeNs = Bun.nanoseconds() - t0;
-    const durations = results.map((r) => r.durationNs);
+    const durations = results.map(r => r.durationNs);
     const nestedData = this.createNestedResults(results);
 
     const benchmarkResults: DeepBenchmarkResults = {
@@ -176,7 +176,7 @@ export class DeepBenchmark {
   }
 
   private createNestedResults(results: IterationResult[]): DeepBenchmarkResults['data'] {
-    const durations = results.map((r) => r.durationNs);
+    const durations = results.map(r => r.durationNs);
     return {
       benchmark: this.config.name,
       iterations: results.length,
@@ -188,7 +188,7 @@ export class DeepBenchmark {
           stdDev: stdDev(durations),
           percentiles: percentiles(durations),
         },
-        nestedInsights: results.map((r) => ({
+        nestedInsights: results.map(r => ({
           durationNs: r.durationNs,
           dataStructure: analyzeStructure(r.data),
         })),
@@ -234,7 +234,7 @@ function analyzeStructure(obj: unknown): StructureAnalysis {
       type: 'array',
       length: obj.length,
       sample: obj.slice(0, 3),
-      itemTypes: [...new Set(obj.map((item) => typeof item))],
+      itemTypes: [...new Set(obj.map(item => typeof item))],
     };
   }
 

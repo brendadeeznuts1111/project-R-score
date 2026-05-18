@@ -18,18 +18,21 @@ interface UltimateBunFile extends BunFile {
 }
 
 interface UltimateBun extends Bun {
-  file(path: string | number | URL, options?: { 
-    type?: string;
-    hash?: boolean;
-    encoding?: string;
-  }): UltimateBunFile;
-  
+  file(
+    path: string | number | URL,
+    options?: {
+      type?: string;
+      hash?: boolean;
+      encoding?: string;
+    }
+  ): UltimateBunFile;
+
   // Enhanced monitoring
   pid: number;
   version: string;
   platform: string;
   arch: string;
-  
+
   // Performance APIs (using process APIs)
   gc(): void;
   memoryUsage(): {
@@ -48,7 +51,7 @@ interface UltimateMetrics extends RealMetrics {
   averageResponseTime: number;
   errorRate: number;
   cacheEfficiency: number;
-  
+
   // System health
   memoryUsage: {
     rss: number;
@@ -58,7 +61,7 @@ interface UltimateMetrics extends RealMetrics {
   };
   cpuUsage: number;
   uptime: number;
-  
+
   // Advanced search analytics
   searchPatterns: Array<{
     query: string;
@@ -66,7 +69,7 @@ interface UltimateMetrics extends RealMetrics {
     avgResponseTime: number;
     successRate: number;
   }>;
-  
+
   // File system analytics
   fileOperations: {
     totalReads: number;
@@ -78,7 +81,7 @@ interface UltimateMetrics extends RealMetrics {
       lastAccessed: string;
     }>;
   };
-  
+
   // Enterprise features
   alerts: Array<{
     level: 'info' | 'warning' | 'error' | 'critical';
@@ -86,7 +89,7 @@ interface UltimateMetrics extends RealMetrics {
     timestamp: string;
     resolved: boolean;
   }>;
-  
+
   compliance: {
     typeSafetyScore: number;
     performanceScore: number;
@@ -106,15 +109,18 @@ export class UltimateEnhancedZenDashboard {
   private updateInterval: any = null;
   private server: any = null;
   private startTime: number = Date.now();
-  
+
   // Advanced caching system
-  private searchCache = new Map<string, {
-    data: any;
-    timestamp: number;
-    ttl: number;
-    hitCount: number;
-  }>();
-  
+  private searchCache = new Map<
+    string,
+    {
+      data: any;
+      timestamp: number;
+      ttl: number;
+      hitCount: number;
+    }
+  >();
+
   // Performance monitoring
   private performanceHistory: Array<{
     timestamp: number;
@@ -122,20 +128,20 @@ export class UltimateEnhancedZenDashboard {
     responseTime: number;
     throughput: number;
   }> = [];
-  
+
   // Alert system
   private alertThresholds = {
     maxResponseTime: 5000, // 5 seconds
     maxMemoryUsage: 512 * 1024 * 1024, // 512MB
     maxErrorRate: 0.1, // 10%
-    minCacheEfficiency: 0.7 // 70%
+    minCacheEfficiency: 0.7, // 70%
   };
 
   constructor() {
     this.bun = (globalThis as any).Bun as UltimateBun;
     this.searcher = new EnhancedZenStreamSearcher();
     this.networkStreamer = new FetchAndRipStreamer();
-    
+
     this.metrics = this.initializeUltimateMetrics();
     this.startAdvancedMonitoring();
     this.initializeEnterpriseFeatures();
@@ -152,39 +158,39 @@ export class UltimateEnhancedZenDashboard {
       typeSafeMetrics: {
         totalFiles: 0,
         detectedFiles: 0,
-        typeSafeOperations: 0
+        typeSafeOperations: 0,
       },
-      
+
       // Performance analytics
       peakThroughput: 0,
       averageResponseTime: 0,
       errorRate: 0,
       cacheEfficiency: 0,
-      
+
       // System health
       memoryUsage: process.memoryUsage(),
       cpuUsage: 0,
       uptime: 0,
-      
+
       // Advanced search analytics
       searchPatterns: [],
-      
+
       // File system analytics
       fileOperations: {
         totalReads: 0,
         totalWrites: 0,
         averageFileSize: 0,
-        mostAccessedFiles: []
+        mostAccessedFiles: [],
       },
-      
+
       // Enterprise features
       alerts: [],
       compliance: {
         typeSafetyScore: 100,
         performanceScore: 100,
         reliabilityScore: 100,
-        securityScore: 100
-      }
+        securityScore: 100,
+      },
     };
   }
 
@@ -195,7 +201,7 @@ export class UltimateEnhancedZenDashboard {
       this.checkAlertThresholds();
       this.updateComplianceScores();
     }, 5000);
-    
+
     // Performance history tracking
     setInterval(() => {
       this.recordPerformanceSnapshot();
@@ -204,17 +210,17 @@ export class UltimateEnhancedZenDashboard {
 
   private async initializeEnterpriseFeatures(): Promise<void> {
     console.info('🏢 Initializing Ultimate Enhanced Zen Dashboard - Enterprise Edition');
-    console.info('=' .repeat(80));
-    
+    console.info('='.repeat(80));
+
     // Initialize advanced MIME type detection
     await this.initializeAdvancedMimeTypes();
-    
+
     // Initialize security features
     await this.initializeSecurityFeatures();
-    
+
     // Initialize performance optimization
     await this.initializePerformanceOptimization();
-    
+
     console.info('🎯 Enterprise Features Initialized:');
     console.info('   ✅ Advanced Analytics & Monitoring');
     console.info('   ✅ Real-time Performance Tracking');
@@ -235,35 +241,35 @@ export class UltimateEnhancedZenDashboard {
       { ext: '.txt', file: 'LICENSE', desc: 'Plain text files' },
       { ext: '.csv', file: 'package.json', desc: 'CSV data files' },
       { ext: '.xml', file: 'package.json', desc: 'XML data files' },
-      { ext: '.yaml', file: 'bunfig.toml', desc: 'YAML configuration' }
+      { ext: '.yaml', file: 'bunfig.toml', desc: 'YAML configuration' },
     ];
 
     console.info('🎯 Advanced MIME Type Detection with File Analytics:');
-    
+
     for (const { ext, file, desc } of testFiles) {
       try {
         const bunFile: UltimateBunFile = this.bun.file(file);
-        
+
         if (await bunFile.exists()) {
           const mimeType = bunFile.type;
           const size = bunFile.size;
-          
+
           // Enhanced file analytics
           const fileStats = await this.analyzeFile(bunFile);
-          
+
           this.metrics.supportedMimeTypes.push({
             extension: ext,
             mimeType: mimeType || 'application/octet-stream',
             description: desc,
             size: size,
-            detected: true
+            detected: true,
           });
-          
+
           console.info(`   ${ext} → ${mimeType || 'unknown'} (${desc})`);
           console.info(`      📊 Size: ${this.formatBytes(size)}`);
           console.info(`      🔍 Hash: ${fileStats.hash || 'N/A'}`);
           console.info(`      📅 Modified: ${new Date(bunFile.lastModified).toISOString()}`);
-          
+
           // Track file access
           this.trackFileAccess(file, size);
         }
@@ -271,9 +277,11 @@ export class UltimateEnhancedZenDashboard {
         console.error(`❌ Error analyzing ${ext}:`, error);
       }
     }
-    
+
     this.metrics.typeSafeMetrics.totalFiles = this.metrics.supportedMimeTypes.length;
-    this.metrics.typeSafeMetrics.detectedFiles = this.metrics.supportedMimeTypes.filter(m => m.detected).length;
+    this.metrics.typeSafeMetrics.detectedFiles = this.metrics.supportedMimeTypes.filter(
+      m => m.detected
+    ).length;
     this.metrics.typeSafeMetrics.typeSafeOperations = this.metrics.typeSafeMetrics.totalFiles;
   }
 
@@ -285,16 +293,16 @@ export class UltimateEnhancedZenDashboard {
     try {
       // Advanced file analysis
       const content = await file.bytes();
-      
+
       // Simple hash calculation (in production, use crypto API)
       const hash = this.simpleHash(content);
-      
+
       // Encoding detection
       const encoding = this.detectEncoding(content);
-      
+
       return {
         hash: hash.substring(0, 16), // First 16 chars
-        encoding
+        encoding,
       };
     } catch (error) {
       return {};
@@ -305,7 +313,7 @@ export class UltimateEnhancedZenDashboard {
     let hash = 0;
     for (let i = 0; i < data.length; i++) {
       const char = data[i];
-      hash = ((hash << 5) - hash) + char;
+      hash = (hash << 5) - hash + char;
       hash = hash & hash; // Convert to 32-bit integer
     }
     return Math.abs(hash).toString(16);
@@ -319,7 +327,7 @@ export class UltimateEnhancedZenDashboard {
 
   private trackFileAccess(path: string, size: number): void {
     this.metrics.fileOperations.totalReads++;
-    
+
     const existingFile = this.metrics.fileOperations.mostAccessedFiles.find(f => f.path === path);
     if (existingFile) {
       existingFile.accessCount++;
@@ -328,26 +336,30 @@ export class UltimateEnhancedZenDashboard {
       this.metrics.fileOperations.mostAccessedFiles.push({
         path,
         accessCount: 1,
-        lastAccessed: new Date().toISOString()
+        lastAccessed: new Date().toISOString(),
       });
     }
-    
+
     // Update average file size
-    const totalSize = this.metrics.fileOperations.mostAccessedFiles.reduce((sum, f) => sum + size, 0);
-    this.metrics.fileOperations.averageFileSize = totalSize / this.metrics.fileOperations.mostAccessedFiles.length;
+    const totalSize = this.metrics.fileOperations.mostAccessedFiles.reduce(
+      (sum, f) => sum + size,
+      0
+    );
+    this.metrics.fileOperations.averageFileSize =
+      totalSize / this.metrics.fileOperations.mostAccessedFiles.length;
   }
 
   private async initializeSecurityFeatures(): Promise<void> {
     console.info('🔒 Initializing Security Features...');
-    
+
     // Security posture analysis
     const securityChecks = [
       { name: 'Type Safety', check: () => this.checkTypeSafety() },
       { name: 'File Access', check: () => this.checkFileAccess() },
       { name: 'Memory Safety', check: () => this.checkMemorySafety() },
-      { name: 'Network Security', check: () => this.checkNetworkSecurity() }
+      { name: 'Network Security', check: () => this.checkNetworkSecurity() },
     ];
-    
+
     for (const { name, check } of securityChecks) {
       try {
         const result = await check();
@@ -382,7 +394,7 @@ export class UltimateEnhancedZenDashboard {
 
   private async initializePerformanceOptimization(): Promise<void> {
     console.info('⚡ Initializing Performance Optimization...');
-    
+
     // Pre-warm the search cache
     const commonQueries = ['bun', 'performance', 'zen', 'fetch', 'spawn'];
     for (const query of commonQueries) {
@@ -393,7 +405,7 @@ export class UltimateEnhancedZenDashboard {
         console.info(`   ⚠️  Pre-warm failed for ${query}: ${error.message}`);
       }
     }
-    
+
     // Optimize memory usage
     if (globalThis.gc) {
       globalThis.gc();
@@ -403,17 +415,17 @@ export class UltimateEnhancedZenDashboard {
 
   private async performOptimizedSearch(query: string): Promise<any> {
     const cacheKey = `search:${query}`;
-    
+
     // Check cache first
     const cached = this.searchCache.get(cacheKey);
     if (cached && this.isCacheValid(cached)) {
       cached.hitCount++;
       return cached.data;
     }
-    
+
     try {
       const startTime = performance.now();
-      
+
       // Use enhanced streaming with all optimizations
       const results = await this.searcher.streamSearch({
         query,
@@ -424,18 +436,20 @@ export class UltimateEnhancedZenDashboard {
         excludePatterns: ['node_modules/*', '*.min.js', 'dist/*'],
         caseSensitive: false,
         priority: 'high',
-        onProgress: (stats) => {
+        onProgress: stats => {
           if (stats.matchesFound % 100 === 0) {
-            console.info(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
+            console.info(
+              `   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`
+            );
           }
-        }
+        },
       });
-      
+
       const searchTime = performance.now() - startTime;
-      
+
       // Update performance metrics
       this.updatePerformanceMetrics(query, searchTime, results);
-      
+
       // Cache the results
       const searchData = {
         id: this.metrics.totalSearches + 1,
@@ -448,32 +462,31 @@ export class UltimateEnhancedZenDashboard {
         filesWithMatches: results.filesWithMatches || 0,
         averageMatchDepth: results.averageMatchDepth || 0,
         cacheHitRate: results.cacheHitRate || 0,
-        throughput: results.throughput || 0
+        throughput: results.throughput || 0,
       };
-      
+
       this.searchCache.set(cacheKey, {
         data: searchData,
         timestamp: Date.now(),
         ttl: 300000, // 5 minutes
-        hitCount: 1
+        hitCount: 1,
       });
-      
+
       this.metrics.realSearchHistory.unshift(searchData);
       if (this.metrics.realSearchHistory.length > 50) {
         this.metrics.realSearchHistory = this.metrics.realSearchHistory.slice(0, 50);
       }
-      
+
       this.metrics.totalSearches++;
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
-      
+
       // Update peak throughput
       if (results.throughput > this.metrics.peakThroughput) {
         this.metrics.peakThroughput = results.throughput;
       }
-      
+
       return searchData;
-      
     } catch (error) {
       console.error(`❌ Optimized search failed for "${query}":`, error);
       this.addAlert('error', `Search failed: ${error.message}`);
@@ -483,9 +496,11 @@ export class UltimateEnhancedZenDashboard {
 
   private updatePerformanceMetrics(query: string, searchTime: number, results: any): void {
     // Update average response time
-    const totalResponseTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) + searchTime;
-    this.metrics.averageResponseTime = totalResponseTime / (this.metrics.realSearchHistory.length + 1);
-    
+    const totalResponseTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) + searchTime;
+    this.metrics.averageResponseTime =
+      totalResponseTime / (this.metrics.realSearchHistory.length + 1);
+
     // Update search patterns
     const existingPattern = this.metrics.searchPatterns.find(p => p.query === query);
     if (existingPattern) {
@@ -496,12 +511,15 @@ export class UltimateEnhancedZenDashboard {
         query,
         frequency: 1,
         avgResponseTime: searchTime,
-        successRate: 1.0
+        successRate: 1.0,
       });
     }
-    
+
     // Update cache efficiency
-    const cacheHits = Array.from(this.searchCache.values()).reduce((sum, cache) => sum + cache.hitCount, 0);
+    const cacheHits = Array.from(this.searchCache.values()).reduce(
+      (sum, cache) => sum + cache.hitCount,
+      0
+    );
     const totalRequests = cacheHits + this.metrics.totalSearches;
     this.metrics.cacheEfficiency = totalRequests > 0 ? cacheHits / totalRequests : 0;
   }
@@ -510,52 +528,63 @@ export class UltimateEnhancedZenDashboard {
     const memUsage = process.memoryUsage();
     this.metrics.memoryUsage = memUsage;
     this.metrics.uptime = Date.now() - this.startTime;
-    
+
     // Calculate error rate
     const errorCount = this.metrics.realSearchHistory.filter(s => s.status === 'error').length;
-    this.metrics.errorRate = this.metrics.totalSearches > 0 ? errorCount / this.metrics.totalSearches : 0;
+    this.metrics.errorRate =
+      this.metrics.totalSearches > 0 ? errorCount / this.metrics.totalSearches : 0;
   }
 
   private checkAlertThresholds(): void {
     // Check response time
     if (this.metrics.averageResponseTime > this.alertThresholds.maxResponseTime) {
-      this.addAlert('warning', `High response time: ${this.metrics.averageResponseTime.toFixed(2)}ms`);
+      this.addAlert(
+        'warning',
+        `High response time: ${this.metrics.averageResponseTime.toFixed(2)}ms`
+      );
     }
-    
+
     // Check memory usage
     if (this.metrics.memoryUsage.heapUsed > this.alertThresholds.maxMemoryUsage) {
-      this.addAlert('error', `High memory usage: ${this.formatBytes(this.metrics.memoryUsage.heapUsed)}`);
+      this.addAlert(
+        'error',
+        `High memory usage: ${this.formatBytes(this.metrics.memoryUsage.heapUsed)}`
+      );
     }
-    
+
     // Check error rate
     if (this.metrics.errorRate > this.alertThresholds.maxErrorRate) {
       this.addAlert('error', `High error rate: ${(this.metrics.errorRate * 100).toFixed(1)}%`);
     }
-    
+
     // Check cache efficiency
     if (this.metrics.cacheEfficiency < this.alertThresholds.minCacheEfficiency) {
-      this.addAlert('warning', `Low cache efficiency: ${(this.metrics.cacheEfficiency * 100).toFixed(1)}%`);
+      this.addAlert(
+        'warning',
+        `Low cache efficiency: ${(this.metrics.cacheEfficiency * 100).toFixed(1)}%`
+      );
     }
   }
 
   private updateComplianceScores(): void {
     // Type safety score based on TypeScript usage
     this.metrics.compliance.typeSafetyScore = 100; // All operations are type-safe
-    
+
     // Performance score based on response times and throughput
-    const responseTimeScore = Math.max(0, 100 - (this.metrics.averageResponseTime / 100)); // Deduct for slow responses
+    const responseTimeScore = Math.max(0, 100 - this.metrics.averageResponseTime / 100); // Deduct for slow responses
     const throughputScore = Math.min(100, (this.metrics.peakThroughput / 1000) * 100); // Reward for high throughput
     this.metrics.compliance.performanceScore = (responseTimeScore + throughputScore) / 2;
-    
+
     // Reliability score based on error rate
-    this.metrics.compliance.reliabilityScore = Math.max(0, 100 - (this.metrics.errorRate * 1000)); // Heavily penalize errors
-    
+    this.metrics.compliance.reliabilityScore = Math.max(0, 100 - this.metrics.errorRate * 1000); // Heavily penalize errors
+
     // Security score based on alerts and security checks
     const criticalAlerts = this.metrics.alerts.filter(a => a.level === 'critical').length;
-    this.metrics.compliance.securityScore = Math.max(0, 100 - (criticalAlerts * 20)); // Deduct for critical alerts
-    
+    this.metrics.compliance.securityScore = Math.max(0, 100 - criticalAlerts * 20); // Deduct for critical alerts
+
     // Update overall system health
-    const avgScore = Object.values(this.metrics.compliance).reduce((sum, score) => sum + score, 0) / 4;
+    const avgScore =
+      Object.values(this.metrics.compliance).reduce((sum, score) => sum + score, 0) / 4;
     if (avgScore >= 90) this.metrics.systemHealth = 'optimal';
     else if (avgScore >= 70) this.metrics.systemHealth = 'good';
     else if (avgScore >= 50) this.metrics.systemHealth = 'warning';
@@ -567,9 +596,9 @@ export class UltimateEnhancedZenDashboard {
       timestamp: Date.now(),
       memoryUsage: { ...this.metrics.memoryUsage },
       responseTime: this.metrics.averageResponseTime,
-      throughput: this.metrics.peakThroughput
+      throughput: this.metrics.peakThroughput,
     });
-    
+
     // Keep only last 100 snapshots
     if (this.performanceHistory.length > 100) {
       this.performanceHistory = this.performanceHistory.slice(-100);
@@ -581,14 +610,14 @@ export class UltimateEnhancedZenDashboard {
       level,
       message,
       timestamp: new Date().toISOString(),
-      resolved: false
+      resolved: false,
     });
-    
+
     // Keep only last 50 alerts
     if (this.metrics.alerts.length > 50) {
       this.metrics.alerts = this.metrics.alerts.slice(-50);
     }
-    
+
     console.info(`🚨 ${level.toUpperCase()}: ${message}`);
   }
 
@@ -609,42 +638,42 @@ export class UltimateEnhancedZenDashboard {
    */
   async startUltimateDashboard(): Promise<void> {
     console.info('🚀 Starting Ultimate Enhanced Zen Dashboard - Enterprise Edition');
-    
+
     const bun = (globalThis as any).Bun as any;
     this.server = bun.serve({
       port: 3007, // Different port for ultimate edition
       fetch: async (req: Request) => {
         const url = new URL(req.url);
-        
+
         try {
           switch (url.pathname) {
             case '/dashboard':
               return new Response(await this.generateUltimateDashboardHTML(), {
-                headers: { 'Content-Type': 'text/html' }
+                headers: { 'Content-Type': 'text/html' },
               });
-              
+
             case '/api/ultimate-metrics':
               return new Response(JSON.stringify(this.metrics, null, 2), {
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
               });
-              
+
             case '/api/performance-history':
               return new Response(JSON.stringify(this.performanceHistory, null, 2), {
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
               });
-              
+
             case '/api/search':
               const query = url.searchParams.get('query') || 'bun';
               const results = await this.performOptimizedSearch(query);
               return new Response(JSON.stringify(results), {
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
               });
-              
+
             case '/api/alerts':
               return new Response(JSON.stringify(this.metrics.alerts, null, 2), {
-                headers: { 'Content-Type': 'application/json' }
+                headers: { 'Content-Type': 'application/json' },
               });
-              
+
             default:
               return new Response('Not Found', { status: 404 });
           }
@@ -652,22 +681,23 @@ export class UltimateEnhancedZenDashboard {
           console.error('Dashboard error:', error);
           return new Response('Internal Server Error', { status: 500 });
         }
-      }
+      },
     });
-    
+
     console.info('🌐 Ultimate Enterprise Dashboard Started!');
-    console.info('=' .repeat(80));
+    console.info('='.repeat(80));
     console.info(`📱 Dashboard: http://localhost:3007/dashboard`);
     console.info(`📊 Ultimate Metrics: http://localhost:3007/api/ultimate-metrics`);
     console.info(`📈 Performance History: http://localhost:3007/api/performance-history`);
     console.info(`🔍 Enhanced Search: http://localhost:3007/api/search?query=zen`);
     console.info(`🚨 Alert System: http://localhost:3007/api/alerts`);
-    console.info('=' .repeat(80));
+    console.info('='.repeat(80));
   }
 
   private async generateUltimateDashboardHTML(): Promise<string> {
-    const complianceScore = Object.values(this.metrics.compliance).reduce((sum, score) => sum + score, 0) / 4;
-    
+    const complianceScore =
+      Object.values(this.metrics.compliance).reduce((sum, score) => sum + score, 0) / 4;
+
     return `
 <!DOCTYPE html>
 <html lang="en">
@@ -741,7 +771,9 @@ export class UltimateEnhancedZenDashboard {
             <section class="glass-effect p-6 rounded-lg mb-8">
                 <h2 class="text-2xl font-bold mb-6">📊 Compliance Scores</h2>
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                    ${Object.entries(this.metrics.compliance).map(([key, score]) => `
+                    ${Object.entries(this.metrics.compliance)
+                      .map(
+                        ([key, score]) => `
                         <div class="text-center">
                             <div class="text-2xl font-bold mb-2 ${this.getScoreColor(score)}">${score.toFixed(1)}%</div>
                             <div class="text-sm opacity-75">${key.replace(/([A-Z])/g, ' $1').trim()}</div>
@@ -749,7 +781,9 @@ export class UltimateEnhancedZenDashboard {
                                 <div class="h-2 rounded-full ${this.getScoreBarColor(score)}" style="width: ${score}%"></div>
                             </div>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </section>
 
@@ -770,7 +804,12 @@ export class UltimateEnhancedZenDashboard {
             <section class="glass-effect p-6 rounded-lg mb-8">
                 <h2 class="text-2xl font-bold mb-6">🚨 Recent Alerts</h2>
                 <div class="space-y-2">
-                    ${this.metrics.alerts.slice(-5).reverse().map(alert => `
+                    ${
+                      this.metrics.alerts
+                        .slice(-5)
+                        .reverse()
+                        .map(
+                          alert => `
                         <div class="flex items-center justify-between p-3 bg-gray-800 rounded-lg">
                             <div class="flex items-center space-x-3">
                                 <span class="${this.getAlertColor(alert.level)}">${this.getAlertIcon(alert.level)}</span>
@@ -778,7 +817,10 @@ export class UltimateEnhancedZenDashboard {
                             </div>
                             <span class="text-sm opacity-75">${new Date(alert.timestamp).toLocaleTimeString()}</span>
                         </div>
-                    `).join('') || '<p class="text-center opacity-75">No recent alerts</p>'}
+                    `
+                        )
+                        .join('') || '<p class="text-center opacity-75">No recent alerts</p>'
+                    }
                 </div>
             </section>
 
@@ -789,15 +831,20 @@ export class UltimateEnhancedZenDashboard {
                     <div>
                         <h4 class="font-semibold mb-3">Top Search Patterns</h4>
                         <div class="space-y-2">
-                            ${this.metrics.searchPatterns
+                            ${
+                              this.metrics.searchPatterns
                                 .sort((a, b) => b.frequency - a.frequency)
                                 .slice(0, 5)
-                                .map(pattern => `
+                                .map(
+                                  pattern => `
                                     <div class="flex justify-between">
                                         <span>${pattern.query}</span>
                                         <span class="text-sm opacity-75">${pattern.frequency}x</span>
                                     </div>
-                                `).join('') || '<p class="text-sm opacity-75">No data yet</p>'}
+                                `
+                                )
+                                .join('') || '<p class="text-sm opacity-75">No data yet</p>'
+                            }
                         </div>
                     </div>
                     
@@ -901,11 +948,16 @@ export class UltimateEnhancedZenDashboard {
 
   private getHealthColor(health: string): string {
     switch (health) {
-      case 'optimal': return 'text-green-400';
-      case 'good': return 'text-blue-400';
-      case 'warning': return 'text-yellow-400';
-      case 'critical': return 'text-red-400';
-      default: return 'text-gray-400';
+      case 'optimal':
+        return 'text-green-400';
+      case 'good':
+        return 'text-blue-400';
+      case 'warning':
+        return 'text-yellow-400';
+      case 'critical':
+        return 'text-red-400';
+      default:
+        return 'text-gray-400';
     }
   }
 
@@ -925,21 +977,31 @@ export class UltimateEnhancedZenDashboard {
 
   private getAlertColor(level: string): string {
     switch (level) {
-      case 'info': return 'text-blue-400';
-      case 'warning': return 'text-yellow-400';
-      case 'error': return 'text-red-400';
-      case 'critical': return 'text-red-600';
-      default: return 'text-gray-400';
+      case 'info':
+        return 'text-blue-400';
+      case 'warning':
+        return 'text-yellow-400';
+      case 'error':
+        return 'text-red-400';
+      case 'critical':
+        return 'text-red-600';
+      default:
+        return 'text-gray-400';
     }
   }
 
   private getAlertIcon(level: string): string {
     switch (level) {
-      case 'info': return 'ℹ️';
-      case 'warning': return '⚠️';
-      case 'error': return '❌';
-      case 'critical': return '🔴';
-      default: return 'ℹ️';
+      case 'info':
+        return 'ℹ️';
+      case 'warning':
+        return '⚠️';
+      case 'error':
+        return '❌';
+      case 'critical':
+        return '🔴';
+      default:
+        return 'ℹ️';
     }
   }
 
@@ -948,7 +1010,7 @@ export class UltimateEnhancedZenDashboard {
     const minutes = Math.floor(seconds / 60);
     const hours = Math.floor(minutes / 60);
     const days = Math.floor(hours / 24);
-    
+
     if (days > 0) return `${days}d ${hours % 24}h`;
     if (hours > 0) return `${hours}h ${minutes % 60}m`;
     if (minutes > 0) return `${minutes}m ${seconds % 60}s`;

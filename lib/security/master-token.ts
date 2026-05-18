@@ -433,7 +433,9 @@ if (import.meta.main) {
           console.info('🔑 Generated Master Token:');
           console.info(token);
           console.info(`\n📋 Permissions: ${permissions.join(', ')}`);
-          console.info(`⏰ Expires: ${new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}`);
+          console.info(
+            `⏰ Expires: ${new Date(Date.now() + 24 * 60 * 60 * 1000).toLocaleString()}`
+          );
           break;
 
         case 'validate':

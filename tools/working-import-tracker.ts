@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 // tools/working-import-tracker.ts — Bun plugin for import tracking with logging
 
-import { plugin } from "bun";
+import { plugin } from 'bun';
 
 plugin({
-  name: "working import tracker",
+  name: 'working import tracker',
   setup(build) {
     const transpiler = new Bun.Transpiler();
     const trackedImports: Record<string, number> = {};
@@ -68,7 +68,7 @@ export default importStats;
 
       return {
         contents: statsContent,
-        loader: "ts",
+        loader: 'ts',
       };
     });
   },

@@ -103,20 +103,8 @@ const DEFAULT_QUERY_PACKS: QueryPacks = {
     'query pack',
     'strict latency',
   ],
-  bun_runtime_api: [
-    'Bun.serve',
-    'Bun.file',
-    'Bun.write',
-    'Bun.spawn',
-    'bun test',
-  ],
-  cleanup_noise: [
-    'generated',
-    'docs-noise',
-    'duplicate',
-    'compiled',
-    'ai-slop',
-  ],
+  bun_runtime_api: ['Bun.serve', 'Bun.file', 'Bun.write', 'Bun.spawn', 'bun test'],
+  cleanup_noise: ['generated', 'docs-noise', 'duplicate', 'compiled', 'ai-slop'],
 };
 
 export function parseArgs(argv: string[]): {
@@ -163,7 +151,10 @@ export function parseArgs(argv: string[]): {
     }
     if (arg === '--queries') {
       const value = argv[i + 1] || '';
-      const parsed = value.split(',').map((q) => q.trim()).filter(Boolean);
+      const parsed = value
+        .split(',')
+        .map(q => q.trim())
+        .filter(Boolean);
       if (parsed.length > 0) {
         queries = parsed;
       }
@@ -210,14 +201,24 @@ export function parseArgs(argv: string[]): {
     }
   }
 
-  return { path, limit, queries, queryPack, concurrency, concurrencyExplicit, overlap, queryTimeoutMs, queryRetries };
+  return {
+    path,
+    limit,
+    queries,
+    queryPack,
+    concurrency,
+    concurrencyExplicit,
+    overlap,
+    queryTimeoutMs,
+    queryRetries,
+  };
 }
 
 export function normalizeQueryPacks(parsed: unknown): QueryPacks {
   const normalized: QueryPacks = {};
   for (const [pack, queries] of Object.entries((parsed || {}) as Record<string, unknown>)) {
     if (Array.isArray(queries)) {
-      const list = queries.map((q) => String(q).trim()).filter(Boolean);
+      const list = queries.map(q => String(q).trim()).filter(Boolean);
       if (list.length > 0) {
         normalized[pack] = list;
       }
@@ -378,12 +379,16 @@ async function runSearchWithRetry(
       if (attempt >= attempts) {
         break;
       }
-      const delayMs = Math.min(2000, 200 * (2 ** (attempt - 1)));
+      const delayMs = Math.min(2000, 200 * 2 ** (attempt - 1));
       await Bun.sleep(delayMs);
-      console.error(`[search:bench] retrying query "${query}" (${attempt}/${attempts - 1} retries used)`);
+      console.error(
+        `[search:bench] retrying query "${query}" (${attempt}/${attempts - 1} retries used)`
+      );
     }
   }
-  throw lastError instanceof Error ? lastError : new Error(`[search:bench] query "${query}" failed`);
+  throw lastError instanceof Error
+    ? lastError
+    : new Error(`[search:bench] query "${query}" failed`);
 }
 
 async function mapWithConcurrency<T, R>(
@@ -415,19 +420,18 @@ function summarizeQuery(query: string, payload: any): QueryResultSummary {
   const slopSet = new Set(['generated', 'compiled', 'docs-noise', 'ai-slop']);
 
   const total = hits.length;
-  const slop = hits.filter((h) => slopSet.has(h.qualityTag)).length;
-  const duplicate = hits.filter((h) => h.qualityTag === 'duplicate').length;
-  const generated = hits.filter((h) => h.qualityTag === 'generated').length;
-  const docsNoise = hits.filter((h) => h.qualityTag === 'docs-noise').length;
+  const slop = hits.filter(h => slopSet.has(h.qualityTag)).length;
+  const duplicate = hits.filter(h => h.qualityTag === 'duplicate').length;
+  const generated = hits.filter(h => h.qualityTag === 'generated').length;
+  const docsNoise = hits.filter(h => h.qualityTag === 'docs-noise').length;
 
-  const familyKeys = new Set(
-    hits.map((h) => h.familyId || h.canonicalFile || h.file)
-  );
+  const familyKeys = new Set(hits.map(h => h.familyId || h.canonicalFile || h.file));
   const uniqueFamilies = familyKeys.size;
 
-  const avgMirrors = total > 0
-    ? Number((hits.reduce((sum, h) => sum + (h.mirrorCount || 0), 0) / total).toFixed(2))
-    : 0;
+  const avgMirrors =
+    total > 0
+      ? Number((hits.reduce((sum, h) => sum + (h.mirrorCount || 0), 0) / total).toFixed(2))
+      : 0;
 
   const signalPct = total > 0 ? Number((((total - slop) / total) * 100).toFixed(2)) : 0;
 
@@ -459,22 +463,46 @@ function percentile(values: number[], p: number): number {
 
 function aggregateProfile(profile: Profile, querySummaries: QueryResultSummary[]): ProfileSummary {
   const n = querySummaries.length || 1;
-  const latencies = querySummaries.map((q) => Number(q.elapsedMs || 0)).filter((v) => Number.isFinite(v) && v >= 0);
+  const latencies = querySummaries
+    .map(q => Number(q.elapsedMs || 0))
+    .filter(v => Number.isFinite(v) && v >= 0);
   const latencyP50Ms = Number(percentile(latencies, 50).toFixed(2));
   const latencyP95Ms = Number(percentile(latencies, 95).toFixed(2));
   const latencyMaxMs = Number((latencies.length > 0 ? Math.max(...latencies) : 0).toFixed(2));
-  const rssValues = querySummaries.map((q) => Number(q.rssMB || 0)).filter((v) => Number.isFinite(v) && v >= 0);
-  const heapValues = querySummaries.map((q) => Number(q.heapUsedMB || 0)).filter((v) => Number.isFinite(v) && v >= 0);
+  const rssValues = querySummaries
+    .map(q => Number(q.rssMB || 0))
+    .filter(v => Number.isFinite(v) && v >= 0);
+  const heapValues = querySummaries
+    .map(q => Number(q.heapUsedMB || 0))
+    .filter(v => Number.isFinite(v) && v >= 0);
   const peakRssMB = Number((rssValues.length > 0 ? Math.max(...rssValues) : 0).toFixed(2));
   const peakHeapUsedMB = Number((heapValues.length > 0 ? Math.max(...heapValues) : 0).toFixed(2));
-  const avgRssMB = Number((rssValues.reduce((a, b) => a + b, 0) / (rssValues.length || 1)).toFixed(2));
-  const avgHeapUsedMB = Number((heapValues.reduce((a, b) => a + b, 0) / (heapValues.length || 1)).toFixed(2));
+  const avgRssMB = Number(
+    (rssValues.reduce((a, b) => a + b, 0) / (rssValues.length || 1)).toFixed(2)
+  );
+  const avgHeapUsedMB = Number(
+    (heapValues.reduce((a, b) => a + b, 0) / (heapValues.length || 1)).toFixed(2)
+  );
 
   const avgSignalPct = Number((querySummaries.reduce((a, q) => a + q.signalPct, 0) / n).toFixed(2));
-  const avgSlopPct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.slop / q.total) * 100 : 0), 0) / n).toFixed(2));
-  const avgDuplicatePct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.duplicate / q.total) * 100 : 0), 0) / n).toFixed(2));
-  const avgUniqueFamilyPct = Number((querySummaries.reduce((a, q) => a + (q.total ? (q.uniqueFamilies / q.total) * 100 : 0), 0) / n).toFixed(2));
-  const avgMirrorsPerHit = Number((querySummaries.reduce((a, q) => a + q.avgMirrors, 0) / n).toFixed(2));
+  const avgSlopPct = Number(
+    (querySummaries.reduce((a, q) => a + (q.total ? (q.slop / q.total) * 100 : 0), 0) / n).toFixed(
+      2
+    )
+  );
+  const avgDuplicatePct = Number(
+    (
+      querySummaries.reduce((a, q) => a + (q.total ? (q.duplicate / q.total) * 100 : 0), 0) / n
+    ).toFixed(2)
+  );
+  const avgUniqueFamilyPct = Number(
+    (
+      querySummaries.reduce((a, q) => a + (q.total ? (q.uniqueFamilies / q.total) * 100 : 0), 0) / n
+    ).toFixed(2)
+  );
+  const avgMirrorsPerHit = Number(
+    (querySummaries.reduce((a, q) => a + q.avgMirrors, 0) / n).toFixed(2)
+  );
 
   const qualityScore = computeQualityScore({
     avgSignalPct,
@@ -515,61 +543,84 @@ export async function main(): Promise<void> {
     queryTimeoutMs,
     queryRetries,
   } = parseArgs(process.argv.slice(2));
-  const effectiveConcurrency = !concurrencyExplicit && path.includes(',')
-    ? Math.min(concurrency, 2)
-    : concurrency;
+  const effectiveConcurrency =
+    !concurrencyExplicit && path.includes(',') ? Math.min(concurrency, 2) : concurrency;
   const loaded = await loadQueryPacks();
   const packs = loaded.packs;
-  const queries = overrideQueries || packs[queryPack] || packs.core_delivery || [...FALLBACK_CORE_QUERIES];
+  const queries = overrideQueries ||
+    packs[queryPack] ||
+    packs.core_delivery || [...FALLBACK_CORE_QUERIES];
   if (!overrideQueries && !packs[queryPack]) {
-    console.error(`[search:bench] query pack "${queryPack}" not found; using core_delivery fallback`);
+    console.error(
+      `[search:bench] query pack "${queryPack}" not found; using core_delivery fallback`
+    );
   }
   if (loaded.source === 'default') {
-    console.error('[search:bench] .search/benchmark-queries.lib.json not found or invalid; using built-in query packs');
+    console.error(
+      '[search:bench] .search/benchmark-queries.lib.json not found or invalid; using built-in query packs'
+    );
   }
 
   const profiles: Profile[] = [
     { id: 'mixed', label: 'Mixed Delivery', args: ['--view', 'mixed', '--task', 'delivery'] },
     { id: 'strict', label: 'Strict', args: ['--strict'] },
     { id: 'lib-strict', label: 'Lib Strict', args: ['--strict', '--family-cap', '2'] },
-    { id: 'cleanup', label: 'Cleanup Slop', args: ['--view', 'slop-only', '--task', 'cleanup', '--group-limit', '5'] },
+    {
+      id: 'cleanup',
+      label: 'Cleanup Slop',
+      args: ['--view', 'slop-only', '--task', 'cleanup', '--group-limit', '5'],
+    },
   ];
 
   const summaries: ProfileSummary[] = [];
 
-  const profileSummaries = await mapWithConcurrency(profiles, Math.min(effectiveConcurrency, profiles.length), async (profile) => {
-    const querySummaries = await mapWithConcurrency(queries, effectiveConcurrency, async (query) => {
-      const started = performance.now();
-      const payload = await runSearchWithRetry(
-        query,
-        path,
-        limit,
-        overlap,
-        profile.args,
-        queryTimeoutMs,
-        queryRetries
+  const profileSummaries = await mapWithConcurrency(
+    profiles,
+    Math.min(effectiveConcurrency, profiles.length),
+    async profile => {
+      const querySummaries = await mapWithConcurrency(
+        queries,
+        effectiveConcurrency,
+        async query => {
+          const started = performance.now();
+          const payload = await runSearchWithRetry(
+            query,
+            path,
+            limit,
+            overlap,
+            profile.args,
+            queryTimeoutMs,
+            queryRetries
+          );
+          payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
+          return summarizeQuery(query, payload);
+        }
       );
-      payload.wallElapsedMs = Number((performance.now() - started).toFixed(2));
-      return summarizeQuery(query, payload);
-    });
-    return aggregateProfile(profile, querySummaries);
-  });
+      return aggregateProfile(profile, querySummaries);
+    }
+  );
 
   summaries.push(...profileSummaries);
 
   summaries.sort((a, b) => b.qualityScore - a.qualityScore);
 
-  console.info(JSON.stringify({
-    path,
-    limit,
-    queryPack,
-    concurrency: effectiveConcurrency,
-    queryTimeoutMs,
-    queryRetries,
-    overlap,
-    queries,
-    rankedProfiles: summaries,
-  }, null, 2));
+  console.info(
+    JSON.stringify(
+      {
+        path,
+        limit,
+        queryPack,
+        concurrency: effectiveConcurrency,
+        queryTimeoutMs,
+        queryRetries,
+        overlap,
+        queries,
+        rankedProfiles: summaries,
+      },
+      null,
+      2
+    )
+  );
 }
 
 if (import.meta.main) {

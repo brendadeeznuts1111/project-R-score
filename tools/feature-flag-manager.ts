@@ -16,31 +16,33 @@ const options = {
   deploy: args.includes('--deploy'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
@@ -80,12 +82,16 @@ if (options.help) {
 // Logging utilities
 const log = {
   info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
   error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Feature flag configuration
@@ -169,14 +175,14 @@ class FeatureFlagManager {
         rolloutPercentage: 0,
         targetGroups: [],
         conditions: {
-          environment: ['development', 'staging']
+          environment: ['development', 'staging'],
         },
         metadata: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           version: '1.0.0',
-          owner: 'documentation-team'
-        }
+          owner: 'documentation-team',
+        },
       },
       {
         id: 'fragment-redirects',
@@ -186,14 +192,14 @@ class FeatureFlagManager {
         rolloutPercentage: 0,
         targetGroups: [],
         conditions: {
-          environment: ['development', 'staging', 'production']
+          environment: ['development', 'staging', 'production'],
         },
         metadata: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           version: '1.0.0',
-          owner: 'documentation-team'
-        }
+          owner: 'documentation-team',
+        },
       },
       {
         id: 'ab-testing-active',
@@ -203,14 +209,14 @@ class FeatureFlagManager {
         rolloutPercentage: 0,
         targetGroups: [],
         conditions: {
-          environment: ['production']
+          environment: ['production'],
         },
         metadata: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           version: '1.0.0',
-          owner: 'documentation-team'
-        }
+          owner: 'documentation-team',
+        },
       },
       {
         id: 'canary-deployment',
@@ -220,15 +226,15 @@ class FeatureFlagManager {
         rolloutPercentage: 0,
         targetGroups: ['canary-users'],
         conditions: {
-          environment: ['production']
+          environment: ['production'],
         },
         metadata: {
           createdAt: new Date().toISOString(),
           updatedAt: new Date().toISOString(),
           version: '1.0.0',
-          owner: 'documentation-team'
-        }
-      }
+          owner: 'documentation-team',
+        },
+      },
     ];
 
     defaultFlags.forEach(flag => {
@@ -236,7 +242,11 @@ class FeatureFlagManager {
     });
   }
 
-  async enableFlag(flagId: string, rolloutPercentage: number = 100, targetGroups: string[] = []): Promise<boolean> {
+  async enableFlag(
+    flagId: string,
+    rolloutPercentage: number = 100,
+    targetGroups: string[] = []
+  ): Promise<boolean> {
     const flag = this.flags.get(flagId);
     if (!flag) {
       log.error(`Feature flag not found: ${flagId}`);
@@ -292,7 +302,7 @@ class FeatureFlagManager {
       const flagData = {
         version: '1.0.0',
         updatedAt: new Date().toISOString(),
-        flags: Array.from(this.flags.entries()).map(([id, flag]) => ({ id, ...flag }))
+        flags: Array.from(this.flags.entries()).map(([id, flag]) => ({ id, ...flag })),
       };
 
       await fs.writeFile(this.configPath, JSON.stringify(flagData, null, 2));
@@ -323,7 +333,7 @@ class DeploymentManager {
         version: 'v2.0.0-direct-urls',
         rolloutStrategy: 'canary',
         targetGroups: ['canary-users'],
-        deploymentTime: new Date().toISOString()
+        deploymentTime: new Date().toISOString(),
       };
 
       this.currentDeployment = deployment;
@@ -334,9 +344,12 @@ class DeploymentManager {
       log.info('Monitoring enabled for 30 minutes');
 
       // Start monitoring
-      setTimeout(() => {
-        this.checkCanaryHealth();
-      }, 30 * 60 * 1000); // 30 minutes
+      setTimeout(
+        () => {
+          this.checkCanaryHealth();
+        },
+        30 * 60 * 1000
+      ); // 30 minutes
 
       return true;
     } catch (error) {
@@ -380,7 +393,7 @@ class DeploymentManager {
       errorRate: 0.1, // 0.1% error rate
       responseTime: 120, // 120ms average
       userSatisfaction: 4.8, // 4.8/5 rating
-      throughput: 1000 // requests per minute
+      throughput: 1000, // requests per minute
     };
 
     log.info(`Error rate: ${metrics.errorRate}%`);
@@ -414,8 +427,8 @@ class ABTestManager {
           trafficPercentage: 50,
           config: {
             urlStructure: 'fragments',
-            redirectsEnabled: false
-          }
+            redirectsEnabled: false,
+          },
         },
         treatment: {
           name: 'Direct URLs',
@@ -423,19 +436,19 @@ class ABTestManager {
           trafficPercentage: 50,
           config: {
             urlStructure: 'direct',
-            redirectsEnabled: true
-          }
-        }
+            redirectsEnabled: true,
+          },
+        },
       },
       targetMetrics: [
         'page-load-time',
         'bounce-rate',
         'user-engagement',
         'navigation-success',
-        'error-rate'
+        'error-rate',
       ],
       duration: 14, // 14 days
-      status: 'draft'
+      status: 'draft',
     };
 
     this.activeTests.set(testId, testConfig);
@@ -466,9 +479,12 @@ class ABTestManager {
     log.info(`Test will run for ${test.duration} days`);
 
     // Schedule test completion
-    setTimeout(() => {
-      this.completeABTest(testId);
-    }, test.duration * 24 * 60 * 60 * 1000);
+    setTimeout(
+      () => {
+        this.completeABTest(testId);
+      },
+      test.duration * 24 * 60 * 60 * 1000
+    );
 
     return true;
   }
@@ -486,17 +502,17 @@ class ABTestManager {
         bounceRate: 0.35,
         userEngagement: 0.65,
         navigationSuccess: 0.89,
-        errorRate: 0.02
+        errorRate: 0.02,
       },
       treatment: {
         pageLoadTime: 1.8,
         bounceRate: 0.28,
         userEngagement: 0.72,
         navigationSuccess: 0.94,
-        errorRate: 0.01
+        errorRate: 0.01,
       },
       significance: 0.95,
-      winner: 'treatment' as const
+      winner: 'treatment' as const,
     };
 
     test.results = results;
@@ -579,7 +595,9 @@ class MonitoringManager {
     }
 
     if (options.verbose) {
-      console.info(`\r📊 Error: ${errorRate.toFixed(2)}% | Response: ${responseTime.toFixed(0)}ms | Satisfaction: ${userSatisfaction.toFixed(2)}/5`);
+      console.info(
+        `\r📊 Error: ${errorRate.toFixed(2)}% | Response: ${responseTime.toFixed(0)}ms | Satisfaction: ${userSatisfaction.toFixed(2)}/5`
+      );
     }
   }
 
@@ -639,7 +657,7 @@ class URLStructureManager {
       ['/docs/api/utils#toarray', '/docs/api/utils/toarray'],
       ['/docs/api/utils#toobject', '/docs/api/utils/toobject'],
       ['/docs/api/utils#jsonparse', '/docs/api/utils/jsonparse'],
-      ['/docs/api/utils#jsonstringify', '/docs/api/utils/jsonstringify']
+      ['/docs/api/utils#jsonstringify', '/docs/api/utils/jsonstringify'],
     ];
 
     fragmentToDirect.forEach(([fragment, direct]) => {
@@ -696,9 +714,7 @@ async function main() {
       if (options.json) {
         log.json({ flags });
       }
-    }
-
-    else if (options.enable) {
+    } else if (options.enable) {
       const flagId = args[args.indexOf('--enable') + 1];
       if (!flagId) {
         log.error('Please specify a feature flag to enable');
@@ -711,9 +727,7 @@ async function main() {
       if (options.canary) {
         await deploymentManager.deployToCanary(featureFlagManager);
       }
-    }
-
-    else if (options.disable) {
+    } else if (options.disable) {
       const flagId = args[args.indexOf('--disable') + 1];
       if (!flagId) {
         log.error('Please specify a feature flag to disable');
@@ -722,34 +736,22 @@ async function main() {
 
       await featureFlagManager.disableFlag(flagId);
       await featureFlagManager.saveFlags();
-    }
-
-    else if (options.canary) {
+    } else if (options.canary) {
       await deploymentManager.deployToCanary(featureFlagManager);
-    }
-
-    else if (options.rollback) {
+    } else if (options.rollback) {
       await deploymentManager.rollback(featureFlagManager);
       await featureFlagManager.saveFlags();
-    }
-
-    else if (options.abTest) {
+    } else if (options.abTest) {
       const testId = await abTestManager.createABTest();
       await abTestManager.startABTest(testId, featureFlagManager);
-    }
-
-    else if (options.monitor) {
+    } else if (options.monitor) {
       await monitoringManager.startMonitoring();
-    }
-
-    else if (options.deploy) {
+    } else if (options.deploy) {
       const targetGroup = args[args.indexOf('--deploy') + 1] || 'all';
       log.info(`Deploying to group: ${targetGroup}`);
       await featureFlagManager.enableFlag('direct-urls-enabled', 100, [targetGroup]);
       await featureFlagManager.saveFlags();
-    }
-
-    else {
+    } else {
       log.section('📋 Available Actions');
       console.info('Feature Flags:');
       console.info('  --enable [flag]        Enable a feature flag');
@@ -782,7 +784,6 @@ async function main() {
         console.info('...(truncated)');
       }
     }
-
   } catch (error: any) {
     log.error(`Error: ${error.message}`);
     if (options.verbose) {

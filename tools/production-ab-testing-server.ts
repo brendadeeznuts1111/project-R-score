@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 // tools/production-ab-testing-server.ts — Production-ready A/B testing server
 
-import { serve } from "bun";
+import { serve } from 'bun';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -13,68 +13,68 @@ import { serve } from "bun";
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { ABTestManager } from "@fw/ab-testing";
+import { ABTestManager } from '@fw/ab-testing';
 
 // Global test configuration
 function configureTests(manager: ABTestManager) {
   // Test 1: URL Structure (50/50 split)
   manager.registerTest({
-    id: "url_structure",
-    variants: ["direct", "fragments"],
+    id: 'url_structure',
+    variants: ['direct', 'fragments'],
     weights: [50, 50],
-    cookieName: "url_test",
+    cookieName: 'url_test',
     maxAgeDays: 30,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
   });
 
   // Test 2: Documentation Layout (60/40 favoring new layout)
   manager.registerTest({
-    id: "doc_layout",
-    variants: ["sidebar", "topnav"],
+    id: 'doc_layout',
+    variants: ['sidebar', 'topnav'],
     weights: [60, 40],
-    cookieName: "layout_test",
+    cookieName: 'layout_test',
     maxAgeDays: 14,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
   });
 
   // Test 3: Call-to-Action Color (3-way split)
   manager.registerTest({
-    id: "cta_color",
-    variants: ["blue", "green", "orange"],
+    id: 'cta_color',
+    variants: ['blue', 'green', 'orange'],
     weights: [34, 33, 33], // Must sum to 100
-    cookieName: "cta_test",
+    cookieName: 'cta_test',
     maxAgeDays: 7,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
   });
 
   // Test 4: Content Density (weighted toward balanced)
   manager.registerTest({
-    id: "content_density",
-    variants: ["compact", "balanced", "spacious"],
+    id: 'content_density',
+    variants: ['compact', 'balanced', 'spacious'],
     weights: [20, 60, 20],
-    cookieName: "density_test",
+    cookieName: 'density_test',
     maxAgeDays: 21,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
   });
 
   // Test 5: Pricing Display (A/B test with different strategies)
   manager.registerTest({
-    id: "pricing_display",
-    variants: ["monthly", "annual", "lifetime"],
+    id: 'pricing_display',
+    variants: ['monthly', 'annual', 'lifetime'],
     weights: [70, 25, 5], // Heavily favor monthly
-    cookieName: "pricing_test",
+    cookieName: 'pricing_test',
     maxAgeDays: 90,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    httpOnly: true
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    httpOnly: true,
   });
 }
 
@@ -82,109 +82,122 @@ function configureTests(manager: ABTestManager) {
 const contentConfigs = {
   url_structure: {
     direct: {
-      title: "Direct URLs - Modern & Clean",
-      description: "Experience our streamlined direct URL structure with enhanced SEO and navigation",
+      title: 'Direct URLs - Modern & Clean',
+      description:
+        'Experience our streamlined direct URL structure with enhanced SEO and navigation',
       features: [
-        "Clean URLs like /docs/api/utils/readfile",
-        "Better search engine optimization",
-        "Improved bookmarking and sharing",
-        "Enhanced user navigation experience"
+        'Clean URLs like /docs/api/utils/readfile',
+        'Better search engine optimization',
+        'Improved bookmarking and sharing',
+        'Enhanced user navigation experience',
       ],
-      color: "#3b82f6",
-      example: "/docs/api/utils/readfile"
+      color: '#3b82f6',
+      example: '/docs/api/utils/readfile',
     },
     fragments: {
-      title: "Fragment URLs - Classic & Reliable",
-      description: "Continue with our proven fragment-based URL structure for consistency",
+      title: 'Fragment URLs - Classic & Reliable',
+      description: 'Continue with our proven fragment-based URL structure for consistency',
       features: [
-        "Traditional URLs like /docs/api/utils#readfile",
-        "Single-page navigation experience",
-        "Consistent with existing documentation",
-        "Familiar to current users"
+        'Traditional URLs like /docs/api/utils#readfile',
+        'Single-page navigation experience',
+        'Consistent with existing documentation',
+        'Familiar to current users',
       ],
-      color: "#22c55e",
-      example: "/docs/api/utils#readfile"
-    }
+      color: '#22c55e',
+      example: '/docs/api/utils#readfile',
+    },
   },
   doc_layout: {
     sidebar: {
-      title: "Sidebar Navigation",
-      description: "Traditional sidebar layout with hierarchical navigation",
-      features: ["Expandable tree view", "Quick section access", "Hierarchical organization"]
+      title: 'Sidebar Navigation',
+      description: 'Traditional sidebar layout with hierarchical navigation',
+      features: ['Expandable tree view', 'Quick section access', 'Hierarchical organization'],
     },
     topnav: {
-      title: "Top Navigation Bar",
-      description: "Modern horizontal navigation with dropdown menus",
-      features: ["Clean header design", "More content space", "Dropdown menus"]
-    }
+      title: 'Top Navigation Bar',
+      description: 'Modern horizontal navigation with dropdown menus',
+      features: ['Clean header design', 'More content space', 'Dropdown menus'],
+    },
   },
   cta_color: {
     blue: {
-      title: "Blue Action Buttons",
-      color: "#3b82f6",
-      description: "Professional blue call-to-action buttons"
+      title: 'Blue Action Buttons',
+      color: '#3b82f6',
+      description: 'Professional blue call-to-action buttons',
     },
     green: {
-      title: "Green Action Buttons",
-      color: "#22c55e",
-      description: "Friendly green call-to-action buttons"
+      title: 'Green Action Buttons',
+      color: '#22c55e',
+      description: 'Friendly green call-to-action buttons',
     },
     orange: {
-      title: "Orange Action Buttons",
-      color: "#f97316",
-      description: "Energetic orange call-to-action buttons"
-    }
+      title: 'Orange Action Buttons',
+      color: '#f97316',
+      description: 'Energetic orange call-to-action buttons',
+    },
   },
   content_density: {
     compact: {
-      title: "Compact Layout",
-      description: "Information-dense layout optimized for power users",
-      padding: "12px",
-      fontSize: "14px"
+      title: 'Compact Layout',
+      description: 'Information-dense layout optimized for power users',
+      padding: '12px',
+      fontSize: '14px',
     },
     balanced: {
-      title: "Balanced Layout",
-      description: "Optimal balance of content and whitespace",
-      padding: "20px",
-      fontSize: "16px"
+      title: 'Balanced Layout',
+      description: 'Optimal balance of content and whitespace',
+      padding: '20px',
+      fontSize: '16px',
     },
     spacious: {
-      title: "Spacious Layout",
-      description: "Clean, breathable layout with ample whitespace",
-      padding: "32px",
-      fontSize: "18px"
-    }
+      title: 'Spacious Layout',
+      description: 'Clean, breathable layout with ample whitespace',
+      padding: '32px',
+      fontSize: '18px',
+    },
   },
   pricing_display: {
     monthly: {
-      title: "Monthly Pricing",
-      description: "Display monthly subscription pricing",
-      features: ["Lower upfront cost", "Flexible commitment", "Easy cancellation"]
+      title: 'Monthly Pricing',
+      description: 'Display monthly subscription pricing',
+      features: ['Lower upfront cost', 'Flexible commitment', 'Easy cancellation'],
     },
     annual: {
-      title: "Annual Pricing",
-      description: "Display annual subscription pricing with discount",
-      features: ["20% discount", "Single payment", "Priority support"]
+      title: 'Annual Pricing',
+      description: 'Display annual subscription pricing with discount',
+      features: ['20% discount', 'Single payment', 'Priority support'],
     },
     lifetime: {
-      title: "Lifetime Access",
-      description: "Display one-time lifetime access pricing",
-      features: ["Pay once, use forever", "All future updates", "Premium support"]
-    }
-  }
+      title: 'Lifetime Access',
+      description: 'Display one-time lifetime access pricing',
+      features: ['Pay once, use forever', 'All future updates', 'Premium support'],
+    },
+  },
 };
 
 // Metrics tracking
 const metrics = {
   url_structure: { direct: { views: 0, clicks: 0 }, fragments: { views: 0, clicks: 0 } },
   doc_layout: { sidebar: { views: 0, clicks: 0 }, topnav: { views: 0, clicks: 0 } },
-  cta_color: { blue: { views: 0, clicks: 0 }, green: { views: 0, clicks: 0 }, orange: { views: 0, clicks: 0 } },
-  content_density: { compact: { views: 0, clicks: 0 }, balanced: { views: 0, clicks: 0 }, spacious: { views: 0, clicks: 0 } },
-  pricing_display: { monthly: { views: 0, clicks: 0 }, annual: { views: 0, clicks: 0 }, lifetime: { views: 0, clicks: 0 } }
+  cta_color: {
+    blue: { views: 0, clicks: 0 },
+    green: { views: 0, clicks: 0 },
+    orange: { views: 0, clicks: 0 },
+  },
+  content_density: {
+    compact: { views: 0, clicks: 0 },
+    balanced: { views: 0, clicks: 0 },
+    spacious: { views: 0, clicks: 0 },
+  },
+  pricing_display: {
+    monthly: { views: 0, clicks: 0 },
+    annual: { views: 0, clicks: 0 },
+    lifetime: { views: 0, clicks: 0 },
+  },
 };
 
 // Track metrics
-function trackMetric(testId: string, variant: string, action: "view" | "click") {
+function trackMetric(testId: string, variant: string, action: 'view' | 'click') {
   if (metrics[testId] && metrics[testId][variant]) {
     metrics[testId][variant][action]++;
     console.info(`📊 ${testId}/${variant}: ${action} (${metrics[testId][variant][action]} total)`);
@@ -193,11 +206,11 @@ function trackMetric(testId: string, variant: string, action: "view" | "click") 
 
 // Generate comprehensive test page
 function generateTestPage(assignments: Record<string, string>): string {
-  const urlVariant = assignments.url_structure || "direct";
-  const layoutVariant = assignments.doc_layout || "sidebar";
-  const ctaVariant = assignments.cta_color || "blue";
-  const densityVariant = assignments.content_density || "balanced";
-  const pricingVariant = assignments.pricing_display || "monthly";
+  const urlVariant = assignments.url_structure || 'direct';
+  const layoutVariant = assignments.doc_layout || 'sidebar';
+  const ctaVariant = assignments.cta_color || 'blue';
+  const densityVariant = assignments.content_density || 'balanced';
+  const pricingVariant = assignments.pricing_display || 'monthly';
 
   const urlConfig = contentConfigs.url_structure[urlVariant];
   const layoutConfig = contentConfigs.doc_layout[layoutVariant];
@@ -537,12 +550,16 @@ function generateTestPage(assignments: Record<string, string>): string {
                 <div class="variant-badge">${pricingVariant.toUpperCase()}</div>
                 <p>${pricingConfig.description}</p>
                 <div class="pricing-features">
-                    ${pricingConfig.features.map(feature => `
+                    ${pricingConfig.features
+                      .map(
+                        feature => `
                         <div class="pricing-feature">
                             <h5>${feature.split(':')[0]}</h5>
                             <p>${feature.split(':').slice(1).join(':')}</p>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
 
@@ -555,29 +572,41 @@ function generateTestPage(assignments: Record<string, string>): string {
             <div class="assignments">
                 <h3>🎲 Your Test Assignments</h3>
                 <div class="assignment-grid">
-                    ${Object.entries(assignments).map(([testId, variant]) => `
+                    ${Object.entries(assignments)
+                      .map(
+                        ([testId, variant]) => `
                         <div class="assignment-item">
                             <span class="test-name">${testId.replace(/_/g, ' ').toUpperCase()}</span>
                             <span class="variant-name">${variant.toUpperCase()}</span>
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
 
             <div class="metrics">
                 <h3>📊 Live Metrics</h3>
                 <div class="metrics-grid">
-                    ${Object.entries(metrics).map(([testId, testMetrics]) => `
+                    ${Object.entries(metrics)
+                      .map(
+                        ([testId, testMetrics]) => `
                         <div class="metric-test">
                             <h4>${testId.replace(/_/g, ' ').toUpperCase()}</h4>
-                            ${Object.entries(testMetrics).map(([variant, variantMetrics]) => `
+                            ${Object.entries(testMetrics)
+                              .map(
+                                ([variant, variantMetrics]) => `
                                 <div class="metric-item">
                                     <span>${variant}:</span>
                                     <span>${variantMetrics.views}v / ${variantMetrics.clicks}c (${variantMetrics.views > 0 ? ((variantMetrics.clicks / variantMetrics.views) * 100).toFixed(1) : '0.0'}%)</span>
                                 </div>
-                            `).join('')}
+                            `
+                              )
+                              .join('')}
                         </div>
-                    `).join('')}
+                    `
+                      )
+                      .join('')}
                 </div>
             </div>
 
@@ -673,9 +702,15 @@ function generateAdminDashboard(): string {
                 </div>
                 <div class="summary-item">
                     <div class="summary-value">${(() => {
-                        const totalViews = Object.values(metrics).reduce((sum, test) => sum + Object.values(test).reduce((s, v) => s + v.views, 0), 0);
-                        const totalClicks = Object.values(metrics).reduce((sum, test) => sum + Object.values(test).reduce((s, v) => s + v.clicks, 0), 0);
-                        return totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
+                      const totalViews = Object.values(metrics).reduce(
+                        (sum, test) => sum + Object.values(test).reduce((s, v) => s + v.views, 0),
+                        0
+                      );
+                      const totalClicks = Object.values(metrics).reduce(
+                        (sum, test) => sum + Object.values(test).reduce((s, v) => s + v.clicks, 0),
+                        0
+                      );
+                      return totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
                     })()}%</div>
                     <div class="summary-label">Overall CTR</div>
                 </div>
@@ -683,17 +718,26 @@ function generateAdminDashboard(): string {
         </div>
 
         <div class="test-grid">
-            ${Object.entries(metrics).map(([testId, testMetrics]) => {
-              const totalViews = Object.values(testMetrics).reduce((sum, v) => sum + v.views, 0);
-              const totalClicks = Object.values(testMetrics).reduce((sum, v) => sum + v.clicks, 0);
-              const overallCTR = totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
+            ${Object.entries(metrics)
+              .map(([testId, testMetrics]) => {
+                const totalViews = Object.values(testMetrics).reduce((sum, v) => sum + v.views, 0);
+                const totalClicks = Object.values(testMetrics).reduce(
+                  (sum, v) => sum + v.clicks,
+                  0
+                );
+                const overallCTR =
+                  totalViews > 0 ? ((totalClicks / totalViews) * 100).toFixed(1) : '0.0';
 
-              return `
+                return `
                 <div class="test-card">
                     <h3>${testId.replace(/_/g, ' ').toUpperCase()}</h3>
-                    ${Object.entries(testMetrics).map(([variant, variantMetrics]) => {
-                      const ctr = variantMetrics.views > 0 ? ((variantMetrics.clicks / variantMetrics.views) * 100).toFixed(1) : '0.0';
-                      return `
+                    ${Object.entries(testMetrics)
+                      .map(([variant, variantMetrics]) => {
+                        const ctr =
+                          variantMetrics.views > 0
+                            ? ((variantMetrics.clicks / variantMetrics.views) * 100).toFixed(1)
+                            : '0.0';
+                        return `
                         <div class="variant">
                             <div class="variant-name">${variant.toUpperCase()}</div>
                             <div class="metrics">
@@ -706,13 +750,15 @@ function generateAdminDashboard(): string {
                             </div>
                         </div>
                       `;
-                    }).join('')}
+                      })
+                      .join('')}
                     <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
                         <strong>Overall: ${overallCTR}% CTR</strong>
                     </div>
                 </div>
               `;
-            }).join('')}
+              })
+              .join('')}
         </div>
 
         <div class="controls">
@@ -759,20 +805,20 @@ const server = serve({
 
     try {
       // Create ABTestManager for this request
-      const cookieHeader = req.headers.get("cookie");
+      const cookieHeader = req.headers.get('cookie');
       const abManager = new ABTestManager(cookieHeader);
 
       // Configure tests (in production, this would be done once globally)
       configureTests(abManager);
 
       // Main test page
-      if (url.pathname === "/" && req.method === "GET") {
+      if (url.pathname === '/' && req.method === 'GET') {
         // Get all assignments for this user
         const assignments = abManager.getAllAssignments();
 
         // Track views for all assigned tests
         Object.entries(assignments).forEach(([testId, variant]) => {
-          trackMetric(testId, variant, "view");
+          trackMetric(testId, variant, 'view');
         });
 
         // Get response headers (including cookies)
@@ -782,29 +828,29 @@ const server = serve({
         const html = generateTestPage(assignments);
 
         const headers: Record<string, string> = {
-          "Content-Type": "text/html",
-          "Cache-Control": "no-cache, no-store, must-revalidate"
+          'Content-Type': 'text/html',
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
         };
 
         // Add cookie headers
         if (cookieHeaders.length > 0) {
-          headers["Set-Cookie"] = cookieHeaders.join(", ");
+          headers['Set-Cookie'] = cookieHeaders.join(', ');
         }
 
         return new Response(html, { headers });
       }
 
       // Metrics tracking
-      if (url.pathname === "/track" && req.method === "POST") {
+      if (url.pathname === '/track' && req.method === 'POST') {
         const body = await req.json();
 
-        if (body.action === "view") {
+        if (body.action === 'view') {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
-            trackMetric(testId, variant, "view");
+            trackMetric(testId, variant, 'view');
           });
-        } else if (body.action === "click") {
+        } else if (body.action === 'click') {
           Object.entries(body.assignments).forEach(([testId, variant]) => {
-            trackMetric(testId, variant, "click");
+            trackMetric(testId, variant, 'click');
           });
         }
 
@@ -812,30 +858,36 @@ const server = serve({
       }
 
       // Admin dashboard
-      if (url.pathname === "/admin" && req.method === "GET") {
+      if (url.pathname === '/admin' && req.method === 'GET') {
         const html = generateAdminDashboard();
         return new Response(html, {
-          headers: { "Content-Type": "text/html" }
+          headers: { 'Content-Type': 'text/html' },
         });
       }
 
       // API endpoints
-      if (url.pathname === "/api/metrics" && req.method === "GET") {
+      if (url.pathname === '/api/metrics' && req.method === 'GET') {
         return Response.json({
           timestamp: new Date().toISOString(),
           metrics,
           summary: {
             totalTests: Object.keys(metrics).length,
-            totalViews: Object.values(metrics).reduce((sum, test) => sum + Object.values(test).reduce((s, v) => s + v.views, 0), 0),
-            totalClicks: Object.values(metrics).reduce((sum, test) => sum + Object.values(test).reduce((s, v) => s + v.clicks, 0), 0)
-          }
+            totalViews: Object.values(metrics).reduce(
+              (sum, test) => sum + Object.values(test).reduce((s, v) => s + v.views, 0),
+              0
+            ),
+            totalClicks: Object.values(metrics).reduce(
+              (sum, test) => sum + Object.values(test).reduce((s, v) => s + v.clicks, 0),
+              0
+            ),
+          },
         });
       }
 
       // Force assignment endpoint
-      if (url.pathname.startsWith("/force/") && req.method === "POST") {
-        const [, testId, variant] = url.pathname.split("/");
-        const cookieHeader = req.headers.get("cookie");
+      if (url.pathname.startsWith('/force/') && req.method === 'POST') {
+        const [, testId, variant] = url.pathname.split('/');
+        const cookieHeader = req.headers.get('cookie');
         const testAbManager = new ABTestManager(cookieHeader);
 
         try {
@@ -843,24 +895,30 @@ const server = serve({
           testAbManager.forceAssign(testId, variant);
           const cookieHeaders = testAbManager.getSetCookieHeaders();
 
-          return Response.json({
-            success: true,
-            message: `Forced ${testId} = ${variant}`
-          }, {
-            headers: cookieHeaders.length > 0 ? { "Set-Cookie": cookieHeaders.join(", ") } : {}
-          });
+          return Response.json(
+            {
+              success: true,
+              message: `Forced ${testId} = ${variant}`,
+            },
+            {
+              headers: cookieHeaders.length > 0 ? { 'Set-Cookie': cookieHeaders.join(', ') } : {},
+            }
+          );
         } catch (error) {
-          return Response.json({
-            success: false,
-            error: error.message
-          }, { status: 400 });
+          return Response.json(
+            {
+              success: false,
+              error: error.message,
+            },
+            { status: 400 }
+          );
         }
       }
 
       // Clear assignment endpoint
-      if (url.pathname.startsWith("/clear/") && req.method === "POST") {
-        const [, testId] = url.pathname.split("/");
-        const cookieHeader = req.headers.get("cookie");
+      if (url.pathname.startsWith('/clear/') && req.method === 'POST') {
+        const [, testId] = url.pathname.split('/');
+        const cookieHeader = req.headers.get('cookie');
         const testAbManager = new ABTestManager(cookieHeader);
 
         configureTests(testAbManager);
@@ -868,48 +926,59 @@ const server = serve({
 
         return Response.json({
           success: true,
-          message: `Cleared ${testId || 'all'} assignments`
+          message: `Cleared ${testId || 'all'} assignments`,
         });
       }
 
       // Reset metrics
-      if (url.pathname === "/reset" && req.method === "POST") {
+      if (url.pathname === '/reset' && req.method === 'POST') {
         Object.keys(metrics).forEach(testId => {
           Object.keys(metrics[testId as keyof typeof metrics]).forEach(variant => {
-            metrics[testId as keyof typeof metrics][variant as keyof typeof metrics[typeof testId]] = { views: 0, clicks: 0 };
+            metrics[testId as keyof typeof metrics][
+              variant as keyof (typeof metrics)[typeof testId]
+            ] = { views: 0, clicks: 0 };
           });
         });
 
-        return Response.json({ success: true, message: "All metrics reset" });
+        return Response.json({ success: true, message: 'All metrics reset' });
       }
 
-      return new Response("Not found", { status: 404 });
-
+      return new Response('Not found', { status: 404 });
     } catch (error) {
-      console.error("Server error:", error);
-      return Response.json({
-        error: "Internal server error",
-        message: error.message
-      }, { status: 500 });
+      console.error('Server error:', error);
+      return Response.json(
+        {
+          error: 'Internal server error',
+          message: error.message,
+        },
+        { status: 500 }
+      );
     }
   },
 });
 
-const PRODUCTION_AB_TESTING_HOST = process.env.PRODUCTION_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
-console.info(`🧪 Production A/B Testing Server running on http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}`);
-console.info(`📊 Admin Dashboard: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/admin`);
-console.info(`📈 Metrics API: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/api/metrics`);
-console.info("🎲 Force assignment: POST /force/{testId}/{variant}");
-console.info("🗑️ Clear assignment: POST /clear/{testId}");
-console.info("");
-console.info("Active Tests:");
-console.info("  • url_structure: direct vs fragments (50/50)");
-console.info("  • doc_layout: sidebar vs topnav (60/40)");
-console.info("  • cta_color: blue vs green vs orange (34/33/33)");
-console.info("  • content_density: compact vs balanced vs spacious (20/60/20)");
-console.info("  • pricing_display: monthly vs annual vs lifetime (70/25/5)");
-console.info("");
-console.info("✅ Strict weight validation enforced (must sum to 100)");
+const PRODUCTION_AB_TESTING_HOST =
+  process.env.PRODUCTION_AB_TESTING_HOST || process.env.SERVER_HOST || 'localhost';
+console.info(
+  `🧪 Production A/B Testing Server running on http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}`
+);
+console.info(
+  `📊 Admin Dashboard: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/admin`
+);
+console.info(
+  `📈 Metrics API: http://${PRODUCTION_AB_TESTING_HOST}:${PRODUCTION_AB_TESTING_PORT}/api/metrics`
+);
+console.info('🎲 Force assignment: POST /force/{testId}/{variant}');
+console.info('🗑️ Clear assignment: POST /clear/{testId}');
+console.info('');
+console.info('Active Tests:');
+console.info('  • url_structure: direct vs fragments (50/50)');
+console.info('  • doc_layout: sidebar vs topnav (60/40)');
+console.info('  • cta_color: blue vs green vs orange (34/33/33)');
+console.info('  • content_density: compact vs balanced vs spacious (20/60/20)');
+console.info('  • pricing_display: monthly vs annual vs lifetime (70/25/5)');
+console.info('');
+console.info('✅ Strict weight validation enforced (must sum to 100)');
 
 /**
  * 💡 Performance Tip: For better performance, consider:

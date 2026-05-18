@@ -2,7 +2,7 @@
 
 /**
  * Context Run Server - Enhanced CLI Execution with Context
- * 
+ *
  * Provides HTTP endpoints for executing CLI commands with context
  * using the official Bun CLI Native Integration v3.15
  */
@@ -55,88 +55,92 @@ async function executeWithContext(
 ): Promise<ContextSession> {
   const sessionId = crypto.randomUUID();
   const cacheKey = JSON.stringify({ commandParts, options });
-  
+
   // Check cache first
   if (options.useCache && commandCache.has(cacheKey)) {
     const cached = commandCache.get(cacheKey)!;
     console.info(c.blue(`📦 Cache hit for: ${commandParts.join(' ')}`));
     return { ...cached, id: sessionId };
   }
-  
+
   const session: ContextSession = {
     id: sessionId,
     command: commandParts[0] || '',
     args: commandParts.slice(1),
     options,
     startTime: Date.now(),
-    status: 'running'
+    status: 'running',
   };
-  
+
   contextSessions.set(sessionId, session);
-  
+
   try {
     console.info(c.cyan(`🚀 Context Run: ${commandParts.join(' ')}`));
     console.info(c.gray(`   Options: ${JSON.stringify(options, null, 2)}`));
-    
+
     // Build CLI arguments with context flags
     const cliArgs = [...commandParts];
-    
+
     // Add context flags
     if (options.cwd) {
       cliArgs.unshift('--cwd', options.cwd);
     }
-    
+
     if (options.envFile?.length) {
       options.envFile.forEach(envFile => {
         cliArgs.unshift('--env-file', envFile);
       });
     }
-    
+
     if (options.config) {
       cliArgs.unshift('--config', options.config);
     }
-    
+
     // Execute with timeout
-    const timeoutPromise = options.timeout ? new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error(`Command timed out after ${options.timeout}ms`)), options.timeout);
-    }) : null;
-    
+    const timeoutPromise = options.timeout
+      ? new Promise<never>((_, reject) => {
+          setTimeout(
+            () => reject(new Error(`Command timed out after ${options.timeout}ms`)),
+            options.timeout
+          );
+        })
+      : null;
+
     const executionPromise = executeBunCLI(cliArgs, { captureOutput: true });
-    
-    const cliSession = timeoutPromise 
+
+    const cliSession = timeoutPromise
       ? await Promise.race([executionPromise, timeoutPromise])
       : await executionPromise;
-    
+
     // Update session with results
     session.status = cliSession.status === 'error' ? 'error' : 'completed';
     session.durationMs = cliSession.durationMs;
     session.output = cliSession.output;
     session.error = cliSession.error;
     session.exitCode = cliSession.exitCode;
-    
+
     // Cache successful results
     if (options.useCache && session.status === 'completed') {
       commandCache.set(cacheKey, { ...session });
-      
+
       // Limit cache size
       if (commandCache.size > 100) {
         const firstKey = commandCache.keys().next().value;
         commandCache.delete(firstKey);
       }
     }
-    
+
     console.info(c.green(`✅ Context Run completed: ${session.command}`));
     console.info(c.gray(`   Duration: ${session.durationMs}ms, Exit Code: ${session.exitCode}`));
-    
   } catch (error) {
     session.status = error.message.includes('timed out') ? 'timeout' : 'error';
     session.error = String(error);
     session.durationMs = Date.now() - session.startTime;
-    
+
     console.info(c.red(`❌ Context Run failed: ${session.command}`));
     console.info(c.red(`   Error: ${session.error}`));
   }
-  
+
   return session;
 }
 
@@ -146,129 +150,134 @@ async function executeWithContext(
 function startContextRunServer(port: number = 3002): void {
   console.info(c.bold('🌐 Context Run Server - Starting'));
   console.info(c.gray(`Port: ${port} | Cache: Enabled | Timeout: 30s\n`));
-  
+
   const server = serve({
     port,
     async fetch(req) {
       const url = new URL(req.url);
-      
+
       // CORS headers
       const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
         'Access-Control-Allow-Headers': 'Content-Type',
       };
-      
+
       if (req.method === 'OPTIONS') {
         return new Response(null, { headers: corsHeaders });
       }
-      
+
       try {
         // Context run endpoint
         if (url.pathname === '/context-run' && req.method === 'GET') {
           const cmd = url.searchParams.get('cmd');
           if (!cmd) {
             return Response.json(
-              { error: 'Missing cmd parameter' }, 
+              { error: 'Missing cmd parameter' },
               { status: 400, headers: corsHeaders }
             );
           }
-          
+
           const options: ContextRunOptions = {
             cwd: url.searchParams.get('cwd') || undefined,
             envFile: url.searchParams.getAll('env-file'),
             config: url.searchParams.get('config') || undefined,
             useCache: url.searchParams.get('cache') !== 'false',
-            timeout: parseInt(url.searchParams.get('timeout') || '30000')
+            timeout: parseInt(url.searchParams.get('timeout') || '30000'),
           };
-          
+
           const session = await executeWithContext(cmd.split(' '), options);
-          
-          return Response.json(session, { 
-            headers: { 
+
+          return Response.json(session, {
+            headers: {
               ...corsHeaders,
-              'Content-Type': 'application/json'
-            } 
+              'Content-Type': 'application/json',
+            },
           });
         }
-        
+
         // List sessions endpoint
         if (url.pathname === '/sessions' && req.method === 'GET') {
           const sessions = Array.from(contextSessions.values());
-          return Response.json({ 
-            sessions: sessions.map(s => ({
-              id: s.id,
-              command: s.command,
-              args: s.args,
-              status: s.status,
-              durationMs: s.durationMs,
-              exitCode: s.exitCode,
-              startTime: s.startTime
-            }))
-          }, { headers: corsHeaders });
+          return Response.json(
+            {
+              sessions: sessions.map(s => ({
+                id: s.id,
+                command: s.command,
+                args: s.args,
+                status: s.status,
+                durationMs: s.durationMs,
+                exitCode: s.exitCode,
+                startTime: s.startTime,
+              })),
+            },
+            { headers: corsHeaders }
+          );
         }
-        
+
         // Get session details endpoint
         if (url.pathname.startsWith('/session/') && req.method === 'GET') {
           const sessionId = url.pathname.split('/')[2];
           const session = contextSessions.get(sessionId);
-          
+
           if (!session) {
             return Response.json(
-              { error: 'Session not found' }, 
+              { error: 'Session not found' },
               { status: 404, headers: corsHeaders }
             );
           }
-          
+
           return Response.json(session, { headers: corsHeaders });
         }
-        
+
         // Clear cache endpoint
         if (url.pathname === '/cache/clear' && req.method === 'POST') {
           const cacheSize = commandCache.size;
           commandCache.clear();
-          return Response.json({ 
-            message: `Cleared ${cacheSize} cached commands` 
-          }, { headers: corsHeaders });
+          return Response.json(
+            {
+              message: `Cleared ${cacheSize} cached commands`,
+            },
+            { headers: corsHeaders }
+          );
         }
-        
+
         // Health check endpoint
         if (url.pathname === '/health' && req.method === 'GET') {
-          return Response.json({
-            status: 'healthy',
-            uptime: Date.now(),
-            activeSessions: contextSessions.size,
-            cacheSize: commandCache.size,
-            version: 'v3.15'
-          }, { headers: corsHeaders });
+          return Response.json(
+            {
+              status: 'healthy',
+              uptime: Date.now(),
+              activeSessions: contextSessions.size,
+              cacheSize: commandCache.size,
+              version: 'v3.15',
+            },
+            { headers: corsHeaders }
+          );
         }
-        
+
         // Dashboard endpoint
         if (url.pathname === '/' && req.method === 'GET') {
           return new Response(getDashboardHTML(), {
-            headers: { 
+            headers: {
               ...corsHeaders,
-              'Content-Type': 'text/html'
-            }
+              'Content-Type': 'text/html',
+            },
           });
         }
-        
+
         // 404 for unknown endpoints
         return Response.json(
-          { error: 'Endpoint not found' }, 
+          { error: 'Endpoint not found' },
           { status: 404, headers: corsHeaders }
         );
-        
       } catch (error) {
         console.error(c.red(`Server error: ${error}`));
-        return Response.json(
-          { error: String(error) }, 
-          { status: 500, headers: corsHeaders }
-        );
+        return Response.json({ error: String(error) }, { status: 500, headers: corsHeaders });
       }
-    }
+    },
   });
-  
+
   console.info(c.green(`✅ Context Run Server running on http://localhost:${port}`));
   console.info(c.cyan(`📊 Dashboard: http://localhost:${port}`));
   console.info(c.yellow(`🔗 API: http://localhost:${port}/context-run?cmd=<command>&cwd=<dir>`));

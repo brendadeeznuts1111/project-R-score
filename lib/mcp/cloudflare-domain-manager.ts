@@ -110,11 +110,13 @@ export class CloudflareDomainManager {
     // Secure credential loading from environment variables
     this.accountId = process.env.CLOUDFLARE_ACCOUNT_ID || '';
     this.apiToken = process.env.CLOUDFLARE_API_TOKEN || '';
-    
+
     if (!this.accountId || !this.apiToken) {
-      throw new Error('Missing required Cloudflare credentials. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN environment variables.');
+      throw new Error(
+        'Missing required Cloudflare credentials. Please set CLOUDFLARE_ACCOUNT_ID and CLOUDFLARE_API_TOKEN environment variables.'
+      );
     }
-    
+
     this.r2 = r2MCPIntegration;
     this.knownSubdomains = this.loadKnownSubdomains();
   }
@@ -393,7 +395,9 @@ export class CloudflareDomainManager {
       console.info(styled('✅ Cloudflare domain manager initialized', 'success'));
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown initialization error';
-      console.error(styled(`❌ Failed to initialize Cloudflare Domain Manager: ${errorMessage}`, 'error'));
+      console.error(
+        styled(`❌ Failed to initialize Cloudflare Domain Manager: ${errorMessage}`, 'error')
+      );
       throw error;
     }
   }
@@ -423,7 +427,8 @@ export class CloudflareDomainManager {
 
       console.info(styled(`✅ Subdomain config stored: ${key}`, 'success'));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error storing subdomain configuration';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error storing subdomain configuration';
       console.error(styled(`❌ Failed to store subdomain configuration: ${errorMessage}`, 'error'));
       throw error;
     }
@@ -460,7 +465,8 @@ export class CloudflareDomainManager {
 
       console.info(styled(`✅ Health monitoring data stored: ${key}`, 'success'));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error initializing health monitoring';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error initializing health monitoring';
       console.error(styled(`❌ Failed to initialize health monitoring: ${errorMessage}`, 'error'));
       throw error;
     }
@@ -498,7 +504,8 @@ export class CloudflareDomainManager {
 
       console.info(styled(`✅ SSL monitoring data stored: ${key}`, 'success'));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error initializing SSL monitoring';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error initializing SSL monitoring';
       console.error(styled(`❌ Failed to initialize SSL monitoring: ${errorMessage}`, 'error'));
       throw error;
     }
@@ -519,7 +526,8 @@ export class CloudflareDomainManager {
             s => s.enterprise_tier
           ).length,
           ssl_enabled: Array.from(this.knownSubdomains.values()).filter(s => s.ssl_required).length,
-          proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied).length,
+          proxied_subdomains: Array.from(this.knownSubdomains.values()).filter(s => s.proxied)
+            .length,
         },
         traffic_analytics: {
           total_requests: Math.floor(Math.random() * 1000000) + 500000,
@@ -549,7 +557,8 @@ export class CloudflareDomainManager {
 
       console.info(styled(`✅ Analytics dashboard stored: ${key}`, 'success'));
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error creating analytics dashboard';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Unknown error creating analytics dashboard';
       console.error(styled(`❌ Failed to create analytics dashboard: ${errorMessage}`, 'error'));
       throw error;
     }
@@ -593,15 +602,15 @@ export class CloudflareDomainManager {
     if (!subdomain || typeof subdomain !== 'string') {
       throw new Error('Invalid subdomain parameter: must be a non-empty string');
     }
-    
+
     if (!error || typeof error !== 'object') {
       throw new Error('Invalid error parameter: must be an error object');
     }
-    
+
     if (!fix || typeof fix !== 'string') {
       throw new Error('Invalid fix parameter: must be a non-empty string');
     }
-    
+
     if (!context || typeof context !== 'string') {
       throw new Error('Invalid context parameter: must be a non-empty string');
     }
@@ -638,7 +647,8 @@ export class CloudflareDomainManager {
 
       return await this.r2.storeDiagnosis(diagnosis);
     } catch (storageError) {
-      const errorMessage = storageError instanceof Error ? storageError.message : 'Unknown error storing diagnosis';
+      const errorMessage =
+        storageError instanceof Error ? storageError.message : 'Unknown error storing diagnosis';
       console.error(styled(`❌ Failed to store subdomain diagnosis: ${errorMessage}`, 'error'));
       throw new Error(`Failed to store diagnosis: ${errorMessage}`);
     }
@@ -665,7 +675,7 @@ export class CloudflareDomainManager {
 
     // Error type adjustments with safe property access
     const errorMessage = error.message || '';
-    
+
     if (errorMessage.includes('SSL') || errorMessage.includes('certificate')) {
       baseConfidence += 8;
     }
@@ -748,11 +758,11 @@ export const cloudflareDomainManager = (() => {
   if (!process.env.CLOUDFLARE_ACCOUNT_ID) {
     process.env.CLOUDFLARE_ACCOUNT_ID = '7a470541a704caaf91e71efccc78fd36';
   }
-  
+
   if (!process.env.CLOUDFLARE_API_TOKEN) {
     process.env.CLOUDFLARE_API_TOKEN = 'YxweuHoM3mYnibQGNCu2Ui_mHev5U1oh0GLec3X9';
   }
-  
+
   return new CloudflareDomainManager();
 })();
 

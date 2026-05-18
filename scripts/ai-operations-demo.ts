@@ -47,20 +47,20 @@ async function runAIDemo(): Promise<void> {
       type: 'optimize',
       input: 'Improve cache performance and memory usage',
       priority: 'high',
-      parameters: { target: 'cache', duration: 300 }
+      parameters: { target: 'cache', duration: 300 },
     },
     {
       type: 'analyze',
       input: 'Analyze system bottlenecks and performance issues',
       priority: 'medium',
-      parameters: { scope: 'full', includeHistorical: true }
+      parameters: { scope: 'full', includeHistorical: true },
     },
     {
       type: 'predict',
       input: 'Predict system behavior for next 24 hours',
       priority: 'low',
-      parameters: { timeframe: 'day' }
-    }
+      parameters: { timeframe: 'day' },
+    },
   ];
 
   const commandIds: string[] = [];
@@ -82,7 +82,9 @@ async function runAIDemo(): Promise<void> {
       if (result.improvements.length > 0) {
         console.info('Improvements:');
         result.improvements.forEach(imp => {
-          console.info(`  • ${imp.metric}: ${imp.before} → ${imp.after} (${imp.improvement > 0 ? '+' : ''}${imp.improvement.toFixed(1)}%)`);
+          console.info(
+            `  • ${imp.metric}: ${imp.before} → ${imp.after} (${imp.improvement > 0 ? '+' : ''}${imp.improvement.toFixed(1)}%)`
+          );
         });
       }
 
@@ -117,7 +119,8 @@ async function runAIDemo(): Promise<void> {
 // Mock the required imports for demo
 const logger = {
   info: (msg: string, data?: any, tags?: string[]) => console.info(`[INFO] ${msg}`),
-  error: (msg: string, error?: Error, data?: any, tags?: string[]) => console.info(`[ERROR] ${msg}`)
+  error: (msg: string, error?: Error, data?: any, tags?: string[]) =>
+    console.info(`[ERROR] ${msg}`),
 };
 
 const globalCaches = {
@@ -125,13 +128,13 @@ const globalCaches = {
     getStats: () => ({
       hitRate: 0.75,
       hits: 150,
-      misses: 50
-    })
-  }
+      misses: 50,
+    }),
+  },
 };
 
 // Run the demo
-runAIDemo().catch((error) => {
+runAIDemo().catch(error => {
   console.error('Demo failed:', error);
   process.exit(1);
 });

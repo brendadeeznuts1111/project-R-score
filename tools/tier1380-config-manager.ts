@@ -1,9 +1,9 @@
 #!/usr/bin/env bun
 // tools/tier1380-config-manager.ts — Configuration manager for A/B tests and system settings
 
-import { writeFileSync, readFileSync, existsSync } from "fs";
-import { validateConfig, COMMON_SCHEMAS } from "../lib/utils/config-validator";
-import { logger } from "../lib/utils/logger";
+import { writeFileSync, readFileSync, existsSync } from 'fs';
+import { validateConfig, COMMON_SCHEMAS } from '../lib/utils/config-validator';
+import { logger } from '../lib/utils/logger';
 
 /**
  * 🚀 Prefetch Optimizations
@@ -15,7 +15,7 @@ import { logger } from "../lib/utils/logger";
  *
  * Generated automatically by optimize-examples-prefetch.ts
  */
-import { join } from "path";
+import { join } from 'path';
 
 interface ABTestConfig {
   [testName: string]: {
@@ -59,7 +59,7 @@ export class Tier1380ConfigManager {
   private configPath: string;
   private config: CompleteConfig;
 
-  constructor(configPath: string = "./config/tier1380-config.json") {
+  constructor(configPath: string = './config/tier1380-config.json') {
     this.configPath = configPath;
     this.config = this.loadOrCreateConfig();
   }
@@ -70,7 +70,7 @@ export class Tier1380ConfigManager {
   private loadOrCreateConfig(): CompleteConfig {
     if (existsSync(this.configPath)) {
       try {
-        const data = readFileSync(this.configPath, "utf-8");
+        const data = readFileSync(this.configPath, 'utf-8');
         return JSON.parse(data);
       } catch (error: unknown) {
         console.warn(`⚠️ Could not load config from ${this.configPath}, creating new one`);
@@ -87,37 +87,37 @@ export class Tier1380ConfigManager {
     return {
       abTests: {
         url_structure: {
-          variants: ["direct", "fragments"],
+          variants: ['direct', 'fragments'],
           weights: [50, 50],
-          enabled: true
+          enabled: true,
         },
         doc_layout: {
-          variants: ["sidebar", "topnav"],
+          variants: ['sidebar', 'topnav'],
           weights: [60, 40],
-          enabled: true
+          enabled: true,
         },
         cta_color: {
-          variants: ["blue", "green", "orange"],
+          variants: ['blue', 'green', 'orange'],
           weights: [34, 33, 33],
-          enabled: true
+          enabled: true,
         },
         content_density: {
-          variants: ["compact", "balanced", "spacious"],
+          variants: ['compact', 'balanced', 'spacious'],
           weights: [20, 60, 20],
-          enabled: true
-        }
+          enabled: true,
+        },
       },
       tier1380: {
-        r2Bucket: "scanner-cookies",
-        publicApiUrl: "https://api.tier1380.com",
-        variant: "enhanced-live",
+        r2Bucket: 'scanner-cookies',
+        publicApiUrl: 'https://api.tier1380.com',
+        variant: 'enhanced-live',
         cacheEnabled: true,
         cacheTTL: 300000, // 5 minutes
         compressionLevel: 3,
-        environment: "development"
+        environment: 'development',
       },
       snapshot: null,
-      lastUpdated: new Date().toISOString()
+      lastUpdated: new Date().toISOString(),
     };
   }
 
@@ -125,8 +125,8 @@ export class Tier1380ConfigManager {
    * Load configuration from environment variables
    */
   loadFromEnvironment(): boolean {
-    logger.info("Loading configuration from environment variables", {
-      module: 'Tier1380ConfigManager'
+    logger.info('Loading configuration from environment variables', {
+      module: 'Tier1380ConfigManager',
     });
 
     try {
@@ -136,9 +136,13 @@ export class Tier1380ConfigManager {
         publicApiUrl: process.env.TIER1380_PUBLIC_API_URL,
         variant: process.env.TIER1380_VARIANT,
         cacheEnabled: process.env.TIER1380_CACHE_ENABLED,
-        cacheTTL: process.env.TIER1380_CACHE_TTL ? Number(process.env.TIER1380_CACHE_TTL) : undefined,
-        compressionLevel: process.env.TIER1380_COMPRESSION_LEVEL ? Number(process.env.TIER1380_COMPRESSION_LEVEL) : undefined,
-        environment: process.env.NODE_ENV
+        cacheTTL: process.env.TIER1380_CACHE_TTL
+          ? Number(process.env.TIER1380_CACHE_TTL)
+          : undefined,
+        compressionLevel: process.env.TIER1380_COMPRESSION_LEVEL
+          ? Number(process.env.TIER1380_COMPRESSION_LEVEL)
+          : undefined,
+        environment: process.env.NODE_ENV,
       };
 
       const schema = {
@@ -147,26 +151,26 @@ export class Tier1380ConfigManager {
           required: true,
           minLength: 1,
           description: 'R2 bucket name',
-          envVar: 'TIER1380_R2_BUCKET'
+          envVar: 'TIER1380_R2_BUCKET',
         },
         publicApiUrl: {
           type: 'url' as const,
           required: false,
           description: 'Public API URL',
-          envVar: 'TIER1380_PUBLIC_API_URL'
+          envVar: 'TIER1380_PUBLIC_API_URL',
         },
         variant: {
           type: 'string' as const,
           required: false,
           enum: ['development', 'staging', 'production', 'enhanced-live'],
           description: 'Deployment variant',
-          envVar: 'TIER1380_VARIANT'
+          envVar: 'TIER1380_VARIANT',
         },
         cacheEnabled: {
           type: 'boolean' as const,
           required: false,
           description: 'Enable caching',
-          envVar: 'TIER1380_CACHE_ENABLED'
+          envVar: 'TIER1380_CACHE_ENABLED',
         },
         cacheTTL: {
           type: 'number' as const,
@@ -174,7 +178,7 @@ export class Tier1380ConfigManager {
           min: 1000,
           max: 3600000,
           description: 'Cache TTL in milliseconds',
-          envVar: 'TIER1380_CACHE_TTL'
+          envVar: 'TIER1380_CACHE_TTL',
         },
         compressionLevel: {
           type: 'number' as const,
@@ -182,26 +186,26 @@ export class Tier1380ConfigManager {
           min: 1,
           max: 9,
           description: 'Compression level',
-          envVar: 'TIER1380_COMPRESSION_LEVEL'
+          envVar: 'TIER1380_COMPRESSION_LEVEL',
         },
         environment: {
           type: 'string' as const,
           required: false,
           enum: ['development', 'staging', 'production'],
           description: 'Environment',
-          envVar: 'NODE_ENV'
-        }
+          envVar: 'NODE_ENV',
+        },
       };
 
       const validation = validateConfig(envConfig, schema, {
         module: 'Tier1380ConfigManager',
-        environment: envConfig.environment
+        environment: envConfig.environment,
       });
 
       if (!validation.isValid) {
         logger.error('Configuration validation failed', {
           module: 'Tier1380ConfigManager',
-          errors: validation.errors
+          errors: validation.errors,
         });
         return false;
       }
@@ -209,12 +213,16 @@ export class Tier1380ConfigManager {
       // Apply validated configuration
       const validatedConfig = validation.config;
       if (validatedConfig.r2Bucket) this.config.tier1380.r2Bucket = validatedConfig.r2Bucket;
-      if (validatedConfig.publicApiUrl) this.config.tier1380.publicApiUrl = validatedConfig.publicApiUrl;
+      if (validatedConfig.publicApiUrl)
+        this.config.tier1380.publicApiUrl = validatedConfig.publicApiUrl;
       if (validatedConfig.variant) this.config.tier1380.variant = validatedConfig.variant;
-      if (validatedConfig.cacheEnabled !== undefined) this.config.tier1380.cacheEnabled = validatedConfig.cacheEnabled;
+      if (validatedConfig.cacheEnabled !== undefined)
+        this.config.tier1380.cacheEnabled = validatedConfig.cacheEnabled;
       if (validatedConfig.cacheTTL) this.config.tier1380.cacheTTL = validatedConfig.cacheTTL;
-      if (validatedConfig.compressionLevel) this.config.tier1380.compressionLevel = validatedConfig.compressionLevel;
-      if (validatedConfig.environment) this.config.tier1380.environment = validatedConfig.environment;
+      if (validatedConfig.compressionLevel)
+        this.config.tier1380.compressionLevel = validatedConfig.compressionLevel;
+      if (validatedConfig.environment)
+        this.config.tier1380.environment = validatedConfig.environment;
 
       // Load A/B test configurations
       const abTestPattern = /^public_ab_test_(.+)$/;
@@ -227,12 +235,12 @@ export class Tier1380ConfigManager {
           if (config) {
             this.config.abTests[testName] = {
               ...config,
-              enabled: true
+              enabled: true,
             };
             logger.info(`Loaded A/B test configuration`, {
               module: 'Tier1380ConfigManager',
               testName,
-              variants: config.variants
+              variants: config.variants,
             });
           }
         }
@@ -244,16 +252,15 @@ export class Tier1380ConfigManager {
           r2Bucket: this.config.tier1380.r2Bucket,
           variant: this.config.tier1380.variant,
           environment: this.config.tier1380.environment,
-          cacheEnabled: this.config.tier1380.cacheEnabled
-        }
+          cacheEnabled: this.config.tier1380.cacheEnabled,
+        },
       });
 
       return true;
-
     } catch (error) {
       logger.error('Failed to load configuration from environment', {
         module: 'Tier1380ConfigManager',
-        error
+        error,
       });
       return false;
     }
@@ -262,14 +269,16 @@ export class Tier1380ConfigManager {
   /**
    * Parse A/B test configuration from environment variable string
    */
-  private parseABTestConfig(configString: string): { variants: string[]; weights: number[] } | null {
+  private parseABTestConfig(
+    configString: string
+  ): { variants: string[]; weights: number[] } | null {
     try {
-      const parts = configString.split(",");
+      const parts = configString.split(',');
       const variants: string[] = [];
       const weights: number[] = [];
 
       for (const part of parts) {
-        const [variant, weightStr] = part.split(":");
+        const [variant, weightStr] = part.split(':');
         if (!variant || !weightStr) {
           console.warn(`⚠️ Invalid config part: ${part}`);
           return null;
@@ -305,22 +314,22 @@ export class Tier1380ConfigManager {
    */
   updateSnapshotMetadata(snapshotResponse: any): void {
     this.config.snapshot = {
-      tier: snapshotResponse.metadata?.tier || "1380-enhanced",
+      tier: snapshotResponse.metadata?.tier || '1380-enhanced',
       environment: snapshotResponse.metadata?.environment || this.config.tier1380.environment,
       variant: snapshotResponse.metadata?.variant || this.config.tier1380.variant,
-      cacheHit: snapshotResponse.cacheHit?.toString() || "false",
-      checksum: snapshotResponse.checksum || "",
-      compressionRatio: snapshotResponse.compressionRatio || "0",
-      compressionLevel: snapshotResponse.metadata?.["compression-level"] || "3",
-      headersCount: snapshotResponse.metadata?.["headers-count"] || "0",
-      cookiesCount: snapshotResponse.metadata?.["cookies-count"] || "0",
-      abTestsCount: snapshotResponse.metadata?.["ab-tests-count"] || "0"
+      cacheHit: snapshotResponse.cacheHit?.toString() || 'false',
+      checksum: snapshotResponse.checksum || '',
+      compressionRatio: snapshotResponse.compressionRatio || '0',
+      compressionLevel: snapshotResponse.metadata?.['compression-level'] || '3',
+      headersCount: snapshotResponse.metadata?.['headers-count'] || '0',
+      cookiesCount: snapshotResponse.metadata?.['cookies-count'] || '0',
+      abTestsCount: snapshotResponse.metadata?.['ab-tests-count'] || '0',
     };
 
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
 
-    console.info("📸 Updated snapshot metadata:");
+    console.info('📸 Updated snapshot metadata:');
     console.info(`   Key: ${snapshotResponse.key}`);
     console.info(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
     console.info(`   Compression: ${this.config.snapshot.compressionRatio}%`);
@@ -355,38 +364,41 @@ export class Tier1380ConfigManager {
 
     // Validate Tier-1380 configuration
     if (!this.config.tier1380.r2Bucket) {
-      errors.push("Tier-1380: R2 bucket not configured");
+      errors.push('Tier-1380: R2 bucket not configured');
     }
 
     if (!this.config.tier1380.publicApiUrl) {
-      errors.push("Tier-1380: Public API URL not configured");
+      errors.push('Tier-1380: Public API URL not configured');
     }
 
     if (!this.config.tier1380.variant) {
-      errors.push("Tier-1380: Variant not configured");
+      errors.push('Tier-1380: Variant not configured');
     }
 
     if (this.config.tier1380.cacheTTL <= 0) {
-      errors.push("Tier-1380: Cache TTL must be positive");
+      errors.push('Tier-1380: Cache TTL must be positive');
     }
 
     if (this.config.tier1380.compressionLevel < 0 || this.config.tier1380.compressionLevel > 9) {
-      errors.push("Tier-1380: Compression level must be 0-9");
+      errors.push('Tier-1380: Compression level must be 0-9');
     }
 
     // Warnings
-    if (this.config.tier1380.environment === "production" && this.config.tier1380.cacheTTL < 60000) {
-      warnings.push("Production environment: Consider longer cache TTL (>= 60s)");
+    if (
+      this.config.tier1380.environment === 'production' &&
+      this.config.tier1380.cacheTTL < 60000
+    ) {
+      warnings.push('Production environment: Consider longer cache TTL (>= 60s)');
     }
 
     if (this.config.tier1380.compressionLevel > 6) {
-      warnings.push("High compression level may impact performance");
+      warnings.push('High compression level may impact performance');
     }
 
     return {
       valid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -395,27 +407,27 @@ export class Tier1380ConfigManager {
    */
   generateEnvScript(): string {
     const lines: string[] = [
-      "#!/bin/bash",
-      "# FactoryWager Tier-1380 Environment Configuration",
-      "# Generated on " + new Date().toISOString(),
-      ""
+      '#!/bin/bash',
+      '# FactoryWager Tier-1380 Environment Configuration',
+      '# Generated on ' + new Date().toISOString(),
+      '',
     ];
 
     // A/B test configurations
-    lines.push("# A/B Test Configuration");
+    lines.push('# A/B Test Configuration');
     for (const [testName, testConfig] of Object.entries(this.config.abTests)) {
       if (testConfig.enabled) {
-        const configString = testConfig.variants.map((variant, i) =>
-          `${variant}:${testConfig.weights[i]}`
-        ).join(",");
+        const configString = testConfig.variants
+          .map((variant, i) => `${variant}:${testConfig.weights[i]}`)
+          .join(',');
         lines.push(`export public_ab_test_${testName}="${configString}"`);
       }
     }
 
-    lines.push("");
+    lines.push('');
 
     // Tier-1380 configuration
-    lines.push("# Enhanced System Configuration");
+    lines.push('# Enhanced System Configuration');
     lines.push(`export R2_BUCKET="${this.config.tier1380.r2Bucket}"`);
     lines.push(`export PUBLIC_API_URL="${this.config.tier1380.publicApiUrl}"`);
     lines.push(`export TIER1380_VARIANT="${this.config.tier1380.variant}"`);
@@ -424,7 +436,7 @@ export class Tier1380ConfigManager {
     lines.push(`export TIER1380_COMPRESSION_LEVEL="${this.config.tier1380.compressionLevel}"`);
     lines.push(`export NODE_ENV="${this.config.tier1380.environment}"`);
 
-    return lines.join("\n");
+    return lines.join('\n');
   }
 
   /**
@@ -432,10 +444,10 @@ export class Tier1380ConfigManager {
    */
   private saveConfig(): void {
     try {
-      const configDir = this.configPath.substring(0, this.configPath.lastIndexOf("/"));
+      const configDir = this.configPath.substring(0, this.configPath.lastIndexOf('/'));
       if (!existsSync(configDir)) {
         // Create directory if it doesn't exist
-        Bun.write(configDir + "/.gitkeep", "");
+        Bun.write(configDir + '/.gitkeep', '');
       }
 
       writeFileSync(this.configPath, JSON.stringify(this.config, null, 2));
@@ -456,7 +468,12 @@ export class Tier1380ConfigManager {
   /**
    * Update A/B test configuration
    */
-  updateABTest(testName: string, variants: string[], weights: number[], enabled: boolean = true): void {
+  updateABTest(
+    testName: string,
+    variants: string[],
+    weights: number[],
+    enabled: boolean = true
+  ): void {
     this.config.abTests[testName] = { variants, weights, enabled };
     this.config.lastUpdated = new Date().toISOString();
     this.saveConfig();
@@ -477,29 +494,33 @@ export class Tier1380ConfigManager {
    * Display configuration summary
    */
   displaySummary(): void {
-    console.info("\n🏭 FactoryWager Tier-1380 Configuration Summary");
-    console.info("=".repeat(50));
+    console.info('\n🏭 FactoryWager Tier-1380 Configuration Summary');
+    console.info('='.repeat(50));
 
     // A/B Tests
-    console.info("\n🧪 A/B Tests:");
+    console.info('\n🧪 A/B Tests:');
     for (const [testName, testConfig] of Object.entries(this.config.abTests)) {
-      const status = testConfig.enabled ? "✅" : "❌";
+      const status = testConfig.enabled ? '✅' : '❌';
       const weightSum = testConfig.weights.reduce((a, b) => a + b, 0);
-      console.info(`   ${status} ${testName}: ${testConfig.variants.join(", ")} (${testConfig.weights.join("/")}) - Sum: ${weightSum}%`);
+      console.info(
+        `   ${status} ${testName}: ${testConfig.variants.join(', ')} (${testConfig.weights.join('/')}) - Sum: ${weightSum}%`
+      );
     }
 
     // Tier-1380 Configuration
-    console.info("\n⚙️ Tier-1380 Configuration:");
+    console.info('\n⚙️ Tier-1380 Configuration:');
     console.info(`   R2 Bucket: ${this.config.tier1380.r2Bucket}`);
     console.info(`   API URL: ${this.config.tier1380.publicApiUrl}`);
     console.info(`   Variant: ${this.config.tier1380.variant}`);
-    console.info(`   Cache: ${this.config.tier1380.cacheEnabled ? "enabled" : "disabled"} (${this.config.tier1380.cacheTTL}ms)`);
+    console.info(
+      `   Cache: ${this.config.tier1380.cacheEnabled ? 'enabled' : 'disabled'} (${this.config.tier1380.cacheTTL}ms)`
+    );
     console.info(`   Compression: Level ${this.config.tier1380.compressionLevel}`);
     console.info(`   Environment: ${this.config.tier1380.environment}`);
 
     // Snapshot Metadata
     if (this.config.snapshot) {
-      console.info("\n📸 Last Snapshot:");
+      console.info('\n📸 Last Snapshot:');
       console.info(`   Tier: ${this.config.snapshot.tier}`);
       console.info(`   Cache Hit: ${this.config.snapshot.cacheHit}`);
       console.info(`   Compression: ${this.config.snapshot.compressionRatio}%`);
@@ -515,8 +536,8 @@ export class Tier1380ConfigManager {
   exportForDeployment(): { environment: string[]; config: CompleteConfig } {
     const envScript = this.generateEnvScript();
     return {
-      environment: envScript.split("\n"),
-      config: this.getConfig()
+      environment: envScript.split('\n'),
+      config: this.getConfig(),
     };
   }
 }
@@ -527,63 +548,63 @@ if (import.meta.path === Bun.main) {
   const command = process.argv[2];
 
   switch (command) {
-    case "load":
+    case 'load':
       manager.loadFromEnvironment();
       break;
 
-    case "validate":
+    case 'validate':
       const validation = manager.validateConfig();
-      console.info(`Validation: ${validation.valid ? "✅ PASSED" : "❌ FAILED"}`);
+      console.info(`Validation: ${validation.valid ? '✅ PASSED' : '❌ FAILED'}`);
       if (validation.errors.length > 0) {
-        console.info("\nErrors:");
+        console.info('\nErrors:');
         validation.errors.forEach(error => console.info(`   ❌ ${error}`));
       }
       if (validation.warnings.length > 0) {
-        console.info("\nWarnings:");
+        console.info('\nWarnings:');
         validation.warnings.forEach(warning => console.info(`   ⚠️ ${warning}`));
       }
       break;
 
-    case "summary":
+    case 'summary':
       manager.displaySummary();
       break;
 
-    case "export":
+    case 'export':
       const exported = manager.exportForDeployment();
-      console.info("📦 Environment Export:");
-      console.info(exported.environment.join("\n"));
+      console.info('📦 Environment Export:');
+      console.info(exported.environment.join('\n'));
       break;
 
-    case "update-snapshot":
+    case 'update-snapshot':
       // Example: Update with sample snapshot response
       const sampleSnapshot = {
         success: true,
-        key: "snapshots/enhanced-live-2024-02-04.tier1380.zst",
+        key: 'snapshots/enhanced-live-2024-02-04.tier1380.zst',
         cacheHit: true,
-        checksum: "5b6e38b626c6690077fa1dbccd347fbebc0d3d77",
-        compressionRatio: "57.4",
+        checksum: '5b6e38b626c6690077fa1dbccd347fbebc0d3d77',
+        compressionRatio: '57.4',
         metadata: {
-          tier: "1380-enhanced",
-          environment: "production",
-          variant: "enhanced-live",
-          "cache-hit": "true",
-          "compression-level": "3",
-          "headers-count": "3",
-          "cookies-count": "3",
-          "ab-tests-count": "4",
-          "compression-ratio": "57.4"
-        }
+          tier: '1380-enhanced',
+          environment: 'production',
+          variant: 'enhanced-live',
+          'cache-hit': 'true',
+          'compression-level': '3',
+          'headers-count': '3',
+          'cookies-count': '3',
+          'ab-tests-count': '4',
+          'compression-ratio': '57.4',
+        },
       };
       manager.updateSnapshotMetadata(sampleSnapshot);
       break;
 
     default:
-      console.info("Usage:");
-      console.info("  bun tier1380-config-manager.ts load        - Load from environment");
-      console.info("  bun tier1380-config-manager.ts validate    - Validate configuration");
-      console.info("  bun tier1380-config-manager.ts summary     - Display summary");
-      console.info("  bun tier1380-config-manager.ts export      - Export environment");
-      console.info("  bun tier1380-config-manager.ts update-snapshot - Update with sample");
+      console.info('Usage:');
+      console.info('  bun tier1380-config-manager.ts load        - Load from environment');
+      console.info('  bun tier1380-config-manager.ts validate    - Validate configuration');
+      console.info('  bun tier1380-config-manager.ts summary     - Display summary');
+      console.info('  bun tier1380-config-manager.ts export      - Export environment');
+      console.info('  bun tier1380-config-manager.ts update-snapshot - Update with sample');
       break;
   }
 }

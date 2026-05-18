@@ -15,9 +15,9 @@ import { secrets } from 'bun';
 type SecretApiMode = 'legacy-manager' | 'service-name';
 
 function getArgValue(name: string): string {
-  const direct = Bun.argv.find((arg) => arg.startsWith(`${name}=`));
+  const direct = Bun.argv.find(arg => arg.startsWith(`${name}=`));
   if (direct) return direct.slice(name.length + 1);
-  const idx = Bun.argv.findIndex((arg) => arg === name);
+  const idx = Bun.argv.findIndex(arg => arg === name);
   if (idx >= 0 && idx + 1 < Bun.argv.length) return Bun.argv[idx + 1];
   return '';
 }
@@ -45,8 +45,14 @@ async function getCurrentAndTarget(
     const current = await versionedManager.getWithVersion(key);
     const target = await versionedManager.getWithVersion(key, targetVersion);
     return {
-      current: { value: String(current.value ?? ''), version: String(current.version ?? 'current') },
-      target: { value: String(target.value ?? ''), version: String(target.version ?? targetVersion) },
+      current: {
+        value: String(current.value ?? ''),
+        version: String(current.version ?? 'current'),
+      },
+      target: {
+        value: String(target.value ?? ''),
+        version: String(target.version ?? targetVersion),
+      },
     };
   }
 
@@ -70,7 +76,9 @@ async function main() {
   const service = getArgValue('--service') || process.env.BUN_SECRETS_SERVICE || 'default';
 
   if (!key || !targetVersion) {
-    console.info(styled('❌ Usage: test-rollback.ts <key> <version> [--dry-run] [--force]', 'error'));
+    console.info(
+      styled('❌ Usage: test-rollback.ts <key> <version> [--dry-run] [--force]', 'error')
+    );
     process.exit(1);
   }
 
@@ -117,7 +125,9 @@ async function main() {
       similarity: current.value === target.value ? 1 : 0,
     };
     console.info(styled('🔍 Change Analysis:', 'accent'));
-    console.info(styled(`   Changed: ${diff.changed ? 'Yes' : 'No'}`, diff.changed ? 'warning' : 'success'));
+    console.info(
+      styled(`   Changed: ${diff.changed ? 'Yes' : 'No'}`, diff.changed ? 'warning' : 'success')
+    );
     if (diff.changed) {
       console.info(styled(`   Length change: ${diff.lengthChange} characters`, 'muted'));
       console.info(styled(`   Similarity: ${(diff.similarity * 100).toFixed(1)}%`, 'muted'));
@@ -128,11 +138,11 @@ async function main() {
     console.info(styled('🧪 Testing Rollback:', 'accent'));
     const rollbackResult =
       mode === 'legacy-manager'
-        ? await versionedManager.rollback(
-            key,
-            targetVersion,
-            { confirm: !force, reason: 'Testing rollback procedure', dryRun }
-          )
+        ? await versionedManager.rollback(key, targetVersion, {
+            confirm: !force,
+            reason: 'Testing rollback procedure',
+            dryRun,
+          })
         : dryRun
           ? {
               success: true,
@@ -162,7 +172,12 @@ async function main() {
       console.info(styled('❌ Rollback cancelled by user', 'muted'));
     } else {
       console.info(styled('✅ Rollback test completed', 'success'));
-      console.info(styled(`   Success: ${rollbackResult.success}`, rollbackResult.success ? 'success' : 'error'));
+      console.info(
+        styled(
+          `   Success: ${rollbackResult.success}`,
+          rollbackResult.success ? 'success' : 'error'
+        )
+      );
       console.info(styled(`   Dry run: ${rollbackResult.dryRun}`, 'muted'));
       console.info(styled(`   From: ${rollbackResult.from}`, 'muted'));
       console.info(styled(`   To: ${rollbackResult.to}`, 'primary'));
@@ -193,7 +208,6 @@ async function main() {
     console.info(styled('📖 Documentation:', 'accent'));
     console.info(styled('   https://bun.com/docs/runtime/secrets/rollback', 'primary'));
     console.info(styled('   https://factorywager.com/docs/secrets/testing', 'primary'));
-
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(styled(`❌ Rollback test failed: ${message}`, 'error'));

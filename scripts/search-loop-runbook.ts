@@ -36,7 +36,9 @@ async function main(): Promise<void> {
   lines.push('# Search Loop Runbook');
   lines.push('');
   lines.push('## Intent');
-  lines.push('- Keep the local search loop decisionable from CLI to dashboard signal without manual data stitching.');
+  lines.push(
+    '- Keep the local search loop decisionable from CLI to dashboard signal without manual data stitching.'
+  );
   lines.push('- Canonical KPI is searchable LOC coverage.');
   lines.push('- Soft-gate warnings are visible, never hard-failing commands.');
   lines.push('');
@@ -63,15 +65,29 @@ async function main(): Promise<void> {
   lines.push('');
   lines.push('## Common Failure Patterns');
   lines.push('- Missing same-pack baseline: run the same pack twice before judging trend deltas.');
-  lines.push('- Missing coverage artifact: run `search:coverage:loc:wide` before status generation.');
-  lines.push('- Dashboard drift: snapshot id/warnings mismatch between loop-status and loaded latest.');
-  lines.push('- Latency warning with stable quality: likely runtime contention or warm-up variance.');
+  lines.push(
+    '- Missing coverage artifact: run `search:coverage:loc:wide` before status generation.'
+  );
+  lines.push(
+    '- Dashboard drift: snapshot id/warnings mismatch between loop-status and loaded latest.'
+  );
+  lines.push(
+    '- Latency warning with stable quality: likely runtime contention or warm-up variance.'
+  );
   lines.push('');
   lines.push('## Next Action Matrix');
-  lines.push('- If `latency_p95_warn`: rerun warm-up + snapshot and inspect CPU profile (`search:bench:snapshot:core:wide:profile`).');
-  lines.push('- If `heap_peak_warn` or `rss_peak_warn`: run heap profile markdown and inspect retained roots/classes.');
-  lines.push('- If quality/slop warnings: run cleanup report and isolate noisy families before moving more modules.');
-  lines.push('- If dashboard parity fail: regenerate loop status and reload dashboard local latest.');
+  lines.push(
+    '- If `latency_p95_warn`: rerun warm-up + snapshot and inspect CPU profile (`search:bench:snapshot:core:wide:profile`).'
+  );
+  lines.push(
+    '- If `heap_peak_warn` or `rss_peak_warn`: run heap profile markdown and inspect retained roots/classes.'
+  );
+  lines.push(
+    '- If quality/slop warnings: run cleanup report and isolate noisy families before moving more modules.'
+  );
+  lines.push(
+    '- If dashboard parity fail: regenerate loop status and reload dashboard local latest.'
+  );
   lines.push('');
   lines.push('## Current Snapshot');
   lines.push(`- latestSnapshotId: \`${status?.latestSnapshotId || 'n/a'}\``);
@@ -79,7 +95,9 @@ async function main(): Promise<void> {
   lines.push(`- loopClosed: \`${status?.loopClosed ? 'yes' : 'no'}\``);
   lines.push(`- loopClosedReason: ${status?.loopClosedReason || 'n/a'}`);
   lines.push(`- activeWarnings: ${warnings.length > 0 ? warnings.join(', ') : 'none'}`);
-  lines.push(`- coverageLOC: ${status?.coverage?.lines ?? 'n/a'} lines across ${status?.coverage?.files ?? 'n/a'} files`);
+  lines.push(
+    `- coverageLOC: ${status?.coverage?.lines ?? 'n/a'} lines across ${status?.coverage?.files ?? 'n/a'} files`
+  );
   lines.push(`- coverageRoots: ${(status?.coverage?.roots || []).join(', ') || 'n/a'}`);
   lines.push(`- overlapMode: \`${status?.coverage?.overlapMode || 'n/a'}\``);
   lines.push('');
@@ -89,4 +107,3 @@ async function main(): Promise<void> {
 }
 
 await main();
-

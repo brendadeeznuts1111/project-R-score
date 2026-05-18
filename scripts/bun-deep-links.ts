@@ -26,7 +26,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -48,7 +48,10 @@ async function validateDeepLink(url: string): Promise<{ valid: boolean; statusCo
   }
 }
 
-async function createDeepLink(searchText: string, page: string = 'reference'): Promise<DeepLinkResult> {
+async function createDeepLink(
+  searchText: string,
+  page: string = 'reference'
+): Promise<DeepLinkResult> {
   const url = generateDeepLink(searchText, page);
   const validation = await validateDeepLink(url);
 
@@ -58,7 +61,7 @@ async function createDeepLink(searchText: string, page: string = 'reference'): P
     page,
     url,
     valid: validation.valid,
-    statusCode: validation.statusCode
+    statusCode: validation.statusCode,
   };
 }
 
@@ -88,19 +91,19 @@ async function runDeepLinkGenerator(): Promise<void> {
       'ESM',
       'CommonJS',
       'SQLite',
-      'Web APIs'
+      'Web APIs',
     ];
 
-    const results = await Promise.all(
-      popularTerms.map(term => createDeepLink(term, page))
-    );
+    const results = await Promise.all(popularTerms.map(term => createDeepLink(term, page)));
 
     // Display results
     for (const result of results) {
       const statusIcon = result.valid ? '✅' : '❌';
       const statusColor = result.valid ? 'green' : 'red';
 
-      console.info(`${statusIcon} ${colorize(`"${result.searchText}"`, 'cyan')}: ${colorize('valid', statusColor)}`);
+      console.info(
+        `${statusIcon} ${colorize(`"${result.searchText}"`, 'cyan')}: ${colorize('valid', statusColor)}`
+      );
       console.info(`   ${colorize(result.url, 'blue')}`);
 
       if (!result.valid) {
@@ -125,7 +128,6 @@ async function runDeepLinkGenerator(): Promise<void> {
     console.info('• Text fragments work in Chrome, Edge, and Safari');
     console.info('• Links are shareable and bookmarkable');
     console.info('• Use quotes for multi-word searches');
-
   } else {
     console.info(colorize(`\n🔍 Generating deep link for: "${searchText}"`, 'yellow'));
     console.info();
@@ -153,7 +155,9 @@ async function runDeepLinkGenerator(): Promise<void> {
       console.info(colorize('💡 Tip: Click the link above to test it in your browser', 'gray'));
     } else {
       console.info(colorize('⚠️  This text may not exist in the documentation', 'yellow'));
-      console.info(colorize('   Try different wording or check the actual text on the page', 'gray'));
+      console.info(
+        colorize('   Try different wording or check the actual text on the page', 'gray')
+      );
     }
   }
 
@@ -165,7 +169,7 @@ async function runDeepLinkGenerator(): Promise<void> {
 }
 
 // Run the deep link generator
-runDeepLinkGenerator().catch((error) => {
+runDeepLinkGenerator().catch(error => {
   console.error(colorize(`Deep link generation failed: ${error}`, 'red'));
   process.exit(1);
 });

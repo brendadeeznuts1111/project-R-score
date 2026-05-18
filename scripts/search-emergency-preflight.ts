@@ -17,7 +17,10 @@ const STEPS: Step[] = [
   { id: 'search:policy:check', command: ['bun', 'run', 'search:policy:check'] },
   { id: 'search:status:unified:strict', command: ['bun', 'run', 'search:status:unified:strict'] },
   { id: 'search:bench:gate', command: ['bun', 'run', 'search:bench:gate', '--json'] },
-  { id: 'search-dashboard-unified-api.test.ts', command: ['bun', 'test', './tests/search-dashboard-unified-api.test.ts'] },
+  {
+    id: 'search-dashboard-unified-api.test.ts',
+    command: ['bun', 'test', './tests/search-dashboard-unified-api.test.ts'],
+  },
 ];
 
 function fmtDuration(ms: number): string {
@@ -60,7 +63,7 @@ async function main(): Promise<void> {
     }
   }
 
-  const failed = results.find((r) => r.code !== 0) || null;
+  const failed = results.find(r => r.code !== 0) || null;
   console.info('\n[preflight] summary');
   for (const r of results) {
     const status = r.code === 0 ? 'PASS' : `FAIL(${r.code})`;
@@ -77,4 +80,3 @@ async function main(): Promise<void> {
 if (import.meta.main) {
   await main();
 }
-

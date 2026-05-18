@@ -1,11 +1,11 @@
 #!/usr/bin/env bun
 
-import { buildBundleAnalysis, parseArg } from "./lib/bundle-analysis";
+import { buildBundleAnalysis, parseArg } from './lib/bundle-analysis';
 
-const DEFAULT_ENTRY = "scratch/bun-v1.3.9-examples/playground-web/server.ts";
+const DEFAULT_ENTRY = 'scratch/bun-v1.3.9-examples/playground-web/server.ts';
 
 async function main() {
-  const entry = parseArg("entry", DEFAULT_ENTRY);
+  const entry = parseArg('entry', DEFAULT_ENTRY);
   const analysis = await buildBundleAnalysis(entry);
   console.info(JSON.stringify(analysis, null, 2));
 }

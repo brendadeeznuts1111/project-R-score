@@ -49,7 +49,8 @@ export interface OptimizationResult {
 // Mock logger and cache for standalone operation
 const logger = {
   info: (msg: string, data?: any, tags?: string[]) => console.info(`[INFO] ${msg}`),
-  error: (msg: string, error?: Error, data?: any, tags?: string[]) => console.info(`[ERROR] ${msg}`)
+  error: (msg: string, error?: Error, data?: any, tags?: string[]) =>
+    console.info(`[ERROR] ${msg}`),
 };
 
 const globalCaches = {
@@ -57,9 +58,9 @@ const globalCaches = {
     getStats: () => ({
       hitRate: 0.75,
       hits: 150,
-      misses: 50
-    })
-  }
+      misses: 50,
+    }),
+  },
 };
 
 export class AIOperationsManager {
@@ -87,17 +88,21 @@ export class AIOperationsManager {
     const aiCommand: AICommand = {
       ...command,
       id: this.generateId(),
-      timestamp: Date.now()
+      timestamp: Date.now(),
     };
 
     this.commandQueue.push(aiCommand);
     this.commandQueue.sort((a, b) => this.getPriorityScore(b) - this.getPriorityScore(a));
 
-    logger.info('AI command submitted', {
-      commandId: aiCommand.id,
-      type: aiCommand.type,
-      priority: aiCommand.priority
-    }, ['ai', 'operations']);
+    logger.info(
+      'AI command submitted',
+      {
+        commandId: aiCommand.id,
+        type: aiCommand.type,
+        priority: aiCommand.priority,
+      },
+      ['ai', 'operations']
+    );
 
     return aiCommand.id;
   }
@@ -156,10 +161,10 @@ export class AIOperationsManager {
         recommendations: [
           'Increase cache size by 25%',
           'Adjust TTL values based on access patterns',
-          'Implement cache pre-warming strategies'
+          'Implement cache pre-warming strategies',
         ],
         data: { hitRate: cacheStats.hitRate, hits: cacheStats.hits, misses: cacheStats.misses },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -181,10 +186,10 @@ export class AIOperationsManager {
           'Implement memory leak detection',
           'Optimize data structures',
           'Consider increasing heap limit',
-          'Review garbage collection patterns'
+          'Review garbage collection patterns',
         ],
         data: { heapUsed: heapUsedMB, heapTotal: heapTotalMB, ratio: heapUsageRatio },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -202,10 +207,10 @@ export class AIOperationsManager {
           'Enable response caching',
           'Optimize database queries',
           'Implement request batching',
-          'Consider CDN integration'
+          'Consider CDN integration',
         ],
         data: { avgResponseTime, threshold: 100 },
-        timestamp: Date.now()
+        timestamp: Date.now(),
       });
     }
 
@@ -227,22 +232,26 @@ export class AIOperationsManager {
       resource: {
         cpu: this.predictTrend(historicalData.map(d => d.cpu)),
         memory: this.predictTrend(historicalData.map(d => d.memory)),
-        storage: this.predictTrend(historicalData.map(d => d.storage))
+        storage: this.predictTrend(historicalData.map(d => d.storage)),
       },
       performance: {
         responseTime: this.predictTrend(historicalData.map(d => d.responseTime)),
         throughput: this.predictTrend(historicalData.map(d => d.throughput)),
-        errorRate: this.predictTrend(historicalData.map(d => d.errorRate))
+        errorRate: this.predictTrend(historicalData.map(d => d.errorRate)),
       },
-      confidence: 0.75 // Based on data quality and model accuracy
+      confidence: 0.75, // Based on data quality and model accuracy
     };
 
-    logger.info('System prediction generated', {
-      timeframe,
-      confidence: prediction.confidence,
-      resourcePrediction: prediction.resource,
-      performancePrediction: prediction.performance
-    }, ['ai', 'prediction']);
+    logger.info(
+      'System prediction generated',
+      {
+        timeframe,
+        confidence: prediction.confidence,
+        resourcePrediction: prediction.resource,
+        performancePrediction: prediction.performance,
+      },
+      ['ai', 'prediction']
+    );
 
     return prediction;
   }
@@ -258,11 +267,15 @@ export class AIOperationsManager {
       throw new Error(`Command ${commandId} not found`);
     }
 
-    logger.info('Executing AI optimization', {
-      commandId,
-      type: command.type,
-      input: command.input
-    }, ['ai', 'optimization']);
+    logger.info(
+      'Executing AI optimization',
+      {
+        commandId,
+        type: command.type,
+        input: command.input,
+      },
+      ['ai', 'optimization']
+    );
 
     const result: OptimizationResult = {
       commandId,
@@ -270,7 +283,7 @@ export class AIOperationsManager {
       improvements: [],
       insights: [],
       executionTime: 0,
-      resourcesUsed: { cpu: 0, memory: 0, network: 0 }
+      resourcesUsed: { cpu: 0, memory: 0, network: 0 },
     };
 
     try {
@@ -284,17 +297,19 @@ export class AIOperationsManager {
           break;
         case 'predict':
           const prediction = await this.predict(command.parameters?.timeframe || 'day');
-          result.insights = [{
-            id: this.generateId(),
-            type: 'performance',
-            title: 'System Prediction',
-            description: `Predicted system behavior for ${command.parameters?.timeframe || 'day'}`,
-            confidence: prediction.confidence,
-            impact: 'medium',
-            recommendations: this.generateRecommendations(prediction),
-            data: prediction,
-            timestamp: Date.now()
-          }];
+          result.insights = [
+            {
+              id: this.generateId(),
+              type: 'performance',
+              title: 'System Prediction',
+              description: `Predicted system behavior for ${command.parameters?.timeframe || 'day'}`,
+              confidence: prediction.confidence,
+              impact: 'medium',
+              recommendations: this.generateRecommendations(prediction),
+              data: prediction,
+              timestamp: Date.now(),
+            },
+          ];
           break;
         case 'automate':
           result.improvements = await this.performAutomation(command);
@@ -312,18 +327,26 @@ export class AIOperationsManager {
         this.insights = this.insights.slice(-100);
       }
 
-      logger.info('AI optimization completed', {
-        commandId,
-        success: result.success,
-        executionTime: result.executionTime,
-        improvements: result.improvements.length,
-        insights: result.insights.length
-      }, ['ai', 'optimization']);
-
+      logger.info(
+        'AI optimization completed',
+        {
+          commandId,
+          success: result.success,
+          executionTime: result.executionTime,
+          improvements: result.improvements.length,
+          insights: result.insights.length,
+        },
+        ['ai', 'optimization']
+      );
     } catch (error) {
-      logger.error('AI optimization failed', error instanceof Error ? error : new Error(String(error)), {
-        commandId
-      }, ['ai', 'error']);
+      logger.error(
+        'AI optimization failed',
+        error instanceof Error ? error : new Error(String(error)),
+        {
+          commandId,
+        },
+        ['ai', 'error']
+      );
 
       result.executionTime = Date.now() - startTime;
     }
@@ -345,7 +368,10 @@ export class AIOperationsManager {
             await this.executeOptimization(command.id);
           }
         } catch (error) {
-          logger.error('Error processing AI command', error instanceof Error ? error : new Error(String(error)));
+          logger.error(
+            'Error processing AI command',
+            error instanceof Error ? error : new Error(String(error))
+          );
         } finally {
           this.processing = false;
         }
@@ -382,7 +408,7 @@ export class AIOperationsManager {
       storage: 20 + Math.random() * 10,
       responseTime: 50 + Math.random() * 100,
       throughput: 100 + Math.random() * 200,
-      errorRate: Math.random() * 5
+      errorRate: Math.random() * 5,
     }));
   }
 
@@ -414,7 +440,7 @@ export class AIOperationsManager {
     return [
       { metric: 'cache_hit_rate', before: 0.65, after: 0.85, improvement: 30.8 },
       { metric: 'response_time', before: 150, after: 95, improvement: 36.7 },
-      { metric: 'memory_usage', before: 512, after: 384, improvement: 25.0 }
+      { metric: 'memory_usage', before: 512, after: 384, improvement: 25.0 },
     ];
   }
 
@@ -433,7 +459,7 @@ export class AIOperationsManager {
     // Mock automation improvements
     return [
       { metric: 'manual_intervention', before: 10, after: 2, improvement: 80.0 },
-      { metric: 'error_rate', before: 5.2, after: 1.1, improvement: 78.8 }
+      { metric: 'error_rate', before: 5.2, after: 1.1, improvement: 78.8 },
     ];
   }
 

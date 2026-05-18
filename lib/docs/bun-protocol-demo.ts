@@ -8,23 +8,23 @@ const bunFileInfo = {
   protocol: 'bun://',
   capabilities: [
     'Direct file access without HTTP overhead',
-    'Built-in caching and optimization', 
+    'Built-in caching and optimization',
     'Zero-configuration file serving',
     'Seamless integration with Bun ecosystem',
     'Automatic MIME type detection',
-    'Performance optimization'
+    'Performance optimization',
   ],
   dashboard: {
     file: 'zen-dashboard-enhanced.html',
     size: (Bun as any).file('zen-dashboard-enhanced.html').size || 9478,
     type: 'text/html',
-    lastModified: new Date().toISOString()
+    lastModified: new Date().toISOString(),
   },
   usage: {
     direct: 'bun://file/path/to/dashboard.html',
     server: 'bun://localhost:3001/dashboard',
-    local: 'open zen-dashboard-enhanced.html'
-  }
+    local: 'open zen-dashboard-enhanced.html',
+  },
 };
 
 // Save the Bun file info
@@ -32,7 +32,7 @@ const bunFile = (Bun as any).file('bun-protocol-info.json');
 await Bun.write(bunFile, new TextEncoder().encode(JSON.stringify(bunFileInfo, null, 2)));
 
 console.info('🎪 Bun File Protocol Demonstration');
-console.info('=' .repeat(50));
+console.info('='.repeat(50));
 console.info('');
 console.info('📋 Created bun-protocol-info.json with protocol details');
 console.info('🌐 Enhanced dashboard opened in browser');

@@ -1,23 +1,23 @@
 #!/usr/bin/env bun
 /**
  * 🔧 Replace example.com URLs with example.com
- * 
+ *
  * Changes all example.com URLs to use example.com for better portability
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join } from "path";
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
 class LocalhostToExampleConverter {
   private readonly sourceDirectories = ['lib', 'services', 'scripts', 'docs', 'tools'];
   private readonly fileExtensions = ['.ts', '.js', '.md', '.json'];
-  
+
   convertAll(): void {
     console.info('🔄 Converting example.com URLs to example.com...\n');
-    
+
     let totalFiles = 0;
     let totalReplacements = 0;
-    
+
     for (const dir of this.sourceDirectories) {
       try {
         statSync(dir);
@@ -28,11 +28,11 @@ class LocalhostToExampleConverter {
         // Directory doesn't exist, skip it
       }
     }
-    
+
     console.info(`\n🎯 Conversion Summary:`);
     console.info(`   Files processed: ${totalFiles}`);
     console.info(`   Replacements made: ${totalReplacements}`);
-    
+
     if (totalReplacements > 0) {
       console.info('\n✅ Successfully converted example.com URLs to example.com');
       console.info('💡 Next steps:');
@@ -43,17 +43,17 @@ class LocalhostToExampleConverter {
       console.info('\nℹ️  No example.com URLs found to convert');
     }
   }
-  
+
   private convertDirectory(dir: string): { fileCount: number; replacements: number } {
     let fileCount = 0;
     let replacements = 0;
-    
+
     function scanDirectory(currentDir: string): void {
       const entries = readdirSync(currentDir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         const fullPath = join(currentDir, entry.name);
-        
+
         if (entry.isDirectory()) {
           scanDirectory(fullPath);
         } else {
@@ -69,50 +69,50 @@ class LocalhostToExampleConverter {
         }
       }
     }
-    
+
     const self = this;
     scanDirectory = scanDirectory.bind(self);
     scanDirectory(dir);
-    
+
     return { fileCount, replacements };
   }
-  
+
   private convertFile(filePath: string): number {
     try {
       let content = readFileSync(filePath, 'utf8');
       const originalContent = content;
-      
+
       // Replace various example.com patterns
       const replacements = [
         // HTTP example.com with different ports
         {
           pattern: /http:\/\/example.com:[0-9]+/g,
-          replacement: 'http://example.com'
+          replacement: 'http://example.com',
         },
         // HTTPS example.com with different ports
         {
           pattern: /https:\/\/example.com:[0-9]+/g,
-          replacement: 'https://example.com'
+          replacement: 'https://example.com',
         },
         // Plain example.com (shouldn't exist but just in case)
         {
           pattern: /\blocalhost\b/g,
-          replacement: 'example.com'
+          replacement: 'example.com',
         },
         // 127.0.0.1 with ports
         {
           pattern: /http:\/\/127\.0\.0\.1:[0-9]+/g,
-          replacement: 'http://example.com'
+          replacement: 'http://example.com',
         },
         // HTTPS 127.0.0.1 with ports
         {
           pattern: /https:\/\/127\.0\.0\.1:[0-9]+/g,
-          replacement: 'https://example.com'
-        }
+          replacement: 'https://example.com',
+        },
       ];
-      
+
       let totalReplacements = 0;
-      
+
       for (const { pattern, replacement } of replacements) {
         const matches = content.match(pattern);
         if (matches) {
@@ -120,14 +120,13 @@ class LocalhostToExampleConverter {
           totalReplacements += matches.length;
         }
       }
-      
+
       // Only write file if changes were made
       if (content !== originalContent) {
         writeFileSync(filePath, content);
       }
-      
+
       return totalReplacements;
-      
     } catch (error) {
       console.warn(`⚠️  Could not process ${filePath}: ${error.message}`);
       return 0;
@@ -142,14 +141,14 @@ class LocalhostToExampleConverter {
 async function main(): Promise<void> {
   const command = process.argv[2];
   const converter = new LocalhostToExampleConverter();
-  
+
   switch (command) {
     case 'convert':
     case '':
       console.info('🔄 Localhost to Example.com Converter\n');
       converter.convertAll();
       break;
-      
+
     case 'help':
     case '--help':
     case '-h':
@@ -179,7 +178,7 @@ NOTE:
   from documentation and example code.
       `);
       break;
-      
+
     default:
       console.error(`Unknown command: ${command}`);
       console.error('Use "help" for usage information');

@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 /**
  * Payment Webhook Server v2 - WITH PERSONALIZATION ENGINE
- * 
+ *
  * Enhanced with Habits Classification:
  * - Whale detection (>100 txns, >$100 avg)
  * - Auto-bonuses based on user tier
  * - VIP risk override for trusted users
  * - Personalized recommendations
- * 
+ *
  * Flow:
  * User Pays → Webhook → Super-Profile + Habits → Risk + Bonus → Deposit!
  */
@@ -20,7 +20,7 @@ import {
   calculateBonus,
   getRecommendation,
   applyVipRiskOverride,
-  type HabitsData
+  type HabitsData,
 } from '@fw/business';
 
 // ============================================================================
@@ -78,16 +78,14 @@ export type PersonalizedPaymentResult = {
 // ============================================================================
 
 const redis = new Redis(REDIS_URL, {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('error', (err) => console.error('Redis error:', err.message));
+redis.on('error', err => console.error('Redis error:', err.message));
 redis.on('connect', () => console.info('✅ Redis connected'));
 
-const pc = PINECONE_API_KEY
-  ? new Pinecone({ apiKey: PINECONE_API_KEY })
-  : null;
+const pc = PINECONE_API_KEY ? new Pinecone({ apiKey: PINECONE_API_KEY }) : null;
 const index = pc ? pc.index(PINECONE_INDEX) : null;
 
 if (!pc) {
@@ -130,9 +128,9 @@ function verifyVenmoWebhook(body: string, headers: Headers): boolean {
 
 async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
   if (!index) return null;
-  
+
   const startTime = performance.now();
-  
+
   try {
     const vector = new Array(PINECONE_DIM).fill(0.1);
     const result = await index.query({
@@ -140,10 +138,10 @@ async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
       vector,
       filter: { userId },
     });
-    
+
     const match = result.matches?.[0];
     if (!match || !match.metadata) return null;
-    
+
     const meta = match.metadata as any;
     const profile: SuperProfile = {
       userId: meta.userId ?? userId,
@@ -151,10 +149,12 @@ async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
       drift: Number(meta.drift ?? 0),
       updatedAt: meta.updatedAt,
     };
-    
+
     const duration = (performance.now() - startTime).toFixed(2);
-    console.info(`✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`);
-    
+    console.info(
+      `✅ Profile query: ${duration}ms | Score: ${profile.score} | Drift: ${profile.drift}`
+    );
+
     return profile;
   } catch (err: any) {
     console.error(`❌ Profile query failed: ${err.message}`);
@@ -166,28 +166,30 @@ function assessRisk(profile: SuperProfile | null): RiskAssessment {
   if (!profile) {
     return { risk: 'low', reason: 'No profile: auto-approve (optional fusion)' };
   }
-  
-  if (profile.score > RISK_THRESHOLDS.LOW_SCORE_MIN && 
-      profile.drift < RISK_THRESHOLDS.LOW_DRIFT_MAX) {
-    return { 
-      risk: 'low', 
+
+  if (
+    profile.score > RISK_THRESHOLDS.LOW_SCORE_MIN &&
+    profile.drift < RISK_THRESHOLDS.LOW_DRIFT_MAX
+  ) {
+    return {
+      risk: 'low',
       reason: 'Super-profile match: high score, low drift',
-      profile 
+      profile,
     };
   }
-  
+
   if (profile.drift > RISK_THRESHOLDS.HIGH_DRIFT_MIN) {
-    return { 
-      risk: 'high', 
+    return {
+      risk: 'high',
       reason: 'High drift: possible account takeover',
-      profile 
+      profile,
     };
   }
-  
-  return { 
-    risk: 'medium', 
+
+  return {
+    risk: 'medium',
     reason: `Review required: score=${profile.score.toFixed(2)}, drift=${profile.drift.toFixed(4)}`,
-    profile 
+    profile,
   };
 }
 
@@ -202,20 +204,23 @@ async function executePersonalizedDeposit(
 ): Promise<{ deposited: number; bonus: number; reason: string }> {
   const bonusCalc = calculateBonus(amount, habits);
   const totalDeposit = amount + bonusCalc.bonus;
-  
+
   // TODO: Wire to actual PayPal Payouts API
   console.info(`💰 DEPOSIT: $${totalDeposit.toFixed(2)} → ${userId} (${bonusCalc.reason})`);
-  
-  await redis.publish('PERSONALIZED_DEPOSIT', JSON.stringify({
-    userId,
-    amount,
-    bonus: bonusCalc.bonus,
-    totalDeposit,
-    tier: habits?.tier ?? 'unknown',
-    reason: bonusCalc.reason,
-    timestamp: new Date().toISOString(),
-  }));
-  
+
+  await redis.publish(
+    'PERSONALIZED_DEPOSIT',
+    JSON.stringify({
+      userId,
+      amount,
+      bonus: bonusCalc.bonus,
+      totalDeposit,
+      tier: habits?.tier ?? 'unknown',
+      reason: bonusCalc.reason,
+      timestamp: new Date().toISOString(),
+    })
+  );
+
   return {
     deposited: totalDeposit,
     bonus: bonusCalc.bonus,
@@ -228,42 +233,47 @@ async function executePersonalizedDeposit(
 // ============================================================================
 
 async function handlePersonalizedPaymentFlow(
-  userId: string, 
-  amount: number, 
+  userId: string,
+  amount: number,
   source: 'paypal' | 'venmo'
 ): Promise<PersonalizedPaymentResult> {
   const startTime = performance.now();
-  
+
   // Step 1: Fetch super-profile (risk assessment)
   const profile = await getSuperProfile(userId);
   const risk = assessRisk(profile);
-  
+
   // Step 2: Fetch habits (personalization)
   const habits = await getHabits(userId);
   if (habits) {
-    console.info(`🎯 User habits: ${habits.tier} (${habits.txnCount} txns, $${habits.avgTxn.toFixed(2)} avg)`);
+    console.info(
+      `🎯 User habits: ${habits.tier} (${habits.txnCount} txns, $${habits.avgTxn.toFixed(2)} avg)`
+    );
   }
-  
+
   // Step 3: Apply VIP risk override
   const finalRisk = applyVipRiskOverride(habits, risk.risk);
   if (finalRisk.risk !== risk.risk) {
     console.info(`👑 VIP override: ${risk.risk} → ${finalRisk.risk} (${finalRisk.reason})`);
   }
-  
+
   // Step 4: Decision with personalization
   let result: PersonalizedPaymentResult;
-  
+
   if (finalRisk.risk === 'low') {
     const depositResult = await executePersonalizedDeposit(userId, amount, habits);
-    
-    await redis.publish('PROFILE_FUSE', JSON.stringify({
-      userId,
-      status: 'risk_ok_personalized',
-      risk: finalRisk,
-      habits: habits?.tier ?? 'unknown',
-      bonus: depositResult.bonus,
-    }));
-    
+
+    await redis.publish(
+      'PROFILE_FUSE',
+      JSON.stringify({
+        userId,
+        status: 'risk_ok_personalized',
+        risk: finalRisk,
+        habits: habits?.tier ?? 'unknown',
+        bonus: depositResult.bonus,
+      })
+    );
+
     result = {
       status: 'approved',
       risk: { ...risk, risk: finalRisk.risk, reason: finalRisk.reason },
@@ -276,14 +286,17 @@ async function handlePersonalizedPaymentFlow(
       timestamp: new Date().toISOString(),
     };
   } else if (finalRisk.risk === 'high') {
-    await redis.publish('FRAUD_ALERT', JSON.stringify({
-      userId,
-      amount,
-      risk: finalRisk,
-      habits: habits?.tier ?? 'unknown',
-      timestamp: new Date().toISOString(),
-    }));
-    
+    await redis.publish(
+      'FRAUD_ALERT',
+      JSON.stringify({
+        userId,
+        amount,
+        risk: finalRisk,
+        habits: habits?.tier ?? 'unknown',
+        timestamp: new Date().toISOString(),
+      })
+    );
+
     result = {
       status: 'blocked',
       risk: finalRisk,
@@ -296,13 +309,16 @@ async function handlePersonalizedPaymentFlow(
       timestamp: new Date().toISOString(),
     };
   } else {
-    await redis.publish('PROFILE_FUSE', JSON.stringify({
-      userId,
-      status: 'review',
-      risk: finalRisk,
-      habits: habits?.tier ?? 'unknown',
-    }));
-    
+    await redis.publish(
+      'PROFILE_FUSE',
+      JSON.stringify({
+        userId,
+        status: 'review',
+        risk: finalRisk,
+        habits: habits?.tier ?? 'unknown',
+      })
+    );
+
     result = {
       status: 'review',
       risk: finalRisk,
@@ -315,10 +331,12 @@ async function handlePersonalizedPaymentFlow(
       timestamp: new Date().toISOString(),
     };
   }
-  
+
   const duration = (performance.now() - startTime).toFixed(2);
-  console.info(`⏱️  Total flow time: ${duration}ms | Status: ${result.status} | Bonus: $${result.bonus.toFixed(2)}`);
-  
+  console.info(
+    `⏱️  Total flow time: ${duration}ms | Status: ${result.status} | Bonus: $${result.bonus.toFixed(2)}`
+  );
+
   return result;
 }
 
@@ -327,27 +345,25 @@ async function handlePersonalizedPaymentFlow(
 // ============================================================================
 
 function parsePayPalUserId(event: any): string {
-  const email = event?.resource?.payer?.payer_info?.email ?? 
-                event?.resource?.sender_email ?? '';
+  const email = event?.resource?.payer?.payer_info?.email ?? event?.resource?.sender_email ?? '';
   const handle = email ? `@${email.split('@')[0]}` : '@unknown';
   return handle;
 }
 
 function parsePayPalAmount(event: any): number {
-  const amount = event?.resource?.amount?.total ?? 
-                 event?.resource?.transactions?.[0]?.amount?.total ?? 0;
+  const amount =
+    event?.resource?.amount?.total ?? event?.resource?.transactions?.[0]?.amount?.total ?? 0;
   return Number(amount);
 }
 
 function parseVenmoUserId(event: any): string {
-  const username = event?.data?.actor?.username ?? 
-                   event?.data?.payment?.actor?.username ?? 'unknown';
+  const username =
+    event?.data?.actor?.username ?? event?.data?.payment?.actor?.username ?? 'unknown';
   return username.startsWith('@') ? username : `@${username}`;
 }
 
 function parseVenmoAmount(event: any): number {
-  const amount = event?.data?.amount ?? 
-                 event?.data?.payment?.amount ?? 0;
+  const amount = event?.data?.amount ?? event?.data?.payment?.amount ?? 0;
   return typeof amount === 'string' ? parseFloat(amount) : Number(amount);
 }
 
@@ -360,80 +376,89 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
-    
+
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check
     if (path === '/health') {
-      return new Response(JSON.stringify({
-        status: 'ok',
-        version: '2.0-personalized',
-        pinecone: pc ? 'connected' : 'disabled',
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        features: ['habits-classification', 'vip-bonuses', 'risk-override'],
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          version: '2.0-personalized',
+          pinecone: pc ? 'connected' : 'disabled',
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          features: ['habits-classification', 'vip-bonuses', 'risk-override'],
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Recommendations endpoint
     if (path.startsWith('/recommend/')) {
       const userId = path.split('/')[2];
       if (!userId) {
         return new Response('User ID required', { status: 400, headers: corsHeaders });
       }
-      
+
       const habits = await getHabits(userId);
       if (!habits) {
-        return new Response(JSON.stringify({ 
-          userId, 
-          recommendation: 'Complete more transactions to unlock personalized perks',
-          habits: null 
-        }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
+        return new Response(
+          JSON.stringify({
+            userId,
+            recommendation: 'Complete more transactions to unlock personalized perks',
+            habits: null,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
       }
-      
+
       const recommendation = getRecommendation(habits);
-      return new Response(JSON.stringify({
-        userId,
-        recommendation,
-        habits: {
-          tier: habits.tier,
-          txnCount: habits.txnCount,
-          avgTxn: habits.avgTxn,
-        },
-        nextBonus: calculateBonus(100, habits).bonusPercent + '% on next deposit',
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          userId,
+          recommendation,
+          habits: {
+            tier: habits.tier,
+            txnCount: habits.txnCount,
+            avgTxn: habits.avgTxn,
+          },
+          nextBonus: calculateBonus(100, habits).bonusPercent + '% on next deposit',
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // PayPal webhook
     if (path === '/webhook/paypal' && req.method === 'POST') {
       const body = await req.text();
-      
+
       if (!verifyPayPalWebhook(body, req.headers)) {
         return new Response('Invalid signature', { status: 401, headers: corsHeaders });
       }
-      
+
       try {
         const event = JSON.parse(body);
         if (event.event_type === 'PAYMENT.SALE.COMPLETED') {
           const userId = parsePayPalUserId(event);
           const amount = parsePayPalAmount(event);
-          
+
           const result = await handlePersonalizedPaymentFlow(userId, amount, 'paypal');
-          
+
           return new Response(JSON.stringify(result), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
@@ -443,23 +468,23 @@ const server = Bun.serve({
         return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Venmo webhook
     if (path === '/webhook/venmo' && req.method === 'POST') {
       const body = await req.text();
-      
+
       if (!verifyVenmoWebhook(body, req.headers)) {
         return new Response('Invalid signature', { status: 401, headers: corsHeaders });
       }
-      
+
       try {
         const event = JSON.parse(body);
         if (event.type === 'payment.created') {
           const userId = parseVenmoUserId(event);
           const amount = parseVenmoAmount(event);
-          
+
           const result = await handlePersonalizedPaymentFlow(userId, amount, 'venmo');
-          
+
           return new Response(JSON.stringify(result), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
@@ -469,19 +494,19 @@ const server = Bun.serve({
         return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Test payment endpoint
     if (path === '/test/payment' && req.method === 'POST') {
       try {
         const body = await req.json();
         const { userId, amount, source = 'test' } = body;
-        
+
         if (!userId || !amount) {
           return new Response('Missing userId or amount', { status: 400, headers: corsHeaders });
         }
-        
+
         const result = await handlePersonalizedPaymentFlow(userId, Number(amount), source as any);
-        
+
         return new Response(JSON.stringify(result, null, 2), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
@@ -489,10 +514,11 @@ const server = Bun.serve({
         return new Response(`Error: ${err.message}`, { status: 400, headers: corsHeaders });
       }
     }
-    
+
     // Root documentation
     if (path === '/') {
-      return new Response(`<!DOCTYPE html>
+      return new Response(
+        `<!DOCTYPE html>
 <html>
 <head>
   <title>Payment Webhook Server v2 - Personalized</title>
@@ -543,9 +569,11 @@ const server = Bun.serve({
     <li><code>PROFILE_FUSE</code> - Profile fusion events</li>
   </ul>
 </body>
-</html>`, { headers: { ...corsHeaders, 'Content-Type': 'text/html' } });
+</html>`,
+        { headers: { ...corsHeaders, 'Content-Type': 'text/html' } }
+      );
     }
-    
+
     return new Response('Not found', { status: 404, headers: corsHeaders });
   },
 });

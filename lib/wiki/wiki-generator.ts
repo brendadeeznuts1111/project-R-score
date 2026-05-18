@@ -370,17 +370,26 @@ async function createWikiFiles(config: Partial<WikiConfig> = {}): Promise<void> 
     finalConfig.format === fmt || finalConfig.format === 'all';
 
   if (shouldWrite('markdown')) {
-    await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.md`, generateMarkdownWiki(wikiData));
+    await AtomicFileOperations.writeAtomic(
+      `${outputDir}/bun-utilities-wiki.md`,
+      generateMarkdownWiki(wikiData)
+    );
     console.info('  Created: bun-utilities-wiki.md');
   }
 
   if (shouldWrite('html')) {
-    await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.html`, generateHTMLWiki(wikiData));
+    await AtomicFileOperations.writeAtomic(
+      `${outputDir}/bun-utilities-wiki.html`,
+      generateHTMLWiki(wikiData)
+    );
     console.info('  Created: bun-utilities-wiki.html');
   }
 
   if (shouldWrite('json')) {
-    await AtomicFileOperations.writeAtomic(`${outputDir}/bun-utilities-wiki.json`, generateJSONWiki(wikiData));
+    await AtomicFileOperations.writeAtomic(
+      `${outputDir}/bun-utilities-wiki.json`,
+      generateJSONWiki(wikiData)
+    );
     console.info('  Created: bun-utilities-wiki.json');
   }
 

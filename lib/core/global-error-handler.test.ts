@@ -47,7 +47,7 @@ describe('GlobalErrorHandler', () => {
   describe('Error Statistics', () => {
     test('returns initial state with zeros', () => {
       const stats = handler.getStatistics();
-      
+
       expect(stats.uncaughtExceptions).toBe(0);
       expect(stats.unhandledRejections).toBe(0);
       expect(stats.warnings).toBe(0);
@@ -58,12 +58,12 @@ describe('GlobalErrorHandler', () => {
 
     test('state is read-only from external access', () => {
       const state = handler.getState();
-      
+
       // TypeScript would prevent this, but runtime check
       expect(() => {
         (state as any).uncaughtExceptions = 100;
       }).not.toThrow();
-      
+
       // Original state should be unchanged
       const newState = handler.getState();
       expect(newState.uncaughtExceptions).toBe(0);
@@ -73,7 +73,7 @@ describe('GlobalErrorHandler', () => {
   describe('Shutdown Handlers', () => {
     test('registers shutdown handlers', async () => {
       let called = false;
-      
+
       handler.registerShutdownHandler(async () => {
         called = true;
       });
@@ -86,9 +86,15 @@ describe('GlobalErrorHandler', () => {
     test('multiple shutdown handlers can be registered', () => {
       const calls: number[] = [];
 
-      handler.registerShutdownHandler(async () => { calls.push(1); });
-      handler.registerShutdownHandler(async () => { calls.push(2); });
-      handler.registerShutdownHandler(async () => { calls.push(3); });
+      handler.registerShutdownHandler(async () => {
+        calls.push(1);
+      });
+      handler.registerShutdownHandler(async () => {
+        calls.push(2);
+      });
+      handler.registerShutdownHandler(async () => {
+        calls.push(3);
+      });
 
       // Handlers are registered (can't test execution without process exit)
       expect(handler).toBeDefined();
@@ -99,17 +105,17 @@ describe('GlobalErrorHandler', () => {
     test('initializeGlobalErrorHandling returns handler instance', () => {
       // Reset to allow re-initialization
       (GlobalErrorHandler as any).instance = undefined;
-      
+
       const result = initializeGlobalErrorHandling({
         exitOnUncaughtException: false,
       });
-      
+
       expect(result).toBeInstanceOf(GlobalErrorHandler);
     });
 
     test('onShutdown registers handler through singleton', () => {
       let registered = false;
-      
+
       onShutdown(async () => {
         registered = true;
       });
@@ -119,7 +125,7 @@ describe('GlobalErrorHandler', () => {
 
     test('getGlobalErrorStatistics returns statistics', () => {
       const stats = getGlobalErrorStatistics();
-      
+
       expect(stats).toHaveProperty('uncaughtExceptions');
       expect(stats).toHaveProperty('unhandledRejections');
       expect(stats).toHaveProperty('warnings');
@@ -141,7 +147,7 @@ describe('GlobalErrorHandler', () => {
       // Note: We can't easily trigger actual errors without
       // process events, but we can verify the calculation logic
       const stats = handler.getStatistics();
-      
+
       // Error rate = totalErrors / (uptime / 60)
       // With 0 errors, should always be 0
       expect(stats.errorRate).toBe(0);
@@ -153,7 +159,7 @@ describe('GlobalErrorHandler', () => {
       // Reset and create new instance
       (GlobalErrorHandler as any).instance = undefined;
       const defaultHandler = GlobalErrorHandler.getInstance();
-      
+
       expect(defaultHandler).toBeDefined();
     });
 
@@ -164,7 +170,7 @@ describe('GlobalErrorHandler', () => {
         shutdownTimeout: 10000,
         // Other options should use defaults
       });
-      
+
       expect(customHandler).toBeDefined();
     });
   });
@@ -173,13 +179,13 @@ describe('GlobalErrorHandler', () => {
 describe('Error Handling Integration', () => {
   test('handler integrates with enterprise error handler', () => {
     const { EnterpriseErrorHandler } = require('./core-errors');
-    
+
     // Reset singletons
     (GlobalErrorHandler as any).instance = undefined;
-    
+
     const handler = initializeGlobalErrorHandling();
     const enterpriseHandler = EnterpriseErrorHandler.getInstance();
-    
+
     expect(handler).toBeDefined();
     expect(enterpriseHandler).toBeDefined();
   });
@@ -190,7 +196,7 @@ describe('Global Error Scenarios', () => {
     // Verify the error formatting is consistent
     const error = new Error('Test error');
     error.name = 'TestError';
-    
+
     expect(error.message).toBe('Test error');
     expect(error.name).toBe('TestError');
     expect(error.stack).toBeDefined();
@@ -200,9 +206,9 @@ describe('Global Error Scenarios', () => {
     // Reset for clean state
     (GlobalErrorHandler as any).instance = undefined;
     const handler = GlobalErrorHandler.getInstance();
-    
+
     const state = handler.getState();
-    
+
     // All counters should start at 0
     expect(state.uncaughtExceptions).toBe(0);
     expect(state.unhandledRejections).toBe(0);
@@ -213,20 +219,20 @@ describe('Global Error Scenarios', () => {
 // Entry guard test
 if (import.meta.main) {
   console.info('🧪 Running Global Error Handler Tests...\n');
-  
+
   // Run a quick smoke test
   const handler = initializeGlobalErrorHandling({
     exitOnUncaughtException: false,
     exitOnUnhandledRejection: false,
   });
-  
+
   console.info('✅ Handler initialized successfully');
   console.info('Statistics:', getGlobalErrorStatistics());
   console.info('State:', handler.getState());
-  
+
   onShutdown(async () => {
     console.info('🧹 Test cleanup executed');
   });
-  
+
   console.info('\n✅ All smoke tests passed!');
 }

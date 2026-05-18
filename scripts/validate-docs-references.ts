@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Documentation Reference Validation Script
- * 
+ *
  * Validates and updates all documentation references across the codebase.
  * Ensures consistency and correctness of all Bun documentation links.
  */
@@ -20,7 +20,7 @@ const CONFIG = {
   GITHUB_URL_PATTERN: /https:\/\/github\.com\/oven-sh\/bun\/[^\s)\]]+/g,
   DRY_RUN: process.argv.includes('--dry-run'),
   FIX: process.argv.includes('--fix'),
-  VERBOSE: process.argv.includes('--verbose')
+  VERBOSE: process.argv.includes('--verbose'),
 } as const;
 
 interface ValidationResult {
@@ -46,26 +46,26 @@ interface FileResult {
 function validateUrl(url: string): { isValid: boolean; suggestedUrl?: string; error?: string } {
   try {
     const parsed = new URL(url);
-    
+
     // Normalize protocol to https
     if (parsed.protocol !== 'https:') {
       return {
         isValid: false,
         suggestedUrl: url.replace(/^http:/, 'https:'),
-        error: 'Protocol should be https'
+        error: 'Protocol should be https',
       };
     }
-    
+
     // Check if it's a known documentation pattern
     if (parsed.hostname === 'bun.sh') {
       if (!validateDocUrl(url)) {
         return {
           isValid: false,
-          error: 'URL does not match known Bun documentation patterns'
+          error: 'URL does not match known Bun documentation patterns',
         };
       }
     }
-    
+
     // Normalize path (remove double slashes)
     if (parsed.pathname.includes('//')) {
       const normalized = parsed.pathname.replace(/\/+/g, '/');
@@ -73,16 +73,15 @@ function validateUrl(url: string): { isValid: boolean; suggestedUrl?: string; er
       return {
         isValid: false,
         suggestedUrl: parsed.toString(),
-        error: 'Path contains double slashes'
+        error: 'Path contains double slashes',
       };
     }
-    
+
     return { isValid: true };
-    
   } catch (error) {
     return {
       isValid: false,
-      error: error instanceof Error ? error.message : 'Invalid URL'
+      error: error instanceof Error ? error.message : 'Invalid URL',
     };
   }
 }
@@ -93,25 +92,25 @@ function validateUrl(url: string): { isValid: boolean; suggestedUrl?: string; er
 async function processFile(filePath: string): Promise<FileResult> {
   const content = await readFile(filePath, 'utf8');
   const lines = content.split('\n');
-  
+
   const result: FileResult = {
     filePath,
     totalUrls: 0,
     validUrls: 0,
     invalidUrls: 0,
-    issues: []
+    issues: [],
   };
-  
+
   lines.forEach((line, lineIndex) => {
     // Find all Bun documentation URLs
     const bunUrls = line.match(CONFIG.BUN_URL_PATTERN) || [];
     const githubUrls = line.match(CONFIG.GITHUB_URL_PATTERN) || [];
     const allUrls = [...bunUrls, ...githubUrls];
-    
+
     allUrls.forEach(url => {
       result.totalUrls++;
       const validation = validateUrl(url);
-      
+
       if (!validation.isValid) {
         result.invalidUrls++;
         result.issues.push({
@@ -120,14 +119,14 @@ async function processFile(filePath: string): Promise<FileResult> {
           url,
           isValid: false,
           suggestedUrl: validation.suggestedUrl,
-          error: validation.error
+          error: validation.error,
         });
       } else {
         result.validUrls++;
       }
     });
   });
-  
+
   return result;
 }
 
@@ -137,20 +136,20 @@ async function processFile(filePath: string): Promise<FileResult> {
 async function fixFile(filePath: string, issues: ValidationResult[]): Promise<void> {
   const content = await readFile(filePath, 'utf8');
   let fixedContent = content;
-  
+
   // Apply fixes in reverse order to maintain line numbers
   const sortedIssues = issues.sort((a, b) => b.line - a.line);
-  
+
   for (const issue of sortedIssues) {
     if (issue.suggestedUrl) {
       fixedContent = fixedContent.replace(issue.url, issue.suggestedUrl);
-      
+
       if (CONFIG.VERBOSE) {
         console.info(`  Fixed: ${issue.url} → ${issue.suggestedUrl}`);
       }
     }
   }
-  
+
   await writeFile(filePath, fixedContent, 'utf8');
 }
 
@@ -159,16 +158,16 @@ async function fixFile(filePath: string, issues: ValidationResult[]): Promise<vo
  */
 async function findFiles(dir: string): Promise<string[]> {
   const files: string[] = [];
-  
+
   try {
     const entries = await readdir(dir, { withFileTypes: true });
-    
+
     for (const entry of entries) {
       const fullPath = join(dir, entry.name);
-      
+
       if (entry.isDirectory()) {
         if (!CONFIG.EXCLUDE_DIRS.includes(entry.name)) {
-          files.push(...await findFiles(fullPath));
+          files.push(...(await findFiles(fullPath)));
         }
       } else if (entry.isFile()) {
         const ext = entry.name.toLowerCase().slice(entry.name.lastIndexOf('.'));
@@ -180,7 +179,7 @@ async function findFiles(dir: string): Promise<string[]> {
   } catch (error) {
     console.warn(`Warning: Could not read directory ${dir}:`, error);
   }
-  
+
   return files;
 }
 
@@ -197,35 +196,35 @@ function generateReferenceTable(): string {
 async function main() {
   console.info('🔍 Documentation Reference Validation');
   console.info('=====================================\n');
-  
+
   if (CONFIG.DRY_RUN) {
     console.info('🔬 DRY RUN MODE - No files will be modified\n');
   }
-  
+
   if (CONFIG.FIX) {
     console.info('🔧 FIX MODE - Invalid URLs will be corrected\n');
   }
-  
+
   // Find all files to process
   const files = await findFiles(CONFIG.ROOT_DIR);
   console.info(`📁 Found ${files.length} files to check\n`);
-  
+
   let totalUrls = 0;
   let totalValid = 0;
   let totalInvalid = 0;
   const allIssues: ValidationResult[] = [];
-  
+
   // Process each file
   for (const filePath of files) {
     if (CONFIG.VERBOSE) {
       console.info(`🔍 Processing: ${filePath}`);
     }
-    
+
     const result = await processFile(filePath);
-    
+
     if (result.issues.length > 0) {
       console.info(`❌ ${filePath}: ${result.issues.length} issues`);
-      
+
       if (CONFIG.VERBOSE) {
         result.issues.forEach(issue => {
           console.info(`   Line ${issue.line}: ${issue.url}`);
@@ -233,9 +232,9 @@ async function main() {
           if (issue.suggestedUrl) console.info(`   Suggested: ${issue.suggestedUrl}`);
         });
       }
-      
+
       allIssues.push(...result.issues);
-      
+
       // Fix file if requested
       if (CONFIG.FIX && !CONFIG.DRY_RUN) {
         await fixFile(filePath, result.issues);
@@ -244,12 +243,12 @@ async function main() {
     } else if (CONFIG.VERBOSE && result.totalUrls > 0) {
       console.info(`✅ ${filePath}: ${result.totalUrls} URLs validated`);
     }
-    
+
     totalUrls += result.totalUrls;
     totalValid += result.validUrls;
     totalInvalid += result.invalidUrls;
   }
-  
+
   // Summary
   console.info('\n📊 Validation Summary');
   console.info('=====================');
@@ -257,10 +256,10 @@ async function main() {
   console.info(`Valid URLs: ${totalValid}`);
   console.info(`Invalid URLs: ${totalInvalid}`);
   console.info(`Success rate: ${((totalValid / totalUrls) * 100).toFixed(1)}%`);
-  
+
   if (totalInvalid > 0) {
     console.info(`\n⚠️  Found ${totalInvalid} invalid documentation references`);
-    
+
     if (!CONFIG.FIX && !CONFIG.DRY_RUN) {
       console.info('💡 Run with --fix to automatically correct issues');
       console.info('💡 Run with --dry-run --fix to preview corrections');
@@ -268,12 +267,12 @@ async function main() {
   } else {
     console.info('\n🎉 All documentation references are valid!');
   }
-  
+
   // Generate reference table
   console.info('\n📚 Documentation Reference Table');
   console.info('================================');
   console.info(generateReferenceTable());
-  
+
   // Exit with appropriate code
   process.exit(totalInvalid > 0 && !CONFIG.FIX ? 1 : 0);
 }

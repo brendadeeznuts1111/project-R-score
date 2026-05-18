@@ -122,12 +122,15 @@ export class MCPWikiGenerator {
   private static readonly WIKI_R2_PREFIX = 'mcp/wiki/';
   private static customTemplates: WikiTemplate[] = [];
   private static templateUsageCache = new Map<string, number>();
-  private static templateMetrics = new Map<string, {
-    totalGenerations: number;
-    successfulGenerations: number;
-    averageGenerationTime: number;
-    lastUsed: string;
-  }>();
+  private static templateMetrics = new Map<
+    string,
+    {
+      totalGenerations: number;
+      successfulGenerations: number;
+      averageGenerationTime: number;
+      lastUsed: string;
+    }
+  >();
   private static templateMap = new Map<string, WikiTemplate>(); // O(1) template lookup cache
   private static mapInitialized = false; // Track if map is initialized
   private static updateLock = false; // Simple lock for template updates
@@ -149,7 +152,7 @@ export class MCPWikiGenerator {
         // Small delay to allow other thread to complete
         attempts++;
       }
-      
+
       // Check again after waiting
       if (MCPWikiGenerator.mapInitialized) {
         return;
@@ -159,12 +162,12 @@ export class MCPWikiGenerator {
     // Acquire lock and initialize
     try {
       MCPWikiGenerator.updateLock = true;
-      
+
       // Double-check pattern - another thread might have initialized while we waited for lock
       if (MCPWikiGenerator.mapInitialized) {
         return;
       }
-      
+
       MCPWikiGenerator.updateTemplateMap();
       MCPWikiGenerator.mapInitialized = true;
     } finally {
@@ -207,12 +210,13 @@ export class MCPWikiGenerator {
     author?: string;
   }): WikiTemplate[] {
     const allTemplates = MCPWikiGenerator.getWikiTemplates();
-    
+
     return allTemplates.filter(template => {
       // Text search
       if (criteria.query) {
         const query = criteria.query.toLowerCase();
-        const searchText = `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
+        const searchText =
+          `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
         if (!searchText.includes(query)) return false;
       }
 
@@ -246,16 +250,16 @@ export class MCPWikiGenerator {
    */
   static getTemplateRecommendations(limit: number = 5): WikiTemplate[] {
     const allTemplates = MCPWikiGenerator.getWikiTemplates();
-    
+
     return allTemplates
       .sort((a, b) => {
         // Sort by usage count and success rate
         const aMetrics = MCPWikiGenerator.templateMetrics.get(a.name);
         const bMetrics = MCPWikiGenerator.templateMetrics.get(b.name);
-        
+
         const aScore = (a.usageCount || 0) + (aMetrics?.successfulGenerations || 0);
         const bScore = (b.usageCount || 0) + (bMetrics?.successfulGenerations || 0);
-        
+
         return bScore - aScore;
       })
       .slice(0, limit);
@@ -303,15 +307,20 @@ export class MCPWikiGenerator {
       .map(([name, metrics]) => ({
         name,
         usageCount: metrics.totalGenerations,
-        successRate: metrics.totalGenerations > 0 ? metrics.successfulGenerations / metrics.totalGenerations : 0
+        successRate:
+          metrics.totalGenerations > 0
+            ? metrics.successfulGenerations / metrics.totalGenerations
+            : 0,
       }))
       .sort((a, b) => b.usageCount - a.usageCount)
       .slice(0, 10);
 
     // Average generation time
-    const avgTime = Array.from(MCPWikiGenerator.templateMetrics.values())
-      .reduce((sum, metrics) => sum + metrics.averageGenerationTime, 0) / 
-      Math.max(MCPWikiGenerator.templateMetrics.size, 1);
+    const avgTime =
+      Array.from(MCPWikiGenerator.templateMetrics.values()).reduce(
+        (sum, metrics) => sum + metrics.averageGenerationTime,
+        0
+      ) / Math.max(MCPWikiGenerator.templateMetrics.size, 1);
 
     return {
       totalTemplates: allTemplates.length,
@@ -321,14 +330,18 @@ export class MCPWikiGenerator {
       categoryDistribution: categoryDist,
       formatDistribution: formatDist,
       mostUsedTemplates: mostUsed,
-      averageGenerationTime: avgTime
+      averageGenerationTime: avgTime,
     };
   }
 
   /**
    * Track template usage with atomic updates and locking
    */
-  private static trackTemplateUsage(templateName: string, generationTime: number, success: boolean): void {
+  private static trackTemplateUsage(
+    templateName: string,
+    generationTime: number,
+    success: boolean
+  ): void {
     // Skip if update is already in progress (simple lock)
     if (MCPWikiGenerator.updateLock) {
       console.warn(styled('⚠️ Template update in progress, skipping tracking', 'warning'));
@@ -352,8 +365,8 @@ export class MCPWikiGenerator {
 
       // Update average generation time with NaN protection
       if (!isNaN(generationTime) && generationTime >= 0) {
-        existing.averageGenerationTime = 
-          (existing.averageGenerationTime * (existing.totalGenerations - 1) + generationTime) / 
+        existing.averageGenerationTime =
+          (existing.averageGenerationTime * (existing.totalGenerations - 1) + generationTime) /
           existing.totalGenerations;
       }
 
@@ -364,17 +377,22 @@ export class MCPWikiGenerator {
       // Atomic template update to prevent race conditions using O(1) lookup
       const template = MCPWikiGenerator.getTemplateByName(templateName);
       if (template) {
-        const templateIndex = MCPWikiGenerator.customTemplates.findIndex(t => t.name === templateName);
+        const templateIndex = MCPWikiGenerator.customTemplates.findIndex(
+          t => t.name === templateName
+        );
         if (templateIndex >= 0) {
           const updatedTemplate = {
             ...MCPWikiGenerator.customTemplates[templateIndex],
             usageCount: (template.usageCount || 0) + 1,
             performanceMetrics: {
               averageGenerationTime: existing.averageGenerationTime,
-              successRate: existing.totalGenerations > 0 ? existing.successfulGenerations / existing.totalGenerations : 0,
+              successRate:
+                existing.totalGenerations > 0
+                  ? existing.successfulGenerations / existing.totalGenerations
+                  : 0,
               lastUsed: existing.lastUsed,
               usageCount: existing.totalGenerations,
-            }
+            },
           };
           MCPWikiGenerator.customTemplates[templateIndex] = updatedTemplate;
           MCPWikiGenerator.templateMap.set(templateName, updatedTemplate); // Update cache
@@ -393,33 +411,39 @@ export class MCPWikiGenerator {
     // Input validation — undefined/omitted is normal, only warn on truly invalid values
     if (maxAge === undefined || typeof maxAge !== 'number' || maxAge < 0) {
       if (maxAge !== undefined) {
-        console.warn(styled('⚠️ Invalid maxAge provided to cleanupOldMetrics, using default', 'warning'));
+        console.warn(
+          styled('⚠️ Invalid maxAge provided to cleanupOldMetrics, using default', 'warning')
+        );
       }
       maxAge = 30 * 24 * 60 * 60 * 1000; // 30 days default
     }
-    
+
     const now = Date.now();
     const toDelete: string[] = [];
-    
+
     for (const [name, metrics] of MCPWikiGenerator.templateMetrics.entries()) {
       try {
         // Validate date parsing
         const lastUsed = new Date(metrics.lastUsed).getTime();
         if (isNaN(lastUsed)) {
-          console.warn(styled(`⚠️ Invalid date for template '${name}', removing from metrics`, 'warning'));
+          console.warn(
+            styled(`⚠️ Invalid date for template '${name}', removing from metrics`, 'warning')
+          );
           toDelete.push(name);
           continue;
         }
-        
+
         if (now - lastUsed > maxAge) {
           toDelete.push(name);
         }
       } catch (error) {
-        console.warn(styled(`⚠️ Error processing metrics for template '${name}': ${error}`, 'warning'));
+        console.warn(
+          styled(`⚠️ Error processing metrics for template '${name}': ${error}`, 'warning')
+        );
         toDelete.push(name); // Remove problematic entries
       }
     }
-    
+
     toDelete.forEach(name => MCPWikiGenerator.templateMetrics.delete(name));
     if (toDelete.length > 0) {
       console.info(styled(`🧹 Cleaned up ${toDelete.length} old template metrics`, 'info'));
@@ -441,7 +465,7 @@ export class MCPWikiGenerator {
 
     try {
       MCPWikiGenerator.updateLock = true;
-      
+
       // Clear all caches and reset state
       MCPWikiGenerator.customTemplates = [];
       MCPWikiGenerator.templateUsageCache.clear();
@@ -511,7 +535,6 @@ export class MCPWikiGenerator {
         // Register template
         MCPWikiGenerator.registerCustomTemplate(template);
         imported++;
-
       } catch (error) {
         errors.push(`Template "${template.name}": ${error.message}`);
       }
@@ -575,77 +598,80 @@ export class MCPWikiGenerator {
     return {
       rssFeedItems,
       gitCommits,
-      relatedTemplates
+      relatedTemplates,
     };
   }
 
   /**
    * Score RSS feed items against template with proper security and error handling
    */
-  private static async scoreRSSFeedItems(template: WikiTemplate): Promise<Array<{
-    title: string;
-    link: string;
-    pubDate: string;
-    relevanceScore: number;
-    benchmarkMatches: Array<{
-      type: 'performance' | 'feature' | 'security';
-      score: number;
-      description: string;
-      rssValue?: string;
-      codeValue?: string;
-    }>;
-  }>> {
+  private static async scoreRSSFeedItems(template: WikiTemplate): Promise<
+    Array<{
+      title: string;
+      link: string;
+      pubDate: string;
+      relevanceScore: number;
+      benchmarkMatches: Array<{
+        type: 'performance' | 'feature' | 'security';
+        score: number;
+        description: string;
+        rssValue?: string;
+        codeValue?: string;
+      }>;
+    }>
+  > {
     try {
       const RSS_FEED_URL = 'https://bun.com/rss.xml';
       const REQUEST_TIMEOUT = 10000; // 10 seconds
 
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT);
-      
+
       try {
         const response = await fetch(RSS_FEED_URL, {
           signal: controller.signal,
           headers: {
             'User-Agent': 'MCPWikiGenerator/1.0',
-            'Accept': 'application/rss+xml, application/xml, text/xml'
-          }
+            Accept: 'application/rss+xml, application/xml, text/xml',
+          },
         });
-        
+
         clearTimeout(timeoutId);
-        
+
         if (!response.ok) {
           throw new Error(`HTTP ${response.status}: ${response.statusText}`);
         }
-        
+
         const rssText = await response.text();
-        
+
         // Validate RSS content
         if (!rssText || rssText.trim().length === 0) {
           console.warn(styled('⚠️ RSS feed returned empty content', 'warning'));
           return [];
         }
-        
+
         // Parse RSS feed (simplified parsing for demo)
         const items = MCPWikiGenerator.parseRSSFeed(rssText);
-        
-        return items.map(item => {
-          const relevanceScore = MCPWikiGenerator.calculateRSSRelevanceScore(item, template);
-          const benchmarkMatches = MCPWikiGenerator.extractBenchmarkMatches(item, template);
-          
-          return {
-            title: item.title,
-            link: item.link,
-            pubDate: item.pubDate,
-            relevanceScore,
-            benchmarkMatches
-          };
-        }).filter(item => item.relevanceScore > 0.3) // Filter low relevance items
+
+        return items
+          .map(item => {
+            const relevanceScore = MCPWikiGenerator.calculateRSSRelevanceScore(item, template);
+            const benchmarkMatches = MCPWikiGenerator.extractBenchmarkMatches(item, template);
+
+            return {
+              title: item.title,
+              link: item.link,
+              pubDate: item.pubDate,
+              relevanceScore,
+              benchmarkMatches,
+            };
+          })
+          .filter(item => item.relevanceScore > 0.3) // Filter low relevance items
           .sort((a, b) => b.relevanceScore - a.relevanceScore)
           .slice(0, 10); // Top 10 items
-
       } catch (fetchError) {
         clearTimeout(timeoutId);
-        
+
         if (fetchError instanceof Error && fetchError.name === 'AbortError') {
           console.warn(styled('⚠️ RSS feed request timed out', 'warning'));
         } else {
@@ -654,7 +680,6 @@ export class MCPWikiGenerator {
         }
         return [];
       }
-      
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.warn(styled(`⚠️ RSS feed processing failed: ${errorMessage}`, 'warning'));
@@ -665,20 +690,22 @@ export class MCPWikiGenerator {
   /**
    * Score git commits against template with proper security and error handling
    */
-  private static async scoreGitCommits(template: WikiTemplate): Promise<Array<{
-    hash: string;
-    message: string;
-    date: string;
-    author: string;
-    relevanceScore: number;
-    benchmarkMatches: Array<{
-      type: 'performance' | 'feature' | 'security';
-      score: number;
-      description: string;
-      commitValue?: string;
-      codeValue?: string;
-    }>;
-  }>> {
+  private static async scoreGitCommits(template: WikiTemplate): Promise<
+    Array<{
+      hash: string;
+      message: string;
+      date: string;
+      author: string;
+      relevanceScore: number;
+      benchmarkMatches: Array<{
+        type: 'performance' | 'feature' | 'security';
+        score: number;
+        description: string;
+        commitValue?: string;
+        codeValue?: string;
+      }>;
+    }>
+  > {
     try {
       // Validate current working directory
       const cwd = process.cwd();
@@ -694,40 +721,45 @@ export class MCPWikiGenerator {
           cwd,
           stdout: 'pipe',
           stderr: 'pipe',
-          timeout: 5000 // 5 second timeout
+          timeout: 5000, // 5 second timeout
         });
       } catch (spawnError) {
         console.warn(styled(`⚠️ Failed to spawn git command: ${spawnError}`, 'warning'));
         return [];
       }
-      
+
       if (gitCheck.exitCode !== 0) {
         const errorMsg = gitCheck.stderr?.toString() || 'Not a git repository';
         console.warn(styled(`⚠️ Git repository validation failed: ${errorMsg}`, 'warning'));
         return [];
       }
-      
+
       // Get git commits for the current repository with proper error handling
       let gitLog: ReturnType<typeof Bun.spawnSync>;
       try {
-        gitLog = Bun.spawnSync(['git', 'log', '--oneline', '-n', '50', '--pretty=format:%H|%s|%ai|%an'], {
-          cwd,
-          stdout: 'pipe',
-          stderr: 'pipe',
-          timeout: 10000 // 10 second timeout
-        });
+        gitLog = Bun.spawnSync(
+          ['git', 'log', '--oneline', '-n', '50', '--pretty=format:%H|%s|%ai|%an'],
+          {
+            cwd,
+            stdout: 'pipe',
+            stderr: 'pipe',
+            timeout: 10000, // 10 second timeout
+          }
+        );
       } catch (spawnError) {
         console.warn(styled(`⚠️ Failed to spawn git log command: ${spawnError}`, 'warning'));
         return [];
       }
-      
+
       if (!gitLog.stdout || gitLog.exitCode !== 0) {
         const errorMsg = gitLog.stderr?.toString() || 'Unknown error';
         console.warn(styled(`⚠️ Git log failed: ${errorMsg}`, 'warning'));
         return [];
       }
-      
-      const commits = gitLog.stdout.toString().split('\n')
+
+      const commits = gitLog.stdout
+        .toString()
+        .split('\n')
         .filter(line => line.trim())
         .map(line => {
           try {
@@ -736,19 +768,21 @@ export class MCPWikiGenerator {
               console.warn(styled(`⚠️ Malformed git log line: ${line}`, 'warning'));
               return null;
             }
-            
+
             const hash = parts[0];
             const messageParts = parts.slice(1, -2);
             const message = messageParts.join('|');
             const date = parts[parts.length - 2];
             const author = parts[parts.length - 1];
-            
+
             // Validate required fields
             if (!hash || !date || !author) {
-              console.warn(styled(`⚠️ Missing required fields in git log line: ${line}`, 'warning'));
+              console.warn(
+                styled(`⚠️ Missing required fields in git log line: ${line}`, 'warning')
+              );
               return null;
             }
-            
+
             return { hash, message, date, author };
           } catch (error) {
             console.warn(styled(`⚠️ Error parsing git log line: ${line}`, 'warning'));
@@ -757,19 +791,20 @@ export class MCPWikiGenerator {
         })
         .filter((commit): commit is NonNullable<typeof commit> => commit !== null);
 
-      return commits.map(commit => {
-        const relevanceScore = MCPWikiGenerator.calculateGitRelevanceScore(commit, template);
-        const benchmarkMatches = MCPWikiGenerator.extractGitBenchmarkMatches(commit, template);
-        
-        return {
-          ...commit,
-          relevanceScore,
-          benchmarkMatches
-        };
-      }).filter(commit => commit.relevanceScore > 0.2)
+      return commits
+        .map(commit => {
+          const relevanceScore = MCPWikiGenerator.calculateGitRelevanceScore(commit, template);
+          const benchmarkMatches = MCPWikiGenerator.extractGitBenchmarkMatches(commit, template);
+
+          return {
+            ...commit,
+            relevanceScore,
+            benchmarkMatches,
+          };
+        })
+        .filter(commit => commit.relevanceScore > 0.2)
         .sort((a, b) => b.relevanceScore - a.relevanceScore)
         .slice(0, 10);
-
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error';
       console.warn(styled(`⚠️ Failed to fetch git commits: ${errorMessage}`, 'warning'));
@@ -787,19 +822,22 @@ export class MCPWikiGenerator {
     sharedTags: string[];
   }> {
     const allTemplates = MCPWikiGenerator.getWikiTemplates();
-    
+
     return allTemplates
       .filter(t => t.name !== template.name)
       .map(otherTemplate => {
-        const similarityScore = MCPWikiGenerator.calculateTemplateSimilarity(template, otherTemplate);
+        const similarityScore = MCPWikiGenerator.calculateTemplateSimilarity(
+          template,
+          otherTemplate
+        );
         const sharedFeatures = MCPWikiGenerator.findSharedFeatures(template, otherTemplate);
         const sharedTags = MCPWikiGenerator.findSharedTags(template, otherTemplate);
-        
+
         return {
           templateName: otherTemplate.name,
           similarityScore,
           sharedFeatures,
-          sharedTags
+          sharedTags,
         };
       })
       .filter(t => t.similarityScore > 0.1)
@@ -814,10 +852,14 @@ export class MCPWikiGenerator {
     let score = 0;
     const title = rssItem.title.toLowerCase();
     const description = rssItem.description.toLowerCase();
-    const templateText = `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
+    const templateText =
+      `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
 
     // Provider matching
-    if (title.includes(template.provider.toLowerCase()) || description.includes(template.provider.toLowerCase())) {
+    if (
+      title.includes(template.provider.toLowerCase()) ||
+      description.includes(template.provider.toLowerCase())
+    ) {
       score += 0.4;
     }
 
@@ -827,7 +869,10 @@ export class MCPWikiGenerator {
     }
 
     // Category matching
-    if (template.category && (title.includes(template.category) || description.includes(template.category))) {
+    if (
+      template.category &&
+      (title.includes(template.category) || description.includes(template.category))
+    ) {
       score += 0.3;
     }
 
@@ -839,7 +884,14 @@ export class MCPWikiGenerator {
     });
 
     // Benchmark keyword matching
-    const benchmarkKeywords = ['faster', 'performance', 'optimization', 'speed', 'benchmark', 'improved'];
+    const benchmarkKeywords = [
+      'faster',
+      'performance',
+      'optimization',
+      'speed',
+      'benchmark',
+      'improved',
+    ];
     benchmarkKeywords.forEach(keyword => {
       if (title.includes(keyword) || description.includes(keyword)) {
         score += 0.1;
@@ -847,7 +899,10 @@ export class MCPWikiGenerator {
     });
 
     // Text similarity bonus
-    const textSimilarity = MCPWikiGenerator.calculateTextSimilarity(templateText, title + ' ' + description);
+    const textSimilarity = MCPWikiGenerator.calculateTextSimilarity(
+      templateText,
+      title + ' ' + description
+    );
     score += textSimilarity * 0.2;
 
     return Math.min(score, 1.0);
@@ -859,7 +914,8 @@ export class MCPWikiGenerator {
   private static calculateGitRelevanceScore(commit: any, template: WikiTemplate): number {
     let score = 0;
     const message = commit.message.toLowerCase();
-    const templateText = `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
+    const templateText =
+      `${template.name} ${template.description} ${template.tags?.join(' ')}`.toLowerCase();
 
     // Provider matching
     if (template.provider && message.includes(template.provider.toLowerCase())) {
@@ -884,7 +940,14 @@ export class MCPWikiGenerator {
     });
 
     // Performance keywords
-    const performanceKeywords = ['performance', 'optimize', 'faster', 'improve', 'benchmark', 'speed'];
+    const performanceKeywords = [
+      'performance',
+      'optimize',
+      'faster',
+      'improve',
+      'benchmark',
+      'speed',
+    ];
     performanceKeywords.forEach(keyword => {
       if (message.includes(keyword)) {
         score += 0.1;
@@ -901,7 +964,10 @@ export class MCPWikiGenerator {
   /**
    * Calculate template similarity
    */
-  private static calculateTemplateSimilarity(template1: WikiTemplate, template2: WikiTemplate): number {
+  private static calculateTemplateSimilarity(
+    template1: WikiTemplate,
+    template2: WikiTemplate
+  ): number {
     let score = 0;
 
     // Provider matching
@@ -921,7 +987,9 @@ export class MCPWikiGenerator {
 
     // Tag overlap
     const sharedTags = MCPWikiGenerator.findSharedTags(template1, template2);
-    score += (sharedTags.length / Math.max(template1.tags?.length || 1, template2.tags?.length || 1)) * 0.2;
+    score +=
+      (sharedTags.length / Math.max(template1.tags?.length || 1, template2.tags?.length || 1)) *
+      0.2;
 
     // Description similarity
     const descSimilarity = MCPWikiGenerator.calculateTextSimilarity(
@@ -936,7 +1004,10 @@ export class MCPWikiGenerator {
   /**
    * Extract benchmark matches from RSS item
    */
-  private static extractBenchmarkMatches(rssItem: any, template: WikiTemplate): Array<{
+  private static extractBenchmarkMatches(
+    rssItem: any,
+    template: WikiTemplate
+  ): Array<{
     type: 'performance' | 'feature' | 'security';
     score: number;
     description: string;
@@ -954,14 +1025,15 @@ export class MCPWikiGenerator {
     const text = rssItem.title + ' ' + rssItem.description;
 
     // Performance benchmarks
-    const performanceRegex = /(\d+%|\d+x)\s+faster|(\d+(?:\.\d+)?)\s*ms|(\d+(?:\.\d+)?)\s*seconds?/gi;
+    const performanceRegex =
+      /(\d+%|\d+x)\s+faster|(\d+(?:\.\d+)?)\s*ms|(\d+(?:\.\d+)?)\s*seconds?/gi;
     let perfMatch;
     while ((perfMatch = performanceRegex.exec(text)) !== null) {
       matches.push({
         type: 'performance',
         score: 0.8,
         description: `Performance improvement: ${perfMatch[0]}`,
-        rssValue: perfMatch[0]
+        rssValue: perfMatch[0],
       });
     }
 
@@ -973,7 +1045,7 @@ export class MCPWikiGenerator {
           type: 'feature',
           score: 0.6,
           description: `Feature mention: ${keyword}`,
-          rssValue: keyword
+          rssValue: keyword,
         });
       }
     });
@@ -986,7 +1058,7 @@ export class MCPWikiGenerator {
           type: 'security',
           score: 0.7,
           description: `Security mention: ${keyword}`,
-          rssValue: keyword
+          rssValue: keyword,
         });
       }
     });
@@ -997,7 +1069,10 @@ export class MCPWikiGenerator {
   /**
    * Extract benchmark matches from git commit
    */
-  private static extractGitBenchmarkMatches(commit: any, template: WikiTemplate): Array<{
+  private static extractGitBenchmarkMatches(
+    commit: any,
+    template: WikiTemplate
+  ): Array<{
     type: 'performance' | 'feature' | 'security';
     score: number;
     description: string;
@@ -1022,7 +1097,7 @@ export class MCPWikiGenerator {
         type: 'performance',
         score: 0.8,
         description: `Performance improvement: ${perfMatch[0]}`,
-        commitValue: perfMatch[0]
+        commitValue: perfMatch[0],
       });
     }
 
@@ -1032,17 +1107,21 @@ export class MCPWikiGenerator {
         type: 'feature',
         score: 0.6,
         description: 'Feature implementation',
-        commitValue: message
+        commitValue: message,
       });
     }
 
     // Security fixes
-    if (message.toLowerCase().includes('security') || message.toLowerCase().includes('cve') || message.toLowerCase().includes('fix:')) {
+    if (
+      message.toLowerCase().includes('security') ||
+      message.toLowerCase().includes('cve') ||
+      message.toLowerCase().includes('fix:')
+    ) {
       matches.push({
         type: 'security',
         score: 0.7,
         description: 'Security fix/improvement',
-        commitValue: message
+        commitValue: message,
       });
     }
 
@@ -1055,7 +1134,7 @@ export class MCPWikiGenerator {
   private static findSharedFeatures(template1: WikiTemplate, template2: WikiTemplate): string[] {
     const features1 = template1.metadata?.features || [];
     const features2 = template2.metadata?.features || [];
-    
+
     return features1.filter((feature: string) => features2.includes(feature));
   }
 
@@ -1065,7 +1144,7 @@ export class MCPWikiGenerator {
   private static findSharedTags(template1: WikiTemplate, template2: WikiTemplate): string[] {
     const tags1 = template1.tags || [];
     const tags2 = template2.tags || [];
-    
+
     return tags1.filter(tag => tags2.includes(tag));
   }
 
@@ -1075,10 +1154,10 @@ export class MCPWikiGenerator {
   private static calculateTextSimilarity(text1: string, text2: string): number {
     const words1 = new Set(text1.toLowerCase().split(/\s+/));
     const words2 = new Set(text2.toLowerCase().split(/\s+/));
-    
+
     const intersection = new Set([...words1].filter(word => words2.has(word)));
     const union = new Set([...words1, ...words2]);
-    
+
     return intersection.size / union.size;
   }
 
@@ -1100,11 +1179,15 @@ export class MCPWikiGenerator {
 
     // Simple regex-based parsing for demo
     const itemMatches = rssText.match(/<item>[\s\S]*?<\/item>/gi) || [];
-    
+
     itemMatches.forEach(itemText => {
-      const titleMatch = itemText.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) || itemText.match(/<title>(.*?)<\/title>/);
+      const titleMatch =
+        itemText.match(/<title><!\[CDATA\[(.*?)\]\]><\/title>/) ||
+        itemText.match(/<title>(.*?)<\/title>/);
       const linkMatch = itemText.match(/<link>(.*?)<\/link>/);
-      const descMatch = itemText.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/) || itemText.match(/<description>(.*?)<\/description>/);
+      const descMatch =
+        itemText.match(/<description><!\[CDATA\[(.*?)\]\]><\/description>/) ||
+        itemText.match(/<description>(.*?)<\/description>/);
       const dateMatch = itemText.match(/<pubDate>(.*?)<\/pubDate>/);
 
       if (titleMatch && linkMatch) {
@@ -1112,7 +1195,7 @@ export class MCPWikiGenerator {
           title: titleMatch[1],
           link: linkMatch[1],
           description: descMatch?.[1] || '',
-          pubDate: dateMatch?.[1] || ''
+          pubDate: dateMatch?.[1] || '',
         });
       }
     });
@@ -1132,25 +1215,25 @@ export class MCPWikiGenerator {
   } {
     // Use existing GFM compliance formula
     const gfmCompliance = MCPWikiGenerator.calculateGFMCompliance(content);
-    
+
     // Use existing CommonMark compliance formula
     const commonmarkCompliance = MCPWikiGenerator.calculateCommonMarkCompliance(content);
-    
+
     // Calculate optimization score (based on wiki output metrics)
     const optimizationScore = MCPWikiGenerator.calculateOptimizationScore(content);
-    
+
     // Estimate React components (existing formula)
     const reactComponents = MCPWikiGenerator.estimateReactComponents(content);
-    
+
     // Calculate complexity score
     const complexityScore = MCPWikiGenerator.calculateComplexityScore(content);
-    
+
     return {
       gfmCompliance,
       commonmarkCompliance,
       optimizationScore,
       reactComponents,
-      complexityScore
+      complexityScore,
     };
   }
 
@@ -1159,14 +1242,14 @@ export class MCPWikiGenerator {
    */
   private static calculateGFMCompliance(md: string): number {
     let score = 60; // Base CommonMark compliance
-    
+
     // GFM features (5 points each)
     if (md.includes('|')) score += 5; // Tables
     if (md.includes('- [')) score += 5; // Task lists
     if (md.includes('~~')) score += 5; // Strikethrough
     if (md.match(/\b[A-Z][a-z]+[A-Z][a-z]+\b/)) score += 5; // Autolinks
     if (md.match(/\.md\b/)) score += 5; // Wiki links
-    
+
     return Math.min(score, 100);
   }
 
@@ -1175,14 +1258,14 @@ export class MCPWikiGenerator {
    */
   private static calculateCommonMarkCompliance(md: string): number {
     let score = 50; // Base score
-    
+
     // CommonMark features (10 points each)
     if (md.match(/^#{1,6}\s/m)) score += 10; // Headings
     if (md.match(/\*\*.*?\*\*/)) score += 10; // Strong emphasis
     if (md.match(/\*.*?\*/)) score += 10; // Emphasis
     if (md.match(/^>\s/m)) score += 10; // Blockquotes
     if (md.match(/\[.*\]\(.*\)/)) score += 10; // Links
-    
+
     return Math.min(score, 100);
   }
 
@@ -1191,29 +1274,30 @@ export class MCPWikiGenerator {
    */
   private static calculateOptimizationScore(content: string): number {
     let score = 40; // Base score
-    
+
     // Content structure optimization
     const headingCount = (content.match(/^#{1,6}\s/gm) || []).length;
-    if (headingCount >= 3 && headingCount <= 8) score += 15; // Optimal heading count
+    if (headingCount >= 3 && headingCount <= 8)
+      score += 15; // Optimal heading count
     else if (headingCount > 0) score += 5; // Some headings
-    
+
     // Code block optimization
     const codeBlocks = (content.match(/```/g) || []).length / 2;
     if (codeBlocks > 0) score += 10;
-    
+
     // List optimization
     const lists = (content.match(/^[-*+]\s/gm) || []).length;
     if (lists > 0) score += 10;
-    
+
     // Link density
     const links = (content.match(/\[.*\]\(.*\)/g) || []).length;
-    const linkDensity = links / Math.max(content.split(/\s+/).length, 1) * 100;
+    const linkDensity = (links / Math.max(content.split(/\s+/).length, 1)) * 100;
     if (linkDensity > 0 && linkDensity <= 10) score += 15;
     else if (linkDensity > 0) score += 5;
-    
+
     // Table presence
     if (content.includes('|')) score += 10;
-    
+
     return Math.min(score, 100);
   }
 
@@ -1222,19 +1306,19 @@ export class MCPWikiGenerator {
    */
   private static estimateReactComponents(md: string): number {
     let components = 0;
-    
+
     // Each heading = component
     components += (md.match(/^#{1,6}\s/gm) || []).length;
-    
+
     // Each table = component
     components += (md.match(/\|.*\|/g) || []).length;
-    
+
     // Each code block = component
     components += (md.match(/```/g) || []).length / 2;
-    
+
     // Each list = component
     components += (md.match(/^[-*+]\s/gm) || []).length;
-    
+
     return Math.ceil(components);
   }
 
@@ -1243,11 +1327,11 @@ export class MCPWikiGenerator {
    */
   private static calculateComplexityScore(content: string): number {
     let complexity = 0;
-    
+
     // Base complexity from content length
     const wordCount = content.split(/\s+/).length;
     complexity += Math.min(wordCount / 100, 30); // Max 30 points for length
-    
+
     // Structural complexity
     const headingLevels = new Set();
     const headingMatches = content.match(/^#{1,6}\s/gm) || [];
@@ -1255,26 +1339,29 @@ export class MCPWikiGenerator {
       headingLevels.add(heading.length);
     });
     complexity += headingLevels.size * 5; // 5 points per heading level
-    
+
     // Code complexity
     const codeBlocks = (content.match(/```/g) || []).length / 2;
     complexity += codeBlocks * 10; // 10 points per code block
-    
+
     // Table complexity
     const tableRows = (content.match(/\|.*\|/g) || []).length;
     complexity += tableRows * 2; // 2 points per table row
-    
+
     // Link complexity
     const links = (content.match(/\[.*\]\(.*\)/g) || []).length;
     complexity += links * 3; // 3 points per link
-    
+
     return Math.min(Math.round(complexity), 100);
   }
 
   /**
    * Enhanced cross-reference scoring with content metrics
    */
-  static async scoreCrossReferencesWithContent(templateName: string, generatedContent?: string): Promise<{
+  static async scoreCrossReferencesWithContent(
+    templateName: string,
+    generatedContent?: string
+  ): Promise<{
     rssFeedItems: Array<{
       title: string;
       link: string;
@@ -1343,42 +1430,50 @@ export class MCPWikiGenerator {
 
     // Get base cross-references
     const baseCrossRefs = await MCPWikiGenerator.scoreCrossReferences(templateName);
-    
+
     // Calculate content scores if content provided with proper validation
-    const contentScores = generatedContent && generatedContent.trim().length > 0 
-      ? MCPWikiGenerator.calculateContentScores(generatedContent) 
-      : null;
+    const contentScores =
+      generatedContent && generatedContent.trim().length > 0
+        ? MCPWikiGenerator.calculateContentScores(generatedContent)
+        : null;
 
     // Enhance RSS items with content scores
     const enhancedRSSItems = baseCrossRefs.rssFeedItems.map(item => ({
       ...item,
-      contentScores: contentScores
+      contentScores: contentScores,
     }));
 
     // Enhance git commits with content scores
     const enhancedGitCommits = baseCrossRefs.gitCommits.map(commit => ({
       ...commit,
-      contentScores: contentScores
+      contentScores: contentScores,
     }));
 
     // Enhance related templates with content scores
     const enhancedRelatedTemplates = baseCrossRefs.relatedTemplates.map(tmpl => ({
       ...tmpl,
-      contentScores: contentScores
+      contentScores: contentScores,
     }));
 
     // Calculate overall scores
-    const avgRelevanceScore = (
-      enhancedRSSItems.reduce((sum, item) => sum + item.relevanceScore, 0) / Math.max(enhancedRSSItems.length, 1) +
-      enhancedGitCommits.reduce((sum, commit) => sum + commit.relevanceScore, 0) / Math.max(enhancedGitCommits.length, 1)
-    ) / 2;
+    const avgRelevanceScore =
+      (enhancedRSSItems.reduce((sum, item) => sum + item.relevanceScore, 0) /
+        Math.max(enhancedRSSItems.length, 1) +
+        enhancedGitCommits.reduce((sum, commit) => sum + commit.relevanceScore, 0) /
+          Math.max(enhancedGitCommits.length, 1)) /
+      2;
 
-    const contentQualityScore = contentScores ? 
-      (contentScores.gfmCompliance + contentScores.commonmarkCompliance + contentScores.optimizationScore) / 3 : 0;
+    const contentQualityScore = contentScores
+      ? (contentScores.gfmCompliance +
+          contentScores.commonmarkCompliance +
+          contentScores.optimizationScore) /
+        3
+      : 0;
 
     const performanceScore = template.performanceMetrics?.successRate || 0;
 
-    const combinedScore = (avgRelevanceScore * 0.4) + (contentQualityScore * 0.4) + (performanceScore * 0.2);
+    const combinedScore =
+      avgRelevanceScore * 0.4 + contentQualityScore * 0.4 + performanceScore * 0.2;
 
     return {
       rssFeedItems: enhancedRSSItems,
@@ -1388,8 +1483,8 @@ export class MCPWikiGenerator {
         relevanceScore: avgRelevanceScore,
         contentQualityScore,
         performanceScore,
-        combinedScore
-      }
+        combinedScore,
+      },
     };
   }
 
@@ -1399,7 +1494,7 @@ export class MCPWikiGenerator {
   static async generateWiki(request: WikiGenerationRequest): Promise<WikiGenerationResult> {
     const startTime = Date.now();
     let templateName = 'Direct Generation';
-    
+
     try {
       // Authenticate request if token provided
       if (request.authToken) {
@@ -1420,26 +1515,30 @@ export class MCPWikiGenerator {
       // Resolve provider metadata if provider is specified
       let resolvedBaseUrl = request.baseUrl;
       let providerMetadata = null;
-      
+
       if (request.provider) {
         providerMetadata = MCPWikiGenerator.getProviderMetadata(request.provider);
         resolvedBaseUrl = request.baseUrl || MCPWikiGenerator.resolveProviderUrl(request.provider);
-        
+
         // Validate format compatibility with provider
         if (!providerMetadata.supportedFormats.includes(request.format as WikiFormat)) {
-          console.warn(styled(
-            `⚠️ Format '${request.format}' may not be fully supported by provider '${request.provider}'. ` +
-            `Supported formats: ${providerMetadata.supportedFormats.join(', ')}`,
-            'warning'
-          ));
+          console.warn(
+            styled(
+              `⚠️ Format '${request.format}' may not be fully supported by provider '${request.provider}'. ` +
+                `Supported formats: ${providerMetadata.supportedFormats.join(', ')}`,
+              'warning'
+            )
+          );
         }
 
         // Log provider information
         console.info(styled(`📋 Using provider: ${providerMetadata.name}`, 'info'));
         console.info(styled(`🔗 Provider URL: ${resolvedBaseUrl}`, 'info'));
-        
+
         if (providerMetadata.requiresAuth) {
-          console.info(styled(`🔐 Provider '${request.provider}' requires authentication`, 'warning'));
+          console.info(
+            styled(`🔐 Provider '${request.provider}' requires authentication`, 'warning')
+          );
         }
       }
 
@@ -1542,7 +1641,7 @@ export class MCPWikiGenerator {
     } catch (error) {
       const generationTime = Date.now() - startTime;
       MCPWikiGenerator.trackTemplateUsage(templateName, generationTime, false);
-      
+
       console.error(styled(`❌ Wiki generation failed: ${error.message}`, 'error'));
       return {
         success: false,
@@ -1569,7 +1668,9 @@ export class MCPWikiGenerator {
     // Validate format is one of the allowed types
     const validFormats: WikiFormat[] = ['markdown', 'html', 'json', 'all'];
     if (!validFormats.includes(template.format)) {
-      throw new Error(`Invalid format '${template.format}'. Must be one of: ${validFormats.join(', ')}`);
+      throw new Error(
+        `Invalid format '${template.format}'. Must be one of: ${validFormats.join(', ')}`
+      );
     }
 
     // Add timestamps if not provided
@@ -1680,13 +1781,16 @@ export class MCPWikiGenerator {
     requiresAuth: boolean;
     features: string[];
   } {
-    const providerMetadata: Record<DocumentationProvider, {
-      name: string;
-      description: string;
-      supportedFormats: WikiFormat[];
-      requiresAuth: boolean;
-      features: string[];
-    }> = {
+    const providerMetadata: Record<
+      DocumentationProvider,
+      {
+        name: string;
+        description: string;
+        supportedFormats: WikiFormat[];
+        requiresAuth: boolean;
+        features: string[];
+      }
+    > = {
       [DocumentationProvider.BUN_OFFICIAL]: {
         name: 'Bun Official Documentation',
         description: 'Official Bun runtime documentation and API reference',
@@ -2020,13 +2124,15 @@ export class MCPWikiGenerator {
       },
     };
 
-    return providerMetadata[provider] || {
-      name: provider,
-      description: `Documentation for ${provider}`,
-      supportedFormats: ['markdown', 'html', 'json'],
-      requiresAuth: false,
-      features: ['Basic Documentation'],
-    };
+    return (
+      providerMetadata[provider] || {
+        name: provider,
+        description: `Documentation for ${provider}`,
+        supportedFormats: ['markdown', 'html', 'json'],
+        requiresAuth: false,
+        features: ['Basic Documentation'],
+      }
+    );
   }
   /**
    * Get all available wiki templates (built-in + custom)
@@ -2053,12 +2159,12 @@ export class MCPWikiGenerator {
         validationRules: {
           requiredSections: ['## Overview', '## Installation'],
           maxSections: 20,
-          forbiddenPatterns: ['<script>', 'javascript:']
+          forbiddenPatterns: ['<script>', 'javascript:'],
         },
         metadata: {
           confluenceSpace: 'ENG',
-          pageTemplate: 'technical-documentation'
-        }
+          pageTemplate: 'technical-documentation',
+        },
       },
       {
         name: 'Notion API',
@@ -2083,8 +2189,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           notionDatabaseId: 'template-db-id',
-          integrationType: 'api'
-        }
+          integrationType: 'api',
+        },
       },
       {
         name: 'GitHub Wiki',
@@ -2109,8 +2215,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           repository: 'your-org/bun-utilities',
-          wikiType: 'github'
-        }
+          wikiType: 'github',
+        },
       },
       {
         name: 'Bun Official Docs',
@@ -2132,12 +2238,12 @@ export class MCPWikiGenerator {
         validationRules: {
           requiredSections: ['## Installation', '## API Reference'],
           maxSections: 30,
-          forbiddenPatterns: ['node.js', 'npm install']
+          forbiddenPatterns: ['node.js', 'npm install'],
         },
         metadata: {
           docStyle: 'bun-official',
-          targetAudience: 'developers'
-        }
+          targetAudience: 'developers',
+        },
       },
       {
         name: 'Vercel Documentation',
@@ -2162,8 +2268,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           deploymentPlatform: 'vercel',
-          framework: 'bun'
-        }
+          framework: 'bun',
+        },
       },
       {
         name: 'API Reference',
@@ -2188,8 +2294,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           specVersion: '3.0.0',
-          apiVersion: 'v1'
-        }
+          apiVersion: 'v1',
+        },
       },
       {
         name: 'Tutorial Guide',
@@ -2214,8 +2320,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           difficulty: 'beginner',
-          estimatedTime: '30 minutes'
-        }
+          estimatedTime: '30 minutes',
+        },
       },
       {
         name: 'Quick Reference',
@@ -2240,8 +2346,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           type: 'cheatsheet',
-          audience: 'experienced-developers'
-        }
+          audience: 'experienced-developers',
+        },
       },
       {
         name: 'Internal Portal',
@@ -2266,8 +2372,8 @@ export class MCPWikiGenerator {
         },
         metadata: {
           portalType: 'internal',
-          accessLevel: 'employee'
-        }
+          accessLevel: 'employee',
+        },
       },
     ];
 
@@ -2278,8 +2384,7 @@ export class MCPWikiGenerator {
    * Get templates by provider
    */
   static getTemplatesByProvider(provider: DocumentationProvider): WikiTemplate[] {
-    return MCPWikiGenerator.getWikiTemplates()
-      .filter(template => template.provider === provider);
+    return MCPWikiGenerator.getWikiTemplates().filter(template => template.provider === provider);
   }
 
   /**
@@ -2298,7 +2403,7 @@ export class MCPWikiGenerator {
     if (!metadata.supportedFormats.includes(format)) {
       throw new Error(
         `Format '${format}' not supported by provider '${provider}'. ` +
-        `Supported formats: ${metadata.supportedFormats.join(', ')}`
+          `Supported formats: ${metadata.supportedFormats.join(', ')}`
       );
     }
 
@@ -2312,7 +2417,7 @@ export class MCPWikiGenerator {
       includeExamples: true,
       customSections: options?.customSections || metadata.features.map(f => `## ${f}`),
       providerConfig: options?.providerConfig || {},
-      ...options
+      ...options,
     };
   }
 
@@ -2327,7 +2432,7 @@ export class MCPWikiGenerator {
     const metadata = MCPWikiGenerator.getProviderMetadata(provider);
     const targetFormats = formats || metadata.supportedFormats;
 
-    return targetFormats.map(format => 
+    return targetFormats.map(format =>
       MCPWikiGenerator.createProviderTemplate(provider, workspace, format)
     );
   }
@@ -2344,17 +2449,23 @@ export class MCPWikiGenerator {
   /**
    * Get provider statistics
    */
-  static getProviderStatistics(): Record<DocumentationProvider, {
-    templateCount: number;
-    supportedFormats: WikiFormat[];
-    requiresAuth: boolean;
-  }> {
-    const templates = MCPWikiGenerator.getWikiTemplates();
-    const stats: Record<DocumentationProvider, {
+  static getProviderStatistics(): Record<
+    DocumentationProvider,
+    {
       templateCount: number;
       supportedFormats: WikiFormat[];
       requiresAuth: boolean;
-    }> = {} as any;
+    }
+  > {
+    const templates = MCPWikiGenerator.getWikiTemplates();
+    const stats: Record<
+      DocumentationProvider,
+      {
+        templateCount: number;
+        supportedFormats: WikiFormat[];
+        requiresAuth: boolean;
+      }
+    > = {} as any;
 
     templates.forEach(template => {
       if (!stats[template.provider]) {
@@ -2362,7 +2473,7 @@ export class MCPWikiGenerator {
         stats[template.provider] = {
           templateCount: 0,
           supportedFormats: metadata.supportedFormats,
-          requiresAuth: metadata.requiresAuth
+          requiresAuth: metadata.requiresAuth,
         };
       }
       stats[template.provider].templateCount++;
@@ -2392,7 +2503,7 @@ export class MCPWikiGenerator {
     if (template.format && !metadata.supportedFormats.includes(template.format)) {
       errors.push(
         `Format '${template.format}' not supported by provider '${template.provider}'. ` +
-        `Supported formats: ${metadata.supportedFormats.join(', ')}`
+          `Supported formats: ${metadata.supportedFormats.join(', ')}`
       );
     }
 
@@ -2415,15 +2526,15 @@ export class MCPWikiGenerator {
     // Validate provider-specific configuration
     if (template.providerConfig) {
       const config = template.providerConfig;
-      
+
       if (config.apiKey && typeof config.apiKey !== 'string') {
         errors.push('API key must be a string');
       }
-      
+
       if (config.version && typeof config.version !== 'string') {
         errors.push('Version must be a string');
       }
-      
+
       if (config.region && typeof config.region !== 'string') {
         errors.push('Region must be a string');
       }
@@ -2436,13 +2547,13 @@ export class MCPWikiGenerator {
           warnings.push('GitHub Enterprise templates should use GitHub URLs');
         }
         break;
-        
+
       case DocumentationProvider.VERCEL:
         if (!template.baseUrl?.includes('vercel.com')) {
           warnings.push('Vercel templates should use Vercel URLs');
         }
         break;
-        
+
       case DocumentationProvider.INTERNAL_WIKI:
         if (!template.baseUrl) {
           errors.push('Internal Wiki templates require a baseUrl');
@@ -2453,7 +2564,7 @@ export class MCPWikiGenerator {
     return {
       isValid: errors.length === 0,
       errors,
-      warnings
+      warnings,
     };
   }
 
@@ -2467,13 +2578,16 @@ export class MCPWikiGenerator {
     configuration: Record<string, any>;
   } {
     const metadata = MCPWikiGenerator.getProviderMetadata(provider);
-    
-    const recommendations: Record<DocumentationProvider, {
-      formats: WikiFormat[];
-      features: string[];
-      bestPractices: string[];
-      configuration: Record<string, any>;
-    }> = {
+
+    const recommendations: Record<
+      DocumentationProvider,
+      {
+        formats: WikiFormat[];
+        features: string[];
+        bestPractices: string[];
+        configuration: Record<string, any>;
+      }
+    > = {
       [DocumentationProvider.BUN_OFFICIAL]: {
         formats: ['markdown', 'html'],
         features: ['API Reference', 'Examples', 'Performance Tips'],
@@ -2481,15 +2595,15 @@ export class MCPWikiGenerator {
           'Include code examples for all APIs',
           'Add performance benchmarks',
           'Use CommonMark-compliant markdown',
-          'Include type definitions'
+          'Include type definitions',
         ],
         configuration: {
           includeExamples: true,
           includeValidation: true,
-          customSections: ['## Installation', '## Quick Start', '## API Reference']
-        }
+          customSections: ['## Installation', '## Quick Start', '## API Reference'],
+        },
       },
-      
+
       [DocumentationProvider.VERCEL]: {
         formats: ['markdown', 'html'],
         features: ['Deployment Guides', 'Edge Functions', 'Configuration'],
@@ -2497,14 +2611,14 @@ export class MCPWikiGenerator {
           'Include deployment steps',
           'Add environment variable examples',
           'Include edge function patterns',
-          'Add performance optimization tips'
+          'Add performance optimization tips',
         ],
         configuration: {
           includeExamples: true,
-          customSections: ['## Deployment', '## Environment Setup', '## Edge Functions']
-        }
+          customSections: ['## Deployment', '## Environment Setup', '## Edge Functions'],
+        },
       },
-      
+
       [DocumentationProvider.GITHUB_ENTERPRISE]: {
         formats: ['markdown'],
         features: ['Wiki Pages', 'Repository Integration', 'Collaboration'],
@@ -2512,14 +2626,14 @@ export class MCPWikiGenerator {
           'Use GitHub-flavored markdown',
           'Include repository links',
           'Add contribution guidelines',
-          'Include issue templates'
+          'Include issue templates',
         ],
         configuration: {
           includeExamples: true,
-          customSections: ['## Contributing', '## Repository Setup', '## Issues']
-        }
+          customSections: ['## Contributing', '## Repository Setup', '## Issues'],
+        },
       },
-      
+
       [DocumentationProvider.INTERNAL_WIKI]: {
         formats: ['markdown', 'html', 'json'],
         features: ['Internal Knowledge', 'Team Collaboration', 'Security Controls'],
@@ -2527,14 +2641,14 @@ export class MCPWikiGenerator {
           'Include internal links',
           'Add security classifications',
           'Include team contact information',
-          'Follow company documentation standards'
+          'Follow company documentation standards',
         ],
         configuration: {
           includeExamples: true,
-          customSections: ['## Internal Links', '## Security', '## Team Contacts']
-        }
+          customSections: ['## Internal Links', '## Security', '## Team Contacts'],
+        },
       },
-      
+
       [DocumentationProvider.API_REFERENCE]: {
         formats: ['json', 'html'],
         features: ['API Schemas', 'Endpoint Documentation', 'Code Examples'],
@@ -2542,28 +2656,30 @@ export class MCPWikiGenerator {
           'Include OpenAPI specifications',
           'Add request/response examples',
           'Include error codes',
-          'Add authentication details'
+          'Add authentication details',
         ],
         configuration: {
           includeExamples: true,
-          customSections: ['## API Endpoints', '## Authentication', '## Error Codes']
-        }
-      }
+          customSections: ['## API Endpoints', '## Authentication', '## Error Codes'],
+        },
+      },
     };
 
-    return recommendations[provider] || {
-      formats: metadata.supportedFormats,
-      features: metadata.features,
-      bestPractices: [
-        'Follow provider documentation guidelines',
-        'Include relevant examples',
-        'Ensure proper formatting'
-      ],
-      configuration: {
-        includeExamples: true,
-        customSections: metadata.features.map(f => `## ${f}`)
+    return (
+      recommendations[provider] || {
+        formats: metadata.supportedFormats,
+        features: metadata.features,
+        bestPractices: [
+          'Follow provider documentation guidelines',
+          'Include relevant examples',
+          'Ensure proper formatting',
+        ],
+        configuration: {
+          includeExamples: true,
+          customSections: metadata.features.map(f => `## ${f}`),
+        },
       }
-    };
+    );
   }
 
   /**
@@ -2578,11 +2694,11 @@ export class MCPWikiGenerator {
     }
   ): Promise<WikiGenerationResult> {
     const startTime = Date.now();
-    
+
     try {
       const templates = MCPWikiGenerator.getWikiTemplates();
       const template = templates.find(t => t.name === templateName);
-      
+
       if (!template) {
         MCPWikiGenerator.trackTemplateUsage(templateName, Date.now() - startTime, false);
         return {
@@ -2632,7 +2748,7 @@ export class MCPWikiGenerator {
     } catch (error) {
       const generationTime = Date.now() - startTime;
       MCPWikiGenerator.trackTemplateUsage(templateName, generationTime, false);
-      
+
       return {
         success: false,
         files: {},
@@ -2653,7 +2769,7 @@ export class MCPWikiGenerator {
       }
 
       const configFile = Bun.file(configPath);
-      if (!await configFile.exists()) {
+      if (!(await configFile.exists())) {
         console.warn(styled(`⚠️ Template config file not found: ${configPath}`, 'warning'));
         return;
       }
@@ -2686,14 +2802,18 @@ export class MCPWikiGenerator {
           try {
             MCPWikiGenerator.registerCustomTemplate(template);
           } catch (templateError) {
-            console.warn(styled(`⚠️ Skipping invalid template: ${templateError.message}`, 'warning'));
+            console.warn(
+              styled(`⚠️ Skipping invalid template: ${templateError.message}`, 'warning')
+            );
           }
         }
       } else {
         console.warn(styled('⚠️ No templates array found in config file', 'warning'));
       }
     } catch (error) {
-      console.error(styled(`❌ Failed to load templates from ${configPath}: ${error.message}`, 'error'));
+      console.error(
+        styled(`❌ Failed to load templates from ${configPath}: ${error.message}`, 'error')
+      );
     }
   }
 
@@ -2705,7 +2825,7 @@ export class MCPWikiGenerator {
       const config = {
         templates: MCPWikiGenerator.getWikiTemplates(),
         exported: new Date().toISOString(),
-        version: '1.0.0'
+        version: '1.0.0',
       };
 
       await Bun.write(configPath, JSON.stringify(config, null, 2));

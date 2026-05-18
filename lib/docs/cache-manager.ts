@@ -52,8 +52,8 @@ export class EnhancedDocsCacheManager {
     try {
       Bun.$`mkdir -p ${baseDir}`.quiet();
     } catch {
-    console.error('Unhandled error:', error);
-  }
+      console.error('Unhandled error:', error);
+    }
 
     return baseDir;
   }

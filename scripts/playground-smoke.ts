@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { RuntimeEnv } from "../lib/env/runtime";
+import { RuntimeEnv } from '../lib/env/runtime';
 
 type SmokeCheck = {
   name: string;
@@ -7,10 +7,10 @@ type SmokeCheck = {
 };
 
 const CHECKS: SmokeCheck[] = [
-  { name: "health", path: "/api/health" },
-  { name: "runtime", path: "/api/control/process/runtime" },
-  { name: "workerDiagnostics", path: "/api/control/worker-pool/diagnostics" },
-  { name: "trendSummary", path: "/api/dashboard/trends/summary?minutes=5&limit=20" },
+  { name: 'health', path: '/api/health' },
+  { name: 'runtime', path: '/api/control/process/runtime' },
+  { name: 'workerDiagnostics', path: '/api/control/worker-pool/diagnostics' },
+  { name: 'trendSummary', path: '/api/dashboard/trends/summary?minutes=5&limit=20' },
 ];
 
 async function main() {
@@ -22,7 +22,7 @@ async function main() {
     const started = performance.now();
     const url = `${base}${check.path}`;
     try {
-      const response = await fetch(url, { signal: AbortSignal.timeout(7000), cache: "no-store" });
+      const response = await fetch(url, { signal: AbortSignal.timeout(7000), cache: 'no-store' });
       const latencyMs = Math.round(performance.now() - started);
       output.push({
         check: check.name,

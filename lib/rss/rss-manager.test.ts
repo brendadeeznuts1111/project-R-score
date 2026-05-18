@@ -67,7 +67,13 @@ describe('RSSManager', () => {
       link: 'https://example.com',
       description: 'Test',
       items: [
-        { title: 'Item 1', link: 'https://example.com/1', description: 'Desc', pubDate: '2026-01-01', guid: 'g1' },
+        {
+          title: 'Item 1',
+          link: 'https://example.com/1',
+          description: 'Desc',
+          pubDate: '2026-01-01',
+          guid: 'g1',
+        },
       ],
       lastBuildDate: '2026-01-01',
       ttl: 60,
@@ -87,9 +93,7 @@ describe('RSSManager', () => {
       description: 'test',
       dependencies: {},
       devDependencies: {},
-      bunDocs: [
-        { api: 'serve', url: 'https://bun.sh/docs/api/serve', category: 'http' },
-      ],
+      bunDocs: [{ api: 'serve', url: 'https://bun.sh/docs/api/serve', category: 'http' }],
     };
     const feed = await mgr.generatePackageFeed('test-pkg', pkgInfo);
     expect(feed.title).toContain('test-pkg');
@@ -114,7 +118,14 @@ describe('RSSManager', () => {
 
   test('CacheManager integration: set and get round-trip', async () => {
     const cache = new CacheManager({ defaultTTL: 300000, maxSize: 100 });
-    const feed = { title: 'Test', link: 'https://test.com', description: 'test', items: [], lastBuildDate: '', ttl: 60 };
+    const feed = {
+      title: 'Test',
+      link: 'https://test.com',
+      description: 'test',
+      items: [],
+      lastBuildDate: '',
+      ttl: 60,
+    };
     await cache.set('test-key', feed, { tags: ['rss'] });
     const retrieved = await cache.get('test-key');
     expect(retrieved).toEqual(feed);

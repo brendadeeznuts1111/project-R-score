@@ -1,6 +1,6 @@
 /**
  * Database Pool Wrappers v3.20
- * 
+ *
  * PostgreSQL and MySQL pool compatibility layers
  * Pg/MySQL compat via pg.Pool and mysql2.Pool
  */
@@ -9,7 +9,7 @@
 export class PostgreSQLPool {
   private pool: any;
   private config: any;
-  
+
   constructor(config: {
     connectionString?: string;
     host?: string;
@@ -25,13 +25,13 @@ export class PostgreSQLPool {
       max: 20,
       min: 5,
       idleTimeoutMillis: 30000,
-      ...config
+      ...config,
     };
-    
+
     // Dynamic import to avoid bundling issues
     this.initializePool();
   }
-  
+
   private async initializePool() {
     try {
       // Dynamic import with error handling
@@ -42,47 +42,53 @@ export class PostgreSQLPool {
         console.warn('⚠️ PostgreSQL library not found. Install with: bun add pg');
         throw new Error('PostgreSQL library not available. Install with: bun add pg');
       }
-      
+
       this.pool = new pg.Pool(this.config);
-      
+
       // Test connection
       const client = await this.pool.connect();
       await client.query('SELECT 1');
       client.release();
-      
+
       console.info('✅ PostgreSQL pool initialized');
     } catch (error) {
       console.error('❌ PostgreSQL pool initialization failed:', error);
       throw error;
     }
   }
-  
+
   async query(text: string, params?: any[]): Promise<any> {
     if (!this.pool) {
       throw new Error('PostgreSQL pool not initialized');
     }
-    
+
     const start = performance.now();
     try {
       const result = await this.pool.query(text, params);
       const latency = performance.now() - start;
-      
+
       return {
         rows: result.rows,
         rowCount: result.rowCount,
-        latency: latency
+        latency: latency,
       };
     } catch (error) {
       console.error('PostgreSQL query error:', error);
       throw error;
     }
   }
-  
-  async insertProfile(sessionId: string, profile: any, member: string = 'anonymous', document: string = 'unknown'): Promise<string> {
+
+  async insertProfile(
+    sessionId: string,
+    profile: any,
+    member: string = 'anonymous',
+    document: string = 'unknown'
+  ): Promise<string> {
     const profileId = crypto.randomUUID();
     const timestamp = Date.now();
-    
-    await this.query(`
+
+    await this.query(
+      `
       INSERT INTO profiles (id, session, profile, timestamp, member, document) 
       VALUES ($1, $2, $3, $4, $5, $6)
       ON CONFLICT (id) DO UPDATE SET
@@ -91,39 +97,41 @@ export class PostgreSQLPool {
         timestamp = EXCLUDED.timestamp,
         member = EXCLUDED.member,
         document = EXCLUDED.document
-    `, [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]);
-    
+    `,
+      [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]
+    );
+
     return profileId;
   }
-  
+
   async querySessions(member: string = '*'): Promise<any[]> {
     let query = 'SELECT * FROM profiles';
     const params: any[] = [];
-    
+
     if (member !== '*') {
       query += ' WHERE member LIKE $1 ORDER BY timestamp DESC';
       params.push(`%${member}%`);
     } else {
       query += ' ORDER BY timestamp DESC LIMIT 100';
     }
-    
+
     const result = await this.query(query, params);
     return result.rows;
   }
-  
+
   async getPoolStats(): Promise<any> {
     if (!this.pool) {
       return { status: 'not_initialized' };
     }
-    
+
     return {
       totalCount: this.pool.totalCount,
       idleCount: this.pool.idleCount,
       waitingCount: this.pool.waitingCount,
-      config: this.config
+      config: this.config,
     };
   }
-  
+
   async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
@@ -136,7 +144,7 @@ export class PostgreSQLPool {
 export class MySQLPool {
   private pool: any;
   private config: any;
-  
+
   constructor(config: {
     host?: string;
     port?: number;
@@ -151,12 +159,12 @@ export class MySQLPool {
       connectionLimit: 20,
       acquireTimeout: 60000,
       timeout: 60000,
-      ...config
+      ...config,
     };
-    
+
     this.initializePool();
   }
-  
+
   private async initializePool() {
     try {
       // Dynamic import with error handling
@@ -167,9 +175,9 @@ export class MySQLPool {
         console.warn('⚠️ MySQL2 library not found. Install with: bun add mysql2');
         throw new Error('MySQL2 library not available. Install with: bun add mysql2');
       }
-      
+
       this.pool = mysql.createPool(this.config);
-      
+
       // Test connection
       const [rows] = await this.pool.execute('SELECT 1');
       console.info('✅ MySQL pool initialized');
@@ -178,33 +186,39 @@ export class MySQLPool {
       throw error;
     }
   }
-  
+
   async query(sql: string, params?: any[]): Promise<any> {
     if (!this.pool) {
       throw new Error('MySQL pool not initialized');
     }
-    
+
     const start = performance.now();
     try {
       const [rows, fields] = await this.pool.execute(sql, params);
       const latency = performance.now() - start;
-      
+
       return {
         rows,
         fields,
-        latency
+        latency,
       };
     } catch (error) {
       console.error('MySQL query error:', error);
       throw error;
     }
   }
-  
-  async insertProfile(sessionId: string, profile: any, member: string = 'anonymous', document: string = 'unknown'): Promise<string> {
+
+  async insertProfile(
+    sessionId: string,
+    profile: any,
+    member: string = 'anonymous',
+    document: string = 'unknown'
+  ): Promise<string> {
     const profileId = crypto.randomUUID();
     const timestamp = Date.now();
-    
-    await this.query(`
+
+    await this.query(
+      `
       INSERT INTO profiles (id, session, profile, timestamp, member, document) 
       VALUES (?, ?, ?, ?, ?, ?)
       ON DUPLICATE KEY UPDATE
@@ -213,38 +227,40 @@ export class MySQLPool {
         timestamp = VALUES(timestamp),
         member = VALUES(member),
         document = VALUES(document)
-    `, [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]);
-    
+    `,
+      [profileId, sessionId, JSON.stringify(profile), timestamp, member, document]
+    );
+
     return profileId;
   }
-  
+
   async querySessions(member: string = '*'): Promise<any[]> {
     let query = 'SELECT * FROM profiles';
     const params: any[] = [];
-    
+
     if (member !== '*') {
       query += ' WHERE member LIKE ? ORDER BY timestamp DESC';
       params.push(`%${member}%`);
     } else {
       query += ' ORDER BY timestamp DESC LIMIT 100';
     }
-    
+
     const result = await this.query(query, params);
     return result.rows;
   }
-  
+
   async getPoolStats(): Promise<any> {
     if (!this.pool) {
       return { status: 'not_initialized' };
     }
-    
+
     // MySQL2 pool doesn't expose the same stats as pg
     return {
       config: this.config,
-      status: 'active'
+      status: 'active',
     };
   }
-  
+
   async close(): Promise<void> {
     if (this.pool) {
       await this.pool.end();
@@ -273,13 +289,13 @@ export class DatabasePoolFactory {
 // Pool Manager for multiple database types
 export class PoolManager {
   private pools: Map<string, any> = new Map();
-  
+
   async addPool(name: string, type: 'sqlite' | 'postgresql' | 'mysql', config: any): Promise<void> {
     const pool = DatabasePoolFactory.createPool(type, config);
     this.pools.set(name, pool);
     console.info(`✅ Added pool '${name}' (${type})`);
   }
-  
+
   getPool(name: string): any {
     const pool = this.pools.get(name);
     if (!pool) {
@@ -287,20 +303,26 @@ export class PoolManager {
     }
     return pool;
   }
-  
-  async insertProfile(poolName: string, sessionId: string, profile: any, member?: string, document?: string): Promise<string> {
+
+  async insertProfile(
+    poolName: string,
+    sessionId: string,
+    profile: any,
+    member?: string,
+    document?: string
+  ): Promise<string> {
     const pool = this.getPool(poolName);
     return await pool.insertProfile(sessionId, profile, member, document);
   }
-  
+
   async querySessions(poolName: string, member: string = '*'): Promise<any[]> {
     const pool = this.getPool(poolName);
     return await pool.querySessions(member);
   }
-  
+
   async getAllPoolStats(): Promise<Record<string, any>> {
     const stats: Record<string, any> = {};
-    
+
     for (const [name, pool] of this.pools) {
       try {
         stats[name] = await pool.getPoolStats();
@@ -308,13 +330,13 @@ export class PoolManager {
         stats[name] = { error: error.message };
       }
     }
-    
+
     return stats;
   }
-  
+
   async closeAll(): Promise<void> {
     console.info(`🔒 Closing all pools...`);
-    
+
     for (const [name, pool] of this.pools) {
       try {
         await pool.close();
@@ -323,7 +345,7 @@ export class PoolManager {
         console.error(`❌ Error closing pool '${name}':`, error);
       }
     }
-    
+
     this.pools.clear();
     console.info(`✅ All pools closed`);
   }
@@ -335,7 +357,7 @@ export const POOL_CONFIGS = {
     connectionString: process.env.PG_URL || 'postgresql://user:pass@localhost:5432/telemetry',
     max: 20,
     min: 5,
-    idleTimeoutMillis: 30000
+    idleTimeoutMillis: 30000,
   },
   mysql: {
     host: process.env.MYSQL_HOST || 'localhost',
@@ -345,10 +367,10 @@ export const POOL_CONFIGS = {
     password: process.env.MYSQL_PASSWORD || '',
     connectionLimit: 20,
     acquireTimeout: 60000,
-    timeout: 60000
+    timeout: 60000,
   },
   sqlite: {
     dbPath: process.env.DB_PATH || './telemetry.db',
-    poolSize: parseInt(process.env.POOL_SIZE || '20')
-  }
+    poolSize: parseInt(process.env.POOL_SIZE || '20'),
+  },
 };

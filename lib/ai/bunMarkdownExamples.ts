@@ -214,9 +214,7 @@ interface RenderMarkdownResponse {
 }
 
 /** API endpoint for rendering markdown */
-export function renderMarkdownAPI(
-  request: RenderMarkdownRequest
-): RenderMarkdownResponse {
+export function renderMarkdownAPI(request: RenderMarkdownRequest): RenderMarkdownResponse {
   try {
     const { markdown, options = {} } = request;
 

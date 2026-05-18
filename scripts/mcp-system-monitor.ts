@@ -42,7 +42,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -51,10 +51,14 @@ function colorize(text: string, color: keyof typeof colors): string {
 
 function getStatusIcon(status: SystemStatus['status']): string {
   switch (status) {
-    case 'healthy': return '✅';
-    case 'warning': return '⚠️';
-    case 'error': return '❌';
-    default: return '❓';
+    case 'healthy':
+      return '✅';
+    case 'warning':
+      return '⚠️';
+    case 'error':
+      return '❌';
+    default:
+      return '❓';
   }
 }
 
@@ -69,13 +73,13 @@ async function checkBunRuntime(): Promise<SystemStatus> {
       component: 'Bun Runtime',
       status: 'healthy',
       message: `v${version} (${revision}) | ${platform} | uptime ${uptime}h`,
-      metrics: { version, revision, platform, uptime }
+      metrics: { version, revision, platform, uptime },
     };
   } catch (error) {
     return {
       component: 'Bun Runtime',
       status: 'error',
-      message: `Failed to check runtime: ${error}`
+      message: `Failed to check runtime: ${error}`,
     };
   }
 }
@@ -86,7 +90,7 @@ async function checkDocumentationHealth(): Promise<SystemStatus[]> {
     'https://bun.com/reference',
     'https://bun.com/docs/api/utils',
     'https://bun.com/docs/runtime/utils',
-    'https://bun.com/docs/api/globals'
+    'https://bun.com/docs/api/globals',
   ];
 
   const results = await Promise.all(
@@ -103,14 +107,14 @@ async function checkDocumentationHealth(): Promise<SystemStatus[]> {
           component: `Docs: ${url.split('/').pop()}`,
           status,
           message: `${response.status} (${responseTime}ms)`,
-          metrics: { url, status: response.status, responseTime }
+          metrics: { url, status: response.status, responseTime },
         };
       } catch (error) {
         return {
           component: `Docs: ${url.split('/').pop()}`,
           status: 'error',
           message: `Failed: ${error}`,
-          metrics: { url }
+          metrics: { url },
         };
       }
     })
@@ -124,20 +128,26 @@ async function checkGitStatus(): Promise<SystemStatus> {
     // Check for uncommitted changes
     const gitStatus = Bun.spawn(['git', 'status', '--porcelain'], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
 
     const statusOutput = await new Response(gitStatus.stdout).text();
-    const changes = statusOutput.trim().split('\n').filter(line => line.length > 0).length;
+    const changes = statusOutput
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0).length;
 
     // Check for recent commits
     const gitLog = Bun.spawn(['git', 'log', '--oneline', '-10'], {
       stdout: 'pipe',
-      stderr: 'pipe'
+      stderr: 'pipe',
     });
 
     const logOutput = await new Response(gitLog.stdout).text();
-    const commits = logOutput.trim().split('\n').filter(line => line.length > 0).length;
+    const commits = logOutput
+      .trim()
+      .split('\n')
+      .filter(line => line.length > 0).length;
 
     const hasChanges = changes > 0;
     const status: SystemStatus['status'] = hasChanges ? 'warning' : 'healthy';
@@ -146,14 +156,14 @@ async function checkGitStatus(): Promise<SystemStatus> {
       component: 'Git Repository',
       status,
       message: `${commits} recent commits, ${changes} uncommitted changes`,
-      metrics: { commits, changes }
+      metrics: { commits, changes },
     };
   } catch (error) {
     return {
       component: 'Git Repository',
       status: 'warning',
       message: `Git check failed: ${error}`,
-      metrics: { error: String(error) }
+      metrics: { error: String(error) },
     };
   }
 }
@@ -167,13 +177,13 @@ async function createMCPSnapshot(): Promise<MCPSnapshot> {
   const [runtimeStatus, docsStatuses, gitStatus] = await Promise.all([
     checkBunRuntime(),
     checkDocumentationHealth(),
-    checkGitStatus()
+    checkGitStatus(),
   ]);
 
   const docsResults = docsStatuses.map(status => ({
     url: status.metrics?.url || '',
     status: status.metrics?.status || 0,
-    responseTime: status.metrics?.responseTime || 0
+    responseTime: status.metrics?.responseTime || 0,
   }));
 
   const snapshot: MCPSnapshot = {
@@ -182,19 +192,19 @@ async function createMCPSnapshot(): Promise<MCPSnapshot> {
       version: runtimeStatus.metrics?.version || '',
       revision: runtimeStatus.metrics?.revision || '',
       platform: runtimeStatus.metrics?.platform || '',
-      uptime: runtimeStatus.metrics?.uptime || 0
+      uptime: runtimeStatus.metrics?.uptime || 0,
     },
     ecosystem: {
       docs: docsResults,
       git: {
         commits: gitStatus.metrics?.commits || 0,
-        warnings: gitStatus.metrics?.changes || 0
-      }
+        warnings: gitStatus.metrics?.changes || 0,
+      },
     },
     reports: {
       generated: [await generateReportFilename()],
-      pending: 0
-    }
+      pending: 0,
+    },
   };
 
   return snapshot;
@@ -212,7 +222,7 @@ async function runMCPMonitor(): Promise<void> {
   const [runtimeStatus, docsStatuses, gitStatus] = await Promise.all([
     checkBunRuntime(),
     checkDocumentationHealth(),
-    checkGitStatus()
+    checkGitStatus(),
   ]);
 
   const allStatuses = [runtimeStatus, ...docsStatuses, gitStatus];
@@ -220,10 +230,12 @@ async function runMCPMonitor(): Promise<void> {
   // Display results
   for (const status of allStatuses) {
     const icon = getStatusIcon(status.status);
-    const statusColor = status.status === 'healthy' ? 'green' :
-                       status.status === 'warning' ? 'yellow' : 'red';
+    const statusColor =
+      status.status === 'healthy' ? 'green' : status.status === 'warning' ? 'yellow' : 'red';
 
-    console.info(`${icon} ${colorize(status.component, 'bright')}: ${colorize(status.message, statusColor)}`);
+    console.info(
+      `${icon} ${colorize(status.component, 'bright')}: ${colorize(status.message, statusColor)}`
+    );
   }
 
   console.info();
@@ -258,8 +270,8 @@ async function runMCPMonitor(): Promise<void> {
 
   // Overall status
   const overallStatus = errors > 0 ? 'error' : warnings > 0 ? 'warning' : 'healthy';
-  const overallColor = overallStatus === 'healthy' ? 'green' :
-                      overallStatus === 'warning' ? 'yellow' : 'red';
+  const overallColor =
+    overallStatus === 'healthy' ? 'green' : overallStatus === 'warning' ? 'yellow' : 'red';
 
   console.info(colorize(`🎯 Overall Status: ${overallStatus.toUpperCase()}`, overallColor));
 
@@ -276,7 +288,7 @@ async function runMCPMonitor(): Promise<void> {
 }
 
 // Run the MCP monitor
-runMCPMonitor().catch((error) => {
+runMCPMonitor().catch(error => {
   console.error(colorize(`MCP Monitor failed: ${error}`, 'red'));
   process.exit(1);
 });

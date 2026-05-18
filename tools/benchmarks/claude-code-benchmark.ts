@@ -12,7 +12,11 @@
  */
 
 function escapeHtml(str: string): string {
-  return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
 }
 
 // ============================================
@@ -39,7 +43,7 @@ export interface BenchmarkResult {
   metric: string;
   value: number;
   unit: string;
-  rating: "excellent" | "good" | "average" | "poor";
+  rating: 'excellent' | 'good' | 'average' | 'poor';
   timestamp: Date;
 }
 
@@ -55,10 +59,13 @@ export interface ConfigProfile {
 // 2. DEFAULT CONFIGS
 // ============================================
 
-export const PRESETS: Record<string, { name: string; description: string; config: ClaudeCodeConfig }> = {
+export const PRESETS: Record<
+  string,
+  { name: string; description: string; config: ClaudeCodeConfig }
+> = {
   performance: {
-    name: "Performance Optimized",
-    description: "Fastest responses with lower token usage",
+    name: 'Performance Optimized',
+    description: 'Fastest responses with lower token usage',
     config: {
       maxTokens: 2048,
       temperature: 0.3,
@@ -77,8 +84,8 @@ export const PRESETS: Record<string, { name: string; description: string; config
   },
 
   balanced: {
-    name: "Balanced",
-    description: "Good balance between speed and quality",
+    name: 'Balanced',
+    description: 'Good balance between speed and quality',
     config: {
       maxTokens: 4096,
       temperature: 0.5,
@@ -97,8 +104,8 @@ export const PRESETS: Record<string, { name: string; description: string; config
   },
 
   quality: {
-    name: "Quality Focused",
-    description: "Higher quality responses with more tokens",
+    name: 'Quality Focused',
+    description: 'Higher quality responses with more tokens',
     config: {
       maxTokens: 8192,
       temperature: 0.7,
@@ -117,8 +124,8 @@ export const PRESETS: Record<string, { name: string; description: string; config
   },
 
   minimal: {
-    name: "Minimal Resource",
-    description: "Lowest resource usage",
+    name: 'Minimal Resource',
+    description: 'Lowest resource usage',
     config: {
       maxTokens: 1024,
       temperature: 0.2,
@@ -151,20 +158,23 @@ export class ConfigBenchmark {
 
   private initializeTestInputs(): void {
     this.testInputs = [
-      "Write a function to calculate fibonacci numbers",
-      "Explain the difference between let and const in JavaScript",
-      "Create a REST API endpoint for user authentication",
-      "Debug this TypeScript code that has a type error",
-      "Write unit tests for a utility library",
-      "Optimize this SQL query for better performance",
-      "Create a React component with proper TypeScript types",
-      "Explain how async/await works under the hood",
-      "Refactor this legacy code to use modern patterns",
-      "Generate documentation for this API endpoint",
+      'Write a function to calculate fibonacci numbers',
+      'Explain the difference between let and const in JavaScript',
+      'Create a REST API endpoint for user authentication',
+      'Debug this TypeScript code that has a type error',
+      'Write unit tests for a utility library',
+      'Optimize this SQL query for better performance',
+      'Create a React component with proper TypeScript types',
+      'Explain how async/await works under the hood',
+      'Refactor this legacy code to use modern patterns',
+      'Generate documentation for this API endpoint',
     ];
   }
 
-  async benchmarkLatency(config: ClaudeCodeConfig, iterations: number = 10): Promise<BenchmarkResult[]> {
+  async benchmarkLatency(
+    config: ClaudeCodeConfig,
+    iterations: number = 10
+  ): Promise<BenchmarkResult[]> {
     const latencies: number[] = [];
 
     for (let i = 0; i < iterations; i++) {
@@ -179,24 +189,24 @@ export class ConfigBenchmark {
 
     return [
       {
-        metric: "Average Latency",
+        metric: 'Average Latency',
         value: parseFloat(avgLatency.toFixed(2)),
-        unit: "ms",
+        unit: 'ms',
         rating: this.rateLatency(avgLatency),
         timestamp: new Date(),
       },
       {
-        metric: "P95 Latency",
+        metric: 'P95 Latency',
         value: parseFloat(p95Latency.toFixed(2)),
-        unit: "ms",
+        unit: 'ms',
         rating: this.rateLatency(p95Latency),
         timestamp: new Date(),
       },
       {
-        metric: "Throughput",
+        metric: 'Throughput',
         value: parseFloat((1000 / avgLatency).toFixed(2)),
-        unit: "req/s",
-        rating: avgLatency < 100 ? "excellent" : avgLatency < 200 ? "good" : "average",
+        unit: 'req/s',
+        rating: avgLatency < 100 ? 'excellent' : avgLatency < 200 ? 'good' : 'average',
         timestamp: new Date(),
       },
     ];
@@ -210,24 +220,24 @@ export class ConfigBenchmark {
 
     return [
       {
-        metric: "Token Efficiency",
+        metric: 'Token Efficiency',
         value: parseFloat(efficiency.toFixed(2)),
-        unit: "%",
-        rating: efficiency > 50 ? "excellent" : efficiency > 25 ? "good" : "average",
+        unit: '%',
+        rating: efficiency > 50 ? 'excellent' : efficiency > 25 ? 'good' : 'average',
         timestamp: new Date(),
       },
       {
-        metric: "Context Utilization",
+        metric: 'Context Utilization',
         value: parseFloat(((outputTokens / contextSize) * 100).toFixed(2)),
-        unit: "%",
-        rating: outputTokens / contextSize > 0.5 ? "excellent" : "good",
+        unit: '%',
+        rating: outputTokens / contextSize > 0.5 ? 'excellent' : 'good',
         timestamp: new Date(),
       },
       {
-        metric: "Compression Ratio",
+        metric: 'Compression Ratio',
         value: parseFloat(compressionRatio.toFixed(2)),
-        unit: "x",
-        rating: compressionRatio > 2 ? "excellent" : compressionRatio > 1.5 ? "good" : "average",
+        unit: 'x',
+        rating: compressionRatio > 2 ? 'excellent' : compressionRatio > 1.5 ? 'good' : 'average',
         timestamp: new Date(),
       },
     ];
@@ -241,24 +251,24 @@ export class ConfigBenchmark {
 
     return [
       {
-        metric: "Estimated Memory Usage",
+        metric: 'Estimated Memory Usage',
         value: parseFloat(totalMemory.toFixed(2)),
-        unit: "MB",
-        rating: totalMemory < 100 ? "excellent" : totalMemory < 200 ? "good" : "average",
+        unit: 'MB',
+        rating: totalMemory < 100 ? 'excellent' : totalMemory < 200 ? 'good' : 'average',
         timestamp: new Date(),
       },
       {
-        metric: "Context Memory",
+        metric: 'Context Memory',
         value: parseFloat(contextMemory.toFixed(2)),
-        unit: "MB",
-        rating: contextMemory < 50 ? "excellent" : "good",
+        unit: 'MB',
+        rating: contextMemory < 50 ? 'excellent' : 'good',
         timestamp: new Date(),
       },
       {
-        metric: "Cache Memory",
+        metric: 'Cache Memory',
         value: parseFloat(cacheMemory.toFixed(2)),
-        unit: "MB",
-        rating: cacheMemory < 10 ? "excellent" : "good",
+        unit: 'MB',
+        rating: cacheMemory < 10 ? 'excellent' : 'good',
         timestamp: new Date(),
       },
     ];
@@ -266,7 +276,15 @@ export class ConfigBenchmark {
 
   async benchmarkCache(config: ClaudeCodeConfig): Promise<BenchmarkResult[]> {
     if (!config.cacheEnabled) {
-      return [{ metric: "Cache Status", value: 0, unit: "disabled", rating: "poor", timestamp: new Date() }];
+      return [
+        {
+          metric: 'Cache Status',
+          value: 0,
+          unit: 'disabled',
+          rating: 'poor',
+          timestamp: new Date(),
+        },
+      ];
     }
 
     const cacheHitTime = 5;
@@ -277,24 +295,24 @@ export class ConfigBenchmark {
 
     return [
       {
-        metric: "Average Cache Time",
+        metric: 'Average Cache Time',
         value: parseFloat(avgCacheTime.toFixed(2)),
-        unit: "ms",
-        rating: avgCacheTime < 20 ? "excellent" : avgCacheTime < 40 ? "good" : "average",
+        unit: 'ms',
+        rating: avgCacheTime < 20 ? 'excellent' : avgCacheTime < 40 ? 'good' : 'average',
         timestamp: new Date(),
       },
       {
-        metric: "Cache Hit Rate",
+        metric: 'Cache Hit Rate',
         value: parseFloat(cacheEfficiency.toFixed(2)),
-        unit: "%",
-        rating: cacheEfficiency > 80 ? "excellent" : cacheEfficiency > 60 ? "good" : "average",
+        unit: '%',
+        rating: cacheEfficiency > 80 ? 'excellent' : cacheEfficiency > 60 ? 'good' : 'average',
         timestamp: new Date(),
       },
       {
-        metric: "TTL Utilization",
+        metric: 'TTL Utilization',
         value: parseFloat(((config.cacheTTL / 600000) * 100).toFixed(2)),
-        unit: "%",
-        rating: "good",
+        unit: '%',
+        rating: 'good',
         timestamp: new Date(),
       },
     ];
@@ -324,25 +342,25 @@ export class ConfigBenchmark {
 
   async compareConfigs(
     configA: ClaudeCodeConfig,
-    configB: ClaudeCodeConfig,
+    configB: ClaudeCodeConfig
   ): Promise<{
     a: ConfigProfile;
     b: ConfigProfile;
     winner: string;
     differences: Map<string, { a: number; b: number }>;
   }> {
-    const profileA = await this.runFullBenchmark(configA, "Config A");
-    const profileB = await this.runFullBenchmark(configB, "Config B");
+    const profileA = await this.runFullBenchmark(configA, 'Config A');
+    const profileB = await this.runFullBenchmark(configB, 'Config B');
 
     const differences = new Map<string, { a: number; b: number }>();
     const metrics = new Set([
-      ...profileA.benchmarks.map((b) => b.metric),
-      ...profileB.benchmarks.map((b) => b.metric),
+      ...profileA.benchmarks.map(b => b.metric),
+      ...profileB.benchmarks.map(b => b.metric),
     ]);
 
     for (const metric of metrics) {
-      const resultA = profileA.benchmarks.find((b) => b.metric === metric);
-      const resultB = profileB.benchmarks.find((b) => b.metric === metric);
+      const resultA = profileA.benchmarks.find(b => b.metric === metric);
+      const resultB = profileB.benchmarks.find(b => b.metric === metric);
       if (resultA && resultB) {
         differences.set(metric, { a: resultA.value, b: resultB.value });
       }
@@ -354,7 +372,7 @@ export class ConfigBenchmark {
     return {
       a: profileA,
       b: profileB,
-      winner: totalScoreA > totalScoreB ? "Config A" : "Config B",
+      winner: totalScoreA > totalScoreB ? 'Config A' : 'Config B',
       differences,
     };
   }
@@ -362,26 +380,26 @@ export class ConfigBenchmark {
   private generateRecommendations(config: ClaudeCodeConfig, results: BenchmarkResult[]): string[] {
     const recommendations: string[] = [];
 
-    const latencyResult = results.find((r) => r.metric === "Average Latency");
+    const latencyResult = results.find(r => r.metric === 'Average Latency');
     if (latencyResult && latencyResult.value > 200) {
-      recommendations.push("Consider reducing maxTokens for faster responses");
-      recommendations.push("Enable streaming for perceived performance improvement");
+      recommendations.push('Consider reducing maxTokens for faster responses');
+      recommendations.push('Enable streaming for perceived performance improvement');
     }
 
-    const cacheResult = results.find((r) => r.metric === "Cache Hit Rate");
+    const cacheResult = results.find(r => r.metric === 'Cache Hit Rate');
     if (cacheResult && cacheResult.value < 60) {
-      recommendations.push("Increase cache TTL for better hit rates");
+      recommendations.push('Increase cache TTL for better hit rates');
     }
 
-    const memoryResult = results.find((r) => r.metric === "Estimated Memory Usage");
+    const memoryResult = results.find(r => r.metric === 'Estimated Memory Usage');
     if (memoryResult && memoryResult.value > 150) {
-      recommendations.push("Reduce contextWindow to lower memory usage");
-      recommendations.push("Enable context compression for memory efficiency");
+      recommendations.push('Reduce contextWindow to lower memory usage');
+      recommendations.push('Enable context compression for memory efficiency');
     }
 
-    const tokenResult = results.find((r) => r.metric === "Token Efficiency");
+    const tokenResult = results.find(r => r.metric === 'Token Efficiency');
     if (tokenResult && tokenResult.value < 25) {
-      recommendations.push("Increase maxTokens for better token utilization");
+      recommendations.push('Increase maxTokens for better token utilization');
     }
 
     return recommendations;
@@ -397,7 +415,7 @@ export class ConfigBenchmark {
   }
 
   private sleep(ms: number): Promise<void> {
-    return new Promise((resolve) => setTimeout(resolve, ms));
+    return new Promise(resolve => setTimeout(resolve, ms));
   }
 
   private percentile(arr: number[], p: number): number {
@@ -406,11 +424,11 @@ export class ConfigBenchmark {
     return sorted[Math.max(0, index)];
   }
 
-  private rateLatency(latency: number): "excellent" | "good" | "average" | "poor" {
-    if (latency < 100) return "excellent";
-    if (latency < 200) return "good";
-    if (latency < 400) return "average";
-    return "poor";
+  private rateLatency(latency: number): 'excellent' | 'good' | 'average' | 'poor' {
+    if (latency < 100) return 'excellent';
+    if (latency < 200) return 'good';
+    if (latency < 400) return 'average';
+    return 'poor';
   }
 
   private calculateScore(result: BenchmarkResult): number {
@@ -419,7 +437,7 @@ export class ConfigBenchmark {
   }
 
   private getProfileDescription(name: string): string {
-    return PRESETS[name]?.description || "Custom configuration";
+    return PRESETS[name]?.description || 'Custom configuration';
   }
 }
 
@@ -446,18 +464,19 @@ export class ConfigOptimizer {
       results.set(name, profile);
     }
 
-    let bestPreset = "balanced";
+    let bestPreset = 'balanced';
     let bestScore = 0;
 
     for (const [name, profile] of results) {
       let score = 0;
-      const latency = profile.benchmarks.find((b) => b.metric === "Average Latency");
-      const memory = profile.benchmarks.find((b) => b.metric === "Estimated Memory Usage");
-      const efficiency = profile.benchmarks.find((b) => b.metric === "Token Efficiency");
+      const latency = profile.benchmarks.find(b => b.metric === 'Average Latency');
+      const memory = profile.benchmarks.find(b => b.metric === 'Estimated Memory Usage');
+      const efficiency = profile.benchmarks.find(b => b.metric === 'Token Efficiency');
 
       if (config.maxLatency && latency && latency.value <= config.maxLatency) score += 50;
       if (config.maxMemory && memory && memory.value <= config.maxMemory) score += 30;
-      if (config.minEfficiency && efficiency && efficiency.value >= config.minEfficiency) score += 20;
+      if (config.minEfficiency && efficiency && efficiency.value >= config.minEfficiency)
+        score += 20;
 
       if (score > bestScore) {
         bestScore = score;
@@ -470,7 +489,7 @@ export class ConfigOptimizer {
 
   async autoTune(
     currentConfig: ClaudeCodeConfig,
-    metrics: { avgLatency: number; avgTokens: number; cacheHitRate: number; memoryUsage: number },
+    metrics: { avgLatency: number; avgTokens: number; cacheHitRate: number; memoryUsage: number }
   ): Promise<ClaudeCodeConfig> {
     const tuned = { ...currentConfig };
 
@@ -508,19 +527,23 @@ export class BenchmarkReport {
     const benchmarks = profile.benchmarks;
 
     const categoryGroups: Record<string, BenchmarkResult[]> = {
-      latency: benchmarks.filter((b) => ["Average Latency", "P95 Latency", "Throughput"].includes(b.metric)),
-      token: benchmarks.filter((b) =>
-        ["Token Efficiency", "Context Utilization", "Compression Ratio"].includes(b.metric),
+      latency: benchmarks.filter(b =>
+        ['Average Latency', 'P95 Latency', 'Throughput'].includes(b.metric)
       ),
-      memory: benchmarks.filter((b) =>
-        ["Estimated Memory Usage", "Context Memory", "Cache Memory"].includes(b.metric),
+      token: benchmarks.filter(b =>
+        ['Token Efficiency', 'Context Utilization', 'Compression Ratio'].includes(b.metric)
       ),
-      cache: benchmarks.filter((b) =>
-        ["Average Cache Time", "Cache Hit Rate", "TTL Utilization", "Cache Status"].includes(b.metric),
+      memory: benchmarks.filter(b =>
+        ['Estimated Memory Usage', 'Context Memory', 'Cache Memory'].includes(b.metric)
+      ),
+      cache: benchmarks.filter(b =>
+        ['Average Cache Time', 'Cache Hit Rate', 'TTL Utilization', 'Cache Status'].includes(
+          b.metric
+        )
       ),
     };
 
-    const icons: Record<string, string> = { latency: "⚡", token: "🔢", memory: "💾", cache: "🗃️" };
+    const icons: Record<string, string> = { latency: '⚡', token: '🔢', memory: '💾', cache: '🗃️' };
 
     const html = `<!DOCTYPE html>
 <html lang="en">
@@ -570,17 +593,17 @@ export class BenchmarkReport {
       .map(
         ([cat, metrics]) => `
       <section class="metrics-section">
-        <h2>${icons[cat] || "📊"} ${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
+        <h2>${icons[cat] || '📊'} ${cat.charAt(0).toUpperCase() + cat.slice(1)}</h2>
         <div class="metrics-grid">
-          ${metrics.map((m) => `<div class="metric-card ${m.rating}"><div class="metric-name">${escapeHtml(m.metric)}</div><div class="metric-value">${m.value}</div><div class="metric-unit">${escapeHtml(m.unit)}</div></div>`).join("")}
+          ${metrics.map(m => `<div class="metric-card ${m.rating}"><div class="metric-name">${escapeHtml(m.metric)}</div><div class="metric-value">${m.value}</div><div class="metric-unit">${escapeHtml(m.unit)}</div></div>`).join('')}
         </div>
-      </section>`,
+      </section>`
       )
-      .join("")}
+      .join('')}
     ${
       profile.recommendations.length > 0
-        ? `<section class="recommendations"><h2>💡 Recommendations</h2><ul>${profile.recommendations.map((r) => `<li>${escapeHtml(r)}</li>`).join("")}</ul></section>`
-        : ""
+        ? `<section class="recommendations"><h2>💡 Recommendations</h2><ul>${profile.recommendations.map(r => `<li>${escapeHtml(r)}</li>`).join('')}</ul></section>`
+        : ''
     }
     <section class="config-section">
       <h2>⚙️ Configuration</h2>
@@ -595,16 +618,16 @@ export class BenchmarkReport {
   }
 
   private renderSummaryCards(profile: ConfigProfile): string {
-    const latency = profile.benchmarks.find((b) => b.metric === "Average Latency");
-    const efficiency = profile.benchmarks.find((b) => b.metric === "Token Efficiency");
-    const memory = profile.benchmarks.find((b) => b.metric === "Estimated Memory Usage");
-    const cache = profile.benchmarks.find((b) => b.metric === "Cache Hit Rate");
+    const latency = profile.benchmarks.find(b => b.metric === 'Average Latency');
+    const efficiency = profile.benchmarks.find(b => b.metric === 'Token Efficiency');
+    const memory = profile.benchmarks.find(b => b.metric === 'Estimated Memory Usage');
+    const cache = profile.benchmarks.find(b => b.metric === 'Cache Hit Rate');
 
     return `
-      <div class="summary-card"><div class="summary-value" style="color:#3b82f6">${latency?.value ?? "N/A"}ms</div><div class="summary-label">Avg Latency</div></div>
-      <div class="summary-card"><div class="summary-value" style="color:#10b981">${efficiency?.value ?? "N/A"}%</div><div class="summary-label">Token Efficiency</div></div>
-      <div class="summary-card"><div class="summary-value" style="color:#f59e0b">${memory?.value ?? "N/A"}MB</div><div class="summary-label">Memory Usage</div></div>
-      <div class="summary-card"><div class="summary-value" style="color:#7c3aed">${cache?.value ?? "N/A"}%</div><div class="summary-label">Cache Hit Rate</div></div>`;
+      <div class="summary-card"><div class="summary-value" style="color:#3b82f6">${latency?.value ?? 'N/A'}ms</div><div class="summary-label">Avg Latency</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#10b981">${efficiency?.value ?? 'N/A'}%</div><div class="summary-label">Token Efficiency</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#f59e0b">${memory?.value ?? 'N/A'}MB</div><div class="summary-label">Memory Usage</div></div>
+      <div class="summary-card"><div class="summary-value" style="color:#7c3aed">${cache?.value ?? 'N/A'}%</div><div class="summary-label">Cache Hit Rate</div></div>`;
   }
 }
 
@@ -639,7 +662,7 @@ async function main() {
 
   for (const profile of profiles) {
     const html = await report.generateReport(profile);
-    const filename = `benchmarks/benchmark-${profile.name.toLowerCase().replace(/\s+/g, "-")}.html`;
+    const filename = `benchmarks/benchmark-${profile.name.toLowerCase().replace(/\s+/g, '-')}.html`;
     await Bun.write(filename, html);
     console.info(`✅ Saved: ${filename}`);
   }

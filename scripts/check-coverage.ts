@@ -1,16 +1,16 @@
 #!/usr/bin/env bun
 
-import { expandGlobs, groupByComponent, parseArg, parseLcovFiles } from "./coverage-utils";
+import { expandGlobs, groupByComponent, parseArg, parseLcovFiles } from './coverage-utils';
 
 const args = process.argv.slice(2);
-const inputPattern = parseArg("--input", args, "coverage/**/lcov.info");
-const min = Number.parseFloat(parseArg("--min", args, "80")) || 80;
-const excludeRaw = parseArg("--exclude", args, "");
+const inputPattern = parseArg('--input', args, 'coverage/**/lcov.info');
+const min = Number.parseFloat(parseArg('--min', args, '80')) || 80;
+const excludeRaw = parseArg('--exclude', args, '');
 const excludePatterns = excludeRaw
-  .split(",")
-  .map((s) => s.trim())
+  .split(',')
+  .map(s => s.trim())
   .filter(Boolean)
-  .map((s) => s.replace("*", ""));
+  .map(s => s.replace('*', ''));
 
 const files = await expandGlobs([inputPattern]);
 if (files.length === 0) {
@@ -20,7 +20,7 @@ if (files.length === 0) {
 
 const coverage = await parseLcovFiles(files);
 const components = groupByComponent(coverage.files, excludePatterns);
-const failing = components.filter((c) => c.coverage < min);
+const failing = components.filter(c => c.coverage < min);
 
 console.info(
   JSON.stringify(

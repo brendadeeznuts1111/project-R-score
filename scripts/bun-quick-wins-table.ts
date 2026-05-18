@@ -2,7 +2,7 @@
 
 /**
  * 🚀 Bun Quick Wins - Tabular Display
- * 
+ *
  * Uses Bun.inspect.table() for beautiful terminal output
  * @see https://bun.com/docs/runtime/utils#bun-inspect-table-tabulardata-properties-options
  */
@@ -132,10 +132,16 @@ function displayTable(): void {
   console.info();
   console.info(colorBar(FW_COLORS.info));
   console.info(styled`{bold}📊 SUMMARY{/bold}`);
-  console.info(`Total Opportunities: ${quickWins.filter(w => !w.priority.includes('OPTIMIZED')).length}`);
-  console.info(`Critical Priority: ${quickWins.filter(w => w.priority.includes('CRITICAL')).length}`);
+  console.info(
+    `Total Opportunities: ${quickWins.filter(w => !w.priority.includes('OPTIMIZED')).length}`
+  );
+  console.info(
+    `Critical Priority: ${quickWins.filter(w => w.priority.includes('CRITICAL')).length}`
+  );
   console.info(`Medium Priority: ${quickWins.filter(w => w.priority.includes('MEDIUM')).length}`);
-  console.info(`Already Optimized: ${quickWins.filter(w => w.priority.includes('OPTIMIZED')).length}`);
+  console.info(
+    `Already Optimized: ${quickWins.filter(w => w.priority.includes('OPTIMIZED')).length}`
+  );
   console.info();
   console.info(styled`{gray}Documentation:{/gray} docs/QUICK_WINS_BUN_NATIVE.md`);
   console.info(styled`{gray}Examples:{/gray} docs/BUN_MIGRATION_EXAMPLES.ts`);
@@ -201,8 +207,9 @@ export function generateMarkdownTable(): string {
   const headers = '| Priority | Pattern | Files | Replacement | Performance Gain | Path |';
   const separator = '|----------|---------|-------|-------------|------------------|------|';
 
-  const rows = quickWins.map(win =>
-    `| ${win.priority} | ${win.pattern} | ${win.files} | ${win.replacement} | ${win.gain} | ${win.path} |`
+  const rows = quickWins.map(
+    win =>
+      `| ${win.priority} | ${win.pattern} | ${win.files} | ${win.replacement} | ${win.gain} | ${win.path} |`
   );
 
   return [headers, separator, ...rows].join('\n');

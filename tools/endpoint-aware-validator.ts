@@ -13,31 +13,33 @@ const options = {
   dryRun: args.includes('--dry-run'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
@@ -67,12 +69,16 @@ if (options.help) {
 // Logging utilities
 const log = {
   info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
   error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -83,8 +89,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -93,7 +99,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -162,7 +168,7 @@ function parseEndpointInfo(url: string, category: string, key: string): Endpoint
     fragment,
     endpointType,
     isUnique: false, // Will be determined later
-    duplicates: []
+    duplicates: [],
   };
 }
 
@@ -175,7 +181,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
     categoryPatterns: new Map<string, EndpointInfo[]>(),
     duplicateEndpoints: new Map<string, EndpointInfo[]>(),
     inconsistentNaming: [] as string[],
-    hierarchyIssues: [] as string[]
+    hierarchyIssues: [] as string[],
   };
 
   // Group endpoints by various properties
@@ -232,7 +238,7 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
       lowercase: 0,
       camelCase: 0,
       kebabCase: 0,
-      snakeCase: 0
+      snakeCase: 0,
     };
 
     categoryEndpoints.forEach(endpoint => {
@@ -270,8 +276,8 @@ function analyzeEndpointConsistency(endpoints: EndpointInfo[]) {
 
     // Check for fragments without proper page endpoints
     if (endpoint.hasFragment && endpoint.endpointType === 'anchor') {
-      const hasPageEndpoint = endpoints.some(ep =>
-        ep.endpoint === endpoint.endpoint && !ep.hasFragment
+      const hasPageEndpoint = endpoints.some(
+        ep => ep.endpoint === endpoint.endpoint && !ep.hasFragment
       );
 
       if (!hasPageEndpoint) {
@@ -294,9 +300,9 @@ function validateEndpointHierarchy(endpoints: EndpointInfo[]) {
       docs: new Map<string, EndpointInfo[]>(),
       api: new Map<string, EndpointInfo[]>(),
       cli: new Map<string, EndpointInfo[]>(),
-      other: new Map<string, EndpointInfo[]>()
+      other: new Map<string, EndpointInfo[]>(),
     },
-    recommendations: [] as string[]
+    recommendations: [] as string[],
   };
 
   // Organize endpoints by hierarchy
@@ -424,7 +430,9 @@ async function runEndpointValidation() {
       console.info('🏗️ Hierarchy Validation (expected: issues found)');
       console.info('');
 
-      console.info(`${colors.blue}💡 To run actual validation, use: bun endpoint-aware-validator.ts --full-analysis${colors.reset}`);
+      console.info(
+        `${colors.blue}💡 To run actual validation, use: bun endpoint-aware-validator.ts --full-analysis${colors.reset}`
+      );
       return;
     }
 
@@ -467,8 +475,16 @@ async function runEndpointValidation() {
     });
 
     log.info(`Categories: ${categories.size}`);
-    log.info(`Endpoint types: ${Array.from(endpointTypes.entries()).map(([type, count]) => `${type}(${count})`).join(', ')}`);
-    log.info(`Depth levels: ${Array.from(depths.entries()).map(([depth, count]) => `L${depth}(${count})`).join(', ')}`);
+    log.info(
+      `Endpoint types: ${Array.from(endpointTypes.entries())
+        .map(([type, count]) => `${type}(${count})`)
+        .join(', ')}`
+    );
+    log.info(
+      `Depth levels: ${Array.from(depths.entries())
+        .map(([depth, count]) => `L${depth}(${count})`)
+        .join(', ')}`
+    );
 
     // Basic URL validation
     log.section('🔗 Basic URL Validation');
@@ -485,7 +501,9 @@ async function runEndpointValidation() {
       }
     });
 
-    recordTest('basic-url-validation', invalidURLs === 0,
+    recordTest(
+      'basic-url-validation',
+      invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
       { validURLs, invalidURLs, totalURLs: endpoints.length }
     );
@@ -511,13 +529,15 @@ async function runEndpointValidation() {
         }
       });
 
-      recordTest('endpoint-uniqueness', duplicateEndpoints.length === 0,
+      recordTest(
+        'endpoint-uniqueness',
+        duplicateEndpoints.length === 0,
         `${uniqueEndpoints.size} unique endpoints, ${duplicateEndpoints.length} duplicates`,
         {
           totalEndpoints: endpoints.length,
           uniqueEndpoints: uniqueEndpoints.size,
           duplicateEndpoints: duplicateEndpoints.length,
-          duplicates: duplicateEndpoints.map(ep => ep.id)
+          duplicates: duplicateEndpoints.map(ep => ep.id),
         }
       );
 
@@ -553,18 +573,25 @@ async function runEndpointValidation() {
 
       const consistency = analyzeEndpointConsistency(endpoints);
 
-      const hasIssues = consistency.inconsistentNaming.length > 0 ||
-                       consistency.hierarchyIssues.length > 0 ||
-                       Array.from(consistency.duplicateEndpoints.values()).some(dups => dups.length > 1);
+      const hasIssues =
+        consistency.inconsistentNaming.length > 0 ||
+        consistency.hierarchyIssues.length > 0 ||
+        Array.from(consistency.duplicateEndpoints.values()).some(dups => dups.length > 1);
 
-      recordTest('consistency-analysis', !hasIssues,
+      recordTest(
+        'consistency-analysis',
+        !hasIssues,
         `Naming: ${consistency.inconsistentNaming.length} issues, Hierarchy: ${consistency.hierarchyIssues.length} issues`,
         {
           inconsistentNaming: consistency.inconsistentNaming,
           hierarchyIssues: consistency.hierarchyIssues,
           duplicateGroups: Array.from(consistency.duplicateEndpoints.entries())
             .filter(([_, endpoints]) => endpoints.length > 1)
-            .map(([endpoint, endpoints]) => ({ endpoint, count: endpoints.length, ids: endpoints.map(ep => ep.id) }))
+            .map(([endpoint, endpoints]) => ({
+              endpoint,
+              count: endpoints.length,
+              ids: endpoints.map(ep => ep.id),
+            })),
         }
       );
 
@@ -595,8 +622,12 @@ async function runEndpointValidation() {
 
       const hierarchy = validateEndpointHierarchy(endpoints);
 
-      recordTest('hierarchy-validation', hierarchy.valid,
-        hierarchy.valid ? 'Hierarchy structure is valid' : `${hierarchy.issues.length} hierarchy issues found`,
+      recordTest(
+        'hierarchy-validation',
+        hierarchy.valid,
+        hierarchy.valid
+          ? 'Hierarchy structure is valid'
+          : `${hierarchy.issues.length} hierarchy issues found`,
         {
           valid: hierarchy.valid,
           issues: hierarchy.issues,
@@ -604,9 +635,9 @@ async function runEndpointValidation() {
             docs: hierarchy.structure.docs.size,
             api: hierarchy.structure.api.size,
             cli: hierarchy.structure.cli.size,
-            other: hierarchy.structure.other.size
+            other: hierarchy.structure.other.size,
           },
-          recommendations: hierarchy.recommendations
+          recommendations: hierarchy.recommendations,
         }
       );
 
@@ -657,20 +688,21 @@ async function runEndpointValidation() {
           depth: ep.depth,
           hasFragment: ep.hasFragment,
           fragment: ep.fragment,
-          isUnique: ep.isUnique
-        }))
+          isUnique: ep.isUnique,
+        })),
       });
     }
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.info(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
+      console.info(
+        `\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`
+      );
       process.exit(1);
     } else {
       console.info(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {
@@ -681,12 +713,12 @@ async function runEndpointValidation() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

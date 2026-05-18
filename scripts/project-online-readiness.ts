@@ -88,8 +88,10 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error(`[project-online-readiness] ${error instanceof Error ? error.message : String(error)}`);
+  main().catch(error => {
+    console.error(
+      `[project-online-readiness] ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   });
 }

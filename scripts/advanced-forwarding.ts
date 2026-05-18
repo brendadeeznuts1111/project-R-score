@@ -1,27 +1,27 @@
 // advanced-forwarding.ts - Enhanced Forwarding System
 // Uses Bun's native Redis client: https://bun.com/docs/runtime/redis
 
-import { redis, RedisClient, type BunRequest } from "bun";
+import { redis, RedisClient, type BunRequest } from 'bun';
 
 // Helper to use raw Redis commands for methods not in the typed API
 async function redisKeys(pattern: string): Promise<string[]> {
-  return await redis.send("KEYS", [pattern]) as string[];
+  return (await redis.send('KEYS', [pattern])) as string[];
 }
 
 async function redisZadd(key: string, score: number, member: string): Promise<number> {
-  return await redis.send("ZADD", [key, score.toString(), member]) as number;
+  return (await redis.send('ZADD', [key, score.toString(), member])) as number;
 }
 
 async function redisExpireAt(key: string, timestamp: number): Promise<void> {
-  await redis.send("EXPIREAT", [key, timestamp.toString()]);
+  await redis.send('EXPIREAT', [key, timestamp.toString()]);
 }
 
 async function redisLpush(key: string, ...values: string[]): Promise<number> {
-  return await redis.send("LPUSH", [key, ...values]) as number;
+  return (await redis.send('LPUSH', [key, ...values])) as number;
 }
 
 async function redisHgetall(key: string): Promise<Record<string, string>> {
-  const result = await redis.send("HGETALL", [key]) as string[];
+  const result = (await redis.send('HGETALL', [key])) as string[];
   const obj: Record<string, string> = {};
   for (let i = 0; i < result.length; i += 2) {
     obj[result[i]] = result[i + 1];
@@ -30,7 +30,7 @@ async function redisHgetall(key: string): Promise<Record<string, string>> {
 }
 
 async function redisScard(key: string): Promise<number> {
-  return await redis.send("SCARD", [key]) as number;
+  return (await redis.send('SCARD', [key])) as number;
 }
 
 type ForwardingRule = {
@@ -72,41 +72,41 @@ class EnhancedForwardingEngine {
   // ====================
   // HASHING UTILITIES (Bun.hash, Bun.password)
   // ====================
-  
+
   /** Generate integrity hash for payment data using Bun.hash */
   static generatePaymentHash(paymentData: any): string {
     const dataString = JSON.stringify({
       amount: paymentData.amount,
       fromAlias: paymentData.fromAlias,
       timestamp: paymentData.timestamp,
-      customerId: paymentData.customerId
+      customerId: paymentData.customerId,
     });
     // Bun.hash returns a number, convert to hex string
     const hash = Bun.hash(dataString);
     return hash.toString(16);
   }
-  
+
   /** Hash sensitive data for storage using Bun.password (Argon2) */
   static async hashSensitiveData(data: string): Promise<string> {
     return await Bun.password.hash(data, {
       algorithm: 'argon2id',
       memoryCost: 65536,
-      timeCost: 3
+      timeCost: 3,
     });
   }
-  
+
   /** Verify hashed data */
   static async verifyHash(data: string, hash: string): Promise<boolean> {
     return await Bun.password.verify(data, hash);
   }
-  
+
   // ====================
   // 1. RULE MANAGEMENT
   // ====================
-  
+
   static async createRule(rule: Omit<ForwardingRule, 'id' | 'metadata'>): Promise<string> {
     const ruleId = `rule_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
-    
+
     const fullRule: ForwardingRule = {
       ...rule,
       id: ruleId,
@@ -115,40 +115,49 @@ class EnhancedForwardingEngine {
         updatedAt: new Date().toISOString(),
         createdBy: 'system',
         usedCount: 0,
-        status: 'active'
-      }
+        status: 'active',
+      },
     };
-    
+
     // Store rule
     await redis.hmset(`forwarding:rule:${ruleId}`, [
-      'data', JSON.stringify(fullRule),
-      'fromAlias', rule.fromAlias,
-      'toAlias', rule.toAlias,
-      'type', rule.type,
-      'priority', rule.priority.toString(),
-      'status', 'active'
+      'data',
+      JSON.stringify(fullRule),
+      'fromAlias',
+      rule.fromAlias,
+      'toAlias',
+      rule.toAlias,
+      'type',
+      rule.type,
+      'priority',
+      rule.priority.toString(),
+      'status',
+      'active',
     ]);
-    
+
     // Add to rule sets for quick lookup
     await redis.sadd(`forwarding:aliases:${rule.fromAlias}`, ruleId);
     await redisZadd(`forwarding:priority:${rule.fromAlias}`, rule.priority, ruleId);
-    
+
     // Set expiration if specified in conditions
     const timeCondition = rule.conditions.find(c => c.type === 'time');
     if (timeCondition?.operator === 'lt' && timeCondition.value) {
       const expiresAt = new Date(timeCondition.value).toISOString();
       await redis.hset(`forwarding:rule:${ruleId}`, 'expiresAt', expiresAt);
-      await redisExpireAt(`forwarding:rule:${ruleId}`, Math.floor(new Date(timeCondition.value).getTime() / 1000));
+      await redisExpireAt(
+        `forwarding:rule:${ruleId}`,
+        Math.floor(new Date(timeCondition.value).getTime() / 1000)
+      );
     }
-    
+
     console.info(`📝 Created forwarding rule ${ruleId}: ${rule.fromAlias} → ${rule.toAlias}`);
     return ruleId;
   }
-  
+
   // ====================
   // 2. SMART RULE EVALUATION
   // ====================
-  
+
   static async evaluatePayment(
     fromAlias: string,
     paymentData: {
@@ -171,49 +180,51 @@ class EnhancedForwardingEngine {
     if (!ruleIds.length) {
       return { shouldForward: false, actions: [] };
     }
-    
+
     // Get rules sorted by priority
     const rules = await Promise.all(
       ruleIds.map(async id => {
         const data = await redis.hget(`forwarding:rule:${id}`, 'data');
-        return data ? JSON.parse(data) as ForwardingRule : null;
+        return data ? (JSON.parse(data) as ForwardingRule) : null;
       })
     );
-    
-    const activeRules = rules.filter(r => 
-      r && r.metadata.status === 'active' && 
-      (!r.metadata.expiresAt || new Date(r.metadata.expiresAt) > new Date())
+
+    const activeRules = rules.filter(
+      r =>
+        r &&
+        r.metadata.status === 'active' &&
+        (!r.metadata.expiresAt || new Date(r.metadata.expiresAt) > new Date())
     );
-    
+
     // Evaluate each rule in priority order
     for (const rule of activeRules.sort((a, b) => b!.priority - a!.priority)) {
       if (!rule) continue;
-      
+
       const conditionsMet = await this.evaluateConditions(rule.conditions, paymentData);
-      
+
       if (conditionsMet) {
         // Update usage count
         await redis.hincrby(`forwarding:rule:${rule.id}`, 'usedCount', 1);
-        
+
         // Check max uses
         if (rule.metadata.maxUses && rule.metadata.usedCount >= rule.metadata.maxUses) {
           await this.deactivateRule(rule.id, 'max_uses_reached');
           continue;
         }
-        
+
         return {
           shouldForward: true,
           targetAlias: rule.toAlias,
           actions: rule.actions,
           ruleId: rule.id,
-          message: `Forwarding per rule ${rule.id}`
+          message: `Forwarding per rule ${rule.id}`,
         };
       }
     }
-    
+
     return { shouldForward: false, actions: [] };
   }
-  
+
   private static async evaluateConditions(
     conditions: ForwardCondition[],
     paymentData: any
@@ -224,26 +235,35 @@ class EnhancedForwardingEngine {
     }
     return true;
   }
-  
+
   private static async evaluateSingleCondition(
     condition: ForwardCondition,
     paymentData: any
   ): Promise<boolean> {
     const value = this.extractValue(condition, paymentData);
-    
+
     switch (condition.operator) {
-      case 'lt': return value < condition.value;
-      case 'gt': return value > condition.value;
-      case 'eq': return value === condition.value;
-      case 'lte': return value <= condition.value;
-      case 'gte': return value >= condition.value;
-      case 'in': return Array.isArray(condition.value) && condition.value.includes(value);
-      case 'not_in': return Array.isArray(condition.value) && !condition.value.includes(value);
-      case 'contains': return String(value).includes(String(condition.value));
-      default: return false;
+      case 'lt':
+        return value < condition.value;
+      case 'gt':
+        return value > condition.value;
+      case 'eq':
+        return value === condition.value;
+      case 'lte':
+        return value <= condition.value;
+      case 'gte':
+        return value >= condition.value;
+      case 'in':
+        return Array.isArray(condition.value) && condition.value.includes(value);
+      case 'not_in':
+        return Array.isArray(condition.value) && !condition.value.includes(value);
+      case 'contains':
+        return String(value).includes(String(condition.value));
+      default:
+        return false;
     }
   }
-  
+
   private static extractValue(condition: ForwardCondition, paymentData: any): any {
     switch (condition.type) {
       case 'time':
@@ -267,11 +287,11 @@ class EnhancedForwardingEngine {
         return paymentData[condition.type];
     }
   }
-  
+
   // ====================
   // 3. ADVANCED FORWARDING TYPES
   // ====================
-  
+
   static async processForwarding(
     paymentId: string,
     fromAlias: string,
@@ -288,20 +308,20 @@ class EnhancedForwardingEngine {
       success: false,
       forwardedAmount: originalAmount,
       splits: [] as Array<{ alias: string; amount: number }>,
-      notifications: [] as string[]
+      notifications: [] as string[],
     };
-    
+
     try {
       // Process each action in sequence
       for (const action of actions) {
         await this.delay(action.delay || 0);
-        
+
         switch (action.type) {
           case 'forward':
             // Simple forward
             await this.forwardPayment(paymentId, fromAlias, toAlias, results.forwardedAmount);
             break;
-            
+
           case 'split':
             // Split payment between multiple aliases
             const splitResult = await this.splitPayment(
@@ -313,22 +333,22 @@ class EnhancedForwardingEngine {
             results.splits = splitResult;
             results.forwardedAmount = splitResult.reduce((sum, s) => sum + s.amount, 0);
             break;
-            
+
           case 'notify':
             await this.sendNotification(action.config, {
               paymentId,
               fromAlias,
               toAlias,
-              amount: results.forwardedAmount
+              amount: results.forwardedAmount,
             });
             results.notifications.push(`Notification sent: ${action.config.channel}`);
             break;
-            
+
           case 'hold':
             // Hold payment for manual review
             await this.holdPayment(paymentId, action.config.reason);
             break;
-            
+
           case 'convert':
             // Convert amount (e.g., currency, apply fee)
             results.forwardedAmount = await this.convertAmount(
@@ -336,22 +356,21 @@ class EnhancedForwardingEngine {
               action.config
             );
             break;
-            
+
           case 'redirect':
             // HTTP redirect to another payment processor
             await this.redirectPayment(paymentId, action.config.url);
             break;
-            
+
           case 'escalate':
             // Escalate to human review
             await this.escalateToHuman(paymentId, action.config);
             break;
         }
       }
-      
+
       results.success = true;
       return results;
-      
     } catch (error) {
       console.error('Forwarding error:', error);
       // Fallback: hold for manual review
@@ -359,11 +378,11 @@ class EnhancedForwardingEngine {
       throw error;
     }
   }
-  
+
   // ====================
   // 4. EDGE CASE HANDLERS
   // ====================
-  
+
   static async handleEdgeCases(paymentData: any): Promise<{
     handled: boolean;
     action: string;
@@ -376,54 +395,57 @@ class EnhancedForwardingEngine {
       return {
         handled: true,
         action: 'circular_forwarding_broken',
-        details: { originalAlias: paymentData.fromAlias }
+        details: { originalAlias: paymentData.fromAlias },
       };
     }
-    
+
     // Edge Case 2: Payment to Closed Business (no forwarding rules)
     const businessStatus = await this.getBusinessStatus(paymentData.fromAlias);
     if (businessStatus === 'closed') {
       return await this.handleClosedBusinessPayment(paymentData);
     }
-    
+
     // Edge Case 3: Payment during business transition (two businesses with similar names)
     if (await this.isAmbiguousBusinessName(paymentData.fromAlias)) {
       return await this.handleAmbiguousPayment(paymentData);
     }
-    
+
     // Edge Case 4: Large payment requiring additional verification
     if (paymentData.amount > 500) {
       return await this.handleLargePayment(paymentData);
     }
-    
+
     // Edge Case 5: Suspicious payment pattern
     if (await this.isSuspiciousPattern(paymentData)) {
       return await this.handleSuspiciousPayment(paymentData);
     }
-    
+
     // Edge Case 6: International payment (different currency/timezone)
     if (paymentData.metadata?.currency !== 'USD') {
       return await this.handleInternationalPayment(paymentData);
     }
-    
+
     return { handled: false, action: 'none', details: {} };
   }
-  
-  static async detectCircularForwarding(alias: string, visited = new Set<string>()): Promise<boolean> {
+
+  static async detectCircularForwarding(
+    alias: string,
+    visited = new Set<string>()
+  ): Promise<boolean> {
     if (visited.has(alias)) return true;
     visited.add(alias);
-    
+
     const ruleIds = await redis.smembers(`forwarding:aliases:${alias}`);
     for (const ruleId of ruleIds) {
       const toAlias = await redis.hget(`forwarding:rule:${ruleId}`, 'toAlias');
-      if (toAlias && await this.detectCircularForwarding(toAlias, visited)) {
+      if (toAlias && (await this.detectCircularForwarding(toAlias, visited))) {
         return true;
       }
     }
-    
+
     return false;
   }
-  
+
   static async breakCircularForwarding(alias: string): Promise<void> {
     // Find and disable rules causing the circle
     const ruleIds = await redis.smembers(`forwarding:aliases:${alias}`);
@@ -439,11 +461,11 @@ class EnhancedForwardingEngine {
       }
     }
   }
-  
+
   private static async handleClosedBusinessPayment(paymentData: any) {
     // Option 1: Attempt to find similar active business
     const similarBusinesses = await this.findSimilarBusinesses(paymentData.fromAlias);
-    
+
     if (similarBusinesses.length > 0) {
       // Suggest alternative
       const alternative = similarBusinesses[0];
@@ -454,62 +476,67 @@ class EnhancedForwardingEngine {
           original: paymentData.fromAlias,
           alternative: alternative.alias,
           confidence: alternative.confidence,
-          message: `Business "${paymentData.fromAlias}" is closed. Did you mean "${alternative.alias}"?`
-        }
+          message: `Business "${paymentData.fromAlias}" is closed. Did you mean "${alternative.alias}"?`,
+        },
       };
     }
-    
+
     // Option 2: Refund automatically
     await this.initiateRefund(paymentData);
-    
+
     return {
       handled: true,
       action: 'auto_refund',
       details: {
         reason: 'business_closed',
         refundInitiated: true,
-        message: 'Payment refunded because business is closed'
-      }
+        message: 'Payment refunded because business is closed',
+      },
     };
   }
-  
+
   private static async handleAmbiguousPayment(paymentData: any) {
     const possibleBusinesses = await this.getPossibleBusinessMatches(paymentData.fromAlias);
-    
+
     // Store for manual review
     await redis.hmset(`ambiguous:${paymentData.paymentId}`, [
-      'originalAlias', paymentData.fromAlias,
-      'possibleMatches', JSON.stringify(possibleBusinesses),
-      'amount', paymentData.amount.toString(),
-      'timestamp', new Date().toISOString(),
-      'status', 'pending_review'
+      'originalAlias',
+      paymentData.fromAlias,
+      'possibleMatches',
+      JSON.stringify(possibleBusinesses),
+      'amount',
+      paymentData.amount.toString(),
+      'timestamp',
+      new Date().toISOString(),
+      'status',
+      'pending_review',
     ]);
-    
+
     // Notify admin
     await this.notifyAdmin('ambiguous_payment', {
       paymentId: paymentData.paymentId,
       originalAlias: paymentData.fromAlias,
-      possibleMatches: possibleBusinesses.length
+      possibleMatches: possibleBusinesses.length,
     });
-    
+
     return {
       handled: true,
       action: 'hold_for_review',
       details: {
         reviewRequired: true,
         possibleMatches: possibleBusinesses,
-        adminNotified: true
-      }
+        adminNotified: true,
+      },
     };
   }
-  
+
   // ====================
   // 5. AUTO-LEARNING FORWARDING
   // ====================
-  
+
   static async analyzeAndCreateSmartRules(): Promise<void> {
     console.info('🧠 Analyzing payment patterns for smart forwarding...');
-    
+
     // Analyze failed/returned payments
     const failedPayments = await redisKeys(`payment:failed:*`);
     for (const key of failedPayments.slice(0, 50)) {
@@ -518,42 +545,42 @@ class EnhancedForwardingEngine {
         await this.learnFromFailedPayment(payment);
       }
     }
-    
+
     // Analyze successful payments after forwarding
     const forwardedPayments = await redisKeys(`payment:forwarded:*`);
     for (const key of forwardedPayments.slice(0, 50)) {
       const payment = await redisHgetall(key);
       await this.learnFromSuccessfulForward(payment);
     }
-    
+
     // Find patterns in customer behavior
     await this.analyzeCustomerPatterns();
-    
+
     // Generate suggested rules
     const suggestions = await this.generateRuleSuggestions();
-    
+
     console.info(`💡 Generated ${suggestions.length} smart rule suggestions`);
-    
+
     // Auto-create high-confidence rules
     for (const suggestion of suggestions.filter(s => s.confidence > 0.8)) {
       await this.createRule(suggestion.rule);
     }
   }
-  
+
   private static async learnFromFailedPayment(payment: any): Promise<void> {
     // Extract patterns from failed payments
     const patterns = {
       commonAlias: payment.fromAlias,
       commonError: payment.error,
       timePattern: new Date(payment.timestamp).getHours(),
-      amountPattern: payment.amount
+      amountPattern: payment.amount,
     };
-    
+
     await redisLpush(`learning:failed_patterns`, JSON.stringify(patterns));
-    
+
     // If same alias fails multiple times, create emergency forwarding rule
     const failCount = await redis.hincrby(`stats:failed:${payment.fromAlias}`, 'count', 1);
-    
+
     if (failCount >= 3) {
       const similarActive = await this.findSimilarBusinesses(payment.fromAlias);
       if (similarActive.length > 0) {
@@ -563,11 +590,13 @@ class EnhancedForwardingEngine {
           toAlias: similarActive[0].alias,
           priority: 90,
           conditions: [],
-          actions: [{
-            type: 'forward',
-            config: { notifyCustomer: true },
-            delay: 0
-          }]
+          actions: [
+            {
+              type: 'forward',
+              config: { notifyCustomer: true },
+              delay: 0,
+            },
+          ],
         });
       }
     }
@@ -576,7 +605,7 @@ class EnhancedForwardingEngine {
   // ====================
   // HELPER METHODS (STUBS)
   // ====================
-  
+
   static async deactivateRule(ruleId: string, reason: string): Promise<void> {
     await redis.hset(`forwarding:rule:${ruleId}`, 'status', 'inactive');
     await redis.hset(`forwarding:rule:${ruleId}`, 'deactivatedReason', reason);
@@ -584,8 +613,14 @@ class EnhancedForwardingEngine {
     console.info(`⛔ Rule ${ruleId} deactivated: ${reason}`);
   }
 
-  private static async getCustomerPaymentCount(customerId: string, businessId: string): Promise<number> {
-    const count = await redis.hget(`stats:customer:${customerId}:business:${businessId}`, 'paymentCount');
+  private static async getCustomerPaymentCount(
+    customerId: string,
+    businessId: string
+  ): Promise<number> {
+    const count = await redis.hget(
+      `stats:customer:${customerId}:business:${businessId}`,
+      'paymentCount'
+    );
     return parseInt(count || '0');
   }
 
@@ -601,16 +636,19 @@ class EnhancedForwardingEngine {
   }
 
   private static async forwardPayment(
-    paymentId: string, 
-    fromAlias: string, 
-    toAlias: string, 
+    paymentId: string,
+    fromAlias: string,
+    toAlias: string,
     amount: number
   ): Promise<void> {
     console.info(`💸 Forwarding payment ${paymentId}: ${fromAlias} → ${toAlias} ($${amount})`);
     await redis.hmset(`payment:${paymentId}`, [
-      'status', 'forwarded',
-      'forwardedTo', toAlias,
-      'forwardedAt', new Date().toISOString()
+      'status',
+      'forwarded',
+      'forwardedTo',
+      toAlias,
+      'forwardedAt',
+      new Date().toISOString(),
     ]);
   }
 
@@ -622,22 +660,22 @@ class EnhancedForwardingEngine {
   ): Promise<Array<{ alias: string; amount: number }>> {
     const result: Array<{ alias: string; amount: number }> = [];
     let remaining = totalAmount;
-    
+
     for (const split of splits) {
       let amount: number;
       if (split.percentage) {
-        amount = Math.round(totalAmount * split.percentage / 100 * 100) / 100;
+        amount = Math.round(((totalAmount * split.percentage) / 100) * 100) / 100;
       } else if (split.amount?.endsWith('%')) {
         const pct = parseFloat(split.amount);
-        amount = Math.round(totalAmount * pct / 100 * 100) / 100;
+        amount = Math.round(((totalAmount * pct) / 100) * 100) / 100;
       } else {
         amount = parseFloat(split.amount || '0');
       }
-      
+
       result.push({ alias: split.alias, amount });
       remaining -= amount;
     }
-    
+
     return result;
   }
 
@@ -665,9 +703,12 @@ class EnhancedForwardingEngine {
 
   static async escalateToHuman(paymentId: string, config: any): Promise<void> {
     await redis.hmset(`escalation:${paymentId}`, [
-      'status', 'pending_review',
-      'escalatedAt', new Date().toISOString(),
-      'notify', JSON.stringify(config.notify || [])
+      'status',
+      'pending_review',
+      'escalatedAt',
+      new Date().toISOString(),
+      'notify',
+      JSON.stringify(config.notify || []),
     ]);
     console.info(`🚨 Payment ${paymentId} escalated to human review`);
   }
@@ -688,13 +729,16 @@ class EnhancedForwardingEngine {
     return {
       handled: true,
       action: 'hold_for_verification',
-      details: { threshold: 500, actual: paymentData.amount }
+      details: { threshold: 500, actual: paymentData.amount },
     };
   }
 
   private static async isSuspiciousPattern(paymentData: any): Promise<boolean> {
     // Check for suspicious patterns
-    const recentCount = await redis.hget(`stats:customer:${paymentData.customerId}:recent`, 'count');
+    const recentCount = await redis.hget(
+      `stats:customer:${paymentData.customerId}:recent`,
+      'count'
+    );
     return parseInt(recentCount || '0') > 10; // More than 10 payments recently
   }
 
@@ -704,7 +748,7 @@ class EnhancedForwardingEngine {
     return {
       handled: true,
       action: 'flagged_for_review',
-      details: { reason: 'suspicious_pattern' }
+      details: { reason: 'suspicious_pattern' },
     };
   }
 
@@ -714,8 +758,8 @@ class EnhancedForwardingEngine {
       action: 'international_processing',
       details: {
         currency: paymentData.metadata?.currency,
-        exchangeRate: await this.getExchangeRate(paymentData.metadata?.currency)
-      }
+        exchangeRate: await this.getExchangeRate(paymentData.metadata?.currency),
+      },
     };
   }
 
@@ -724,19 +768,21 @@ class EnhancedForwardingEngine {
     return 1.0;
   }
 
-  private static async findSimilarBusinesses(alias: string): Promise<Array<{ alias: string; confidence: number }>> {
+  private static async findSimilarBusinesses(
+    alias: string
+  ): Promise<Array<{ alias: string; confidence: number }>> {
     // Simple string similarity check
     const allBusinesses = await redis.smembers('businesses:all');
     const similar: Array<{ alias: string; confidence: number }> = [];
-    
+
     for (const business of allBusinesses) {
       const distance = this.levenshteinDistance(alias.toLowerCase(), business.toLowerCase());
-      const confidence = 1 - (distance / Math.max(alias.length, business.length));
+      const confidence = 1 - distance / Math.max(alias.length, business.length);
       if (confidence > 0.6 && business !== alias) {
         similar.push({ alias: business, confidence });
       }
     }
-    
+
     return similar.sort((a, b) => b.confidence - a.confidence);
   }
 
@@ -744,24 +790,32 @@ class EnhancedForwardingEngine {
     const matrix = [];
     for (let i = 0; i <= b.length; i++) matrix[i] = [i];
     for (let j = 0; j <= a.length; j++) matrix[0][j] = j;
-    
+
     for (let i = 1; i <= b.length; i++) {
       for (let j = 1; j <= a.length; j++) {
-        matrix[i][j] = b.charAt(i - 1) === a.charAt(j - 1)
-          ? matrix[i - 1][j - 1]
-          : Math.min(matrix[i - 1][j - 1] + 1, Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1));
+        matrix[i][j] =
+          b.charAt(i - 1) === a.charAt(j - 1)
+            ? matrix[i - 1][j - 1]
+            : Math.min(
+                matrix[i - 1][j - 1] + 1,
+                Math.min(matrix[i][j - 1] + 1, matrix[i - 1][j] + 1)
+              );
       }
     }
-    
+
     return matrix[b.length][a.length];
   }
 
   private static async initiateRefund(paymentData: any): Promise<void> {
     await redis.hmset(`refund:${paymentData.paymentId}`, [
-      'status', 'initiated',
-      'amount', paymentData.amount.toString(),
-      'reason', 'business_closed',
-      'initiatedAt', new Date().toISOString()
+      'status',
+      'initiated',
+      'amount',
+      paymentData.amount.toString(),
+      'reason',
+      'business_closed',
+      'initiatedAt',
+      new Date().toISOString(),
     ]);
     console.info(`↩️ Refund initiated for ${paymentData.paymentId}`);
   }
@@ -773,15 +827,21 @@ class EnhancedForwardingEngine {
 
   private static async notifyAdmin(event: string, data: any): Promise<void> {
     console.info(`🔔 Admin notification: ${event}`, data);
-    await redisLpush(`notifications:admin`, JSON.stringify({ event, data, timestamp: new Date().toISOString() }));
+    await redisLpush(
+      `notifications:admin`,
+      JSON.stringify({ event, data, timestamp: new Date().toISOString() })
+    );
   }
 
   private static async learnFromSuccessfulForward(payment: any): Promise<void> {
-    await redisLpush(`learning:successful_patterns`, JSON.stringify({
-      fromAlias: payment.fromAlias,
-      toAlias: payment.toAlias,
-      timestamp: payment.timestamp
-    }));
+    await redisLpush(
+      `learning:successful_patterns`,
+      JSON.stringify({
+        fromAlias: payment.fromAlias,
+        toAlias: payment.toAlias,
+        timestamp: payment.timestamp,
+      })
+    );
   }
 
   private static async analyzeCustomerPatterns(): Promise<void> {
@@ -789,7 +849,9 @@ class EnhancedForwardingEngine {
     console.info('📊 Analyzing customer patterns...');
   }
 
-  private static async generateRuleSuggestions(): Promise<Array<{ confidence: number; rule: any }>> {
+  private static async generateRuleSuggestions(): Promise<
+    Array<{ confidence: number; rule: any }>
+  > {
     // Generate smart rule suggestions based on patterns
     return [];
   }
@@ -816,92 +878,98 @@ class EnhancedForwardingEngine {
 class ForwardingMonitor {
   static async startMonitoring(): Promise<void> {
     console.info('👁️ Starting forwarding monitor...');
-    
+
     // Subscribe to payment events
     const subscriber = new RedisClient();
     await subscriber.connect();
-    
+
     // Subscribe to payment events channel
     await subscriber.subscribe('payment:events', (message, channel) => {
       const event = JSON.parse(message);
-      
+
       if (event.type === 'payment_received') {
         this.monitorPayment(event).catch(console.error);
       }
     });
-    
+
     // Run periodic checks
-    setInterval(async () => {
-      await this.checkForStuckPayments();
-      await this.validateForwardingRules();
-      await this.generateReports();
-    }, 5 * 60 * 1000); // Every 5 minutes
+    setInterval(
+      async () => {
+        await this.checkForStuckPayments();
+        await this.validateForwardingRules();
+        await this.generateReports();
+      },
+      5 * 60 * 1000
+    ); // Every 5 minutes
   }
-  
+
   private static async monitorPayment(event: any): Promise<void> {
     const metrics = {
       paymentId: event.paymentId,
       alias: event.alias,
       amount: event.amount,
       timestamp: new Date().toISOString(),
-      monitored: true
+      monitored: true,
     };
-    
+
     await redis.hmset(`monitor:payment:${event.paymentId}`, [
-      'data', JSON.stringify(metrics),
-      'status', 'monitoring',
-      'lastCheck', new Date().toISOString()
+      'data',
+      JSON.stringify(metrics),
+      'status',
+      'monitoring',
+      'lastCheck',
+      new Date().toISOString(),
     ]);
-    
+
     // Set up monitoring TTL
     await redis.expire(`monitor:payment:${event.paymentId}`, 24 * 60 * 60); // 24 hours
-    
+
     // Check if forwarding needed immediately
     const needsForwarding = await EnhancedForwardingEngine.evaluatePayment(
       event.alias,
       event.paymentData
     );
-    
+
     if (needsForwarding.shouldForward) {
       console.info(`🚀 Forwarding needed: ${event.alias} → ${needsForwarding.targetAlias}`);
       await EnhancedForwardingEngine.logForwardingDecision(event.paymentId, needsForwarding);
     }
   }
-  
+
   private static async checkForStuckPayments(): Promise<void> {
     const stuckPayments = await redisKeys(`monitor:payment:*`);
-    
+
     for (const key of stuckPayments) {
       const payment = await redisHgetall(key);
       const data = JSON.parse(payment.data || '{}');
       const lastCheck = new Date(payment.lastCheck || 0);
       const now = new Date();
-      
+
       // If payment hasn't moved in 30 minutes
       if (now.getTime() - lastCheck.getTime() > 30 * 60 * 1000) {
         console.warn(`⚠️ Stuck payment detected: ${data.paymentId}`);
-        
+
         // Escalate
-        await EnhancedForwardingEngine.escalateToHuman(data.paymentId, { 
+        await EnhancedForwardingEngine.escalateToHuman(data.paymentId, {
           reason: 'stuck_payment',
-          notify: ['admin']
+          notify: ['admin'],
         });
       }
     }
   }
-  
+
   private static async validateForwardingRules(): Promise<void> {
     const allRules = await redisKeys(`forwarding:rule:*`);
-    
+
     for (const key of allRules) {
       const rule = await redis.hgetall(key);
       const data = JSON.parse(rule.data || '{}') as ForwardingRule;
-      
+
       // Check for expired rules
       if (data.metadata.expiresAt && new Date(data.metadata.expiresAt) < new Date()) {
         await EnhancedForwardingEngine.deactivateRule(data.id, 'expired');
       }
-      
+
       // Check for rules pointing to inactive businesses
       const businessStatus = await EnhancedForwardingEngine.getBusinessStatus(data.toAlias);
       if (businessStatus === 'closed') {
@@ -933,35 +1001,35 @@ const edgeCaseExamples = {
         {
           type: 'time',
           operator: 'gte',
-          value: '2024-03-01T00:00:00Z' // Start forwarding on March 1
+          value: '2024-03-01T00:00:00Z', // Start forwarding on March 1
         },
         {
           type: 'time',
           operator: 'lt',
-          value: '2024-06-01T00:00:00Z' // Stop forwarding on June 1
-        }
+          value: '2024-06-01T00:00:00Z', // Stop forwarding on June 1
+        },
       ],
       actions: [
         {
           type: 'forward',
           config: { notifyCustomer: true },
-          delay: 0
+          delay: 0,
         },
         {
           type: 'notify',
           config: {
             channel: 'sms',
             template: 'business_moved',
-            includeNewAddress: true
+            includeNewAddress: true,
           },
-          delay: 1000
-        }
-      ]
+          delay: 1000,
+        },
+      ],
     });
-    
+
     console.info(`📅 Gradual transition rule created: ${ruleId}`);
   },
-  
+
   // Example 2: Split Payments for Partner Businesses
   partnerSplit: async () => {
     // When two barbers split a shop
@@ -974,8 +1042,8 @@ const edgeCaseExamples = {
         {
           type: 'customer',
           operator: 'in',
-          value: ['customer123', 'customer456'] // Barber A's customers
-        }
+          value: ['customer123', 'customer456'], // Barber A's customers
+        },
       ],
       actions: [
         {
@@ -983,18 +1051,18 @@ const edgeCaseExamples = {
           config: {
             splits: [
               { alias: 'BarberASolo', percentage: 60 },
-              { alias: 'BarberBSolo', percentage: 40 }
+              { alias: 'BarberBSolo', percentage: 40 },
             ],
-            notifyBoth: true
+            notifyBoth: true,
           },
-          delay: 0
-        }
-      ]
+          delay: 0,
+        },
+      ],
     });
-    
+
     console.info(`✂️ Partner split rule created: ${ruleId}`);
   },
-  
+
   // Example 3: Time-Based Forwarding
   timeBasedForwarding: async () => {
     // Forward to different business based on time of day
@@ -1007,33 +1075,33 @@ const edgeCaseExamples = {
         {
           type: 'business_hours',
           operator: 'eq',
-          value: false // Outside business hours
-        }
+          value: false, // Outside business hours
+        },
       ],
       actions: [
         {
           type: 'forward',
-          config: { 
+          config: {
             target: 'AfterHoursBarber',
-            message: 'Forwarded to after-hours service'
+            message: 'Forwarded to after-hours service',
           },
-          delay: 0
+          delay: 0,
         },
         {
           type: 'notify',
           config: {
             channel: 'email',
             template: 'after_hours_forward',
-            includeHours: true
+            includeHours: true,
           },
-          delay: 500
-        }
-      ]
+          delay: 500,
+        },
+      ],
     });
-    
+
     console.info(`⏰ Time-based forwarding rule created: ${ruleId}`);
   },
-  
+
   // Example 4: Location-Based Forwarding
   locationBasedForwarding: async () => {
     // Forward based on customer location (geofencing)
@@ -1048,30 +1116,32 @@ const edgeCaseExamples = {
           operator: 'in',
           value: {
             type: 'polygon',
-            coordinates: [[
-              [-74.0060, 40.7128],
-              [-73.9352, 40.7306],
-              [-73.8801, 40.6782],
-              [-74.0060, 40.7128]
-            ]] // Uptown area
-          }
-        }
+            coordinates: [
+              [
+                [-74.006, 40.7128],
+                [-73.9352, 40.7306],
+                [-73.8801, 40.6782],
+                [-74.006, 40.7128],
+              ],
+            ], // Uptown area
+          },
+        },
       ],
       actions: [
         {
           type: 'forward',
-          config: { 
+          config: {
             target: 'UptownShop',
-            reason: 'Customer in uptown area'
+            reason: 'Customer in uptown area',
           },
-          delay: 0
-        }
-      ]
+          delay: 0,
+        },
+      ],
     });
-    
+
     console.info(`📍 Location-based forwarding rule created: ${ruleId}`);
   },
-  
+
   // Example 5: Emergency Contingency Rules
   emergencyRules: async () => {
     // Multiple fallback options in sequence
@@ -1085,16 +1155,16 @@ const edgeCaseExamples = {
           type: 'payment_count',
           operator: 'gt',
           value: 0,
-          field: 'failed_attempts'
-        }
+          field: 'failed_attempts',
+        },
       ],
       actions: [
         {
           type: 'forward',
           config: { emergency: true },
-          delay: 0
-        }
-      ]
+          delay: 0,
+        },
+      ],
     };
 
     const rule2: Omit<ForwardingRule, 'id' | 'metadata'> = {
@@ -1106,23 +1176,23 @@ const edgeCaseExamples = {
         {
           type: 'time',
           operator: 'gt',
-          value: Date.now() + 3600000 // After 1 hour
-        }
+          value: Date.now() + 3600000, // After 1 hour
+        },
       ],
       actions: [
         {
           type: 'escalate',
           config: { level: 'admin', notify: true },
-          delay: 0
-        }
-      ]
+          delay: 0,
+        },
+      ],
     };
-    
+
     const ruleId1 = await EnhancedForwardingEngine.createRule(rule1);
     console.info(`🚨 Emergency rule created: ${ruleId1}`);
     const ruleId2 = await EnhancedForwardingEngine.createRule(rule2);
     console.info(`🚨 Emergency rule created: ${ruleId2}`);
-  }
+  },
 };
 
 // ====================
@@ -1131,7 +1201,7 @@ const edgeCaseExamples = {
 class ForwardingSimulator {
   static async runTestSuite(): Promise<void> {
     console.info('🧪 Running forwarding rule tests...');
-    
+
     const testCases = [
       {
         name: 'Basic Forwarding',
@@ -1139,9 +1209,9 @@ class ForwardingSimulator {
           fromAlias: 'TestShop',
           amount: 50,
           timestamp: new Date().toISOString(),
-          paymentMethod: 'cashapp'
+          paymentMethod: 'cashapp',
         },
-        expected: { shouldForward: true }
+        expected: { shouldForward: true },
       },
       {
         name: 'Expired Rule',
@@ -1149,9 +1219,9 @@ class ForwardingSimulator {
           fromAlias: 'ExpiredShop',
           amount: 30,
           timestamp: new Date('2024-12-31').toISOString(), // Far future
-          paymentMethod: 'venmo'
+          paymentMethod: 'venmo',
         },
-        expected: { shouldForward: false }
+        expected: { shouldForward: false },
       },
       {
         name: 'Amount-Based Forwarding',
@@ -1159,9 +1229,9 @@ class ForwardingSimulator {
           fromAlias: 'PremiumShop',
           amount: 150, // Over $100 threshold
           timestamp: new Date().toISOString(),
-          paymentMethod: 'paypal'
+          paymentMethod: 'paypal',
         },
-        expected: { shouldForward: true }
+        expected: { shouldForward: true },
       },
       {
         name: 'Customer-Specific Forwarding',
@@ -1170,52 +1240,52 @@ class ForwardingSimulator {
           amount: 75,
           timestamp: new Date().toISOString(),
           paymentMethod: 'cashapp',
-          customerId: 'vip_customer_123'
+          customerId: 'vip_customer_123',
         },
-        expected: { shouldForward: true }
-      }
+        expected: { shouldForward: true },
+      },
     ];
-    
+
     for (const test of testCases) {
       const result = await EnhancedForwardingEngine.evaluatePayment(
         test.payment.fromAlias,
         test.payment
       );
-      
+
       const passed = result.shouldForward === test.expected.shouldForward;
       console.info(`${passed ? '✅' : '❌'} ${test.name}: ${passed ? 'PASS' : 'FAIL'}`);
-      
+
       if (!passed) {
         console.info(`   Expected: ${test.expected.shouldForward}, Got: ${result.shouldForward}`);
       }
     }
   }
-  
+
   static async simulateEdgeCases(): Promise<void> {
     console.info('🌀 Simulating edge cases...');
-    
+
     // Simulate circular forwarding
     await redis.hmset('test:circular:1', ['toAlias', 'AliasB']);
     await redis.hmset('test:circular:2', ['toAlias', 'AliasC']);
     await redis.hmset('test:circular:3', ['toAlias', 'AliasA']); // Creates circle
-    
+
     const hasCircle = await EnhancedForwardingEngine.detectCircularForwarding('AliasA');
     console.info(`Circular forwarding detected: ${hasCircle}`);
-    
+
     if (hasCircle) {
       await EnhancedForwardingEngine.breakCircularForwarding('AliasA');
       console.info('Circular forwarding broken');
     }
-    
+
     // Simulate ambiguous business
     const ambiguousResult = await EnhancedForwardingEngine.handleEdgeCases({
       fromAlias: 'HairCutz', // Similar to "Haircuts", "Hair Cut", etc.
       amount: 25,
       timestamp: new Date().toISOString(),
       paymentMethod: 'cashapp',
-      paymentId: 'test_123'
+      paymentId: 'test_123',
     });
-    
+
     console.info(`Ambiguous payment handled: ${ambiguousResult.action}`);
   }
 }
@@ -1225,25 +1295,28 @@ class ForwardingSimulator {
 // ====================
 async function deployEnhancedForwarding() {
   console.info('🚀 Deploying Enhanced Forwarding System...\n');
-  
+
   // 1. Initialize the system
   await ForwardingMonitor.startMonitoring();
-  
+
   // 2. Create example rules
   await edgeCaseExamples.gradualTransition();
   await edgeCaseExamples.partnerSplit();
   await edgeCaseExamples.timeBasedForwarding();
   await edgeCaseExamples.emergencyRules();
-  
+
   // 3. Run tests
   await ForwardingSimulator.runTestSuite();
   await ForwardingSimulator.simulateEdgeCases();
-  
+
   // 4. Start auto-learning
-  setInterval(async () => {
-    await EnhancedForwardingEngine.analyzeAndCreateSmartRules();
-  }, 60 * 60 * 1000); // Every hour
-  
+  setInterval(
+    async () => {
+      await EnhancedForwardingEngine.analyzeAndCreateSmartRules();
+    },
+    60 * 60 * 1000
+  ); // Every hour
+
   // 5. Create admin dashboard endpoint with Bun native Cookie API
   const server = Bun.serve({
     port: 3004,
@@ -1254,76 +1327,77 @@ async function deployEnhancedForwarding() {
         if (!sessionCookie) {
           return new Response('Unauthorized', { status: 401 });
         }
-        
+
         const rules = await redisKeys('forwarding:rule:*');
-        const ruleData = await Promise.all(rules.map(async key => {
-          return await redisHgetall(key);
-        }));
-        
+        const ruleData = await Promise.all(
+          rules.map(async key => {
+            return await redisHgetall(key);
+          })
+        );
+
         // Set cache-control cookie
         req.cookies.set('last_viewed', new Date().toISOString());
-        
+
         return Response.json(ruleData);
       },
-      
+
       '/forwarding/stats': async (req: BunRequest) => {
         const stats = {
           totalRules: await redisScard('forwarding:rules:all'),
           activeRules: await redisScard('forwarding:rules:active'),
           todayForwards: await redis.get('stats:forwards:today'),
-          successRate: await redis.get('stats:success_rate')
+          successRate: await redis.get('stats:success_rate'),
         };
-        
+
         return Response.json(stats);
       },
-      
+
       '/forwarding/test': async (req: BunRequest) => {
         if (req.method !== 'POST') {
           return new Response('Method not allowed', { status: 405 });
         }
-        
+
         const body = await req.json();
-        const result = await EnhancedForwardingEngine.evaluatePayment(
-          body.fromAlias,
-          body
-        );
-        
+        const result = await EnhancedForwardingEngine.evaluatePayment(body.fromAlias, body);
+
         // Set test cookie with secure options
         req.cookies.set({
           name: 'test_session',
           value: await Bun.hash(body.fromAlias + Date.now()).toString(36),
           maxAge: 300, // 5 minutes
           httpOnly: true,
-          sameSite: 'strict'
+          sameSite: 'strict',
         });
-        
+
         return Response.json(result);
       },
-      
+
       '/forwarding/login': async (req: BunRequest) => {
         if (req.method !== 'POST') {
           return new Response('Method not allowed', { status: 405 });
         }
-        
-        const { password } = await req.json() as { password: string };
-        
+
+        const { password } = (await req.json()) as { password: string };
+
         // Verify password using Bun.password (Argon2)
         const adminHash = await redis.hget('config:admin', 'password_hash');
-        const isValid = adminHash 
+        const isValid = adminHash
           ? await Bun.password.verify(password, adminHash)
           : password === 'admin'; // Fallback for first run
-        
+
         if (!isValid) {
           return new Response('Invalid credentials', { status: 401 });
         }
-        
+
         // Create secure session
         const sessionId = Bun.randomUUIDv7();
         await redis.hmset(`session:${sessionId}`, [
-          'created_at', new Date().toISOString(),
-          'ip', req.headers.get('x-forwarded-for') || 'unknown'
+          'created_at',
+          new Date().toISOString(),
+          'ip',
+          req.headers.get('x-forwarded-for') || 'unknown',
         ]);
-        
+
         // Set secure session cookie
         req.cookies.set({
           name: 'session',
@@ -1332,16 +1406,16 @@ async function deployEnhancedForwarding() {
           httpOnly: true,
           secure: true,
           sameSite: 'strict',
-          path: '/forwarding'
+          path: '/forwarding',
         });
-        
+
         return Response.json({ success: true });
       },
-      
-      '/': () => new Response('Enhanced Forwarding System API')
-    }
+
+      '/': () => new Response('Enhanced Forwarding System API'),
+    },
   });
-  
+
   console.info(`
 🎉 Enhanced Forwarding System Ready!
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -1383,5 +1457,5 @@ export {
   type ForwardingRule,
   type ForwardCondition,
   type ForwardAction,
-  type RuleMetadata
+  type RuleMetadata,
 };

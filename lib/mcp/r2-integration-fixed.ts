@@ -64,22 +64,15 @@ export class R2MCPIntegration {
   private initialized = false;
 
   constructor(config?: Partial<R2Config>) {
-    const resolvedAccessKey =
-      process.env.R2_ACCESS_KEY_ID ||
-      process.env.AWS_ACCESS_KEY_ID ||
-      '';
+    const resolvedAccessKey = process.env.R2_ACCESS_KEY_ID || process.env.AWS_ACCESS_KEY_ID || '';
     const resolvedSecretKey =
-      process.env.R2_SECRET_ACCESS_KEY ||
-      process.env.AWS_SECRET_ACCESS_KEY ||
-      '';
+      process.env.R2_SECRET_ACCESS_KEY || process.env.AWS_SECRET_ACCESS_KEY || '';
     const resolvedBucketName =
       process.env.R2_BUCKET_NAME ||
       process.env.S3_BUCKET_NAME ||
       process.env.AWS_BUCKET_NAME ||
       'scanner-cookies';
-    const resolvedEndpoint =
-      process.env.R2_ENDPOINT ||
-      process.env.S3_ENDPOINT;
+    const resolvedEndpoint = process.env.R2_ENDPOINT || process.env.S3_ENDPOINT;
 
     this.config = {
       accountId: process.env.R2_ACCOUNT_ID || '7a470541a704caaf91e71efccc78fd36',
@@ -467,7 +460,8 @@ export class R2MCPIntegration {
       const indexKey = 'mcp/indexes/diagnoses.json';
       const index = await globalCache.getOrSet(
         indexKey,
-        async () => (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
+        async () =>
+          (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
         { ttl: 300000, tags: ['diagnoses', 'index'] }
       );
 
@@ -504,7 +498,8 @@ export class R2MCPIntegration {
       const indexKey = 'mcp/indexes/audits.json';
       const index = await globalCache.getOrSet(
         indexKey,
-        async () => (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
+        async () =>
+          (await this.getJSON(indexKey)) ?? { entries: [], lastUpdated: new Date().toISOString() },
         { ttl: 300000, tags: ['audits', 'index'] }
       );
 

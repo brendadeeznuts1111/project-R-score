@@ -4,7 +4,7 @@
  * Uses Bun.main to generate unique profile names per project
  */
 
-import { profile } from "bun:jsc";
+import { profile } from 'bun:jsc';
 
 interface ProfileResult {
   timeline: any[];
@@ -16,10 +16,7 @@ function getProfileFilename(): string {
   const mainPath = Bun.main;
   // Replace slashes with dashes, remove .ts extension, add timestamp
   const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const baseName = mainPath
-    .split('/')
-    .pop()
-    ?.replace(/\.ts$/, '') || 'profile';
+  const baseName = mainPath.split('/').pop()?.replace(/\.ts$/, '') || 'profile';
   return `${mainPath}-${baseName}-${timestamp}.json`;
 }
 
@@ -27,7 +24,7 @@ function getProfileFilename(): string {
 async function profileAndSave<T>(fn: () => T | Promise<T>): Promise<T> {
   console.info(`Starting profiling for: ${Bun.main}`);
 
-  const result = await profile(fn) as ProfileResult;
+  const result = (await profile(fn)) as ProfileResult;
 
   const outputFile = getProfileFilename();
   await Bun.write(outputFile, JSON.stringify(result, null, 2));
@@ -50,7 +47,7 @@ async function profileAndSave<T>(fn: () => T | Promise<T>): Promise<T> {
 
 // Example workload to profile
 async function exampleWorkload() {
-  console.info("Running example workload...");
+  console.info('Running example workload...');
 
   // Simulate some async work
   await new Promise(resolve => setTimeout(resolve, 100));
@@ -92,11 +89,11 @@ Note: Profile files are saved relative to the current working directory
 if (args.includes('--run')) {
   profileAndSave(exampleWorkload)
     .then(() => {
-      console.info("Profiling complete!");
+      console.info('Profiling complete!');
       Bun.exit(0);
     })
     .catch(err => {
-      console.error("Profiling error:", err);
+      console.error('Profiling error:', err);
       Bun.exit(1);
     });
 } else {

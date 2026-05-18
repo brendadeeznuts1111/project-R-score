@@ -11,7 +11,7 @@ interface BunFile {
   readonly size: number;
   readonly type: string;
   readonly lastModified: number;
-  
+
   exists(): Promise<boolean>;
   text(): Promise<string>;
   json<T = any>(): Promise<T>;
@@ -21,20 +21,23 @@ interface BunFile {
 }
 
 interface Bun {
-  file(path: string | number | URL, options?: { 
-    type?: string;
-    hash?: boolean;
-    encoding?: string;
-  }): BunFile;
-  
+  file(
+    path: string | number | URL,
+    options?: {
+      type?: string;
+      hash?: boolean;
+      encoding?: string;
+    }
+  ): BunFile;
+
   write(path: string | URL | BunFile, data: string | Uint8Array | ReadableStream): Promise<number>;
-  
+
   // Enhanced monitoring
   pid: number;
   version: string;
   platform: string;
   arch: string;
-  
+
   // Performance APIs (using process APIs)
   gc(): void;
   memoryUsage(): {
@@ -52,13 +55,19 @@ interface ZenBunFile extends BunFile {
 }
 
 interface ZenBun {
-  file(path: string | number | URL, options?: { 
-    type?: string;
-    hash?: boolean;
-    encoding?: string;
-  }): ZenBunFile;
-  
-  write(path: string | URL | ZenBunFile, data: string | Uint8Array | ReadableStream): Promise<number>;
+  file(
+    path: string | number | URL,
+    options?: {
+      type?: string;
+      hash?: boolean;
+      encoding?: string;
+    }
+  ): ZenBunFile;
+
+  write(
+    path: string | URL | ZenBunFile,
+    data: string | Uint8Array | ReadableStream
+  ): Promise<number>;
 }
 
 /**
@@ -73,18 +82,18 @@ export class FinalDocumentationCLI {
   constructor() {
     this.bun = (globalThis as any).Bun as ZenBun;
     this.searcher = new EnhancedZenStreamSearcher();
-    
+
     // Pattern 1: File Descriptor for "Silent Pipe" telemetry
     this.telemetryPipe = this.bun.file(3); // FD 3 for data output
-    
+
     // Pattern 2: ESM URL for absolute portability
     this.configRoot = new URL('../..', import.meta.url); // Monorepo root
-    
+
     console.info('🏁 Final Documentation CLI - Ultimate "Bun Zen" Architecture');
-    console.info('=' .repeat(70));
+    console.info('='.repeat(70));
     console.info(`📁 Config Root: ${this.configRoot.href}`);
     console.info(`🔌 Telemetry FD: ${this.telemetryPipe.fd || 'N/A (not redirected)'}`);
-    console.info('=' .repeat(70));
+    console.info('='.repeat(70));
   }
 
   /**
@@ -113,44 +122,44 @@ export class FinalDocumentationCLI {
     try {
       // Find shared config relative to THIS file, not process.cwd()
       const configFile = this.bun.file(new URL('../../.env', this.configRoot));
-      
+
       if (await configFile.exists()) {
         console.info(`🔧 Loading shared config from: ${configFile.name}`);
-        
+
         const configContent = await configFile.text();
         const config = this.parseConfig(configContent);
-        
+
         // Log telemetry about config loading
         await this.logTelemetry({
           event: 'config_loaded',
           file: configFile.name,
           size: configFile.size,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-        
+
         return config;
       } else {
         console.info('⚠️  No shared config found, using defaults');
-        
+
         // Log telemetry about missing config
         await this.logTelemetry({
           event: 'config_missing',
           searchedPath: configFile.name,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
-        
+
         return this.getDefaultConfig();
       }
     } catch (error) {
       console.error('❌ Failed to load shared config:', error);
-      
+
       // Log telemetry about config error
       await this.logTelemetry({
         event: 'config_error',
         error: error.message,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
-      
+
       return this.getDefaultConfig();
     }
   }
@@ -158,7 +167,7 @@ export class FinalDocumentationCLI {
   private parseConfig(content: string): any {
     const config: any = {};
     const lines = content.split('\n');
-    
+
     for (const line of lines) {
       const trimmed = line.trim();
       if (trimmed && !trimmed.startsWith('#')) {
@@ -168,7 +177,7 @@ export class FinalDocumentationCLI {
         }
       }
     }
-    
+
     return config;
   }
 
@@ -178,29 +187,32 @@ export class FinalDocumentationCLI {
       SEARCH_TIMEOUT: '30000',
       MAX_RESULTS: '1000',
       ENABLE_TELEMETRY: 'true',
-      LOG_LEVEL: 'info'
+      LOG_LEVEL: 'info',
     };
   }
 
   /**
    * Ultimate Documentation Search with Both Patterns
    */
-  async performZenSearch(query: string, options: {
-    useTelemetry?: boolean;
-    validateConfig?: boolean;
-  } = {}): Promise<any> {
+  async performZenSearch(
+    query: string,
+    options: {
+      useTelemetry?: boolean;
+      validateConfig?: boolean;
+    } = {}
+  ): Promise<any> {
     const startTime = performance.now();
-    
+
     console.info(`🔍 Performing Zen Search: "${query}"`);
-    
+
     // Load config using ESM URL pattern
     const config = await this.loadSharedConfig();
-    
+
     // Validate configuration if requested
     if (options.validateConfig) {
       await this.validateConfiguration(config);
     }
-    
+
     try {
       // Perform enhanced search
       const results = await this.searcher.streamSearch({
@@ -212,10 +224,12 @@ export class FinalDocumentationCLI {
         excludePatterns: ['node_modules/*', '*.min.js', 'dist/*'],
         caseSensitive: false,
         priority: 'high',
-        onProgress: (stats) => {
+        onProgress: stats => {
           if (stats.matchesFound % 50 === 0) {
-            console.info(`   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`);
-            
+            console.info(
+              `   📊 Progress: ${stats.matchesFound} matches at ${stats.throughput.toFixed(0)} matches/sec`
+            );
+
             // Log progress telemetry
             if (options.useTelemetry) {
               this.logTelemetry({
@@ -223,15 +237,15 @@ export class FinalDocumentationCLI {
                 query,
                 matches: stats.matchesFound,
                 throughput: stats.throughput,
-                timestamp: new Date().toISOString()
+                timestamp: new Date().toISOString(),
               });
             }
           }
-        }
+        },
       });
-      
+
       const searchTime = performance.now() - startTime;
-      
+
       const searchResults = {
         query,
         matches: results.matchesFound || 0,
@@ -243,31 +257,32 @@ export class FinalDocumentationCLI {
         config: {
           loaded: true,
           source: 'shared_config',
-          cachePath: config.CACHE_PATH
-        }
+          cachePath: config.CACHE_PATH,
+        },
       };
-      
-      console.info(`✅ Zen Search Complete: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
+
+      console.info(
+        `✅ Zen Search Complete: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`
+      );
       console.info(`   🚀 Throughput: ${results.throughput?.toFixed(0) || 'N/A'} matches/sec`);
       console.info(`   💾 Cache Hit Rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
-      
+
       // Log completion telemetry
       if (options.useTelemetry) {
         await this.logTelemetry({
           event: 'search_complete',
           query,
           results: searchResults,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
-      
+
       return searchResults;
-      
     } catch (error) {
       const searchTime = performance.now() - startTime;
-      
+
       console.error(`❌ Zen Search Failed: ${error.message}`);
-      
+
       // Log error telemetry
       if (options.useTelemetry) {
         await this.logTelemetry({
@@ -275,10 +290,10 @@ export class FinalDocumentationCLI {
           query,
           error: error.message,
           duration: searchTime,
-          timestamp: new Date().toISOString()
+          timestamp: new Date().toISOString(),
         });
       }
-      
+
       throw error;
     }
   }
@@ -288,41 +303,41 @@ export class FinalDocumentationCLI {
    */
   async validateConfiguration(config: any): Promise<void> {
     console.info('🔍 Validating Configuration...');
-    
+
     const validations = [
       {
         name: 'Cache Path',
         check: async () => {
           const cachePath = config.CACHE_PATH;
           const cacheDir = this.bun.file(new URL(cachePath.replace(/^.*\//, ''), this.configRoot));
-          return await cacheDir.exists() || cachePath.startsWith('/'); // Allow absolute paths
-        }
+          return (await cacheDir.exists()) || cachePath.startsWith('/'); // Allow absolute paths
+        },
       },
       {
         name: 'Search Timeout',
         check: async () => {
           const timeout = parseInt(config.SEARCH_TIMEOUT);
           return timeout > 0 && timeout <= 300000; // Max 5 minutes
-        }
+        },
       },
       {
         name: 'Max Results',
         check: async () => {
           const maxResults = parseInt(config.MAX_RESULTS);
           return maxResults > 0 && maxResults <= 10000;
-        }
+        },
       },
       {
         name: 'Log Level',
         check: async () => {
           const validLevels = ['debug', 'info', 'warn', 'error'];
           return validLevels.includes(config.LOG_LEVEL?.toLowerCase());
-        }
-      }
+        },
+      },
     ];
-    
+
     let passedValidations = 0;
-    
+
     for (const { name, check } of validations) {
       try {
         const result = await check();
@@ -336,17 +351,19 @@ export class FinalDocumentationCLI {
         console.info(`   ⚠️  ${name}: ERROR - ${error.message}`);
       }
     }
-    
+
     const successRate = (passedValidations / validations.length) * 100;
-    console.info(`📊 Configuration Validation: ${passedValidations}/${validations.length} passed (${successRate.toFixed(1)}%)`);
-    
+    console.info(
+      `📊 Configuration Validation: ${passedValidations}/${validations.length} passed (${successRate.toFixed(1)}%)`
+    );
+
     // Log validation telemetry
     await this.logTelemetry({
       event: 'config_validation',
       passed: passedValidations,
       total: validations.length,
       successRate,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -355,61 +372,61 @@ export class FinalDocumentationCLI {
    */
   async demonstrateZenArchitecture(): Promise<void> {
     console.info('🎯 Demonstrating Ultimate "Bun Zen" Architecture');
-    console.info('=' .repeat(70));
-    
+    console.info('='.repeat(70));
+
     // Pattern 1: ESM URL Portability
     console.info('\n📍 Pattern 1: ESM URL Portability');
     console.info('-'.repeat(40));
-    
+
     const currentFile = this.bun.file(new URL(import.meta.url));
     console.info(`📁 Current File: ${currentFile.name}`);
     console.info(`📏 Size: ${currentFile.size} bytes`);
     console.info(`🗂️  Type: ${currentFile.type}`);
-    
+
     // Find monorepo root using ESM URL
     const monorepoRoot = this.bun.file(new URL('../../package.json', import.meta.url));
     if (await monorepoRoot.exists()) {
       console.info(`📦 Monorepo Root: ${monorepoRoot.name}`);
       console.info(`✅ ESM URL pattern working - config follows code!`);
     }
-    
+
     // Pattern 2: File Descriptor Telemetry
     console.info('\n🔌 Pattern 2: File Descriptor Telemetry');
     console.info('-'.repeat(40));
-    
+
     if (this.telemetryPipe.fd !== undefined) {
       console.info(`✅ FD 3 is open - Silent pipe available!`);
       console.info(`💡 Run with: bun run script 3> telemetry.log`);
-      
+
       // Test telemetry
       await this.logTelemetry({
         event: 'architecture_demo',
         patterns: ['ESM_URL', 'FILE_DESCRIPTOR'],
         status: 'working',
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       });
-      
+
       console.info('📊 Test telemetry sent to FD 3');
     } else {
       console.info(`⚠️  FD 3 not open - Run with: bun run script 3> telemetry.log`);
       console.info(`📊 Telemetry will appear in console instead`);
     }
-    
+
     // Combined demonstration
     console.info('\n🚀 Combined: Zen Search with Both Patterns');
     console.info('-'.repeat(40));
-    
+
     const results = await this.performZenSearch('Bun.file', {
       useTelemetry: true,
-      validateConfig: true
+      validateConfig: true,
     });
-    
+
     console.info('\n🎉 Ultimate "Bun Zen" Architecture Demo Complete!');
-    console.info('=' .repeat(70));
+    console.info('='.repeat(70));
     console.info('✅ ESM URL Pattern: Config follows code, not shell');
     console.info('✅ File Descriptor Pattern: Clean separation of data and UI');
     console.info('✅ Combined: Robust, portable, high-performance CLI');
-    console.info('=' .repeat(70));
+    console.info('='.repeat(70));
   }
 
   /**
@@ -421,21 +438,21 @@ export class FinalDocumentationCLI {
         const query = args[0] || 'Bun.file';
         await this.performZenSearch(query, { useTelemetry: true });
         break;
-        
+
       case 'validate':
         const config = await this.loadSharedConfig();
         await this.validateConfiguration(config);
         break;
-        
+
       case 'demo':
         await this.demonstrateZenArchitecture();
         break;
-        
+
       case 'doctor':
         console.info('🏥 Running Documentation CLI Doctor...');
         await this.demonstrateZenArchitecture();
         break;
-        
+
       default:
         console.info('📖 Available Commands:');
         console.info('  search [query]     - Perform zen search');
@@ -452,7 +469,7 @@ export class FinalDocumentationCLI {
  */
 export async function runDocumentationCLI(args: string[] = process.argv.slice(2)): Promise<void> {
   const cli = new FinalDocumentationCLI();
-  
+
   if (args.length === 0) {
     await cli.runCommand('demo');
   } else {

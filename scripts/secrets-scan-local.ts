@@ -26,7 +26,7 @@ const findings: Finding[] = [];
 
 function isPlaceholder(value: string): boolean {
   if (value.length === 0) return true;
-  return PLACEHOLDER_PATTERNS.some((re) => re.test(value));
+  return PLACEHOLDER_PATTERNS.some(re => re.test(value));
 }
 
 function looksLikeSecretKey(key: string): boolean {
@@ -46,14 +46,17 @@ function parseEnvFile(filePath: string, tracked: boolean) {
   if (!existsSync(filePath)) return;
   const rel = filePath.replace(ROOT + '/', '');
   const lines = Bun.file(filePath).text();
-  return lines.then((content) => {
+  return lines.then(content => {
     content.split('\n').forEach((rawLine, idx) => {
       const line = rawLine.trim();
       if (line.length === 0 || line.startsWith('#')) return;
       const eq = line.indexOf('=');
       if (eq < 1) return;
       const key = line.slice(0, eq).trim();
-      const value = line.slice(eq + 1).trim().replace(/^['"]|['"]$/g, '');
+      const value = line
+        .slice(eq + 1)
+        .trim()
+        .replace(/^['"]|['"]$/g, '');
       if (!looksLikeSecretKey(key)) return;
       if (!looksHighConfidenceSecret(value)) return;
       findings.push({
@@ -73,13 +76,17 @@ function getTrackedEnvFiles(): string[] {
   const text = new TextDecoder().decode(output.stdout);
   return text
     .split('\n')
-    .map((v) => v.trim())
+    .map(v => v.trim())
     .filter(Boolean)
-    .filter((file) => /^\.env(\..+)?$/.test(file));
+    .filter(file => /^\.env(\..+)?$/.test(file));
 }
 
 function isIgnoredByGit(filePath: string): boolean {
-  const output = Bun.spawnSync(['git', 'check-ignore', '-q', filePath], { cwd: ROOT, stdout: 'pipe', stderr: 'pipe' });
+  const output = Bun.spawnSync(['git', 'check-ignore', '-q', filePath], {
+    cwd: ROOT,
+    stdout: 'pipe',
+    stderr: 'pipe',
+  });
   return output.exitCode === 0;
 }
 
@@ -89,7 +96,7 @@ async function main() {
   console.info('');
 
   const trackedEnvFiles = getTrackedEnvFiles();
-  const trackedAbsolute = trackedEnvFiles.map((file) => resolve(ROOT, file));
+  const trackedAbsolute = trackedEnvFiles.map(file => resolve(ROOT, file));
 
   const localCandidates = [
     '.env',
@@ -101,15 +108,15 @@ async function main() {
     '.env.bun-secrets-v37',
     '.env.registry',
     '.env.secret',
-  ].map((file) => resolve(ROOT, file));
+  ].map(file => resolve(ROOT, file));
 
   await Promise.all([
-    ...trackedAbsolute.map((file) => parseEnvFile(file, true)),
-    ...localCandidates.map((file) => parseEnvFile(file, false)),
+    ...trackedAbsolute.map(file => parseEnvFile(file, true)),
+    ...localCandidates.map(file => parseEnvFile(file, false)),
   ]);
 
-  const trackedFindings = findings.filter((f) => f.tracked);
-  const localFindings = findings.filter((f) => !f.tracked);
+  const trackedFindings = findings.filter(f => f.tracked);
+  const localFindings = findings.filter(f => !f.tracked);
 
   if (trackedFindings.length > 0) {
     console.info('FAIL tracked plaintext secrets found:');
@@ -139,7 +146,9 @@ async function main() {
       dedup.add(line);
       console.info(`  ${line}`);
     }
-    console.info('WARN ensure these values are rotated if previously exposed and remain untracked.');
+    console.info(
+      'WARN ensure these values are rotated if previously exposed and remain untracked.'
+    );
   } else {
     console.info('PASS no local secret-like values detected in scanned local files');
   }
@@ -151,7 +160,7 @@ async function main() {
   console.info('3. Validate with `bun run security:secrets:local` and deploy smoke checks.');
   console.info('4. Revoke old credentials after successful rollout validation.');
 
-  const hasGitIgnoreFailure = requiredLocalFiles.some((file) => !isIgnoredByGit(file));
+  const hasGitIgnoreFailure = requiredLocalFiles.some(file => !isIgnoredByGit(file));
   process.exit(trackedFindings.length > 0 || hasGitIgnoreFailure ? 1 : 0);
 }
 

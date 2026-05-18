@@ -13,31 +13,33 @@ const options = {
   report: args.includes('--generate-report'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
@@ -68,12 +70,16 @@ if (options.help) {
 // Logging utilities
 const log = {
   info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
   error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Failure classification system
@@ -135,7 +141,9 @@ class FailureAnalyzer {
       // Analyze endpoint uniqueness
       const endpointMap = new Map<string, any[]>();
       endpoints.forEach(endpoint => {
-        const fullUrl = endpoint.url.startsWith('http') ? endpoint.url : `https://bun.sh${endpoint.url}`;
+        const fullUrl = endpoint.url.startsWith('http')
+          ? endpoint.url
+          : `https://bun.sh${endpoint.url}`;
         const parsed = new URL(fullUrl);
         const endpointPath = parsed.pathname;
 
@@ -165,15 +173,15 @@ class FailureAnalyzer {
                   'Create individual endpoint pages for each utils function',
                   'Update BUN_UTILS_URLS constants to use direct URLs',
                   'Maintain fragment URLs for backward compatibility',
-                  'Update documentation to reflect new structure'
+                  'Update documentation to reflect new structure',
                 ],
                 filesToModify: [
                   'lib/documentation/constants/utils.ts',
                   'internal-wiki/bun-utilities-wiki.md',
-                  'WIKI_GENERATOR_USAGE_GUIDE.md'
+                  'WIKI_GENERATOR_USAGE_GUIDE.md',
                 ],
                 estimatedTime: '2-4 hours',
-                risk: 'medium'
+                risk: 'medium',
               },
               {
                 id: 'add-main-utils-page',
@@ -183,18 +191,18 @@ class FailureAnalyzer {
                   'Create /docs/api/utils main page',
                   'Add navigation to individual function sections',
                   'Update fragment links to reference main page',
-                  'Test navigation and bookmarking'
+                  'Test navigation and bookmarking',
                 ],
                 filesToModify: [
                   'lib/documentation/constants/utils.ts',
-                  'internal-wiki/bun-utilities-wiki.md'
+                  'internal-wiki/bun-utilities-wiki.md',
                 ],
                 estimatedTime: '1-2 hours',
-                risk: 'low'
-              }
+                risk: 'low',
+              },
             ],
             autoFixable: false,
-            impact: 'Navigation difficulty, SEO issues, bookmarking problems'
+            impact: 'Navigation difficulty, SEO issues, bookmarking problems',
           });
         }
       });
@@ -234,18 +242,18 @@ class FailureAnalyzer {
                 'Create main page for each missing base URL',
                 'Add navigation sections for each fragment',
                 'Ensure proper cross-referencing',
-                'Test internal navigation'
+                'Test internal navigation',
               ],
               filesToModify: [
                 'lib/documentation/constants/utils.ts',
-                'internal-wiki/bun-utilities-wiki.md'
+                'internal-wiki/bun-utilities-wiki.md',
               ],
               estimatedTime: '3-5 hours',
-              risk: 'medium'
-            }
+              risk: 'medium',
+            },
           ],
           autoFixable: false,
-          impact: 'Broken navigation, poor user experience'
+          impact: 'Broken navigation, poor user experience',
         });
       }
 
@@ -274,15 +282,15 @@ class FailureAnalyzer {
                 'Choose consistent URL strategy (direct URLs vs fragments)',
                 'Apply chosen strategy to all endpoints',
                 'Update navigation and cross-references',
-                'Test all endpoint links'
+                'Test all endpoint links',
               ],
               filesToModify: [
                 'lib/documentation/constants/cli.ts',
                 'lib/documentation/constants/utils.ts',
-                'internal-wiki/bun-utilities-wiki.md'
+                'internal-wiki/bun-utilities-wiki.md',
               ],
               estimatedTime: '4-6 hours',
-              risk: 'high'
+              risk: 'high',
             },
             {
               id: 'document-pattern-differences',
@@ -292,21 +300,17 @@ class FailureAnalyzer {
                 'Add documentation explaining different URL strategies',
                 'Create style guide for endpoint patterns',
                 'Update developer documentation',
-                'Add examples for each pattern type'
+                'Add examples for each pattern type',
               ],
-              filesToModify: [
-                'WIKI_GENERATOR_USAGE_GUIDE.md',
-                'CLI_STATUS_REPORT.md'
-              ],
+              filesToModify: ['WIKI_GENERATOR_USAGE_GUIDE.md', 'CLI_STATUS_REPORT.md'],
               estimatedTime: '1-2 hours',
-              risk: 'low'
-            }
+              risk: 'low',
+            },
           ],
           autoFixable: false,
-          impact: 'Inconsistent user experience, maintenance complexity'
+          impact: 'Inconsistent user experience, maintenance complexity',
         });
       }
-
     } catch (error) {
       log.error(`Failed to analyze failures: ${error.message}`);
     }
@@ -383,7 +387,7 @@ class AutoFixer {
             fix,
             failure,
             wouldSucceed: preview.wouldSucceed,
-            details: preview.details
+            details: preview.details,
           });
 
           if (preview.wouldSucceed) {
@@ -420,8 +424,12 @@ class AutoFixer {
     if (dryRunMode) {
       log.section('📊 DRY RUN Summary');
       console.info(`${colors.blue}Auto-fixes analyzed: ${autoFixesAttempted}${colors.reset}`);
-      console.info(`${colors.green}Would succeed: ${dryRunResults.filter(r => r.wouldSucceed).length}${colors.reset}`);
-      console.info(`${colors.yellow}Would fail: ${dryRunResults.filter(r => !r.wouldSucceed).length}${colors.reset}`);
+      console.info(
+        `${colors.green}Would succeed: ${dryRunResults.filter(r => r.wouldSucceed).length}${colors.reset}`
+      );
+      console.info(
+        `${colors.yellow}Would fail: ${dryRunResults.filter(r => !r.wouldSucceed).length}${colors.reset}`
+      );
 
       if (options.verbose && dryRunResults.length > 0) {
         console.info(`\n${colors.cyan}Detailed Results:${colors.reset}`);
@@ -453,7 +461,10 @@ class AutoFixer {
     }
   }
 
-  private async previewAutoFix(fix: Fix, failure: Failure): Promise<{
+  private async previewAutoFix(
+    fix: Fix,
+    failure: Failure
+  ): Promise<{
     wouldSucceed: boolean;
     details: string;
   }> {
@@ -474,25 +485,26 @@ class AutoFixer {
           if (filesExist) {
             return {
               wouldSucceed: true,
-              details: 'Would add documentation explaining URL pattern differences between CLI and Utils endpoints'
+              details:
+                'Would add documentation explaining URL pattern differences between CLI and Utils endpoints',
             };
           } else {
             return {
               wouldSucceed: false,
-              details: 'Some target files do not exist or are not accessible'
+              details: 'Some target files do not exist or are not accessible',
             };
           }
         } catch (error) {
           return {
             wouldSucceed: false,
-            details: `Cannot access file system: ${error.message}`
+            details: `Cannot access file system: ${error.message}`,
           };
         }
 
       default:
         return {
           wouldSucceed: false,
-          details: 'Unknown auto-fix type - cannot preview'
+          details: 'Unknown auto-fix type - cannot preview',
         };
     }
   }
@@ -539,10 +551,12 @@ class ReportGenerator {
         critical: colors.red,
         high: colors.yellow,
         medium: colors.blue,
-        low: colors.green
+        low: colors.green,
       }[failure.severity];
 
-      console.info(`${index + 1}. ${severityColor}${failure.category}${colors.reset} - ${failure.description}`);
+      console.info(
+        `${index + 1}. ${severityColor}${failure.category}${colors.reset} - ${failure.description}`
+      );
     });
 
     // Generate action plan
@@ -558,14 +572,18 @@ class ReportGenerator {
 
     console.info(`Total estimated fix time: ${totalEstimatedTime} hours`);
     console.info(`High-priority fixes: ${criticalFailures.length + highFailures.length}`);
-    console.info(`Auto-fixable issues: ${failures.flatMap(f => f.suggestedFixes).filter(f => f.type === 'auto').length}`);
+    console.info(
+      `Auto-fixable issues: ${failures.flatMap(f => f.suggestedFixes).filter(f => f.type === 'auto').length}`
+    );
   }
 }
 
 // Main failure handler
 async function handleFailures() {
   console.info(`${colors.cyan}🔧 Failure Handler & Fix Manager${colors.reset}`);
-  console.info(`${colors.gray}Systematic approach to handling validation failures${colors.reset}\n`);
+  console.info(
+    `${colors.gray}Systematic approach to handling validation failures${colors.reset}\n`
+  );
 
   const startTime = Date.now();
 
@@ -612,8 +630,9 @@ async function handleFailures() {
           high: failures.filter(f => f.severity === 'high').length,
           medium: failures.filter(f => f.severity === 'medium').length,
           low: failures.filter(f => f.severity === 'low').length,
-          autoFixable: failures.flatMap(f => f.suggestedFixes).filter(fix => fix.type === 'auto').length
-        }
+          autoFixable: failures.flatMap(f => f.suggestedFixes).filter(fix => fix.type === 'auto')
+            .length,
+        },
       });
     }
 
@@ -626,7 +645,9 @@ async function handleFailures() {
 
     if (options.dryRun) {
       console.info(`\n${colors.yellow}🔍 DRY RUN MODE: No changes were applied${colors.reset}`);
-      console.info(`${colors.blue}💡 To apply changes, run: bun failure-handler.ts --auto-fix${colors.reset}`);
+      console.info(
+        `${colors.blue}💡 To apply changes, run: bun failure-handler.ts --auto-fix${colors.reset}`
+      );
     }
 
     if (failures.length > 0) {
@@ -643,7 +664,6 @@ async function handleFailures() {
         console.info('4. Re-run validation to verify fixes');
       }
     }
-
   } catch (error: any) {
     log.error(`Failure handler error: ${error.message}`);
     if (options.verbose) {
@@ -654,12 +674,12 @@ async function handleFailures() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

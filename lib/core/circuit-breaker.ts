@@ -1,10 +1,6 @@
 // lib/core/circuit-breaker.ts — Circuit breaker pattern for resilient external calls
 
-import {
-  createNetworkError,
-  createSystemError,
-  EnterpriseErrorCode,
-} from './core-errors';
+import { createNetworkError, createSystemError, EnterpriseErrorCode } from './core-errors';
 import { safeAsync } from './error-handling';
 
 /**
@@ -57,7 +53,7 @@ const DEFAULT_CONFIG: CircuitBreakerConfig = {
   failureThreshold: 5,
   resetTimeoutMs: 30000, // 30 seconds
   successThreshold: 3,
-  callTimeoutMs: 10000,  // 10 seconds
+  callTimeoutMs: 10000, // 10 seconds
   halfOpenMaxCalls: 3,
 };
 
@@ -72,8 +68,8 @@ export class CircuitBreakerOpenError extends Error {
   ) {
     super(
       `Circuit breaker is OPEN for service "${serviceName}". ` +
-      `Last error: ${lastError?.message || 'Unknown'}. ` +
-      `Open for ${Math.floor(openDuration / 1000)}s`
+        `Last error: ${lastError?.message || 'Unknown'}. ` +
+        `Open for ${Math.floor(openDuration / 1000)}s`
     );
     this.name = 'CircuitBreakerOpenError';
   }
@@ -81,15 +77,15 @@ export class CircuitBreakerOpenError extends Error {
 
 /**
  * Circuit Breaker
- * 
+ *
  * Prevents cascading failures by temporarily blocking requests to failing services.
  * Implements the Circuit Breaker pattern from "Release It!" by Michael Nygard.
- * 
+ *
  * States:
  * - CLOSED: Normal operation, requests pass through
  * - OPEN: Service failing, requests are blocked immediately
  * - HALF_OPEN: Testing if service recovered, limited requests allowed
- * 
+ *
  * @example
  * ```typescript
  * const breaker = new CircuitBreaker('payment-api', {
@@ -97,15 +93,15 @@ export class CircuitBreakerOpenError extends Error {
  *   resetTimeoutMs: 30000,
  *   successThreshold: 2,
  * });
- * 
+ *
  * // Use the breaker
  * const result = await breaker.execute(async () => {
  *   return await fetchPayment(paymentId);
  * });
- * 
+ *
  * // Check statistics
  * console.info(breaker.getStats());
- * 
+ *
  * // Clean up when done
  * breaker.destroy();
  * ```
@@ -142,16 +138,12 @@ export class CircuitBreaker {
     // Check if we should transition from OPEN to HALF_OPEN
     if (this.state === CircuitState.OPEN) {
       const timeSinceLastFailure = Date.now() - (this.lastFailureTime || 0);
-      
+
       if (timeSinceLastFailure >= this.config.resetTimeoutMs) {
         this.transitionTo(CircuitState.HALF_OPEN);
       } else {
         this.rejectedCalls++;
-        throw new CircuitBreakerOpenError(
-          this.serviceName,
-          this.lastError,
-          timeSinceLastFailure
-        );
+        throw new CircuitBreakerOpenError(this.serviceName, this.lastError, timeSinceLastFailure);
       }
     }
 
@@ -191,11 +183,13 @@ export class CircuitBreaker {
       fn(),
       new Promise<never>((_, reject) => {
         setTimeout(() => {
-          reject(createNetworkError(
-            EnterpriseErrorCode.NETWORK_TIMEOUT,
-            `Circuit breaker call timed out after ${this.config.callTimeoutMs}ms`,
-            this.serviceName
-          ));
+          reject(
+            createNetworkError(
+              EnterpriseErrorCode.NETWORK_TIMEOUT,
+              `Circuit breaker call timed out after ${this.config.callTimeoutMs}ms`,
+              this.serviceName
+            )
+          );
         }, this.config.callTimeoutMs);
       }),
     ]);
@@ -254,9 +248,7 @@ export class CircuitBreaker {
         this.halfOpenCalls = 0;
       }
 
-      console.info(
-        `🔌 Circuit breaker "${this.serviceName}": ${oldState} → ${newState}`
-      );
+      console.info(`🔌 Circuit breaker "${this.serviceName}": ${oldState} → ${newState}`);
     }
   }
 
@@ -336,7 +328,7 @@ export class CircuitBreaker {
    */
   recordFailure(error?: Error): void {
     this.totalCalls++;
-    this.onFailure(error ?? new Error("unknown failure"));
+    this.onFailure(error ?? new Error('unknown failure'));
   }
 
   /**
@@ -386,10 +378,7 @@ export class CircuitBreakerRegistry {
   /**
    * Get or create a circuit breaker
    */
-  getOrCreate(
-    serviceName: string,
-    config?: Partial<CircuitBreakerConfig>
-  ): CircuitBreaker {
+  getOrCreate(serviceName: string, config?: Partial<CircuitBreakerConfig>): CircuitBreaker {
     if (!this.breakers.has(serviceName)) {
       this.breakers.set(serviceName, new CircuitBreaker(serviceName, config));
     }
@@ -436,10 +425,8 @@ export class CircuitBreakerRegistry {
   }> {
     return Array.from(this.breakers.entries()).map(([service, breaker]) => {
       const stats = breaker.getStats();
-      const rejectionRate = stats.totalCalls > 0
-        ? stats.rejectedCalls / stats.totalCalls
-        : 0;
-      
+      const rejectionRate = stats.totalCalls > 0 ? stats.rejectedCalls / stats.totalCalls : 0;
+
       return {
         service,
         healthy: breaker.isClosed(),
@@ -487,9 +474,7 @@ export function getCircuitBreakerRegistry(): CircuitBreakerRegistry {
 /**
  * Get circuit breaker health status
  */
-export function getCircuitBreakerHealth(): ReturnType<
-  CircuitBreakerRegistry['getHealthStatus']
-> {
+export function getCircuitBreakerHealth(): ReturnType<CircuitBreakerRegistry['getHealthStatus']> {
   return globalRegistry.getHealthStatus();
 }
 

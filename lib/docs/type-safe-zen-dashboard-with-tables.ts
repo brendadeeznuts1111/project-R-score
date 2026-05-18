@@ -9,9 +9,9 @@ interface Bun {
 
   write(
     destination: string | number | BunFile | URL,
-    input: string | Blob | ArrayBuffer | SharedArrayBuffer | Uint8Array | Response,
+    input: string | Blob | ArrayBuffer | SharedArrayBuffer | Uint8Array | Response
   ): Promise<number>;
-  
+
   stdout: {
     write(data: Uint8Array): void;
   };
@@ -22,7 +22,7 @@ interface BunFile {
   readonly size: number;
   readonly type: string;
   readonly lastModified: number;
-  
+
   exists(): Promise<boolean>;
   text(): Promise<string>;
   json<T = any>(): Promise<T>;
@@ -41,21 +41,24 @@ interface FileSink {
 }
 
 // Enhanced Dynamic Table Engine with new metrics
-const tableEngine = createDynamicTable([
-  // Enhanced columns with new metrics
-  { key: 'id', header: 'ID', type: 'number', priority: 1, width: 6 },
-  { key: 'query', header: 'QUERY', type: 'string', priority: 2, width: 12 },
-  { key: 'status', header: 'STATUS', type: 'status', priority: 3, width: 10 },
-  { key: 'matches', header: 'MATCHES', type: 'number', priority: 4, width: 8 },
-  { key: 'filesWithMatches', header: 'FILES', type: 'number', priority: 5, width: 6 },
-  { key: 'time', header: 'TIME', type: 'duration', priority: 6, width: 10 },
-  { key: 'throughput', header: 'THRUPUT', type: 'throughput', priority: 7, width: 10 },
-  { key: 'cacheHitRate', header: 'CACHE', type: 'percentage', priority: 8, width: 6 },
-  { key: 'timestamp', header: 'TIMESTAMP', type: 'date', priority: 9, width: 20 }
-], {
-  maxWidth: 100,
-  showOverflow: false
-});
+const tableEngine = createDynamicTable(
+  [
+    // Enhanced columns with new metrics
+    { key: 'id', header: 'ID', type: 'number', priority: 1, width: 6 },
+    { key: 'query', header: 'QUERY', type: 'string', priority: 2, width: 12 },
+    { key: 'status', header: 'STATUS', type: 'status', priority: 3, width: 10 },
+    { key: 'matches', header: 'MATCHES', type: 'number', priority: 4, width: 8 },
+    { key: 'filesWithMatches', header: 'FILES', type: 'number', priority: 5, width: 6 },
+    { key: 'time', header: 'TIME', type: 'duration', priority: 6, width: 10 },
+    { key: 'throughput', header: 'THRUPUT', type: 'throughput', priority: 7, width: 10 },
+    { key: 'cacheHitRate', header: 'CACHE', type: 'percentage', priority: 8, width: 6 },
+    { key: 'timestamp', header: 'TIMESTAMP', type: 'date', priority: 9, width: 20 },
+  ],
+  {
+    maxWidth: 100,
+    showOverflow: false,
+  }
+);
 
 // Dynamic Table Engine Integration
 // Simple stringWidth function for ANSI-aware width calculation
@@ -68,7 +71,17 @@ function stringWidth(str: string): number {
 interface DynamicColumn {
   key: string;
   header: string;
-  type: 'string' | 'number' | 'boolean' | 'date' | 'url' | 'status' | 'bytes' | 'duration' | 'throughput' | 'percentage';
+  type:
+    | 'string'
+    | 'number'
+    | 'boolean'
+    | 'date'
+    | 'url'
+    | 'status'
+    | 'bytes'
+    | 'duration'
+    | 'throughput'
+    | 'percentage';
   width: number;
   align: 'left' | 'right' | 'center';
   priority: number;
@@ -89,7 +102,7 @@ const c = {
   hsl: (h: number, s: number, l: number, text: string) => {
     try {
       const bun = (globalThis as any).Bun as any;
-      return bun.color ? bun.color(`hsl(${h}, ${s}%, ${l}%)`, "ansi") || text : text;
+      return bun.color ? bun.color(`hsl(${h}, ${s}%, ${l}%)`, 'ansi') || text : text;
     } catch {
       return `\x1b[38;2;${hslToRgb(h, s, l).join(';')}m${text}\x1b[0m`;
     }
@@ -110,7 +123,7 @@ function detectType(key: string, values: any[]): DynamicColumn['type'] {
   if (nonNull.length === 0) return 'string';
 
   const allSameType = nonNull.every(v => typeof v === typeof nonNull[0]);
-  
+
   if (!allSameType) {
     if (nonNull.some(v => typeof v === 'boolean')) return 'status';
     return 'string';
@@ -122,12 +135,14 @@ function detectType(key: string, values: any[]): DynamicColumn['type'] {
     if (sample.match(/^https?:\/\//)) return 'url';
     if (key.includes('url') || key.includes('endpoint') || key.includes('path')) return 'url';
     if (sample.match(/^\d{4}-\d{2}-\d{2}/)) return 'date';
-    if (['active', 'inactive', 'pending', 'running', 'error'].includes(sample.toLowerCase())) return 'status';
+    if (['active', 'inactive', 'pending', 'running', 'error'].includes(sample.toLowerCase()))
+      return 'status';
   }
 
   if (typeof sample === 'number') {
     if (key.includes('bytes') || key.includes('size') || key.includes('memory')) return 'bytes';
-    if (key.includes('time') || key.includes('duration') || key.includes('latency')) return 'duration';
+    if (key.includes('time') || key.includes('duration') || key.includes('latency'))
+      return 'duration';
     if (key.includes('count') || key.includes('total') || key.includes('matches')) return 'number';
   }
 
@@ -150,22 +165,22 @@ function calculatePriority(key: string): number {
 
 function getFormatter(type: DynamicColumn['type']): (val: any) => string {
   const formatters: Record<DynamicColumn['type'], (val: any) => string> = {
-    string: (v) => String(v ?? '-'),
-    number: (v) => typeof v === 'number' ? v.toLocaleString() : String(v ?? '-'),
-    boolean: (v) => v ? c.hsl(120, 80, 60, '✓') : c.hsl(0, 80, 60, '✗'),
-    date: (v) => {
+    string: v => String(v ?? '-'),
+    number: v => (typeof v === 'number' ? v.toLocaleString() : String(v ?? '-')),
+    boolean: v => (v ? c.hsl(120, 80, 60, '✓') : c.hsl(0, 80, 60, '✗')),
+    date: v => {
       const d = new Date(v);
       const diff = Date.now() - d.getTime();
       if (diff < 60000) return c.hsl(120, 80, 60, 'just now');
       if (diff < 3600000) return `${Math.floor(diff / 60000)}m ago`;
       return d.toLocaleTimeString();
     },
-    url: (v) => {
+    url: v => {
       const url = String(v);
       const domain = url.replace(/^https?:\/\//, '').split('/')[0];
       return c.hsl(200, 80, 60, domain);
     },
-    status: (v) => {
+    status: v => {
       const status = String(v).toLowerCase();
       const colors: Record<string, [number, number, number]> = {
         active: [120, 80, 60],
@@ -183,7 +198,7 @@ function getFormatter(type: DynamicColumn['type']): (val: any) => string {
       const [h, s, l] = colors[status] || [200, 80, 60];
       return c.hsl(h, s, l, `● ${status.toUpperCase()}`);
     },
-    bytes: (v) => {
+    bytes: v => {
       if (typeof v !== 'number') return String(v ?? '-');
       const units = ['B', 'KB', 'MB', 'GB', 'TB'];
       let i = 0;
@@ -195,19 +210,19 @@ function getFormatter(type: DynamicColumn['type']): (val: any) => string {
       const color = i > 2 ? [0, 80, 60] : i > 1 ? [45, 90, 60] : [120, 80, 60];
       return c.hsl(color[0], color[1], color[2], `${val.toFixed(1)}${units[i]}`);
     },
-    duration: (v) => {
+    duration: v => {
       if (typeof v !== 'number') return String(v ?? '-');
       if (v < 1000) return c.hsl(120, 80, 60, `${v}ms`);
       if (v < 60000) return c.hsl(60, 80, 60, `${(v / 1000).toFixed(1)}s`);
       return c.hsl(0, 80, 60, `${(v / 60000).toFixed(1)}m`);
     },
-    throughput: (v) => {
+    throughput: v => {
       if (typeof v !== 'number') return String(v ?? '-');
       if (v > 1000) return c.hsl(120, 80, 60, `${(v / 1000).toFixed(1)}K/s`);
       if (v > 100) return c.hsl(60, 80, 60, `${v.toFixed(0)}/s`);
       return c.hsl(45, 90, 60, `${v.toFixed(1)}/s`);
     },
-    percentage: (v) => {
+    percentage: v => {
       if (typeof v !== 'number') return String(v ?? '-');
       const percentage = v * 100;
       if (percentage > 80) return c.hsl(120, 80, 60, `${percentage.toFixed(0)}%`);
@@ -223,7 +238,7 @@ export function generateDynamicColumns(data: Record<string, any>[]): DynamicColu
   if (data.length === 0) return [];
 
   const schema = new Map<string, any[]>();
-  
+
   data.forEach(row => {
     Object.entries(row).forEach(([key, value]) => {
       if (!schema.has(key)) schema.set(key, []);
@@ -234,15 +249,19 @@ export function generateDynamicColumns(data: Record<string, any>[]): DynamicColu
   const columns: DynamicColumn[] = Array.from(schema.entries()).map(([key, values]) => {
     const type = detectType(key, values);
     const priority = calculatePriority(key);
-    
+
     const maxContentWidth = Math.max(
       stringWidth(key),
       ...values.map(v => stringWidth(getFormatter(type)(v)))
     );
-    
+
     return {
       key,
-      header: key.replace(/_/g, ' ').replace(/([A-Z])/g, ' $1').trim().toUpperCase(),
+      header: key
+        .replace(/_/g, ' ')
+        .replace(/([A-Z])/g, ' $1')
+        .trim()
+        .toUpperCase(),
       type,
       width: Math.min(Math.max(maxContentWidth + 2, 8), 40),
       align: type === 'number' || type === 'bytes' || type === 'duration' ? 'right' : 'left',
@@ -256,15 +275,12 @@ export function generateDynamicColumns(data: Record<string, any>[]): DynamicColu
   return columns.sort((a, b) => b.priority - a.priority);
 }
 
-function selectVisibleColumns(
-  columns: DynamicColumn[],
-  viewport: TableViewport
-): DynamicColumn[] {
+function selectVisibleColumns(columns: DynamicColumn[], viewport: TableViewport): DynamicColumn[] {
   const sorted = [...columns].sort((a, b) => b.priority - a.priority);
-  
+
   let totalWidth = 0;
   const visible: DynamicColumn[] = [];
-  
+
   for (const col of sorted) {
     const colWidth = col.width + 1;
     if (visible.length < viewport.maxColumns && totalWidth + colWidth <= viewport.maxWidth) {
@@ -296,32 +312,36 @@ export function createDynamicTable(
 
   let columns = generateDynamicColumns(data);
   columns = selectVisibleColumns(columns, viewport);
-  
+
   const visibleCols = columns.filter(c => c.visible);
   const hiddenCols = columns.filter(c => !c.visible);
 
   return {
     columns: visibleCols.map(c => c.key),
     hidden: hiddenCols.map(c => c.key),
-    
+
     render(): string {
       if (data.length === 0) return c.dim('(no data)');
 
       const lines: string[] = [];
-      
+
       if (options.title) {
         const titleWidth = stringWidth(options.title);
         const padding = Math.max(0, Math.floor((viewport.maxWidth - titleWidth - 4) / 2));
-        lines.push(c.bold(c.hsl(200, 90, 70, ' '.repeat(padding) + '═══ ' + options.title + ' ═══')));
+        lines.push(
+          c.bold(c.hsl(200, 90, 70, ' '.repeat(padding) + '═══ ' + options.title + ' ═══'))
+        );
         lines.push('');
       }
 
       const colWidths = visibleCols.map(col => {
         const headerWidth = stringWidth(col.header);
-        const maxDataWidth = Math.max(...data.map(row => {
-          const formatted = col.formatter!(row[col.key]);
-          return stringWidth(formatted);
-        }));
+        const maxDataWidth = Math.max(
+          ...data.map(row => {
+            const formatted = col.formatter!(row[col.key]);
+            return stringWidth(formatted);
+          })
+        );
         return Math.max(headerWidth, maxDataWidth, col.width) + 2;
       });
 
@@ -347,7 +367,7 @@ export function createDynamicTable(
           const padding = width - visualWidth;
 
           let cell = formatted;
-          
+
           if (col.align === 'right') cell = ' '.repeat(padding) + formatted;
           else if (col.align === 'center') {
             const left = Math.floor(padding / 2);
@@ -365,7 +385,12 @@ export function createDynamicTable(
         lines.push('│' + cells.join('│') + '│');
       });
 
-      const bottomBorder = c.hsl(220, 80, 60, '└' + colWidths.map(w => '─'.repeat(w)).join('┴') + '┘');
+      const bottomBorder = c.hsl(
+        220,
+        80,
+        60,
+        '└' + colWidths.map(w => '─'.repeat(w)).join('┴') + '┘'
+      );
       lines.push(bottomBorder);
 
       if (options.showOverflow !== false && hiddenCols.length > 0) {
@@ -390,11 +415,13 @@ export function createDynamicTable(
 
     toCSV(): string {
       const headers = visibleCols.map(c => c.header).join(',');
-      const rows = data.map(row => 
-        visibleCols.map(col => {
-          const val = row[col.key];
-          return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
-        }).join(',')
+      const rows = data.map(row =>
+        visibleCols
+          .map(col => {
+            const val = row[col.key];
+            return typeof val === 'string' && val.includes(',') ? `"${val}"` : val;
+          })
+          .join(',')
       );
       return [headers, ...rows].join('\n');
     },
@@ -458,8 +485,8 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       typeSafeMetrics: {
         totalFiles: 0,
         detectedFiles: 0,
-        typeSafeOperations: 0
-      }
+        typeSafeOperations: 0,
+      },
     };
 
     this.searcher = new EnhancedZenStreamSearcher();
@@ -476,31 +503,33 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       { ext: '.js', file: 'package.json', desc: 'JavaScript files' },
       { ext: '.css', file: 'package.json', desc: 'CSS stylesheets' },
       { ext: '.txt', file: 'LICENSE', desc: 'Plain text files' },
-      { ext: '.csv', file: 'package.json', desc: 'CSV data files' }
+      { ext: '.csv', file: 'package.json', desc: 'CSV data files' },
     ];
 
     console.info('🎯 Type-Safe MIME Type Detection Initialized:');
-    
+
     for (const { ext, file, desc } of testFiles) {
       try {
         // Use official Bun.file API for type-safe operations
         const bun = (globalThis as any).Bun as Bun;
         const bunFile: BunFile = bun.file(file);
-        
+
         // Check if file exists and get its type
         if (await bunFile.exists()) {
           const mimeType = bunFile.type;
           const size = bunFile.size;
-          
+
           this.metrics.supportedMimeTypes.push({
             extension: ext,
             mimeType: mimeType || 'application/octet-stream',
             description: desc,
             size: size,
-            detected: true
+            detected: true,
           });
-          
-          console.info(`   ${ext} → ${mimeType || 'unknown'} (${desc}) ✅ ${this.formatBytes(size)}`);
+
+          console.info(
+            `   ${ext} → ${mimeType || 'unknown'} (${desc}) ✅ ${this.formatBytes(size)}`
+          );
         } else {
           // Fallback for missing files
           this.metrics.supportedMimeTypes.push({
@@ -508,10 +537,12 @@ export class TypeSafeEnhancedZenDashboardWithTables {
             mimeType: this.getMimeTypeFallback(ext),
             description: desc,
             size: 0,
-            detected: false
+            detected: false,
           });
-          
-          console.info(`   ${ext} → ${this.getMimeTypeFallback(ext)} (${desc}) ⚠️ (file not found)`);
+
+          console.info(
+            `   ${ext} → ${this.getMimeTypeFallback(ext)} (${desc}) ⚠️ (file not found)`
+          );
         }
       } catch (error) {
         console.error(`❌ Error detecting MIME type for ${ext}:`, error);
@@ -520,13 +551,15 @@ export class TypeSafeEnhancedZenDashboardWithTables {
           mimeType: 'application/octet-stream',
           description: desc,
           size: 0,
-          detected: false
+          detected: false,
         });
       }
     }
-    
+
     this.metrics.typeSafeMetrics.totalFiles = this.metrics.supportedMimeTypes.length;
-    this.metrics.typeSafeMetrics.detectedFiles = this.metrics.supportedMimeTypes.filter(m => m.detected).length;
+    this.metrics.typeSafeMetrics.detectedFiles = this.metrics.supportedMimeTypes.filter(
+      m => m.detected
+    ).length;
     this.metrics.typeSafeMetrics.typeSafeOperations = this.metrics.typeSafeMetrics.totalFiles; // Each file operation is type-safe
   }
 
@@ -539,7 +572,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       '.js': 'application/javascript;charset=utf-8',
       '.css': 'text/css;charset=utf-8',
       '.txt': 'text/plain;charset=utf-8',
-      '.csv': 'text/csv'
+      '.csv': 'text/csv',
     };
     return mimeMap[extension] || 'application/octet-stream';
   }
@@ -554,68 +587,70 @@ export class TypeSafeEnhancedZenDashboardWithTables {
 
   async startTypeSafeEnhancedDashboardWithTables(): Promise<void> {
     console.info('🎯 Starting Type-Safe Enhanced Zen Dashboard with Dynamic Tables!');
-    
+
     const bun = (globalThis as any).Bun as any;
     this.server = bun.serve({
       port: 3006,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
-        
+
         if (url.pathname === '/' || url.pathname === '/dashboard') {
           const html = await this.generateTableEnhancedHTMLDashboard();
           return new Response(html, {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' }
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
           });
         }
-        
+
         if (url.pathname === '/api/table-data') {
           const tableData = this.generateTableData();
           return Response.json(tableData);
         }
-        
+
         if (url.pathname === '/api/render-table') {
           const tableData = this.generateTableData();
           const table = createDynamicTable(tableData, {
             title: '🔍 Zen Search History',
             maxWidth: 100,
-            maxColumns: 6
+            maxColumns: 6,
           });
-          
+
           return Response.json({
             rendered: table.render(),
             columns: table.columns,
             hidden: table.hidden,
             csv: table.toCSV(),
-            json: table.toJSON()
+            json: table.toJSON(),
           });
         }
-        
+
         if (url.pathname === '/api/type-safe-metrics') {
           return Response.json({
             ...this.metrics,
             bunInterfaces: 'Official Bun interfaces integrated',
             typeSafety: '100% type-safe operations',
-            dynamicTables: 'Advanced table rendering with auto-type detection'
+            dynamicTables: 'Advanced table rendering with auto-type detection',
           });
         }
-        
+
         if (url.pathname === '/api/search') {
           const query = url.searchParams.get('query') || 'bun';
           const result = await this.performRealSearch(query);
           return Response.json(result);
         }
-        
+
         return new Response('Not Found', { status: 404 });
       },
     });
 
     console.info('🌐 Type-Safe Enhanced Zen Dashboard with Dynamic Tables Started!');
-    console.info('=' .repeat(80));
+    console.info('='.repeat(80));
     console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
     console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
     console.info(`📊 Table Data: http://localhost:${this.server.port}/api/table-data`);
     console.info(`📋 Render Table: http://localhost:${this.server.port}/api/render-table`);
-    console.info(`🛡️ Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`);
+    console.info(
+      `🛡️ Type-Safe Metrics: http://localhost:${this.server.port}/api/type-safe-metrics`
+    );
     console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
     console.info('');
     console.info('🛡️ Enhanced Features:');
@@ -624,7 +659,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     console.info('   ✅ Beautiful ASCII tables with colors');
     console.info('   ✅ 100% type-safe file operations');
     console.info('   ✅ Real-time search visualization');
-    
+
     this.startRealSearches();
     await this.generateTableEnhancedStaticDashboard();
   }
@@ -637,16 +672,16 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       time: search.time,
       memory: search.memory,
       timestamp: search.timestamp,
-      status: this.metrics.systemHealth
+      status: this.metrics.systemHealth,
     }));
   }
 
   private async performRealSearch(query: string): Promise<any> {
     console.info(`🔍 Performing ENHANCED REAL search: "${query}"`);
-    
+
     try {
       const startTime = performance.now();
-      
+
       // Use enhanced streaming with caching and optimization
       const results = await this.searcher.streamSearch({
         query,
@@ -658,13 +693,15 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         caseSensitive: false,
         contextLines: 0,
         priority: 'normal',
-        onProgress: (stats) => {
+        onProgress: stats => {
           if (stats.matchesFound % 50 === 0) {
-            console.info(`   📊 Progress: ${stats.matchesFound} matches, ${stats.filesWithMatches} files, ${stats.throughput.toFixed(1)} matches/sec`);
+            console.info(
+              `   📊 Progress: ${stats.matchesFound} matches, ${stats.filesWithMatches} files, ${stats.throughput.toFixed(1)} matches/sec`
+            );
           }
-        }
+        },
       });
-      
+
       const searchTime = performance.now() - startTime;
 
       const realSearch = {
@@ -679,7 +716,7 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         filesWithMatches: results.filesWithMatches || 0,
         averageMatchDepth: results.averageMatchDepth || 0,
         cacheHitRate: results.cacheHitRate || 0,
-        throughput: results.throughput || 0
+        throughput: results.throughput || 0,
       };
 
       this.metrics.realSearchHistory.unshift(realSearch);
@@ -691,12 +728,14 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.info(`✅ ENHANCED REAL Search Results: ${results.matchesFound || 0} matches in ${searchTime.toFixed(2)}ms`);
+      console.info(
+        `✅ ENHANCED REAL Search Results: ${results.matchesFound || 0} matches in ${searchTime.toFixed(2)}ms`
+      );
       console.info(`   📁 Files with matches: ${results.filesWithMatches || 0}`);
       console.info(`   🎯 Average match depth: ${results.averageMatchDepth?.toFixed(2) || 'N/A'}`);
       console.info(`   🚀 Throughput: ${results.throughput?.toFixed(1) || 'N/A'} matches/sec`);
       console.info(`   💾 Cache hit rate: ${((results.cacheHitRate || 0) * 100).toFixed(1)}%`);
-      
+
       return {
         success: true,
         query,
@@ -710,12 +749,13 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         enhanced: true,
         filesWithMatches: results.filesWithMatches || 0,
         cacheHitRate: results.cacheHitRate || 0,
-        throughput: results.throughput || 0
+        throughput: results.throughput || 0,
       };
-      
     } catch (error) {
-      console.error(`❌ Enhanced real search failed: ${error instanceof Error ? error.message : 'Unknown error'}`);
-      
+      console.error(
+        `❌ Enhanced real search failed: ${error instanceof Error ? error.message : 'Unknown error'}`
+      );
+
       // Add failed search to history for visibility
       const failedSearch = {
         id: this.metrics.totalSearches + 1,
@@ -728,21 +768,21 @@ export class TypeSafeEnhancedZenDashboardWithTables {
         filesWithMatches: 0,
         averageMatchDepth: 0,
         cacheHitRate: 0,
-        throughput: 0
+        throughput: 0,
       };
-      
+
       this.metrics.realSearchHistory.unshift(failedSearch);
       if (this.metrics.realSearchHistory.length > 20) {
         this.metrics.realSearchHistory = this.metrics.realSearchHistory.slice(0, 20);
       }
-      
+
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Unknown error',
         query,
         typeSafe: false,
         tableData: failedSearch,
-        enhanced: false
+        enhanced: false,
       };
     }
   }
@@ -753,8 +793,12 @@ export class TypeSafeEnhancedZenDashboardWithTables {
       return;
     }
 
-    const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-    const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+    const avgTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+      this.metrics.realSearchHistory.length;
+    const avgMemory =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+      this.metrics.realSearchHistory.length;
 
     if (avgTime > 100 || avgMemory > 50) {
       this.metrics.systemHealth = 'critical';
@@ -776,19 +820,33 @@ export class TypeSafeEnhancedZenDashboardWithTables {
   }
 
   private async startRandomSearches(): Promise<void> {
-    const queries = ['bun', 'performance', 'zen', 'fetch', 'spawn', 'ripgrep', 'mime', 'typescript', 'table'];
+    const queries = [
+      'bun',
+      'performance',
+      'zen',
+      'fetch',
+      'spawn',
+      'ripgrep',
+      'mime',
+      'typescript',
+      'table',
+    ];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-    
+
     await this.performRealSearch(randomQuery);
   }
 
   private async generateTableEnhancedHTMLDashboard(): Promise<string> {
-    const avgTime = this.metrics.realSearchHistory.length > 0 
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length 
-      : 0;
-    const avgMemory = this.metrics.realSearchHistory.length > 0
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length
-      : 0;
+    const avgTime =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
+    const avgMemory =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
     const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
     const html = `
@@ -1063,18 +1121,22 @@ export class TypeSafeEnhancedZenDashboardWithTables {
     </script>
 </body>
 </html>`;
-    
+
     return html;
   }
 
   private async generateTableEnhancedStaticDashboard(): Promise<void> {
     const html = await this.generateTableEnhancedHTMLDashboard();
     const bun = (globalThis as any).Bun as Bun;
-    const staticFile: BunFile = bun.file('type-safe-zen-dashboard-with-tables.html', { type: 'text/html' });
-    
+    const staticFile: BunFile = bun.file('type-safe-zen-dashboard-with-tables.html', {
+      type: 'text/html',
+    });
+
     await bun.write(staticFile, html);
-    
-    console.info('📄 Type-safe dashboard with tables saved: type-safe-zen-dashboard-with-tables.html');
+
+    console.info(
+      '📄 Type-safe dashboard with tables saved: type-safe-zen-dashboard-with-tables.html'
+    );
     console.info('🛡️ Open with: open type-safe-zen-dashboard-with-tables.html');
   }
 
@@ -1094,9 +1156,9 @@ export class TypeSafeEnhancedZenDashboardWithTables {
 // Run type-safe enhanced dashboard with tables
 if (import.meta.url === `file://${process.argv[1]}`) {
   const typeSafeDashboardWithTables = new TypeSafeEnhancedZenDashboardWithTables();
-  
+
   typeSafeDashboardWithTables.startTypeSafeEnhancedDashboardWithTables().catch(console.error);
-  
+
   process.on('SIGINT', () => {
     console.info('\n👋 Shutting down Type-Safe Enhanced Zen Dashboard with Tables...');
     typeSafeDashboardWithTables.stopDashboard();

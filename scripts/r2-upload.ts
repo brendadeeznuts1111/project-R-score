@@ -2,11 +2,7 @@
 
 import { resolve4, resolveCname } from 'node:dns/promises';
 import { createDomainContext } from './lib/domain-context';
-import {
-  resolveR2BridgeConfig,
-  uploadCompressedStateToR2,
-  uploadJsonToR2,
-} from './lib/r2-bridge';
+import { resolveR2BridgeConfig, uploadCompressedStateToR2, uploadJsonToR2 } from './lib/r2-bridge';
 
 type Options = {
   domain: string;
@@ -47,7 +43,12 @@ function parseArgs(argv: string[]): Options {
   const out: Options = {
     domain: defaultDomain,
     zone: (Bun.env.CLOUDFLARE_ZONE_NAME || defaultDomain).trim(),
-    bucket: (Bun.env.R2_BENCH_BUCKET || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || 'bun-secrets').trim(),
+    bucket: (
+      Bun.env.R2_BENCH_BUCKET ||
+      Bun.env.R2_BUCKET ||
+      Bun.env.R2_BUCKET_NAME ||
+      'bun-secrets'
+    ).trim(),
     endpoint: endpoint.trim(),
     prefix: (Bun.env.DOMAIN_HEALTH_PREFIX || defaultPrefix).trim().replace(/^\/+|\/+$/g, ''),
     date: utcDateYYYYMMDD(),
@@ -168,14 +169,26 @@ async function resolveDns(
       const c = await withTimeout(resolveCname(host), timeoutMs);
       return { dnsResolved: c.length > 0, dnsRecords: c.slice(0, 4), dnsSource: 'CNAME' };
     } catch (cError) {
-      const err = cError instanceof Error ? cError.message : (aError instanceof Error ? aError.message : String(aError));
+      const err =
+        cError instanceof Error
+          ? cError.message
+          : aError instanceof Error
+            ? aError.message
+            : String(aError);
       const timeout = err.includes('timeout_after_');
-      return { dnsResolved: false, dnsRecords: [], dnsSource: timeout ? 'timeout' : 'none', dnsError: err };
+      return {
+        dnsResolved: false,
+        dnsRecords: [],
+        dnsSource: timeout ? 'timeout' : 'none',
+        dnsError: err,
+      };
     }
   }
 }
 
-async function loadSubdomains(domain: string): Promise<Array<{ subdomain: string; fullDomain: string; purpose: string }>> {
+async function loadSubdomains(
+  domain: string
+): Promise<Array<{ subdomain: string; fullDomain: string; purpose: string }>> {
   try {
     if (domain === 'factory-wager.com') {
       const mod = await import('../lib/mcp/cloudflare-domain-manager');
@@ -191,10 +204,25 @@ async function loadSubdomains(domain: string): Promise<Array<{ subdomain: string
   }
 
   const fallback = [
-    'npm', 'api', 'cdn', 'monitor', 'docs', 'rss', 'config', 'admin', 'auth',
-    'database', 'storage', 'vault', 'redis', 'www', 'blog', 'support', 'wiki',
+    'npm',
+    'api',
+    'cdn',
+    'monitor',
+    'docs',
+    'rss',
+    'config',
+    'admin',
+    'auth',
+    'database',
+    'storage',
+    'vault',
+    'redis',
+    'www',
+    'blog',
+    'support',
+    'wiki',
   ];
-  return fallback.map((name) => ({
+  return fallback.map(name => ({
     subdomain: name,
     fullDomain: `${name}.${domain}`,
     purpose: 'fallback',
@@ -217,7 +245,7 @@ async function main(): Promise<void> {
 
   const subdomains = await loadSubdomains(ctx.domain);
   const checks = await Promise.all(
-    subdomains.map(async (entry) => {
+    subdomains.map(async entry => {
       const dns = await resolveDns(entry.fullDomain, options.timeoutMs);
       const out: SubdomainEntry = {
         subdomain: entry.subdomain,
@@ -232,7 +260,7 @@ async function main(): Promise<void> {
     })
   );
 
-  const resolved = checks.filter((c) => c.dnsResolved).length;
+  const resolved = checks.filter(c => c.dnsResolved).length;
   const checked = checks.length;
   const dnsRatio = checked > 0 ? resolved / checked : 0;
   const now = new Date().toISOString();
@@ -250,7 +278,7 @@ async function main(): Promise<void> {
       cacheTtlSec: options.cacheTtlSec,
       ratio: Number(dnsRatio.toFixed(4)),
     },
-    health_checks: checks.map((c) => ({
+    health_checks: checks.map(c => ({
       subdomain: c.subdomain,
       full_domain: c.fullDomain,
       status: c.dnsResolved ? 'healthy' : 'unresolved',
@@ -267,10 +295,10 @@ async function main(): Promise<void> {
     domain: ctx.domain,
     ssl_overview: {
       total_certificates: checked,
-      valid_certificates: checks.filter((c) => c.dnsResolved).length,
-      unresolved_domains: checks.filter((c) => !c.dnsResolved).length,
+      valid_certificates: checks.filter(c => c.dnsResolved).length,
+      unresolved_domains: checks.filter(c => !c.dnsResolved).length,
     },
-    certificates: checks.map((c) => ({
+    certificates: checks.map(c => ({
       domain: c.fullDomain,
       status: c.dnsResolved ? 'valid' : 'unknown',
       observed_dns: c.dnsSource,
@@ -294,7 +322,7 @@ async function main(): Promise<void> {
       dns_failure_rate: Number(((1 - dnsRatio) * 100).toFixed(2)),
       cache_ttl_sec: options.cacheTtlSec,
     },
-    unresolved_subdomains: checks.filter((c) => !c.dnsResolved).map((c) => c.fullDomain),
+    unresolved_subdomains: checks.filter(c => !c.dnsResolved).map(c => c.fullDomain),
   };
 
   const healthKey = `${ctx.prefix}/health/${options.date}.json`;
@@ -302,10 +330,14 @@ async function main(): Promise<void> {
   const analyticsKey = `${ctx.prefix}/analytics/${options.date}.json`;
   const sessionStateKey = `domains/${ctx.namespace}/sessions/${options.sessionId}/state.zst`;
 
-  console.info(`[r2-upload] domain=${ctx.domain} zone=${ctx.zone} account=${accountMasked || 'n/a'}`);
+  console.info(
+    `[r2-upload] domain=${ctx.domain} zone=${ctx.zone} account=${accountMasked || 'n/a'}`
+  );
   console.info(`[r2-upload] bucket=${r2.bucket} endpoint=${r2.endpoint}`);
   console.info(`[r2-upload] prefix=${ctx.prefix}`);
-  console.info(`[r2-upload] dnsChecked=${checked} dnsResolved=${resolved} cacheTtlSec=${options.cacheTtlSec}`);
+  console.info(
+    `[r2-upload] dnsChecked=${checked} dnsResolved=${resolved} cacheTtlSec=${options.cacheTtlSec}`
+  );
   console.info(`[r2-upload] key health=${healthKey}`);
   console.info(`[r2-upload] key ssl=${sslKey}`);
   console.info(`[r2-upload] key analytics=${analyticsKey}`);
@@ -340,7 +372,7 @@ async function main(): Promise<void> {
         checked,
         resolved,
         ratio: Number(dnsRatio.toFixed(4)),
-        unresolvedSubdomains: checks.filter((c) => !c.dnsResolved).map((c) => c.fullDomain),
+        unresolvedSubdomains: checks.filter(c => !c.dnsResolved).map(c => c.fullDomain),
       },
     });
     console.info('[r2-upload] uploaded compressed session bridge state');

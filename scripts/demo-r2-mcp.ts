@@ -2,7 +2,7 @@
 
 /**
  * 🎬 FactoryWager MCP R2 Integration Demo
- * 
+ *
  * Demonstrates the complete R2-integrated MCP workflow
  * with mock data when credentials aren't configured.
  */
@@ -27,11 +27,11 @@ class MCPDemo {
   async demonstrateErrorDiagnosis(): Promise<void> {
     console.info(styled('\n🔍 Error Diagnosis Workflow', 'primary'));
     console.info(colorBar('primary', 50));
-    
+
     // Simulate an error
     const error = new Error('Bun.secrets.get: Invalid region configuration');
     error.name = 'RegionError';
-    
+
     console.info(styled('Simulated Error:', 'error'));
     console.info(styled(`  ${error.name}: ${error.message}`, 'muted'));
     console.info('');
@@ -107,7 +107,12 @@ try {
     };
 
     console.info(styled('📦 What would be stored in R2:', 'success'));
-    console.info(styled(`  Key: mcp/diagnoses/${mockDiagnosis.timestamp.replace(/[:.]/g, '-')}-${mockDiagnosis.error.name}.json`, 'muted'));
+    console.info(
+      styled(
+        `  Key: mcp/diagnoses/${mockDiagnosis.timestamp.replace(/[:.]/g, '-')}-${mockDiagnosis.error.name}.json`,
+        'muted'
+      )
+    );
     console.info(styled(`  Size: ${JSON.stringify(mockDiagnosis).length} bytes`, 'muted'));
     console.info(styled(`  Confidence: ${Math.round(mockDiagnosis.confidence * 100)}%`, 'info'));
     console.info('');
@@ -121,7 +126,7 @@ try {
   async demonstrateAuditSearch(): Promise<void> {
     console.info(styled('\n📋 Audit Trail Search', 'warning'));
     console.info(colorBar('warning', 50));
-    
+
     console.info(styled('Searching for similar past errors...', 'info'));
     console.info('');
 
@@ -153,7 +158,9 @@ try {
       console.info(styled(`\n${i + 1}. ${audit.id}`, 'accent'));
       console.info(styled(`   When: ${new Date(audit.timestamp).toLocaleString()}`, 'muted'));
       console.info(styled(`   Context: ${audit.context}`, 'info'));
-      console.info(styled(`   Severity: ${audit.severity}`, audit.severity === 'medium' ? 'warning' : 'muted'));
+      console.info(
+        styled(`   Severity: ${audit.severity}`, audit.severity === 'medium' ? 'warning' : 'muted')
+      );
       console.info(styled(`   Resolution: ${audit.resolution}`, 'muted'));
       if (audit.successfulFix) {
         console.info(styled(`   ✅ Fix: ${audit.successfulFix}`, 'success'));
@@ -165,7 +172,7 @@ try {
   async demonstrateMetrics(): Promise<void> {
     console.info(styled('\n📊 Usage Analytics', 'info'));
     console.info(colorBar('info', 50));
-    
+
     // Mock metrics (what would be stored in R2)
     const mockMetrics = {
       timestamp: new Date().toISOString(),
@@ -197,13 +204,22 @@ try {
 
     console.info(styled('⚡ Performance Metrics:', 'accent'));
     console.info(styled(`  Avg Response: ${mockMetrics.performance.avgResponseTime}ms`, 'primary'));
-    console.info(styled(`  Cache Hit Rate: ${Math.round(mockMetrics.performance.cacheHitRate * 100)}%`, 'success'));
-    console.info(styled(`  Error Rate: ${Math.round(mockMetrics.performance.errorRate * 100)}%`, 'error'));
+    console.info(
+      styled(
+        `  Cache Hit Rate: ${Math.round(mockMetrics.performance.cacheHitRate * 100)}%`,
+        'success'
+      )
+    );
+    console.info(
+      styled(`  Error Rate: ${Math.round(mockMetrics.performance.errorRate * 100)}%`, 'error')
+    );
     console.info('');
 
     console.info(styled('🔥 Popular Queries:', 'accent'));
     mockMetrics.popularQueries.forEach((query, i) => {
-      console.info(styled(`  ${i + 1}. "${query.query}" (${query.count} times, ${query.context})`, 'info'));
+      console.info(
+        styled(`  ${i + 1}. "${query.query}" (${query.count} times, ${query.context})`, 'info')
+      );
     });
     console.info('');
   }
@@ -211,7 +227,7 @@ try {
   async demonstrateR2Storage(): Promise<void> {
     console.info(styled('\n☁️ R2 Storage Structure', 'success'));
     console.info(colorBar('success', 50));
-    
+
     console.info(styled('Your scanner-cookies bucket would contain:', 'muted'));
     console.info('');
 
@@ -240,14 +256,16 @@ try {
     console.info(styled('📊 Bucket Statistics:', 'accent'));
     console.info(styled(`  Total Objects: ${mockStats.objectCount}`, 'primary'));
     console.info(styled(`  Total Size: ${mockStats.totalSize}`, 'info'));
-    console.info(styled(`  MCP Data: ${mockStats.mcpDataCount} objects (${mockStats.mcpDataSize})`, 'success'));
+    console.info(
+      styled(`  MCP Data: ${mockStats.mcpDataCount} objects (${mockStats.mcpDataSize})`, 'success')
+    );
     console.info('');
   }
 
   async demonstrateClaudeIntegration(): Promise<void> {
     console.info(styled('\n🤖 Claude Desktop Integration', 'accent'));
     console.info(colorBar('accent', 50));
-    
+
     console.info(styled('With R2 integration, Claude Desktop gains these abilities:', 'muted'));
     console.info('');
 
@@ -285,7 +303,7 @@ try {
   showSetupInstructions(): void {
     console.info(styled('\n🛠️ Setup Instructions', 'warning'));
     console.info(colorBar('warning', 50));
-    
+
     console.info(styled('To enable R2 storage, follow these steps:', 'muted'));
     console.info('');
 
@@ -343,7 +361,6 @@ try {
       console.info(styled('Your FactoryWager MCP system is ready for R2 integration!', 'accent'));
       console.info(styled('Configure your R2 credentials to enable full functionality.', 'muted'));
       console.info('');
-
     } catch (error) {
       console.error(styled(`❌ Demo failed: ${error.message}`, 'error'));
     }

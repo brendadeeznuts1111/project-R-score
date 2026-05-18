@@ -2,7 +2,7 @@
 
 /**
  * Wiki v3.19 - AI Wiki Generator
- * 
+ *
  * Tier-1380 AI Transmute generates wiki sections (prompt → MD with GFM/tables/code)
  * 107K chars/s gen on 1000-page wiki with AI-powered content generation
  */
@@ -209,45 +209,51 @@ interface WikiI18n {
 // Usage
 const i18n = await Bun.JSONC.parse(await Bun.file('wiki-i18n.jsonc').text());
 const englishContent = i18n.en.sections['changelog'];
-\`\`\``
+\`\`\``,
 };
 
 // AI Wiki Section Generator
 async function aiWikiSection(prompt: string): Promise<string> {
   const startTime = performance.now();
-  
+
   // Find matching template
-  const template = Object.entries(AI_TEMPLATES).find(([key]) => 
+  const template = Object.entries(AI_TEMPLATES).find(([key]) =>
     prompt.toLowerCase().includes(key)
   )?.[1];
-  
+
   if (!template) {
     // Generate default section with AI-like processing
     const defaultTemplate = generateDefaultSection(prompt);
     const genTime = performance.now() - startTime;
-    const throughput = Math.round((defaultTemplate.length / genTime) * 1000 / 1024);
-    
-    return defaultTemplate + `\n\n**AI Gen**: ${genTime.toFixed(2)}ms | ${throughput}K/s | GFM 100%`;
+    const throughput = Math.round(((defaultTemplate.length / genTime) * 1000) / 1024);
+
+    return (
+      defaultTemplate + `\n\n**AI Gen**: ${genTime.toFixed(2)}ms | ${throughput}K/s | GFM 100%`
+    );
   }
-  
+
   // Simulate profiling (without actual file processing)
   const simulatedProfile = {
     throughput: Math.round(Math.random() * 50 + 100), // 100-150K/s
     gfmScore: 100,
-    parseTime: Math.random() * 0.5 + 0.2 // 0.2-0.7ms
+    parseTime: Math.random() * 0.5 + 0.2, // 0.2-0.7ms
   };
-  
+
   const genTime = performance.now() - startTime;
-  
-  return template + `\n\n**AI Gen**: ${genTime.toFixed(2)}ms | ${simulatedProfile.throughput}K/s | GFM ${simulatedProfile.gfmScore}%`;
+
+  return (
+    template +
+    `\n\n**AI Gen**: ${genTime.toFixed(2)}ms | ${simulatedProfile.throughput}K/s | GFM ${simulatedProfile.gfmScore}%`
+  );
 }
 
 // Generate default section when no template matches
 function generateDefaultSection(prompt: string): string {
-  const sections = prompt.split(' ').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' ');
-  
+  const sections = prompt
+    .split(' ')
+    .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(' ');
+
   return `# ${sections}
 
 ## Overview
@@ -274,17 +280,17 @@ export async function generateAIWiki(sections: string[]): Promise<string> {
 ---
 
 `;
-  
+
   for (const section of sections) {
     console.info(`🤖 Generating AI section: ${section}`);
     const generatedSection = await aiWikiSection(section);
     wiki += generatedSection + '\n\n---\n\n';
   }
-  
+
   const totalTime = performance.now() - startTime;
   const totalChars = wiki.length;
-  const throughput = Math.round((totalChars / totalTime) * 1000 / 1024);
-  
+  const throughput = Math.round(((totalChars / totalTime) * 1000) / 1024);
+
   wiki += `## Generation Summary
 - **Sections**: ${sections.length}
 - **Total Characters**: ${totalChars.toLocaleString()}
@@ -294,14 +300,14 @@ export async function generateAIWiki(sections: string[]): Promise<string> {
 
 ---
 *Wiki v3.19 - AI Revolution Complete* 🚀🤖💥`;
-  
+
   return wiki;
 }
 
 // CLI Interface
 if (import.meta.main) {
   const args = process.argv.slice(2);
-  
+
   if (args.length === 0) {
     console.info('🤖 AI Wiki Generator v3.19');
     console.info('Usage: bun run ai-wiki-gen.ts "section1" "section2" ...');
@@ -312,17 +318,17 @@ if (import.meta.main) {
     });
     process.exit(0);
   }
-  
+
   console.info('🚀 Starting AI Wiki Generation v3.19...');
   console.info(`📝 Sections to generate: ${args.join(', ')}`);
   console.info('');
-  
+
   generateAIWiki(args)
     .then(wiki => {
       // Save to file
       const filename = `ai-wiki-${Date.now()}.md`;
       writeFileSync(filename, wiki);
-      
+
       console.info('✅ AI Wiki Generation Complete!');
       console.info(`📁 Saved to: ${filename}`);
       console.info(`📊 Wiki size: ${(wiki.length / 1024).toFixed(1)}KB`);

@@ -2,7 +2,7 @@
 
 /**
  * FactoryWager Tools MCP Server
- * 
+ *
  * Complementary MCP server providing FactoryWager-specific tools:
  * - Profiling and diagnostics
  * - Security auditing
@@ -12,10 +12,7 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 
 import { styled, FW_COLORS } from '../lib/theme/colors.ts';
 
@@ -122,20 +119,20 @@ class FactoryWagerToolsMCP {
       };
     });
 
-    this.server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    this.server.setRequestHandler(CallToolRequestSchema, async request => {
       const { name, arguments: args } = request.params;
 
       try {
         switch (name) {
           case 'ProfileAndDiagnose':
             return await this.handleProfileAndDiagnose(args);
-            
+
           case 'SecurityAudit':
             return await this.handleSecurityAudit(args);
-            
+
           case 'R2StorageManager':
             return await this.handleR2StorageManager(args);
-            
+
           default:
             throw new Error(`Unknown tool: ${name}`);
         }
@@ -154,7 +151,7 @@ class FactoryWagerToolsMCP {
 
   private async handleProfileAndDiagnose(args: any): Promise<any> {
     const { command, file, generateReport = true } = args;
-    
+
     // Mock profiling results
     const profileData = {
       command,
@@ -179,7 +176,7 @@ class FactoryWagerToolsMCP {
 
   private async handleSecurityAudit(args: any): Promise<any> {
     const { target, severity = 'medium', includeRecommendations = true } = args;
-    
+
     const audit = {
       target,
       severity,
@@ -204,7 +201,7 @@ class FactoryWagerToolsMCP {
 
   private async handleR2StorageManager(args: any): Promise<any> {
     const { operation, bucket, key, file } = args;
-    
+
     const result = {
       operation,
       bucket,
@@ -277,7 +274,9 @@ Generated: ${new Date().toISOString()}
 ${JSON.stringify(metrics, null, 2)}
 
 Recommendations:
-${this.getRecommendations(command).map(r => `- ${r}`).join('\n')}
+${this.getRecommendations(command)
+  .map(r => `- ${r}`)
+  .join('\n')}
     `.trim();
   }
 
@@ -332,7 +331,7 @@ ${this.getRecommendations(command).map(r => `- ${r}`).join('\n')}
   async start(): Promise<void> {
     const transport = new StdioServerTransport();
     await this.server.connect(transport);
-    
+
     process.on('SIGINT', async () => {
       await this.server.close();
       process.exit(0);

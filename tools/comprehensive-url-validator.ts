@@ -12,31 +12,33 @@ const options = {
   fullAnalysis: args.includes('--full-analysis'),
   json: args.includes('--json'),
   noColor: args.includes('--no-color'),
-  help: args.includes('-h') || args.includes('--help')
+  help: args.includes('-h') || args.includes('--help'),
 };
 
 // Color utilities
-const colors = options.noColor ? {
-  reset: '',
-  red: '',
-  green: '',
-  yellow: '',
-  blue: '',
-  magenta: '',
-  cyan: '',
-  white: '',
-  gray: ''
-} : {
-  reset: '\x1b[0m',
-  red: '\x1b[31m',
-  green: '\x1b[32m',
-  yellow: '\x1b[33m',
-  blue: '\x1b[34m',
-  magenta: '\x1b[35m',
-  cyan: '\x1b[36m',
-  white: '\x1b[37m',
-  gray: '\x1b[90m'
-};
+const colors = options.noColor
+  ? {
+      reset: '',
+      red: '',
+      green: '',
+      yellow: '',
+      blue: '',
+      magenta: '',
+      cyan: '',
+      white: '',
+      gray: '',
+    }
+  : {
+      reset: '\x1b[0m',
+      red: '\x1b[31m',
+      green: '\x1b[32m',
+      yellow: '\x1b[33m',
+      blue: '\x1b[34m',
+      magenta: '\x1b[35m',
+      cyan: '\x1b[36m',
+      white: '\x1b[37m',
+      gray: '\x1b[90m',
+    };
 
 // Show help
 if (options.help) {
@@ -65,12 +67,16 @@ if (options.help) {
 // Logging utilities
 const log = {
   info: (msg: string) => !options.quiet && console.info(`${colors.blue}ℹ${colors.reset} ${msg}`),
-  success: (msg: string) => !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
-  warning: (msg: string) => !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
+  success: (msg: string) =>
+    !options.quiet && console.info(`${colors.green}✅${colors.reset} ${msg}`),
+  warning: (msg: string) =>
+    !options.quiet && console.info(`${colors.yellow}⚠️${colors.reset} ${msg}`),
   error: (msg: string) => console.info(`${colors.red}❌${colors.reset} ${msg}`),
-  verbose: (msg: string) => options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
-  section: (title: string) => !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
-  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2))
+  verbose: (msg: string) =>
+    options.verbose && console.info(`${colors.gray}🔍${colors.reset} ${msg}`),
+  section: (title: string) =>
+    !options.quiet && console.info(`\n${colors.cyan}${title}${colors.reset}`),
+  json: (data: any) => options.json && console.info(JSON.stringify(data, null, 2)),
 };
 
 // Test results storage
@@ -81,8 +87,8 @@ const testResults = {
     total: 0,
     passed: 0,
     failed: 0,
-    warnings: 0
-  }
+    warnings: 0,
+  },
 };
 
 // Helper to record test results
@@ -91,7 +97,7 @@ const recordTest = (name: string, passed: boolean, message: string, details?: an
     passed,
     message,
     details,
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
   };
 
   testResults.summary.total++;
@@ -203,9 +209,8 @@ function validateURLComprehensive(url: string): {
       subpaths,
       fragment: hasFragment ? fragment : undefined,
       errors,
-      warnings
+      warnings,
     };
-
   } catch (error) {
     return {
       isValid: false,
@@ -219,7 +224,7 @@ function validateURLComprehensive(url: string): {
       pathname: '',
       subpaths: [],
       errors: [error.message],
-      warnings
+      warnings,
     };
   }
 }
@@ -233,7 +238,7 @@ function analyzeURLPatterns(urls: string[]) {
     commonPaths: new Map<string, number>(),
     pathDepths: [] as number[],
     fragmentUsage: { with: 0, without: 0 },
-    subpathCounts: new Map<number, number>()
+    subpathCounts: new Map<number, number>(),
   };
 
   urls.forEach(url => {
@@ -246,7 +251,10 @@ function analyzeURLPatterns(urls: string[]) {
       if (validation.subpaths.length > 0) {
         patterns.firstSubpaths.add(validation.subpaths[0]);
         patterns.pathDepths.push(validation.subpaths.length);
-        patterns.subpathCounts.set(validation.subpaths.length, (patterns.subpathCounts.get(validation.subpaths.length) || 0) + 1);
+        patterns.subpathCounts.set(
+          validation.subpaths.length,
+          (patterns.subpathCounts.get(validation.subpaths.length) || 0) + 1
+        );
 
         const pathKey = validation.subpaths.join('/');
         patterns.commonPaths.set(pathKey, (patterns.commonPaths.get(pathKey) || 0) + 1);
@@ -265,16 +273,21 @@ function analyzeURLPatterns(urls: string[]) {
     hostnames: Array.from(patterns.hostnames),
     firstSubpaths: Array.from(patterns.firstSubpaths),
     commonPaths: Array.from(patterns.commonPaths.entries()).sort((a, b) => b[1] - a[1]),
-    avgPathDepth: patterns.pathDepths.length > 0 ? patterns.pathDepths.reduce((a, b) => a + b, 0) / patterns.pathDepths.length : 0,
+    avgPathDepth:
+      patterns.pathDepths.length > 0
+        ? patterns.pathDepths.reduce((a, b) => a + b, 0) / patterns.pathDepths.length
+        : 0,
     fragmentUsage: patterns.fragmentUsage,
-    subpathDistribution: Array.from(patterns.subpathCounts.entries()).sort((a, b) => a[0] - b[0])
+    subpathDistribution: Array.from(patterns.subpathCounts.entries()).sort((a, b) => a[0] - b[0]),
   };
 }
 
 // Main validation function
 async function runComprehensiveValidation() {
   console.info(`${colors.cyan}🔍 Comprehensive URL Validator${colors.reset}`);
-  console.info(`${colors.gray}Validating URLs with Base + Subpath + Fragment analysis...${colors.reset}\n`);
+  console.info(
+    `${colors.gray}Validating URLs with Base + Subpath + Fragment analysis...${colors.reset}\n`
+  );
 
   const startTime = Date.now();
 
@@ -329,7 +342,9 @@ async function runComprehensiveValidation() {
       }
     });
 
-    recordTest('basic-url-validation', invalidURLs === 0,
+    recordTest(
+      'basic-url-validation',
+      invalidURLs === 0,
       `${validURLs} valid, ${invalidURLs} invalid URLs`,
       { validURLs, invalidURLs, totalURLs: allURLs.length }
     );
@@ -358,7 +373,7 @@ async function runComprehensiveValidation() {
         uniqueSubpaths: new Set<string>(),
         subpathLengths: [] as number[],
         invalidSubpaths: 0,
-        commonSubpaths: new Map<string, number>()
+        commonSubpaths: new Map<string, number>(),
       };
 
       allURLs.forEach(url => {
@@ -368,7 +383,10 @@ async function runComprehensiveValidation() {
           validation.subpaths.forEach(subpath => {
             subpathStats.uniqueSubpaths.add(subpath);
             subpathStats.subpathLengths.push(subpath.length);
-            subpathStats.commonSubpaths.set(subpath, (subpathStats.commonSubpaths.get(subpath) || 0) + 1);
+            subpathStats.commonSubpaths.set(
+              subpath,
+              (subpathStats.commonSubpaths.get(subpath) || 0) + 1
+            );
           });
 
           if (!validation.subpathValid) {
@@ -379,15 +397,19 @@ async function runComprehensiveValidation() {
         }
       });
 
-      const avgSubpathLength = subpathStats.subpathLengths.length > 0
-        ? subpathStats.subpathLengths.reduce((a, b) => a + b, 0) / subpathStats.subpathLengths.length
-        : 0;
+      const avgSubpathLength =
+        subpathStats.subpathLengths.length > 0
+          ? subpathStats.subpathLengths.reduce((a, b) => a + b, 0) /
+            subpathStats.subpathLengths.length
+          : 0;
 
       const commonSubpathsList = Array.from(subpathStats.commonSubpaths.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      recordTest('subpath-analysis', subpathStats.invalidSubpaths === 0,
+      recordTest(
+        'subpath-analysis',
+        subpathStats.invalidSubpaths === 0,
         `${subpathStats.urlsWithSubpaths}/${subpathStats.totalURLs} URLs have subpaths, ${subpathStats.invalidSubpaths} invalid`,
         {
           totalURLs: subpathStats.totalURLs,
@@ -396,7 +418,7 @@ async function runComprehensiveValidation() {
           uniqueSubpaths: Array.from(subpathStats.uniqueSubpaths),
           avgSubpathLength,
           invalidSubpaths: subpathStats.invalidSubpaths,
-          commonSubpaths: commonSubpathsList
+          commonSubpaths: commonSubpathsList,
         }
       );
 
@@ -427,7 +449,7 @@ async function runComprehensiveValidation() {
         uniqueFragments: new Set<string>(),
         fragmentLengths: [] as number[],
         invalidFragments: 0,
-        commonFragments: new Map<string, number>()
+        commonFragments: new Map<string, number>(),
       };
 
       allURLs.forEach(url => {
@@ -437,7 +459,10 @@ async function runComprehensiveValidation() {
           if (validation.fragment) {
             fragmentStats.uniqueFragments.add(validation.fragment);
             fragmentStats.fragmentLengths.push(validation.fragment.length);
-            fragmentStats.commonFragments.set(validation.fragment, (fragmentStats.commonFragments.get(validation.fragment) || 0) + 1);
+            fragmentStats.commonFragments.set(
+              validation.fragment,
+              (fragmentStats.commonFragments.get(validation.fragment) || 0) + 1
+            );
           }
 
           if (!validation.fragmentValid) {
@@ -448,15 +473,19 @@ async function runComprehensiveValidation() {
         }
       });
 
-      const avgFragmentLength = fragmentStats.fragmentLengths.length > 0
-        ? fragmentStats.fragmentLengths.reduce((a, b) => a + b, 0) / fragmentStats.fragmentLengths.length
-        : 0;
+      const avgFragmentLength =
+        fragmentStats.fragmentLengths.length > 0
+          ? fragmentStats.fragmentLengths.reduce((a, b) => a + b, 0) /
+            fragmentStats.fragmentLengths.length
+          : 0;
 
       const commonFragmentsList = Array.from(fragmentStats.commonFragments.entries())
         .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
 
-      recordTest('fragment-analysis', fragmentStats.invalidFragments === 0,
+      recordTest(
+        'fragment-analysis',
+        fragmentStats.invalidFragments === 0,
         `${fragmentStats.urlsWithFragments}/${fragmentStats.totalURLs} URLs have fragments, ${fragmentStats.invalidFragments} invalid`,
         {
           totalURLs: fragmentStats.totalURLs,
@@ -465,12 +494,14 @@ async function runComprehensiveValidation() {
           uniqueFragments: Array.from(fragmentStats.uniqueFragments),
           avgFragmentLength,
           invalidFragments: fragmentStats.invalidFragments,
-          commonFragments: commonFragmentsList
+          commonFragments: commonFragmentsList,
         }
       );
 
       if (fragmentStats.invalidFragments === 0) {
-        log.success(`Fragment Analysis: OK (${fragmentStats.urlsWithFragments} URLs with fragments)`);
+        log.success(
+          `Fragment Analysis: OK (${fragmentStats.urlsWithFragments} URLs with fragments)`
+        );
       } else {
         log.error(`Fragment Analysis: ${fragmentStats.invalidFragments} invalid fragments found`);
       }
@@ -491,7 +522,9 @@ async function runComprehensiveValidation() {
 
       const patterns = analyzeURLPatterns(allURLs);
 
-      recordTest('structure-analysis', true,
+      recordTest(
+        'structure-analysis',
+        true,
         `Analyzed ${allURLs.length} URLs, found ${patterns.commonPaths.length} unique paths`,
         patterns
       );
@@ -503,7 +536,9 @@ async function runComprehensiveValidation() {
         log.verbose(`Hostnames: ${patterns.hostnames.join(', ')}`);
         log.verbose(`First subpaths: ${patterns.firstSubpaths.join(', ')}`);
         log.verbose(`Average path depth: ${patterns.avgPathDepth.toFixed(1)}`);
-        log.verbose(`Fragment usage: ${patterns.fragmentUsage.with} with, ${patterns.fragmentUsage.without} without`);
+        log.verbose(
+          `Fragment usage: ${patterns.fragmentUsage.with} with, ${patterns.fragmentUsage.without} without`
+        );
 
         log.verbose('Top 5 common paths:');
         patterns.commonPaths.slice(0, 5).forEach(([path, count]) => {
@@ -532,19 +567,20 @@ async function runComprehensiveValidation() {
       log.json({
         ...testResults,
         urlValidation: validationResults,
-        urlSources
+        urlSources,
       });
     }
 
     // Exit with appropriate code
     if (failed > 0) {
-      console.info(`\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`);
+      console.info(
+        `\n${colors.yellow}⚠️ Some validations failed. See details above.${colors.reset}`
+      );
       process.exit(1);
     } else {
       console.info(`\n${colors.green}🎉 All validations passed!${colors.reset}`);
       process.exit(0);
     }
-
   } catch (error: any) {
     log.error(`Validation failed: ${error.message}`);
     if (options.verbose) {
@@ -555,12 +591,12 @@ async function runComprehensiveValidation() {
 }
 
 // Handle uncaught errors
-process.on('uncaughtException', (error) => {
+process.on('uncaughtException', error => {
   log.error(`Uncaught exception: ${error.message}`);
   process.exit(1);
 });
 
-process.on('unhandledRejection', (reason) => {
+process.on('unhandledRejection', reason => {
   log.error(`Unhandled rejection: ${reason}`);
   process.exit(1);
 });

@@ -57,7 +57,7 @@ export interface AnsiWidthResult {
 
 /**
  * Validate that a binary exists in PATH
- * 
+ *
  * @example
  * ```typescript
  * const bunPath = validateBinaryExists('bun');
@@ -107,14 +107,14 @@ export function validateBinaryOrThrow(command: string): string {
 
 /**
  * Safely spawn a process with timeout and error handling
- * 
+ *
  * @example
  * ```typescript
  * const result = await safeSpawn(
  *   ['bun', 'test'],
  *   { timeoutMs: 5000, validateBinary: true }
  * );
- * 
+ *
  * if (result.success) {
  *   console.info('Output:', result.stdout);
  * }
@@ -160,16 +160,13 @@ export async function safeSpawn(
     // Set up timeout
     const timeoutId = setTimeout(() => {
       process_.kill('SIGTERM');
-      recordError(
-        new Error(`Spawn timeout after ${timeoutMs}ms`),
-        {
-          service: serviceName,
-          operation: 'spawn_timeout',
-          command: cmd.join(' '),
-          timeoutMs,
-          pid: process_.pid,
-        }
-      );
+      recordError(new Error(`Spawn timeout after ${timeoutMs}ms`), {
+        service: serviceName,
+        operation: 'spawn_timeout',
+        command: cmd.join(' '),
+        timeoutMs,
+        pid: process_.pid,
+      });
     }, timeoutMs);
 
     // Collect output with size limit
@@ -222,16 +219,13 @@ export async function safeSpawn(
 
     // Record error if process failed
     if (exitCode !== 0) {
-      recordError(
-        new Error(`Process exited with code ${exitCode}`),
-        {
-          service: serviceName,
-          operation: 'spawn_exit_error',
-          command: cmd.join(' '),
-          exitCode,
-          stderr: stderr.slice(0, 1000), // Limit error context
-        }
-      );
+      recordError(new Error(`Process exited with code ${exitCode}`), {
+        service: serviceName,
+        operation: 'spawn_exit_error',
+        command: cmd.join(' '),
+        exitCode,
+        stderr: stderr.slice(0, 1000), // Limit error context
+      });
     }
 
     return {
@@ -263,7 +257,7 @@ export async function safeSpawn(
 
 /**
  * Memory-efficient spawn that streams output with timeout
- * 
+ *
  * @example
  * ```typescript
  * await streamSpawn(
@@ -366,7 +360,7 @@ export async function streamSpawn(
 
 /**
  * Calculate ANSI-aware string width
- * 
+ *
  * @example
  * ```typescript
  * const result = ansiStringWidth('\x1b[31mred\x1b[0m');
@@ -378,11 +372,11 @@ export function ansiStringWidth(str: string): AnsiWidthResult {
   try {
     // Use Bun's built-in stringWidth if available
     const width = (Bun as any).stringWidth?.(str) ?? str.length;
-    
+
     // Check for ANSI codes
     const ansiPattern = /\x1b\[[0-9;]*m/g;
     const hasAnsi = ansiPattern.test(str);
-    
+
     return {
       width,
       length: str.length,
@@ -394,7 +388,7 @@ export function ansiStringWidth(str: string): AnsiWidthResult {
       operation: 'string_width',
       input: str,
     });
-    
+
     // Fallback: strip ANSI and return length
     const stripped = str.replace(/\x1b\[[0-9;]*m/g, '');
     return {
@@ -414,7 +408,7 @@ export function stripAnsi(str: string): string {
 
 /**
  * Truncate string to visual width (ANSI-aware)
- * 
+ *
  * @example
  * ```typescript
  * truncateAnsi('\x1b[31mhello world\x1b[0m', 5);
@@ -423,7 +417,7 @@ export function stripAnsi(str: string): string {
  */
 export function truncateAnsi(str: string, maxWidth: number): string {
   const { width } = ansiStringWidth(str);
-  
+
   if (width <= maxWidth) {
     return str;
   }

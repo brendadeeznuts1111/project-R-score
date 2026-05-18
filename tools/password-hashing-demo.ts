@@ -24,8 +24,11 @@ async function demonstratePasswordHashing() {
 
   // Validate password strength
   const strength = SecurityUtils.validateStrength(password);
-  log.metric('Strength score', strength.score.toString(),
-              strength.score > 80 ? 'success' : strength.score > 50 ? 'warning' : 'error');
+  log.metric(
+    'Strength score',
+    strength.score.toString(),
+    strength.score > 80 ? 'success' : strength.score > 50 ? 'warning' : 'error'
+  );
 
   if (strength.issues.length > 0) {
     console.info(styled('\nIssues:', 'warning'));
@@ -41,7 +44,7 @@ async function demonstratePasswordHashing() {
   const argon2Hash = await SecurityUtils.hashPassword(password, {
     algorithm: 'argon2id',
     memoryCost: 64,
-    timeCost: 3
+    timeCost: 3,
   });
   log.metric('Argon2id', argon2Hash.substring(0, 50) + '...', 'success');
 
@@ -49,14 +52,14 @@ async function demonstratePasswordHashing() {
   const argon2iHash = await SecurityUtils.hashPassword(password, {
     algorithm: 'argon2i',
     memoryCost: 32,
-    timeCost: 2
+    timeCost: 2,
   });
   log.metric('Argon2i', argon2iHash.substring(0, 50) + '...', 'primary');
 
   // bcrypt
   const bcryptHash = await SecurityUtils.hashPassword(password, {
     algorithm: 'bcrypt',
-    cost: 12
+    cost: 12,
   });
   log.metric('bcrypt', bcryptHash.substring(0, 50) + '...', 'accent');
 
@@ -79,7 +82,7 @@ async function demonstratePasswordHashing() {
 
   const syncHash = SecurityUtils.hashPasswordSync(password, {
     algorithm: 'bcrypt',
-    cost: 10
+    cost: 10,
   });
   log.metric('Sync hash', syncHash.substring(0, 50) + '...', 'muted');
 
@@ -108,11 +111,13 @@ async function demonstratePasswordHashing() {
   log.metric('Sync hashing', `${iterations} hashes in ${syncTime.toFixed(2)}ms`, 'primary');
 
   // Show performance difference
-  const diff = ((asyncTime - syncTime) / syncTime * 100).toFixed(1);
+  const diff = (((asyncTime - syncTime) / syncTime) * 100).toFixed(1);
   log.metric('Performance difference', `${diff}%`, 'muted');
 
   console.info(styled('\n✅ Password hashing demo complete!', 'success'));
-  console.info(styled('\n📖 Reference: https://bun.com/docs/runtime/hashing#bun-password', 'accent'));
+  console.info(
+    styled('\n📖 Reference: https://bun.com/docs/runtime/hashing#bun-password', 'accent')
+  );
 }
 
 // Run if called directly

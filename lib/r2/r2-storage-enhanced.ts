@@ -39,11 +39,11 @@ export class R2Storage {
       .replace(/^-+|-+$/g, '') // Remove leading/trailing dashes
       .toLowerCase()
       .substring(0, 50); // Limit length
-      
+
     if (!sanitized || sanitized.length < 1) {
       throw new Error('Package name contains no valid characters after sanitization');
     }
-    
+
     const bucketName = `bun-docs-${sanitized}-${Date.now().toString(36)}`;
 
     await this.createBucket(bucketName);
@@ -71,7 +71,11 @@ export class R2Storage {
 
     // Also generate and upload HTML docs
     const html = await this.generateHtmlDocs(packageName, docs);
-    await this.put(bucketName, `packages/${packageName}/${timestamp}/index.html`, Buffer.from(html));
+    await this.put(
+      bucketName,
+      `packages/${packageName}/${timestamp}/index.html`,
+      Buffer.from(html)
+    );
 
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
   }
@@ -170,37 +174,45 @@ export class R2Storage {
   // Core R2 operations
   private async createBucket(bucketName: string): Promise<void> {
     // R2 API call to create bucket
-    await withCircuitBreaker('r2-storage', async () => {
-      const response = await fetch(`${this.endpoint}/buckets`, {
-        method: 'POST',
-        headers: this.getAuthHeaders('POST', '/buckets'),
-        body: JSON.stringify({ bucket: bucketName }),
-      });
+    await withCircuitBreaker(
+      'r2-storage',
+      async () => {
+        const response = await fetch(`${this.endpoint}/buckets`, {
+          method: 'POST',
+          headers: this.getAuthHeaders('POST', '/buckets'),
+          body: JSON.stringify({ bucket: bucketName }),
+        });
 
-      if (!response.ok) throw new Error(`Failed to create bucket: ${response.statusText}`);
-    }, R2_CB_CONFIG);
+        if (!response.ok) throw new Error(`Failed to create bucket: ${response.statusText}`);
+      },
+      R2_CB_CONFIG
+    );
   }
 
   private async put(bucket: string, key: string, data: Buffer, crc32Hex?: string): Promise<void> {
     try {
-      await withCircuitBreaker('r2-storage', async () => {
-        const headers: Record<string, string> = {
-          ...this.getAuthHeaders('PUT', `/${bucket}/${key}`) as Record<string, string>,
-        };
-        if (crc32Hex) {
-          headers['x-amz-meta-crc32'] = crc32Hex;
-        }
+      await withCircuitBreaker(
+        'r2-storage',
+        async () => {
+          const headers: Record<string, string> = {
+            ...(this.getAuthHeaders('PUT', `/${bucket}/${key}`) as Record<string, string>),
+          };
+          if (crc32Hex) {
+            headers['x-amz-meta-crc32'] = crc32Hex;
+          }
 
-        const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-          method: 'PUT',
-          headers,
-          body: new Uint8Array(data),
-        });
+          const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+            method: 'PUT',
+            headers,
+            body: new Uint8Array(data),
+          });
 
-        if (!response.ok) {
-          throw new Error(`Failed to upload to R2: ${response.status} ${response.statusText}`);
-        }
-      }, R2_CB_CONFIG);
+          if (!response.ok) {
+            throw new Error(`Failed to upload to R2: ${response.status} ${response.statusText}`);
+          }
+        },
+        R2_CB_CONFIG
+      );
     } catch (error) {
       console.error(`Failed to put ${bucket}/${key}:`, error);
       throw error; // Re-throw to allow caller to handle
@@ -209,14 +221,18 @@ export class R2Storage {
 
   private async getPrivate(bucket: string, key: string): Promise<Buffer | null> {
     try {
-      return await withCircuitBreaker('r2-storage', async () => {
-        const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
-          headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
-        });
+      return await withCircuitBreaker(
+        'r2-storage',
+        async () => {
+          const response = await fetch(`${this.endpoint}/${bucket}/${key}`, {
+            headers: this.getAuthHeaders('GET', `/${bucket}/${key}`),
+          });
 
-        if (!response.ok) return null;
-        return Buffer.from(await response.arrayBuffer());
-      }, R2_CB_CONFIG);
+          if (!response.ok) return null;
+          return Buffer.from(await response.arrayBuffer());
+        },
+        R2_CB_CONFIG
+      );
     } catch (error) {
       console.error(`Failed to get ${bucket}/${key}:`, error);
       return null;
@@ -244,19 +260,26 @@ export class R2Storage {
 
   private async listObjects(prefix: string): Promise<any[]> {
     try {
-      return await withCircuitBreaker('r2-storage', async () => {
-        const response = await fetch(`${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`, {
-          headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
-        });
+      return await withCircuitBreaker(
+        'r2-storage',
+        async () => {
+          const response = await fetch(
+            `${this.endpoint}/${this.config.defaultBucket}?prefix=${prefix}`,
+            {
+              headers: this.getAuthHeaders('GET', `/${this.config.defaultBucket}`),
+            }
+          );
 
-        if (!response.ok) {
-          throw new Error(`Failed to list objects: ${response.status} ${response.statusText}`);
-        }
+          if (!response.ok) {
+            throw new Error(`Failed to list objects: ${response.status} ${response.statusText}`);
+          }
 
-        const xml = await response.text();
-        // Parse XML response
-        return this.parseListObjectsResponse(xml);
-      }, R2_CB_CONFIG);
+          const xml = await response.text();
+          // Parse XML response
+          return this.parseListObjectsResponse(xml);
+        },
+        R2_CB_CONFIG
+      );
     } catch (error) {
       console.error('Failed to list objects:', error);
       return [];
@@ -268,18 +291,18 @@ export class R2Storage {
    */
   private parseListObjectsResponse(xml: string): unknown[] {
     const objects: unknown[] = [];
-    
+
     // Simple XML parsing for S3 ListObjects response
     // In production, you'd want to use a proper XML parser
     const keyMatches = xml.match(/<Key>([^<]+)<\/Key>/g);
-    
+
     if (keyMatches) {
       for (const match of keyMatches) {
         const key = match.replace(/<Key>([^<]+)<\/Key>/, '$1');
         objects.push({ Key: key });
       }
     }
-    
+
     return objects;
   }
 
@@ -293,7 +316,7 @@ export class R2Storage {
     if (config?.bucket && typeof config.bucket === 'string') {
       return config.bucket;
     }
-    
+
     return await this.createBucketForPackage(packageName);
   }
 

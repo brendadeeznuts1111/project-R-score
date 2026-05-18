@@ -103,14 +103,14 @@ describe('CircuitBreaker', () => {
         resetTimeoutMs: 60000, // Long timeout
         successThreshold: 2,
       });
-      
+
       openBreaker.forceOpen();
       expect(openBreaker.getState()).toBe(CircuitState.OPEN);
 
-      await expect(
-        openBreaker.execute(async () => 'success')
-      ).rejects.toThrow(CircuitBreakerOpenError);
-      
+      await expect(openBreaker.execute(async () => 'success')).rejects.toThrow(
+        CircuitBreakerOpenError
+      );
+
       openBreaker.destroy();
     });
 
@@ -121,7 +121,7 @@ describe('CircuitBreaker', () => {
         resetTimeoutMs: 60000, // Long timeout
         successThreshold: 2,
       });
-      
+
       rejectBreaker.forceOpen();
 
       try {
@@ -132,7 +132,7 @@ describe('CircuitBreaker', () => {
 
       const stats = rejectBreaker.getStats();
       expect(stats.rejectedCalls).toBe(1);
-      
+
       rejectBreaker.destroy();
     });
 
@@ -399,7 +399,7 @@ describe('Global Registry Helpers', () => {
 // Entry guard for testing
 if (import.meta.main) {
   console.info('🧪 Running Circuit Breaker Tests...\n');
-  
+
   // Quick smoke test
   const breaker = new CircuitBreaker('smoke-test', {
     failureThreshold: 3,

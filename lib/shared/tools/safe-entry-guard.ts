@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * SAFE Entry Guard Utility
- * 
+ *
  * Prevents the silent killer pattern that destroys async operations
  */
 

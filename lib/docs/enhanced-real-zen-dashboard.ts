@@ -40,7 +40,7 @@ export class EnhancedRealZenDashboard {
       realSearchHistory: [],
       systemHealth: 'optimal',
       lastUpdate: new Date().toISOString(),
-      supportedMimeTypes: []
+      supportedMimeTypes: [],
     };
 
     this.searcher = new ZenStreamSearcher();
@@ -60,18 +60,20 @@ export class EnhancedRealZenDashboard {
       { ext: '.js', file: 'package.json', desc: 'JavaScript files' },
       { ext: '.css', file: 'package.json', desc: 'CSS stylesheets' },
       { ext: '.txt', file: 'bun-protocol-info.json', desc: 'Plain text files' },
-      { ext: '.csv', file: 'search-results.csv', desc: 'CSV data files' }
+      { ext: '.csv', file: 'search-results.csv', desc: 'CSV data files' },
     ];
 
-    this.metrics.supportedMimeTypes = testFiles.map(({ ext: extension, file, desc: description }) => {
-      try {
-        const bunFile = (Bun as any).file(file);
-        const mimeType = bunFile.type || 'application/octet-stream';
-        return { extension, mimeType, description };
-      } catch {
-        return { extension, mimeType: 'application/octet-stream', description };
+    this.metrics.supportedMimeTypes = testFiles.map(
+      ({ ext: extension, file, desc: description }) => {
+        try {
+          const bunFile = (Bun as any).file(file);
+          const mimeType = bunFile.type || 'application/octet-stream';
+          return { extension, mimeType, description };
+        } catch {
+          return { extension, mimeType: 'application/octet-stream', description };
+        }
       }
-    });
+    );
 
     console.info('🎯 MIME Type Detection Initialized:');
     this.metrics.supportedMimeTypes.forEach(({ extension, mimeType, description }) => {
@@ -84,35 +86,35 @@ export class EnhancedRealZenDashboard {
    */
   async startEnhancedRealDashboard(): Promise<void> {
     console.info('🎯 Starting Enhanced REAL Zen Dashboard with MIME Type Detection!');
-    
+
     // Start Bun server with enhanced MIME support
     this.server = (Bun as any).serve({
       port: 3004,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
-        
+
         // Serve enhanced dashboard HTML
         if (url.pathname === '/' || url.pathname === '/dashboard') {
           const html = await this.generateEnhancedHTMLDashboard();
           return new Response(html, {
-            headers: { 'Content-Type': 'text/html; charset=utf-8' }
+            headers: { 'Content-Type': 'text/html; charset=utf-8' },
           });
         }
-        
+
         // API for REAL metrics
         if (url.pathname === '/api/real-metrics') {
           return Response.json(this.metrics);
         }
-        
+
         // MIME type detection API
         if (url.pathname === '/api/mime-types') {
           return Response.json({
             supportedMimeTypes: this.metrics.supportedMimeTypes,
             totalTypes: this.metrics.supportedMimeTypes.length,
-            bunCapability: 'Built-in MIME type detection using Bun.file().type'
+            bunCapability: 'Built-in MIME type detection using Bun.file().type',
           });
         }
-        
+
         // File analysis with MIME detection
         if (url.pathname === '/api/analyze-file') {
           const filename = url.searchParams.get('file');
@@ -121,31 +123,33 @@ export class EnhancedRealZenDashboard {
             return Response.json(analysis);
           }
         }
-        
+
         // Perform REAL search
         if (url.pathname === '/api/search') {
           const query = url.searchParams.get('query') || 'bun';
           const result = await this.performRealSearch(query);
           return Response.json(result);
         }
-        
+
         // Serve files with proper MIME types
         if (url.pathname.startsWith('/static/')) {
           const filename = url.pathname.substring(8); // Remove /static/
           return await this.serveFileWithMime(filename);
         }
-        
+
         return new Response('Not Found', { status: 404 });
       },
     });
 
     console.info('🌐 Enhanced REAL Zen Dashboard Server Started!');
-    console.info('=' .repeat(70));
+    console.info('='.repeat(70));
     console.info(`📱 Dashboard: http://localhost:${this.server.port}/dashboard`);
     console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
     console.info(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
     console.info(`🎭 MIME Types: http://localhost:${this.server.port}/api/mime-types`);
-    console.info(`📁 File Analysis: http://localhost:${this.server.port}/api/analyze-file?file=package.json`);
+    console.info(
+      `📁 File Analysis: http://localhost:${this.server.port}/api/analyze-file?file=package.json`
+    );
     console.info(`🔍 Live Search: http://localhost:${this.server.port}/api/search?query=zen`);
     console.info('');
     console.info('🎯 Enhanced Features:');
@@ -153,10 +157,10 @@ export class EnhancedRealZenDashboard {
     console.info('   ✅ Intelligent file serving');
     console.info('   ✅ Real-time performance metrics');
     console.info('   ✅ Interactive file analysis');
-    
+
     // Start performing real searches
     this.startRealSearches();
-    
+
     // Generate enhanced static dashboard
     await this.generateEnhancedStaticDashboard();
   }
@@ -168,12 +172,12 @@ export class EnhancedRealZenDashboard {
     try {
       const bunFile = (Bun as any).file(filename);
       const exists = await bunFile.exists();
-      
+
       if (!exists) {
         return {
           error: 'File not found',
           filename,
-          exists: false
+          exists: false,
         };
       }
 
@@ -190,14 +194,13 @@ export class EnhancedRealZenDashboard {
         lastModified,
         sizeHuman: this.formatBytes(size),
         bunDetection: 'Using Bun.file().type property',
-        capabilities: this.getMimeCapabilities(mimeType)
+        capabilities: this.getMimeCapabilities(mimeType),
       };
-      
     } catch (error) {
       return {
         error: error.message,
         filename,
-        exists: false
+        exists: false,
       };
     }
   }
@@ -214,9 +217,9 @@ export class EnhancedRealZenDashboard {
       'text/typescript': ['Syntax highlighting', 'Type checking', 'Import analysis'],
       'text/javascript': ['Execute safely', 'Parse AST', 'Dependency analysis'],
       'text/csv': ['Parse as table', 'Data analysis', 'Chart generation'],
-      'application/octet-stream': ['Binary analysis', 'Hex view', 'Signature detection']
+      'application/octet-stream': ['Binary analysis', 'Hex view', 'Signature detection'],
     };
-    
+
     return capabilities[mimeType] || ['Generic file handling'];
   }
 
@@ -227,21 +230,20 @@ export class EnhancedRealZenDashboard {
     try {
       const bunFile = (Bun as any).file(filename);
       const exists = await bunFile.exists();
-      
+
       if (!exists) {
         return new Response('File not found', { status: 404 });
       }
 
       const mimeType = bunFile.type || 'application/octet-stream';
       const fileContent = await bunFile.arrayBuffer();
-      
+
       return new Response(fileContent, {
-        headers: { 
+        headers: {
           'Content-Type': mimeType,
-          'Cache-Control': 'public, max-age=3600'
-        }
+          'Cache-Control': 'public, max-age=3600',
+        },
       });
-      
     } catch (error) {
       return new Response(`Error serving file: ${error.message}`, { status: 500 });
     }
@@ -263,12 +265,12 @@ export class EnhancedRealZenDashboard {
    */
   private async performRealSearch(query: string): Promise<any> {
     console.info(`🔍 Performing REAL search: "${query}"`);
-    
+
     try {
       const startTime = performance.now();
       const results = await this.searcher.streamSearch({
         query,
-        cachePath: '/Users/nolarose/Projects/.cache'
+        cachePath: '/Users/nolarose/Projects/.cache',
       });
       const searchTime = performance.now() - startTime;
 
@@ -277,7 +279,7 @@ export class EnhancedRealZenDashboard {
         matches: results.matchesFound,
         time: searchTime,
         memory: results.memoryUsage / 1024 / 1024,
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       this.metrics.realSearchHistory.unshift(realSearch);
@@ -289,23 +291,24 @@ export class EnhancedRealZenDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`);
-      
+      console.info(
+        `✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms`
+      );
+
       return {
         success: true,
         query,
         matches: results.matchesFound,
         time: searchTime,
         memory: realSearch.memory,
-        totalSearches: this.metrics.totalSearches
+        totalSearches: this.metrics.totalSearches,
       };
-      
     } catch (error) {
       console.error(`❌ Real search failed: ${error.message}`);
       return {
         success: false,
         error: error.message,
-        query
+        query,
       };
     }
   }
@@ -319,8 +322,12 @@ export class EnhancedRealZenDashboard {
       return;
     }
 
-    const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-    const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+    const avgTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+      this.metrics.realSearchHistory.length;
+    const avgMemory =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+      this.metrics.realSearchHistory.length;
 
     if (avgTime > 100 || avgMemory > 50) {
       this.metrics.systemHealth = 'critical';
@@ -350,7 +357,7 @@ export class EnhancedRealZenDashboard {
   private async performRandomRealSearch(): Promise<void> {
     const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch', 'spawn', 'ripgrep', 'mime'];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-    
+
     await this.performRealSearch(randomQuery);
   }
 
@@ -358,12 +365,16 @@ export class EnhancedRealZenDashboard {
    * Generate enhanced HTML dashboard
    */
   private async generateEnhancedHTMLDashboard(): Promise<string> {
-    const avgTime = this.metrics.realSearchHistory.length > 0 
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length 
-      : 0;
-    const avgMemory = this.metrics.realSearchHistory.length > 0
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length
-      : 0;
+    const avgTime =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
+    const avgMemory =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
     const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
     const html = `
@@ -492,13 +503,17 @@ export class EnhancedRealZenDashboard {
             <h3>🎭 MIME Type Detection - Bun Intelligence</h3>
             <p>Using Bun.file().type for automatic MIME type recognition</p>
             <div class="mime-grid">
-                ${this.metrics.supportedMimeTypes.map(({ extension, mimeType, description }) => `
+                ${this.metrics.supportedMimeTypes
+                  .map(
+                    ({ extension, mimeType, description }) => `
                     <div class="mime-item">
                         <span class="mime-ext">${extension}</span>
                         <span class="mime-type">${mimeType}</span>
                         <div style="font-size: 0.8em; margin-top: 5px;">${description}</div>
                     </div>
-                `).join('')}
+                `
+                  )
+                  .join('')}
             </div>
             <button class="btn mime" onclick="refreshMimeTypes()">🔄 Refresh MIME Types</button>
             <button class="btn mime" onclick="analyzeFile()">📁 Analyze File</button>
@@ -534,14 +549,19 @@ export class EnhancedRealZenDashboard {
         <div class="search-history">
             <h2>📜 REAL Search History - Live Data</h2>
             <div id="searchHistory">
-                ${this.metrics.realSearchHistory.length === 0 ? 
-                    '<p style="text-align: center; color: #64748b;">No real searches performed yet...</p>' :
-                    this.metrics.realSearchHistory.map(search => `
+                ${
+                  this.metrics.realSearchHistory.length === 0
+                    ? '<p style="text-align: center; color: #64748b;">No real searches performed yet...</p>'
+                    : this.metrics.realSearchHistory
+                        .map(
+                          search => `
                         <div class="search-item">
                             <span class="search-query">🔍 "${search.query}"</span>
                             <span class="search-stats">${search.matches} matches • ${search.time.toFixed(2)}ms • ${search.memory.toFixed(2)}MB</span>
                         </div>
-                    `).join('')
+                    `
+                        )
+                        .join('')
                 }
             </div>
         </div>
@@ -655,7 +675,7 @@ export class EnhancedRealZenDashboard {
     </script>
 </body>
 </html>`;
-    
+
     return html;
   }
 
@@ -664,9 +684,11 @@ export class EnhancedRealZenDashboard {
    */
   private async generateEnhancedStaticDashboard(): Promise<void> {
     const html = await this.generateEnhancedHTMLDashboard();
-    const staticFile = (Bun as any).file('enhanced-real-zen-dashboard-mime.html', { type: 'text/html' });
+    const staticFile = (Bun as any).file('enhanced-real-zen-dashboard-mime.html', {
+      type: 'text/html',
+    });
     await Bun.write(staticFile, new TextEncoder().encode(html));
-    
+
     console.info('📄 Enhanced static dashboard saved: enhanced-real-zen-dashboard-mime.html');
     console.info('🎯 Open with: open enhanced-real-zen-dashboard-mime.html');
   }
@@ -690,9 +712,9 @@ export class EnhancedRealZenDashboard {
 // Run enhanced dashboard
 if (import.meta.url === `file://${process.argv[1]}`) {
   const enhancedDashboard = new EnhancedRealZenDashboard();
-  
+
   enhancedDashboard.startEnhancedRealDashboard().catch(console.error);
-  
+
   process.on('SIGINT', () => {
     console.info('\n👋 Shutting down Enhanced REAL Zen Dashboard...');
     enhancedDashboard.stopDashboard();

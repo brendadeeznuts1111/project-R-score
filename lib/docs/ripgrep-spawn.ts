@@ -5,11 +5,17 @@
 
 // Import Bun types properly
 declare const Bun: {
-  spawn: (args: string[], options?: { stdout?: string; stderr?: string; env?: any }) => {
+  spawn: (
+    args: string[],
+    options?: { stdout?: string; stderr?: string; env?: any }
+  ) => {
     stdout: ReadableStream;
     exited: Promise<number>;
   };
-  spawnSync: (args: string[], options?: { stdout?: string; stderr?: string }) => {
+  spawnSync: (
+    args: string[],
+    options?: { stdout?: string; stderr?: string }
+  ) => {
     success: boolean;
     stdout?: Uint8Array;
   };
@@ -149,17 +155,19 @@ export class RipgrepSearcher {
   private requestCache: LRUCache<string, Promise<RipgrepMatch[]>>;
   private cacheTTL: number;
 
-  constructor(options: {
-    cacheDir?: string;
-    maxConcurrency?: number;
-    cacheTTL?: number;
-    maxCacheSize?: number;
-  } = {}) {
+  constructor(
+    options: {
+      cacheDir?: string;
+      maxConcurrency?: number;
+      cacheTTL?: number;
+      maxCacheSize?: number;
+    } = {}
+  ) {
     this.cacheDir = options.cacheDir || `${process.env.HOME}/.cache/bun-docs/requests`;
     this.maxConcurrency = options.maxConcurrency || 5;
     this.cacheTTL = options.cacheTTL || 5 * 60 * 1000; // 5 minutes
     this.requestCache = new LRUCache(options.maxCacheSize || 100);
-    
+
     // Ensure cache directory exists
     this.ensureCacheDir();
   }
@@ -180,25 +188,25 @@ export class RipgrepSearcher {
     options: SearchOptions & { json?: boolean; maxCount?: number }
   ): string[] {
     const args: string[] = ['rg'];
-    
+
     if (!options.caseSensitive) {
       args.push('-i');
     }
-    
+
     if (options.json !== false) {
       args.push('--json');
     }
-    
+
     const maxCount = options.maxCount ?? options.maxResults ?? 50;
     args.push('--max-count', maxCount.toString());
-    
+
     if (options.filePattern) {
       args.push('--glob', options.filePattern);
     }
 
     args.push(query);
     args.push(...paths);
-    
+
     return args;
   }
 
@@ -207,7 +215,7 @@ export class RipgrepSearcher {
    */
   async search(query: string, options: SearchOptions = {}): Promise<RipgrepMatch[]> {
     const cacheKey = `${query}:${options.caseSensitive ?? false}:${options.maxResults ?? 50}:${options.filePattern ?? '*'}`;
-    
+
     const cached = this.requestCache.get(cacheKey);
     if (cached) {
       return cached;
@@ -224,22 +232,19 @@ export class RipgrepSearcher {
     return searchPromise;
   }
 
-  private async performSearch(
-    query: string, 
-    options: SearchOptions
-  ): Promise<RipgrepMatch[]> {
+  private async performSearch(query: string, options: SearchOptions): Promise<RipgrepMatch[]> {
     const args = this.buildArgs(query, [this.cacheDir], options);
     const maxResults = options.maxResults ?? 50;
 
     const proc = Bun.spawn(args, {
       stdout: 'pipe',
       stderr: 'ignore',
-      env: process.env
+      env: process.env,
     });
 
     try {
       const results: RipgrepMatch[] = [];
-      
+
       for await (const parsed of parseJsonLines(proc.stdout)) {
         if (parsed.type === 'match') {
           results.push(parsed);
@@ -263,7 +268,7 @@ export class RipgrepSearcher {
    * Streaming search - yields results as they arrive (lowest latency)
    */
   async *searchStream(
-    query: string, 
+    query: string,
     options: SearchOptions = {}
   ): AsyncGenerator<RipgrepMatch, RipgrepSummary['data'] | undefined> {
     const args = this.buildArgs(query, [this.cacheDir], options);
@@ -272,7 +277,7 @@ export class RipgrepSearcher {
     const proc = Bun.spawn(args, {
       stdout: 'pipe',
       stderr: 'ignore',
-      env: process.env
+      env: process.env,
     });
 
     let count = 0;
@@ -306,7 +311,7 @@ export class RipgrepSearcher {
 
     const result = Bun.spawnSync(args, {
       stdout: 'pipe',
-      stderr: 'ignore'
+      stderr: 'ignore',
     });
 
     if (!result.success || !result.stdout) {
@@ -341,25 +346,25 @@ export class RipgrepSearcher {
    * Parallel search across multiple queries with concurrency limiting
    */
   async parallelSearch(
-    queries: string[], 
+    queries: string[],
     options: SearchOptions = {}
   ): Promise<Map<string, RipgrepMatch[]>> {
     const results = new Map<string, RipgrepMatch[]>();
-    
+
     // Use p-map style concurrency control
     const executing = new Set<Promise<void>>();
-    
+
     for (const query of queries) {
       const promise = this.search(query, options).then(matches => {
         results.set(query, matches);
       });
-      
+
       executing.add(promise);
-      
+
       if (executing.size >= this.maxConcurrency) {
         await Promise.race(executing);
       }
-      
+
       // Clean up completed promises
       promise.finally(() => executing.delete(promise));
     }
@@ -376,7 +381,7 @@ export class RipgrepSearcher {
     directories: string[],
     options: SearchOptions = {}
   ): Promise<Map<string, RipgrepMatch[]>> {
-    const searchPromises = directories.map(async (dir) => {
+    const searchPromises = directories.map(async dir => {
       const searcher = new RipgrepSearcher({ cacheDir: dir });
       const matches = await searcher.search(query, options);
       return [dir, matches] as [string, RipgrepMatch[]];
@@ -397,7 +402,7 @@ export class RipgrepSearcher {
     return {
       cacheSize: this.requestCache.size,
       activeRequests: this.requestCache.size,
-      cacheDir: this.cacheDir
+      cacheDir: this.cacheDir,
     };
   }
 
@@ -412,10 +417,7 @@ export class RipgrepSearcher {
 /**
  * Convenience function for quick searches
  */
-export async function searchDocs(
-  query: string, 
-  options?: SearchOptions
-): Promise<RipgrepMatch[]> {
+export async function searchDocs(query: string, options?: SearchOptions): Promise<RipgrepMatch[]> {
   const searcher = new RipgrepSearcher();
   return searcher.search(query, options);
 }
@@ -433,7 +435,7 @@ export async function ghostSearch(
 }> {
   const [docs, code] = await Promise.all([
     searchDocs(query, { ...options, filePattern: '*.json' }),
-    searchProjectCode(query, projectDir, options)
+    searchProjectCode(query, projectDir, options),
   ]);
 
   return { docs, code };
@@ -449,10 +451,14 @@ const LIB_ALIASES = ['@lib', '@lib/'];
 function isLibAliasQuery(query: string): { isAlias: boolean; tail: string } {
   const normalized = query.trim();
   for (const alias of LIB_ALIASES) {
-    if (normalized === alias || normalized.startsWith(alias + '/') || normalized.startsWith(alias + '\\')) {
-      return { 
-        isAlias: true, 
-        tail: normalized.replace(/^@lib[\/]?/i, '') 
+    if (
+      normalized === alias ||
+      normalized.startsWith(alias + '/') ||
+      normalized.startsWith(alias + '\\')
+    ) {
+      return {
+        isAlias: true,
+        tail: normalized.replace(/^@lib[\/]?/i, ''),
       };
     }
   }
@@ -472,21 +478,19 @@ export async function searchProjectCode(
   const { isAlias, tail } = isLibAliasQuery(normalizedQuery);
   const hasTail = tail.length > 0;
 
-  const searchRoots = isAlias 
-    ? Array.from(new Set(['./lib', projectDir]))
-    : [projectDir];
+  const searchRoots = isAlias ? Array.from(new Set(['./lib', projectDir])) : [projectDir];
 
   const args: string[] = ['rg'];
-  
+
   if (!options.caseSensitive) {
     args.push('-i');
   }
-  
+
   args.push(isAlias && hasTail ? tail : normalizedQuery);
   args.push(...searchRoots);
   args.push('--json');
   args.push('--max-count', maxResults.toString());
-  
+
   // Use globs for broad compatibility
   for (const ext of SOURCE_EXTENSIONS) {
     args.push('--glob', ext);
@@ -494,7 +498,7 @@ export async function searchProjectCode(
 
   const proc = Bun.spawn(args, {
     stdout: 'pipe',
-    stderr: 'ignore'
+    stderr: 'ignore',
   });
 
   try {
@@ -514,7 +518,12 @@ export async function searchProjectCode(
 
     // If alias query, do secondary search for imports
     if (isAlias && results.length < maxResults) {
-      const aliasMatches = await searchLibImports(projectDir, options, maxResults - results.length, seen);
+      const aliasMatches = await searchLibImports(
+        projectDir,
+        options,
+        maxResults - results.length,
+        seen
+      );
       results.push(...aliasMatches);
     }
 
@@ -544,14 +553,14 @@ async function searchLibImports(
   args.push(projectDir);
   args.push('--json');
   args.push('--max-count', (remainingSlots * 2).toString());
-  
+
   for (const ext of SOURCE_EXTENSIONS) {
     args.push('--glob', ext);
   }
 
   const proc = Bun.spawn(args, {
     stdout: 'pipe',
-    stderr: 'ignore'
+    stderr: 'ignore',
   });
 
   const results: RipgrepMatch[] = [];
@@ -586,7 +595,7 @@ export async function batchSearch(
   const searcher = new RipgrepSearcher({ maxConcurrency: 5 });
 
   await Promise.all(
-    queries.map(async (query) => {
+    queries.map(async query => {
       const matches = await searchProjectCode(query, projectDir, options);
       results.set(query, { matches });
     })

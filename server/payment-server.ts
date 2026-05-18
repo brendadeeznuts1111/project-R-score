@@ -24,9 +24,7 @@ const redisPublish = async (channel: string, payload: unknown) => {
   }
 };
 
-const pc = PINECONE_API_KEY
-  ? new Pinecone({ apiKey: PINECONE_API_KEY })
-  : null;
+const pc = PINECONE_API_KEY ? new Pinecone({ apiKey: PINECONE_API_KEY }) : null;
 const index = pc ? pc.index(PINECONE_INDEX) : null;
 
 export type SuperProfile = {
@@ -55,9 +53,9 @@ async function getPayPalAccessToken(): Promise<string> {
     method: 'POST',
     headers: {
       Authorization: `Basic ${basic}`,
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type': 'application/x-www-form-urlencoded',
     },
-    body: 'grant_type=client_credentials'
+    body: 'grant_type=client_credentials',
   });
   if (!res.ok) {
     const text = await res.text();
@@ -67,7 +65,7 @@ async function getPayPalAccessToken(): Promise<string> {
   const expiresIn = Number(data.expires_in ?? 300);
   cachedPayPalToken = {
     token: data.access_token,
-    expiresAt: now + expiresIn * 1000
+    expiresAt: now + expiresIn * 1000,
   };
   return data.access_token;
 }
@@ -87,7 +85,7 @@ async function verifyPayPalWebhook(body: string, headers: Headers): Promise<bool
         method: 'POST',
         headers: {
           Authorization: `Bearer ${token}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           transmission_id: transmissionId,
@@ -96,8 +94,8 @@ async function verifyPayPalWebhook(body: string, headers: Headers): Promise<bool
           auth_algo: authAlgo,
           transmission_sig: sig,
           webhook_id: PAYPAL_WEBHOOK_ID,
-          webhook_event: JSON.parse(body)
-        })
+          webhook_event: JSON.parse(body),
+        }),
       });
       if (!res.ok) return false;
       const data = await res.json();
@@ -132,7 +130,7 @@ async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
   const result = await index.query({
     topK: 1,
     vector,
-    filter: { userId }
+    filter: { userId },
   });
   const match = result.matches?.[0];
   if (!match || !match.metadata) return null;
@@ -141,7 +139,7 @@ async function getSuperProfile(userId: string): Promise<SuperProfile | null> {
     userId: meta.userId ?? userId,
     score: Number(meta.score ?? 0),
     drift: Number(meta.drift ?? 0),
-    updatedAt: meta.updatedAt
+    updatedAt: meta.updatedAt,
   };
 }
 
@@ -227,7 +225,7 @@ Bun.serve({
     }
 
     return new Response('Webhooks: /webhook/paypal, /webhook/venmo', { status: 200 });
-  }
+  },
 });
 
 console.info(`Payment server running on http://localhost:${PORT}`);

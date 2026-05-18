@@ -11,7 +11,7 @@ import { ZenStreamSearcher } from './stream-search';
  */
 export class ZenOutputSystem {
   private writer: any;
-  
+
   constructor() {
     // Get the high-performance writer for stdout
     this.writer = (Bun as any).stdout.writer();
@@ -24,15 +24,17 @@ export class ZenOutputSystem {
     for (const match of results) {
       this.writer.write(`📄 ${match.data.path.text}:${match.data.line_number}\n`);
       this.writer.write(`   ${match.data.lines.text.trim()}\n`);
-      
+
       if (match.data.submatches && match.data.submatches.length > 0) {
         for (const submatch of match.data.submatches) {
-          this.writer.write(`   📍 "${submatch.match.text}" at ${submatch.start}-${submatch.end}\n`);
+          this.writer.write(
+            `   📍 "${submatch.match.text}" at ${submatch.start}-${submatch.end}\n`
+          );
         }
       }
       this.writer.write('\n');
     }
-    
+
     // Bulk flush for maximum performance
     this.writer.flush();
   }
@@ -41,7 +43,9 @@ export class ZenOutputSystem {
    * Write progress updates with minimal overhead
    */
   writeProgress(current: number, total: number, operation: string): void {
-    this.writer.write(`\r⚡ ${operation}: ${current}/${total} (${((current/total)*100).toFixed(1)}%)`);
+    this.writer.write(
+      `\r⚡ ${operation}: ${current}/${total} (${((current / total) * 100).toFixed(1)}%)`
+    );
     if (current === total) {
       this.writer.write('\n');
     }
@@ -125,9 +129,13 @@ export class VirtualDocumentationManager {
   /**
    * Create a virtual export file that may not exist yet
    */
-  async createVirtualExport(filename: string, results: any[], format: 'json' | 'markdown' | 'csv' = 'json'): Promise<void> {
-    const exportFile = (Bun as any).file(filename, { 
-      type: format === 'json' ? 'application/json' : 'text/plain' 
+  async createVirtualExport(
+    filename: string,
+    results: any[],
+    format: 'json' | 'markdown' | 'csv' = 'json'
+  ): Promise<void> {
+    const exportFile = (Bun as any).file(filename, {
+      type: format === 'json' ? 'application/json' : 'text/plain',
     });
 
     // Check if we already have cached results
@@ -140,7 +148,7 @@ export class VirtualDocumentationManager {
     // Generate content only if file doesn't exist or cache is empty
     if (!(await exportFile.exists())) {
       console.info(`🔨 Generating ${format} export: ${filename}`);
-      
+
       let content: string;
       switch (format) {
         case 'json':
@@ -164,11 +172,11 @@ export class VirtualDocumentationManager {
    */
   private generateMarkdownExport(results: any[]): string {
     let markdown = '# Documentation Search Results\n\n';
-    
+
     for (const match of results) {
       markdown += `## 📄 ${match.data.path.text}:${match.data.line_number}\n\n`;
       markdown += '```\n' + match.data.lines.text.trim() + '\n```\n\n';
-      
+
       if (match.data.submatches && match.data.submatches.length > 0) {
         markdown += '### Matches:\n';
         for (const submatch of match.data.submatches) {
@@ -177,7 +185,7 @@ export class VirtualDocumentationManager {
         markdown += '\n';
       }
     }
-    
+
     return markdown;
   }
 
@@ -186,13 +194,13 @@ export class VirtualDocumentationManager {
    */
   private generateCSVExport(results: any[]): string {
     let csv = 'Path,Line,Content,Submatches\n';
-    
+
     for (const match of results) {
       const content = match.data.lines.text.replace(/"/g, '""');
       const submatches = match.data.submatches?.map((sm: any) => sm.match.text).join(';') || '';
       csv += `"${match.data.path.text}",${match.data.line_number},"${content}","${submatches}"\n`;
     }
-    
+
     return csv;
   }
 
@@ -222,11 +230,11 @@ export class SelfReferentialSystem {
   async loadTemplate(templateName: string): Promise<string> {
     const templateUrl = new URL(`./templates/${templateName}`, this.baseUrl);
     const templateFile = (Bun as any).file(templateUrl);
-    
+
     if (await templateFile.exists()) {
       return await templateFile.text();
     }
-    
+
     throw new Error(`Template ${templateName} not found at ${templateUrl}`);
   }
 
@@ -254,7 +262,7 @@ export class SelfReferentialSystem {
       modulePath: this.baseUrl.pathname,
       directory: new URL('.', this.baseUrl).pathname,
       templates: new URL('./templates/', this.baseUrl).pathname,
-      resources: new URL('./resources/', this.baseUrl).pathname
+      resources: new URL('./resources/', this.baseUrl).pathname,
     };
   }
 }
@@ -281,24 +289,27 @@ export class ZenDocumentationSystem {
   /**
    * Ultimate search with all Zen I/O patterns
    */
-  async ultimateSearch(query: string, options: {
-    stdout?: boolean;
-    export?: string[];
-    pipes?: number[];
-    useTemplate?: string;
-  } = {}): Promise<any> {
+  async ultimateSearch(
+    query: string,
+    options: {
+      stdout?: boolean;
+      export?: string[];
+      pipes?: number[];
+      useTemplate?: string;
+    } = {}
+  ): Promise<any> {
     console.info(`🚀 Ultimate Zen Search: ${query}`);
-    
+
     // Perform the search
     const results = await this.searcher.streamSearch({
       query,
       cachePath: '/Users/nolarose/Projects/.cache',
-      onMatch: (match) => {
+      onMatch: match => {
         // Real-time progress
         if (options.stdout) {
           this.outputSystem.writeProgress(1, 1, 'Searching');
         }
-      }
+      },
     });
 
     // 1. Zero-latency stdout output
@@ -317,7 +328,10 @@ export class ZenDocumentationSystem {
     // 3. File descriptor outputs
     if (options.pipes) {
       for (const fd of options.pipes) {
-        await this.fdManager.writeToDescriptor(fd, `Search complete: ${results.matchesFound} matches`);
+        await this.fdManager.writeToDescriptor(
+          fd,
+          `Search complete: ${results.matchesFound} matches`
+        );
       }
     }
 
@@ -339,14 +353,16 @@ export class ZenDocumentationSystem {
    */
   async systemHealthCheck(): Promise<void> {
     console.info('🏥 Zen I/O System Health Check');
-    console.info('=' .repeat(40));
+    console.info('='.repeat(40));
 
     // Check stdout writer
     this.outputSystem.writeSuccess('✓ Stdout writer operational');
 
     // Check file descriptors
     const pipe3Available = await this.fdManager.isPipeAvailable(3);
-    console.info(`${pipe3Available ? '✓' : '⚠️'} FD 3 ${pipe3Available ? 'available' : 'not available'}`);
+    console.info(
+      `${pipe3Available ? '✓' : '⚠️'} FD 3 ${pipe3Available ? 'available' : 'not available'}`
+    );
 
     // Check self-referential system
     const config = this.selfSystem.getSelfConfig();
@@ -365,7 +381,7 @@ export class ZenDocumentationSystem {
  */
 export async function demonstrateZenIO() {
   console.info('🧘 Zen I/O System - Complete Integration');
-  console.info('=' .repeat(60));
+  console.info('='.repeat(60));
 
   const zenSystem = new ZenDocumentationSystem();
 
@@ -374,13 +390,13 @@ export async function demonstrateZenIO() {
 
   // Ultimate search demonstration
   console.info('\n🔍 Ultimate Search Demonstration');
-  console.info('-' .repeat(40));
+  console.info('-'.repeat(40));
 
   await zenSystem.ultimateSearch('bun', {
     stdout: true,
     export: ['search-results.json', 'search-results.md'],
     pipes: [3], // Try to write to FD 3 if available
-    useTemplate: 'search-results'
+    useTemplate: 'search-results',
   });
 
   console.info('\n🎉 Zen I/O Integration Complete!');

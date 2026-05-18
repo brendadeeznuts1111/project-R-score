@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Profiling Error Handling System
- * 
+ *
  * Standardized error codes with documentation references for profiling operations.
  * Integrates with examples/corrected-docs-constants.ts pattern.
  */
@@ -30,13 +30,13 @@ export enum ProfilingErrorCode {
   ENTRY_POINT_NOT_FOUND = 'PROF_1002',
   PROFILE_FILE_NOT_CREATED = 'PROF_1003',
   INVALID_PROJECT_PATH = 'PROF_1004',
-  
+
   // Analysis Errors (PROF_2000-2099)
   PROFILE_NOT_FOUND = 'PROF_2000',
   PROFILE_PARSE_ERROR = 'PROF_2001',
   ANALYSIS_FAILED = 'PROF_2002',
   INVALID_PROFILE_FORMAT = 'PROF_2003',
-  
+
   // Optimization Errors (PROF_3000-3099)
   OPTIMIZATION_FAILED = 'PROF_3000',
   FILE_WRITE_FAILED = 'PROF_3001',
@@ -132,7 +132,7 @@ export class ProfilingError extends Error {
   public readonly timestamp: number;
 
   constructor(
-    errorDef: typeof PROFILING_ERRORS[keyof typeof PROFILING_ERRORS],
+    errorDef: (typeof PROFILING_ERRORS)[keyof typeof PROFILING_ERRORS],
     context?: Record<string, unknown>
   ) {
     super(errorDef.message);
@@ -152,9 +152,7 @@ export class ProfilingError extends Error {
    * Format error message with documentation link
    */
   public formatMessage(): string {
-    const contextStr = this.context 
-      ? `\n   Context: ${JSON.stringify(this.context, null, 2)}`
-      : '';
+    const contextStr = this.context ? `\n   Context: ${JSON.stringify(this.context, null, 2)}` : '';
     return `${this.message}${contextStr}\n   Documentation: ${this.docs}`;
   }
 
@@ -198,14 +196,15 @@ export function handleProfilingError(
   }
 
   if (error instanceof Error) {
-    return new ProfilingError(
-      PROFILING_ERRORS[defaultCode],
-      { ...context, originalError: error.message, stack: error.stack }
-    );
+    return new ProfilingError(PROFILING_ERRORS[defaultCode], {
+      ...context,
+      originalError: error.message,
+      stack: error.stack,
+    });
   }
 
-  return new ProfilingError(
-    PROFILING_ERRORS[defaultCode],
-    { ...context, originalError: String(error) }
-  );
+  return new ProfilingError(PROFILING_ERRORS[defaultCode], {
+    ...context,
+    originalError: String(error),
+  });
 }

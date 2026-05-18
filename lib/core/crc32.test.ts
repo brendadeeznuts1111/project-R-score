@@ -101,11 +101,7 @@ describe('CRC32', () => {
     });
 
     test('returns correct total size', () => {
-      const chunks = [
-        new Uint8Array(100),
-        new Uint8Array(200),
-        new Uint8Array(300),
-      ];
+      const chunks = [new Uint8Array(100), new Uint8Array(200), new Uint8Array(300)];
       const result = crc32Chunks(chunks);
       expect(result.size).toBe(600);
     });
@@ -194,7 +190,7 @@ describe('CRC32', () => {
     });
 
     test('handles large numbers', () => {
-      expect(toHex(0xFFFFFFFF)).toBe('FFFFFFFF');
+      expect(toHex(0xffffffff)).toBe('FFFFFFFF');
     });
   });
 
@@ -242,9 +238,9 @@ describe('CRC32', () => {
       const start = performance.now();
       Bun.hash.crc32(data);
       const timeMs = performance.now() - start;
-      
+
       const throughputMB = 1 / (timeMs / 1000);
-      
+
       // Should achieve at least 1 GB/s on modern hardware
       expect(throughputMB).toBeGreaterThan(1000);
     });
@@ -253,15 +249,15 @@ describe('CRC32', () => {
       // Larger data sizes for more stable timing
       const sizes = [100000, 500000, 1000000]; // 100KB, 500KB, 1MB
       const times: number[] = [];
-      
+
       for (const size of sizes) {
         const data = new Uint8Array(size);
         // Multiple iterations for stability
         const iterations = 10;
-        
+
         // Warm up
         for (let i = 0; i < 5; i++) Bun.hash.crc32(data);
-        
+
         const start = performance.now();
         for (let i = 0; i < iterations; i++) {
           Bun.hash.crc32(data);
@@ -269,14 +265,14 @@ describe('CRC32', () => {
         const avgTime = (performance.now() - start) / iterations;
         times.push(avgTime);
       }
-      
+
       // Verify that larger data takes more time (monotonic increase)
       expect(times[1]).toBeGreaterThan(times[0]);
       expect(times[2]).toBeGreaterThan(times[1]);
-      
+
       // Verify throughput stays relatively consistent.
       // Allow wider variance for shared/dev environments where CPU scheduling can jitter.
-      const throughputs = sizes.map((size, i) => (size / 1024 / 1024) / (times[i] / 1000));
+      const throughputs = sizes.map((size, i) => size / 1024 / 1024 / (times[i] / 1000));
       const minThroughput = Math.min(...throughputs);
       const maxThroughput = Math.max(...throughputs);
       expect(maxThroughput / minThroughput).toBeLessThan(2.0);
@@ -285,7 +281,7 @@ describe('CRC32', () => {
 
   describe('File Operations', () => {
     const testFilePath = '/tmp/crc32-test-file.txt';
-    
+
     beforeAll(async () => {
       // Create test file
       await Bun.write(testFilePath, 'hello world for file testing');
@@ -322,17 +318,17 @@ describe('CRC32', () => {
 // Entry guard for quick test
 if (import.meta.main) {
   console.info('🧪 CRC32 Quick Test\n');
-  
+
   // Test known vector
   const result = crc32('hello world');
   console.info(`crc32('hello world') = 0x${result.hex}`);
   console.info(`Expected: 0x0D4A1185`);
   console.info(`Match: ${result.hex === '0D4A1185' ? '✅' : '❌'}`);
-  
+
   // Quick benchmark
   console.info('\nQuick Benchmark:');
   const bench = benchmark(1024);
   console.info(`1MB: ${bench.throughput} (${bench.opsPerSecond} ops/sec)`);
-  
+
   console.info('\n✅ Test complete!');
 }

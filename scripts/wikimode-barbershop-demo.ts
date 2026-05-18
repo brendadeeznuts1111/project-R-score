@@ -2,7 +2,7 @@
 
 /**
  * 🎯 Enhanced WikiMode + Barbershop Integration Demo
- * 
+ *
  * This demo showcases the complete integration between Enhanced WikiMode and the Barbershop system,
  * featuring advanced wiki generation, real-time profiling, dashboard widgets, and collaborative features.
  */
@@ -122,7 +122,6 @@ class WikiModeBarbershopDemo {
 
       console.info(styled('✅ Demo initialization complete!', 'success'));
       console.info('');
-
     } catch (error) {
       console.error(styled('❌ Demo initialization failed:', 'error'), error);
       throw error;
@@ -154,7 +153,12 @@ class WikiModeBarbershopDemo {
     // Demo 7: Export and Reporting
     await this.demoExportReporting();
 
-    console.info(styled('\n🎉 Demo Complete! Enhanced WikiMode + Barbershop Integration showcased successfully!', 'success'));
+    console.info(
+      styled(
+        '\n🎉 Demo Complete! Enhanced WikiMode + Barbershop Integration showcased successfully!',
+        'success'
+      )
+    );
     console.info(colorBar('success', 70));
   }
 
@@ -163,8 +167,10 @@ class WikiModeBarbershopDemo {
     console.info(colorBar('info', 50));
 
     await this.wikiMode.displayEnhancedMatrix();
-    
-    console.info(styled('✨ Enhanced matrix displayed with Barbershop integration indicators', 'success'));
+
+    console.info(
+      styled('✨ Enhanced matrix displayed with Barbershop integration indicators', 'success')
+    );
     console.info('');
   }
 
@@ -181,7 +187,9 @@ class WikiModeBarbershopDemo {
 
       console.info(styled('✅ Basic wiki generation completed', 'success'));
       console.info(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
-      console.info(`   Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Enabled' : 'Disabled'}`);
+      console.info(
+        `   Barbershop Integration: ${result.metadata.barbershopIntegration ? 'Enabled' : 'Disabled'}`
+      );
       console.info('');
 
       // Process through Barbershop integration
@@ -189,10 +197,11 @@ class WikiModeBarbershopDemo {
         const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
         console.info(styled('🏗️ Barbershop integration processed successfully', 'success'));
         console.info(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
-        console.info(`   Analytics Data: ${Object.keys(barbershopResult.analyticsData).length} categories`);
+        console.info(
+          `   Analytics Data: ${Object.keys(barbershopResult.analyticsData).length} categories`
+        );
         console.info('');
       }
-
     } catch (error) {
       console.error(styled('❌ Basic wiki generation failed:', 'error'), error);
     }
@@ -212,11 +221,11 @@ class WikiModeBarbershopDemo {
 
       console.info(styled('✅ Advanced wiki generation completed', 'success'));
       console.info(`   Generation Time: ${result.metadata.generationTime.toFixed(2)}ms`);
-      
+
       if (result.performance) {
         console.info(`   Optimization Score: ${result.performance.optimizationScore}%`);
         console.info(`   Recommendations: ${result.performance.recommendations.length}`);
-        
+
         if (result.performance.recommendations.length > 0) {
           console.info(styled('💡 Performance Recommendations:', 'warning'));
           result.performance.recommendations.forEach(rec => {
@@ -228,16 +237,21 @@ class WikiModeBarbershopDemo {
       // Process through Barbershop integration with full features
       if (this.config.wikiMode.barbershopMode) {
         const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
-        
+
         console.info(styled('🏗️ Full Barbershop integration completed', 'success'));
         console.info(`   Dashboard Widgets: ${barbershopResult.dashboardWidgets.length}`);
-        console.info(`   Analytics Categories: ${Object.keys(barbershopResult.analyticsData).length}`);
-        console.info(`   Collaboration Metrics: ${Object.keys(barbershopResult.collaborationMetrics).length}`);
-        console.info(`   Performance Insights: ${Object.keys(barbershopResult.performanceInsights).length}`);
+        console.info(
+          `   Analytics Categories: ${Object.keys(barbershopResult.analyticsData).length}`
+        );
+        console.info(
+          `   Collaboration Metrics: ${Object.keys(barbershopResult.collaborationMetrics).length}`
+        );
+        console.info(
+          `   Performance Insights: ${Object.keys(barbershopResult.performanceInsights).length}`
+        );
       }
 
       console.info('');
-
     } catch (error) {
       console.error(styled('❌ Advanced wiki generation failed:', 'error'), error);
     }
@@ -250,7 +264,9 @@ class WikiModeBarbershopDemo {
     // Show connection status
     const connectionStatus = this.barbershopIntegration.getConnectionStatus();
     console.info(styled('📡 Connection Status:', 'muted'));
-    console.info(`   Connected: ${connectionStatus.connected ? styled('✅', 'success') : styled('❌', 'error')}`);
+    console.info(
+      `   Connected: ${connectionStatus.connected ? styled('✅', 'success') : styled('❌', 'error')}`
+    );
     console.info(`   Health: ${connectionStatus.health}`);
     console.info(`   Endpoint: ${connectionStatus.endpoint}`);
     console.info('');
@@ -269,7 +285,9 @@ class WikiModeBarbershopDemo {
       console.info(styled('📊 Dashboard Widgets Generated:', 'success'));
       barbershopResult.dashboardWidgets.forEach((widget, index) => {
         console.info(`   ${index + 1}. ${widget.title} (${widget.type})`);
-        console.info(`      Position: (${widget.position.x}, ${widget.position.y}) - ${widget.position.width}x${widget.position.height}`);
+        console.info(
+          `      Position: (${widget.position.x}, ${widget.position.y}) - ${widget.position.width}x${widget.position.height}`
+        );
       });
 
       console.info('');
@@ -278,20 +296,19 @@ class WikiModeBarbershopDemo {
       if (this.config.demo.showAnalytics) {
         console.info(styled('📈 Analytics Summary:', 'success'));
         const analytics = barbershopResult.analyticsData;
-        
+
         if (analytics.contentAnalytics) {
           console.info(`   Content Words: ${analytics.contentAnalytics.totalWords}`);
           console.info(`   Reading Time: ${analytics.contentAnalytics.readingTime} min`);
           console.info(`   Complexity: ${analytics.contentAnalytics.complexity}`);
         }
-        
+
         if (analytics.performanceAnalytics) {
           console.info(`   Efficiency: ${analytics.performanceAnalytics.efficiency.toFixed(1)}%`);
         }
-        
+
         console.info('');
       }
-
     } catch (error) {
       console.error(styled('❌ Barbershop integration demo failed:', 'error'), error);
     }
@@ -318,26 +335,27 @@ class WikiModeBarbershopDemo {
       const barbershopResult = await this.barbershopIntegration.processWikiResult(result);
 
       console.info(styled('🤝 Collaborative Features Enabled:', 'success'));
-      
+
       const collaboration = barbershopResult.collaborationMetrics;
       if (collaboration.editingMetrics) {
         console.info(`   Active Contributors: ${collaboration.editingMetrics.activeContributors}`);
         console.info(`   Average Edit Time: ${collaboration.editingMetrics.averageEditTime} min`);
         console.info(`   Edit Frequency: ${collaboration.editingMetrics.editFrequency} per day`);
       }
-      
+
       if (collaboration.reviewMetrics) {
         console.info(`   Pending Reviews: ${collaboration.reviewMetrics.pendingReviews}`);
         console.info(`   Approval Rate: ${collaboration.reviewMetrics.approvalRate}%`);
       }
-      
+
       if (collaboration.communicationMetrics) {
         console.info(`   Comments Count: ${collaboration.communicationMetrics.commentsCount}`);
-        console.info(`   Discussions Count: ${collaboration.communicationMetrics.discussionsCount}`);
+        console.info(
+          `   Discussions Count: ${collaboration.communicationMetrics.discussionsCount}`
+        );
       }
 
       console.info('');
-
     } catch (error) {
       console.error(styled('❌ Collaborative features demo failed:', 'error'), error);
     }
@@ -356,7 +374,8 @@ class WikiModeBarbershopDemo {
     try {
       const result = await this.wikiMode.generateWiki('API Reference', {
         title: 'Advanced Analytics and Insights Demo',
-        description: 'Comprehensive analytics, performance insights, and optimization recommendations',
+        description:
+          'Comprehensive analytics, performance insights, and optimization recommendations',
         includeAnalytics: true,
         includePerformanceMetrics: true,
       });
@@ -366,13 +385,13 @@ class WikiModeBarbershopDemo {
       // Display performance insights
       console.info(styled('⚡ Performance Insights:', 'success'));
       const insights = barbershopResult.performanceInsights;
-      
+
       if (insights.generationInsights) {
         const genInsights = insights.generationInsights;
         console.info(`   Generation Percentile: ${genInsights.timeAnalysis.percentile}%`);
         console.info(`   Trend: ${genInsights.timeAnalysis.trend}`);
         console.info(`   Target Score: ${genInsights.optimizationInsights.targetScore}%`);
-        
+
         if (genInsights.optimizationInsights.improvementAreas.length > 0) {
           console.info(styled('   Improvement Areas:', 'warning'));
           genInsights.optimizationInsights.improvementAreas.forEach(area => {
@@ -390,7 +409,7 @@ class WikiModeBarbershopDemo {
         console.info(`   Sections: ${contentInsights.structureAnalysis.sections}`);
         console.info(`   Balance Score: ${contentInsights.structureAnalysis.balanceScore}%`);
         console.info(`   Overall Quality: ${contentInsights.qualityMetrics.overallScore}%`);
-        
+
         if (contentInsights.optimizationSuggestions.length > 0) {
           console.info(styled('   Content Suggestions:', 'warning'));
           contentInsights.optimizationSuggestions.forEach(suggestion => {
@@ -400,7 +419,6 @@ class WikiModeBarbershopDemo {
       }
 
       console.info('');
-
     } catch (error) {
       console.error(styled('❌ Analytics insights demo failed:', 'error'), error);
     }
@@ -446,7 +464,6 @@ class WikiModeBarbershopDemo {
       console.info(styled('✅ All exports completed successfully', 'success'));
       console.info('   Check the output directory for exported files');
       console.info('');
-
     } catch (error) {
       console.error(styled('❌ Export and reporting demo failed:', 'error'), error);
     }

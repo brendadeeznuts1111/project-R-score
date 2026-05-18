@@ -188,8 +188,8 @@ export function num(input: unknown, fallback = 0): number {
 export function findStrictProfile(snapshot: Snapshot): RankedProfile {
   const profiles = Array.isArray(snapshot.rankedProfiles) ? snapshot.rankedProfiles : [];
   return (
-    profiles.find((p) => String(p.profile || '').toLowerCase() === 'strict') ||
-    profiles.find((p) => String(p.label || '').toLowerCase() === 'strict') ||
+    profiles.find(p => String(p.profile || '').toLowerCase() === 'strict') ||
+    profiles.find(p => String(p.label || '').toLowerCase() === 'strict') ||
     profiles[0] ||
     {}
   );
@@ -213,7 +213,9 @@ export function toBaseline(
     version: 1,
     pinnedAt: new Date().toISOString(),
     source,
-    rationale: String(metadata?.rationale || 'bootstrap_missing_baseline').trim() || 'bootstrap_missing_baseline',
+    rationale:
+      String(metadata?.rationale || 'bootstrap_missing_baseline').trim() ||
+      'bootstrap_missing_baseline',
     pinnedBy: String(metadata?.pinnedBy || defaultPinnedBy()).trim() || 'unknown',
     previousSnapshotId: metadata?.previousSnapshotId ?? null,
     snapshot: {
@@ -260,14 +262,19 @@ export function thresholds(): CompareThresholds {
 }
 
 function parseBoolEnv(name: string, fallback: boolean): boolean {
-  const raw = String(Bun.env[name] || '').trim().toLowerCase();
+  const raw = String(Bun.env[name] || '')
+    .trim()
+    .toLowerCase();
   if (!raw) return fallback;
   return raw === '1' || raw === 'true' || raw === 'yes' || raw === 'on';
 }
 
 function trendConfig(): TrendGateConfig {
   const window = Math.max(2, Math.min(20, num(Bun.env.SEARCH_BENCH_PIN_TREND_WINDOW, 5)));
-  const minSamples = Math.max(2, Math.min(window, num(Bun.env.SEARCH_BENCH_PIN_TREND_MIN_SAMPLES, 3)));
+  const minSamples = Math.max(
+    2,
+    Math.min(window, num(Bun.env.SEARCH_BENCH_PIN_TREND_MIN_SAMPLES, 3))
+  );
   return {
     enabled: parseBoolEnv('SEARCH_BENCH_PIN_TREND_ENABLED', true),
     strict: parseBoolEnv('SEARCH_BENCH_PIN_TREND_STRICT', false),
@@ -340,11 +347,11 @@ export function assessTrend(
   }
 
   const baseline = {
-    latencyP95Ms: median(trimmedSamples.map((s) => s.latencyP95Ms)),
-    peakHeapUsedMB: median(trimmedSamples.map((s) => s.peakHeapUsedMB)),
-    peakRssMB: median(trimmedSamples.map((s) => s.peakRssMB)),
-    qualityScore: median(trimmedSamples.map((s) => s.qualityScore)),
-    reliabilityPct: median(trimmedSamples.map((s) => s.reliabilityPct)),
+    latencyP95Ms: median(trimmedSamples.map(s => s.latencyP95Ms)),
+    peakHeapUsedMB: median(trimmedSamples.map(s => s.peakHeapUsedMB)),
+    peakRssMB: median(trimmedSamples.map(s => s.peakRssMB)),
+    qualityScore: median(trimmedSamples.map(s => s.qualityScore)),
+    reliabilityPct: median(trimmedSamples.map(s => s.reliabilityPct)),
   };
 
   const deltaAbsolute = {
@@ -414,15 +421,23 @@ function classifyAnomalyType(
   failures: string[],
   warnings: string[],
   compatibility: { queryPackMatch: boolean },
-  deltaAbsolute: { latencyP95Ms: number; peakHeapUsedMB: number; qualityScore: number; reliabilityPct: number }
+  deltaAbsolute: {
+    latencyP95Ms: number;
+    peakHeapUsedMB: number;
+    qualityScore: number;
+    reliabilityPct: number;
+  }
 ): AnomalyType {
   if (!compatibility.queryPackMatch) return 'pack_mismatch';
   if (failures.length === 0 && warnings.length === 0) return 'stable';
 
   const latencyFlag = failures.includes('latencyP95Ms') || warnings.includes('latencyP95Ms');
   const memoryFlag = failures.includes('peakHeapUsedMB') || warnings.includes('peakHeapUsedMB');
-  const qualityFlag = failures.includes('qualityScore') || failures.includes('reliabilityPct') ||
-    warnings.includes('qualityScore') || warnings.includes('reliabilityPct');
+  const qualityFlag =
+    failures.includes('qualityScore') ||
+    failures.includes('reliabilityPct') ||
+    warnings.includes('qualityScore') ||
+    warnings.includes('reliabilityPct');
 
   if (latencyFlag && !memoryFlag && !qualityFlag) return 'latency_spike';
   if (!latencyFlag && memoryFlag && !qualityFlag) return 'memory_spike';
@@ -456,11 +471,7 @@ function severityForHigherIsWorse(
   return 'ok';
 }
 
-function severityForLowerIsWorse(
-  delta: number,
-  warnFloor: number,
-  failFloor: number
-): Severity {
+function severityForLowerIsWorse(delta: number, warnFloor: number, failFloor: number): Severity {
   if (delta < failFloor) return 'fail';
   if (delta < warnFloor) return 'warn';
   return 'ok';
@@ -561,13 +572,30 @@ export function parseArgs(argv: string[]): {
   }
 
   if (mode === 'pin' && !rationale) {
-    throw new Error('Missing rationale. Pass --rationale "<reason>" when pinning search benchmark baseline.');
+    throw new Error(
+      'Missing rationale. Pass --rationale "<reason>" when pinning search benchmark baseline.'
+    );
   }
 
-  return { mode, fromPath, outPath, rationale, pinnedBy, baselinePath, bootstrapMissingBaseline, json, strict };
+  return {
+    mode,
+    fromPath,
+    outPath,
+    rationale,
+    pinnedBy,
+    baselinePath,
+    bootstrapMissingBaseline,
+    json,
+    strict,
+  };
 }
 
-export async function pin(fromPath: string, outPath: string, rationale: string, pinnedBy: string): Promise<void> {
+export async function pin(
+  fromPath: string,
+  outPath: string,
+  rationale: string,
+  pinnedBy: string
+): Promise<void> {
   if (!existsSync(fromPath)) {
     throw new Error(`Snapshot not found: ${fromPath}`);
   }
@@ -594,8 +622,12 @@ export async function pin(fromPath: string, outPath: string, rationale: string, 
   await writeFile(outPath, `${JSON.stringify(baseline, null, 2)}\n`, 'utf8');
 
   console.info(`[search:bench:pin] baseline saved: ${outPath}`);
-  console.info(`[search:bench:pin] snapshot=${baseline.snapshot.id} pack=${baseline.snapshot.queryPack}`);
-  console.info(`[search:bench:pin] rationale="${baseline.rationale}" pinnedBy="${baseline.pinnedBy}" previous=${baseline.previousSnapshotId || 'none'}`);
+  console.info(
+    `[search:bench:pin] snapshot=${baseline.snapshot.id} pack=${baseline.snapshot.queryPack}`
+  );
+  console.info(
+    `[search:bench:pin] rationale="${baseline.rationale}" pinnedBy="${baseline.pinnedBy}" previous=${baseline.previousSnapshotId || 'none'}`
+  );
   console.info(
     `[search:bench:pin] strict p95=${baseline.strict.latencyP95Ms.toFixed(2)}ms heap=${baseline.strict.peakHeapUsedMB.toFixed(2)}MB quality=${baseline.strict.qualityScore.toFixed(2)} reliability=${baseline.strict.reliabilityPct.toFixed(2)}`
   );
@@ -613,7 +645,14 @@ export async function comparePayload(
   }
 
   const current = toBaseline(await readJson<Snapshot>(fromPath), fromPath);
-  return compareResolved(current, baselinePathInput, outPath, strict, fromPath, bootstrapMissingBaseline);
+  return compareResolved(
+    current,
+    baselinePathInput,
+    outPath,
+    strict,
+    fromPath,
+    bootstrapMissingBaseline
+  );
 }
 
 export async function compareSnapshotPayload(
@@ -625,7 +664,14 @@ export async function compareSnapshotPayload(
   bootstrapMissingBaseline = false
 ): Promise<CompareResultPayload> {
   const current = toBaseline(snapshot, currentPath);
-  return compareResolved(current, baselinePathInput, outPath, strict, currentPath, bootstrapMissingBaseline);
+  return compareResolved(
+    current,
+    baselinePathInput,
+    outPath,
+    strict,
+    currentPath,
+    bootstrapMissingBaseline
+  );
 }
 
 type SnapshotIndex = {
@@ -657,7 +703,7 @@ async function collectTrendSamples(
     return [];
   }
   const entries = Array.isArray(index.snapshots) ? index.snapshots : [];
-  const filtered = entries.filter((entry) => {
+  const filtered = entries.filter(entry => {
     const id = String(entry.id || '').trim();
     if (!id || id === currentSnapshotId) return false;
     const pack = String(entry.queryPack || '').trim() || 'core_delivery';
@@ -718,7 +764,9 @@ async function compareResolved(
     await mkdir(dirname(bootstrapPath), { recursive: true });
     await writeFile(bootstrapPath, `${JSON.stringify(bootstrapped, null, 2)}\n`, 'utf8');
     baselinePath = bootstrapPath;
-    console.warn(`[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`);
+    console.warn(
+      `[search:bench:compare] baseline missing; bootstrapped from current snapshot: ${baselinePath}`
+    );
   }
 
   const baseline = await readJson<PinnedBaseline>(baselinePath);
@@ -726,10 +774,14 @@ async function compareResolved(
 
   const deltaAbsolute = {
     latencyP95Ms: Number((current.strict.latencyP95Ms - baseline.strict.latencyP95Ms).toFixed(4)),
-    peakHeapUsedMB: Number((current.strict.peakHeapUsedMB - baseline.strict.peakHeapUsedMB).toFixed(4)),
+    peakHeapUsedMB: Number(
+      (current.strict.peakHeapUsedMB - baseline.strict.peakHeapUsedMB).toFixed(4)
+    ),
     peakRssMB: Number((current.strict.peakRssMB - baseline.strict.peakRssMB).toFixed(4)),
     qualityScore: Number((current.strict.qualityScore - baseline.strict.qualityScore).toFixed(4)),
-    reliabilityPct: Number((current.strict.reliabilityPct - baseline.strict.reliabilityPct).toFixed(4)),
+    reliabilityPct: Number(
+      (current.strict.reliabilityPct - baseline.strict.reliabilityPct).toFixed(4)
+    ),
   };
 
   const deltaPercent = {
@@ -786,12 +838,7 @@ async function compareResolved(
     current.snapshot.id,
     trendGate
   );
-  const trend = assessTrend(
-    toTrendStrictMetrics(current.strict),
-    trendSamples,
-    gate,
-    trendGate
-  );
+  const trend = assessTrend(toTrendStrictMetrics(current.strict), trendSamples, gate, trendGate);
 
   const payload: CompareResultPayload = {
     ok: failures.length === 0,
@@ -841,7 +888,9 @@ export async function compare(
   if (asJson) {
     console.info(JSON.stringify(payload, null, 2));
   } else {
-    console.info(`[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`);
+    console.info(
+      `[search:bench:compare] baseline=${payload.baseline.snapshot.id} current=${payload.current.snapshot.id}`
+    );
     console.info(
       `[search:bench:compare] Δp95=${payload.delta.absolute.latencyP95Ms}ms (${payload.delta.percent.latencyP95Ms ?? 'n/a'}%) Δheap=${payload.delta.absolute.peakHeapUsedMB}MB (${payload.delta.percent.peakHeapUsedMB ?? 'n/a'}%) Δquality=${payload.delta.absolute.qualityScore} Δreliability=${payload.delta.absolute.reliabilityPct}`
     );
@@ -862,15 +911,22 @@ export async function compare(
         `[search:bench:compare] trend window=${payload.trend.window ?? 'n/a'} samples=${payload.trend.sampleSize} strict=${payload.trend.strict ? 'on' : 'off'} note=${payload.trend.note}`
       );
       if (payload.trend.failures.length > 0) {
-        console.info(`[search:bench:compare] trend fail metrics: ${payload.trend.failures.join(', ')}`);
+        console.info(
+          `[search:bench:compare] trend fail metrics: ${payload.trend.failures.join(', ')}`
+        );
       }
       if (payload.trend.warnings.length > 0) {
-        console.info(`[search:bench:compare] trend warn metrics: ${payload.trend.warnings.join(', ')}`);
+        console.info(
+          `[search:bench:compare] trend warn metrics: ${payload.trend.warnings.join(', ')}`
+        );
       }
     }
   }
 
-  if (strict && (payload.failures.length > 0 || (payload.trend.strict && payload.trend.failures.length > 0))) {
+  if (
+    strict &&
+    (payload.failures.length > 0 || (payload.trend.strict && payload.trend.failures.length > 0))
+  ) {
     process.exitCode = 1;
   }
   return payload;

@@ -2,26 +2,31 @@
 
 type EndpointCheck = {
   name: string;
-  method: "GET" | "POST";
+  method: 'GET' | 'POST';
   path: string;
   expectedStatus: number;
   body?: unknown;
 };
 
-const baseUrl = (process.env.PLAYGROUND_BASE_URL || "http://localhost:3011").replace(/\/+$/, "");
-const timeoutMs = Number(process.env.ENDPOINT_TEST_TIMEOUT_MS || "4000");
+const baseUrl = (process.env.PLAYGROUND_BASE_URL || 'http://localhost:3011').replace(/\/+$/, '');
+const timeoutMs = Number(process.env.ENDPOINT_TEST_TIMEOUT_MS || '4000');
 
 const checks: EndpointCheck[] = [
-  { name: "info", method: "GET", path: "/api/info", expectedStatus: 200 },
-  { name: "demos", method: "GET", path: "/api/demos", expectedStatus: 200 },
+  { name: 'info', method: 'GET', path: '/api/info', expectedStatus: 200 },
+  { name: 'demos', method: 'GET', path: '/api/demos', expectedStatus: 200 },
   {
-    name: "protocol-router-dryrun",
-    method: "POST",
-    path: "/api/fetch/protocol-router",
+    name: 'protocol-router-dryrun',
+    method: 'POST',
+    path: '/api/fetch/protocol-router',
     expectedStatus: 200,
-    body: { url: "https://example.com", method: "GET", dryRun: true, bodyType: "string" },
+    body: { url: 'https://example.com', method: 'GET', dryRun: true, bodyType: 'string' },
   },
-  { name: "workspace-panel", method: "GET", path: "/api/control/script-orchestration-panel", expectedStatus: 200 },
+  {
+    name: 'workspace-panel',
+    method: 'GET',
+    path: '/api/control/script-orchestration-panel',
+    expectedStatus: 200,
+  },
 ];
 
 let failures = 0;
@@ -34,14 +39,16 @@ for (const check of checks) {
   try {
     const res = await fetch(url, {
       method: check.method,
-      headers: check.body ? { "content-type": "application/json" } : undefined,
+      headers: check.body ? { 'content-type': 'application/json' } : undefined,
       body: check.body ? JSON.stringify(check.body) : undefined,
       signal: AbortSignal.timeout(timeoutMs),
     });
     const elapsed = Date.now() - start;
     if (res.status !== check.expectedStatus) {
       failures++;
-      console.info(`FAIL ${check.name} ${res.status} expected=${check.expectedStatus} ${elapsed}ms ${check.path}`);
+      console.info(
+        `FAIL ${check.name} ${res.status} expected=${check.expectedStatus} ${elapsed}ms ${check.path}`
+      );
       continue;
     }
     console.info(`PASS ${check.name} ${res.status} ${elapsed}ms ${check.path}`);

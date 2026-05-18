@@ -2,7 +2,7 @@
 
 /**
  * Demonstration of Custom Wiki Template System
- * 
+ *
  * This script shows how to:
  * 1. Register custom templates programmatically
  * 2. Load templates from configuration files
@@ -18,7 +18,7 @@ async function demonstrateCustomTemplates() {
 
   // 1. Register a custom template programmatically
   console.info('\n📝 1. Registering custom template programmatically...');
-  
+
   const customTemplate: WikiTemplate = {
     name: 'Internal CRM Wiki',
     description: 'JSON format for internal CRM documentation',
@@ -30,8 +30,8 @@ async function demonstrateCustomTemplates() {
       '## Integration Steps',
       '## Data Mapping',
       '## Error Handling',
-      '## Support Contacts'
-    ]
+      '## Support Contacts',
+    ],
   };
 
   MCPWikiGenerator.registerCustomTemplate(customTemplate);
@@ -43,7 +43,7 @@ async function demonstrateCustomTemplates() {
   // 3. List all available templates
   console.info('\n📋 3. Available Templates:');
   console.info('━'.repeat(80));
-  
+
   const allTemplates = MCPWikiGenerator.getWikiTemplates();
   allTemplates.forEach((template, index) => {
     console.info(`${(index + 1).toString().padStart(2)}. ${template.name}`);
@@ -58,10 +58,10 @@ async function demonstrateCustomTemplates() {
 
   // 4. Generate wiki using a custom template
   console.info('🚀 4. Generating wiki using custom template...');
-  
+
   const result = await MCPWikiGenerator.generateFromTemplate('Internal CRM Wiki', {
     includeValidation: true,
-    context: 'crm-integration-demo'
+    context: 'crm-integration-demo',
   });
 
   if (result.success) {
@@ -69,7 +69,7 @@ async function demonstrateCustomTemplates() {
     console.info(`   Files generated: ${Object.keys(result.files).length}`);
     console.info(`   Total utilities: ${result.metadata.total}`);
     console.info(`   Output format: ${result.metadata.generated}`);
-    
+
     // Show generated files
     Object.entries(result.files).forEach(([filename, content]) => {
       console.info(`   📄 ${filename} (${content.length} characters)`);
@@ -80,15 +80,17 @@ async function demonstrateCustomTemplates() {
 
   // 5. Generate wiki using loaded template
   console.info('\n🚀 5. Generating wiki using loaded template...');
-  
+
   const slackResult = await MCPWikiGenerator.generateFromTemplate('Slack Knowledge Base', {
     includeValidation: true,
-    context: 'slack-knowledge-demo'
+    context: 'slack-knowledge-demo',
   });
 
   if (slackResult.success) {
     console.info('✅ Slack wiki generated successfully!');
-    console.info(`   Files: ${Object.keys(slackResult.files).length} | Utilities: ${slackResult.metadata.total}`);
+    console.info(
+      `   Files: ${Object.keys(slackResult.files).length} | Utilities: ${slackResult.metadata.total}`
+    );
   }
 
   // 6. Export all templates to a new configuration file

@@ -60,7 +60,7 @@ export class AdvancedCacheManager extends EventEmitter {
 
   constructor(config: Partial<CacheConfig> = {}) {
     super();
-    
+
     this.config = {
       maxSize: 1000,
       ttl: 30 * 60 * 1000, // 30 minutes
@@ -70,7 +70,7 @@ export class AdvancedCacheManager extends EventEmitter {
       compressionThreshold: 1024, // 1KB
       enableMetrics: true,
       cleanupInterval: 60 * 1000, // 1 minute
-      ...config
+      ...config,
     };
 
     this.metrics = {
@@ -83,7 +83,7 @@ export class AdvancedCacheManager extends EventEmitter {
       itemCount: 0,
       hitRate: 0,
       averageAccessTime: 0,
-      memoryUsage: 0
+      memoryUsage: 0,
     };
 
     this.startCleanupTimer();
@@ -95,11 +95,11 @@ export class AdvancedCacheManager extends EventEmitter {
    */
   public async get<T = any>(key: string): Promise<T | null> {
     const startTime = performance.now();
-    
+
     try {
       // Check local cache first
       const item = this.cache.get(key);
-      
+
       if (item) {
         // Check if item is expired
         if (this.isExpired(item)) {
@@ -114,7 +114,7 @@ export class AdvancedCacheManager extends EventEmitter {
         // Update access information
         item.lastAccessed = Date.now();
         item.accessCount++;
-        
+
         if (this.config.enableLRU) {
           this.updateAccessOrder(key);
         }
@@ -164,14 +164,14 @@ export class AdvancedCacheManager extends EventEmitter {
    * Set an item in cache
    */
   public async set<T = any>(
-    key: string, 
-    value: T, 
+    key: string,
+    value: T,
     options: { ttl?: number; compress?: boolean; priority?: 'low' | 'medium' | 'high' } = {}
   ): Promise<void> {
     try {
       const now = Date.now();
       const ttl = options.ttl || this.config.ttl;
-      
+
       // Check if we need to evict items
       await this.ensureCapacity();
 
@@ -181,7 +181,7 @@ export class AdvancedCacheManager extends EventEmitter {
       const serializedValue = JSON.stringify(value);
       const size = new Blob([serializedValue]).size;
 
-      if ((options.compress !== false) && size > this.config.compressionThreshold) {
+      if (options.compress !== false && size > this.config.compressionThreshold) {
         compressedValue = await this.compressValue(serializedValue);
         compressed = true;
       }
@@ -195,12 +195,12 @@ export class AdvancedCacheManager extends EventEmitter {
         size: compressed ? new Blob([compressedValue as string]).size : size,
         ttl: ttl > 0 ? now + ttl : undefined,
         compressed,
-        checksum: this.calculateChecksum(serializedValue)
+        checksum: this.calculateChecksum(serializedValue),
       };
 
       // Store in local cache
       this.cache.set(key, item);
-      
+
       if (this.config.enableLRU) {
         this.updateAccessOrder(key);
       }
@@ -233,7 +233,7 @@ export class AdvancedCacheManager extends EventEmitter {
 
       this.cache.delete(key);
       this.accessOrder.delete(key);
-      
+
       // Update metrics
       this.metrics.deletes++;
       this.metrics.totalSize -= item.size;
@@ -259,12 +259,12 @@ export class AdvancedCacheManager extends EventEmitter {
   public async has(key: string): Promise<boolean> {
     const item = this.cache.get(key);
     if (!item) return false;
-    
+
     if (this.isExpired(item)) {
       await this.delete(key);
       return false;
     }
-    
+
     return true;
   }
 
@@ -274,7 +274,7 @@ export class AdvancedCacheManager extends EventEmitter {
   public async clear(): Promise<void> {
     this.cache.clear();
     this.accessOrder.clear();
-    
+
     // Reset metrics
     this.metrics = {
       hits: 0,
@@ -286,7 +286,7 @@ export class AdvancedCacheManager extends EventEmitter {
       itemCount: 0,
       hitRate: 0,
       averageAccessTime: 0,
-      memoryUsage: 0
+      memoryUsage: 0,
     };
 
     // Clear distributed cache if enabled
@@ -302,15 +302,15 @@ export class AdvancedCacheManager extends EventEmitter {
    */
   public async mget<T = any>(keys: string[]): Promise<Map<string, T | null>> {
     const results = new Map<string, T | null>();
-    
+
     // Process in parallel for better performance
-    const promises = keys.map(async (key) => {
+    const promises = keys.map(async key => {
       const value = await this.get<T>(key);
       return [key, value] as [string, T | null];
     });
 
     const settled = await Promise.allSettled(promises);
-    
+
     for (const result of settled) {
       if (result.status === 'fulfilled') {
         const [key, value] = result.value;
@@ -325,9 +325,7 @@ export class AdvancedCacheManager extends EventEmitter {
    * Set multiple items in batch
    */
   public async mset<T = any>(items: Map<string, T>): Promise<void> {
-    const promises = Array.from(items.entries()).map(([key, value]) => 
-      this.set(key, value)
-    );
+    const promises = Array.from(items.entries()).map(([key, value]) => this.set(key, value));
 
     await Promise.allSettled(promises);
   }
@@ -342,7 +340,7 @@ export class AdvancedCacheManager extends EventEmitter {
       .map(item => ({
         key: item.key,
         accessCount: item.accessCount,
-        size: item.size
+        size: item.size,
       }));
 
     const sizeDistribution = this.calculateSizeDistribution();
@@ -352,7 +350,7 @@ export class AdvancedCacheManager extends EventEmitter {
       metrics: { ...this.metrics },
       topKeys,
       sizeDistribution,
-      ttlDistribution
+      ttlDistribution,
     };
   }
 
@@ -381,7 +379,7 @@ export class AdvancedCacheManager extends EventEmitter {
     if (this.cache.size < this.config.maxSize) return;
 
     const itemsToEvict = this.cache.size - this.config.maxSize + 1;
-    
+
     if (this.config.enableLRU) {
       // Evict least recently used items
       const sortedKeys = Array.from(this.accessOrder.entries())
@@ -409,11 +407,11 @@ export class AdvancedCacheManager extends EventEmitter {
     if (item) {
       this.cache.delete(key);
       this.accessOrder.delete(key);
-      
+
       this.metrics.evictions++;
       this.metrics.totalSize -= item.size;
       this.metrics.itemCount = this.cache.size;
-      
+
       this.emit('evict', key, item);
     }
   }
@@ -423,13 +421,13 @@ export class AdvancedCacheManager extends EventEmitter {
    */
   private updateAccessOrder(key: string): void {
     this.accessOrder.set(key, Date.now());
-    
+
     // Limit access order map size
     if (this.accessOrder.size > this.config.maxSize * 2) {
       const sortedEntries = Array.from(this.accessOrder.entries())
         .sort(([, a], [, b]) => a - b)
         .slice(0, this.config.maxSize);
-      
+
       this.accessOrder.clear();
       for (const [key, time] of sortedEntries) {
         this.accessOrder.set(key, time);
@@ -459,13 +457,13 @@ export class AdvancedCacheManager extends EventEmitter {
   private recordAccessTime(startTime: number): void {
     const accessTime = performance.now() - startTime;
     this.accessTimes.push(accessTime);
-    
+
     // Keep only last 100 access times
     if (this.accessTimes.length > 100) {
       this.accessTimes = this.accessTimes.slice(-100);
     }
-    
-    this.metrics.averageAccessTime = 
+
+    this.metrics.averageAccessTime =
       this.accessTimes.reduce((sum, time) => sum + time, 0) / this.accessTimes.length;
   }
 
@@ -474,21 +472,25 @@ export class AdvancedCacheManager extends EventEmitter {
    */
   private updateMemoryUsage(): void {
     // Rough estimation of memory usage
-    this.metrics.memoryUsage = this.metrics.totalSize + (this.cache.size * 200); // Add overhead
+    this.metrics.memoryUsage = this.metrics.totalSize + this.cache.size * 200; // Add overhead
   }
 
   /**
    * Calculate size distribution
    */
   private calculateSizeDistribution(): { small: number; medium: number; large: number } {
-    let small = 0, medium = 0, large = 0;
-    
+    let small = 0,
+      medium = 0,
+      large = 0;
+
     for (const item of this.cache.values()) {
-      if (item.size < 1024) small++; // < 1KB
-      else if (item.size < 10240) medium++; // < 10KB
+      if (item.size < 1024)
+        small++; // < 1KB
+      else if (item.size < 10240)
+        medium++; // < 10KB
       else large++; // >= 10KB
     }
-    
+
     return { small, medium, large };
   }
 
@@ -496,15 +498,17 @@ export class AdvancedCacheManager extends EventEmitter {
    * Calculate TTL distribution
    */
   private calculateTTLDistribution(): { expired: number; active: number; permanent: number } {
-    let expired = 0, active = 0, permanent = 0;
+    let expired = 0,
+      active = 0,
+      permanent = 0;
     const now = Date.now();
-    
+
     for (const item of this.cache.values()) {
       if (!item.ttl) permanent++;
       else if (now > item.ttl) expired++;
       else active++;
     }
-    
+
     return { expired, active, permanent };
   }
 
@@ -542,15 +546,15 @@ export class AdvancedCacheManager extends EventEmitter {
    */
   private async getFromDistributedCache(key: string): Promise<any | null> {
     if (!this.config.enableDistributed) return null;
-    
+
     try {
       // Try each distributed node
       for (const nodeUrl of this.config.distributedNodes) {
         const response = await fetch(`${nodeUrl}/cache/${key}`, {
           method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
+          headers: { 'Content-Type': 'application/json' },
         });
-        
+
         if (response.ok) {
           const data = await response.json();
           if (data.value !== null) {
@@ -558,7 +562,7 @@ export class AdvancedCacheManager extends EventEmitter {
           }
         }
       }
-      
+
       return null;
     } catch (error) {
       console.error('Distributed cache get error:', error);
@@ -568,27 +572,27 @@ export class AdvancedCacheManager extends EventEmitter {
 
   private async setToDistributedCache(key: string, value: any, ttl?: number): Promise<void> {
     if (!this.config.enableDistributed) return;
-    
+
     try {
       const data = {
         key,
         value,
-        ttl: ttl || this.config.ttl
+        ttl: ttl || this.config.ttl,
       };
-      
+
       // Set on all distributed nodes
-      const promises = this.config.distributedNodes.map(async (nodeUrl) => {
+      const promises = this.config.distributedNodes.map(async nodeUrl => {
         try {
           await fetch(`${nodeUrl}/cache/${key}`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(data)
+            body: JSON.stringify(data),
           });
         } catch (error) {
           console.error(`Failed to set on node ${nodeUrl}:`, error);
         }
       });
-      
+
       await Promise.allSettled(promises);
     } catch (error) {
       console.error('Distributed cache set error:', error);
@@ -597,18 +601,18 @@ export class AdvancedCacheManager extends EventEmitter {
 
   private async deleteFromDistributedCache(key: string): Promise<void> {
     if (!this.config.enableDistributed) return;
-    
+
     try {
-      const promises = this.config.distributedNodes.map(async (nodeUrl) => {
+      const promises = this.config.distributedNodes.map(async nodeUrl => {
         try {
           await fetch(`${nodeUrl}/cache/${key}`, {
-            method: 'DELETE'
+            method: 'DELETE',
           });
         } catch (error) {
           console.error(`Failed to delete from node ${nodeUrl}:`, error);
         }
       });
-      
+
       await Promise.allSettled(promises);
     } catch (error) {
       console.error('Distributed cache delete error:', error);
@@ -617,18 +621,18 @@ export class AdvancedCacheManager extends EventEmitter {
 
   private async clearDistributedCache(): Promise<void> {
     if (!this.config.enableDistributed) return;
-    
+
     try {
-      const promises = this.config.distributedNodes.map(async (nodeUrl) => {
+      const promises = this.config.distributedNodes.map(async nodeUrl => {
         try {
           await fetch(`${nodeUrl}/cache`, {
-            method: 'DELETE'
+            method: 'DELETE',
           });
         } catch (error) {
           console.error(`Failed to clear node ${nodeUrl}:`, error);
         }
       });
-      
+
       await Promise.allSettled(promises);
     } catch (error) {
       console.error('Distributed cache clear error:', error);
@@ -660,17 +664,17 @@ export class AdvancedCacheManager extends EventEmitter {
       clearInterval(this.cleanupTimer);
       this.cleanupTimer = undefined;
     }
-    
+
     if (this.accessTimer) {
       clearInterval(this.accessTimer);
       this.accessTimer = undefined;
     }
-    
+
     if (this.compressionWorker) {
       this.compressionWorker.terminate();
       this.compressionWorker = undefined;
     }
-    
+
     await this.clear();
     this.removeAllListeners();
   }

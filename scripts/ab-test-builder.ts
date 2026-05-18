@@ -134,16 +134,16 @@ class EnvironmentBuildManager {
     });
 
     if (!result.success) {
-      const message = result.logs.map((l) => l.message).join('; ') || 'Unknown build failure';
+      const message = result.logs.map(l => l.message).join('; ') || 'Unknown build failure';
       throw new Error(`Build failed for ${envName}: ${message}`);
     }
 
     const outputs = result.outputs
-      .map((output) => output.path)
+      .map(output => output.path)
       .filter((p): p is string => typeof p === 'string' && p.length > 0);
 
     const sizes = await Promise.all(
-      outputs.map(async (p) => {
+      outputs.map(async p => {
         try {
           const info = await stat(p);
           return info.size;
@@ -182,11 +182,18 @@ class ABTestBuilder {
       domain: options?.domain || process.env.DOMAIN || 'factory-wager.com',
       subdomains:
         options?.subdomains ||
-        (process.env.SUBDOMAINS ? process.env.SUBDOMAINS.split(',').map((s) => s.trim()).filter(Boolean) : ['www', 'api', 'cdn']),
+        (process.env.SUBDOMAINS
+          ? process.env.SUBDOMAINS.split(',')
+              .map(s => s.trim())
+              .filter(Boolean)
+          : ['www', 'api', 'cdn']),
     };
   }
 
-  async createTestVariants(baseEnvironment: string, variants: VariantSpec[]): Promise<CreateVariantResult> {
+  async createTestVariants(
+    baseEnvironment: string,
+    variants: VariantSpec[]
+  ): Promise<CreateVariantResult> {
     const builds: BuiltVariant[] = [];
 
     for (const variant of variants) {
@@ -197,7 +204,9 @@ class ABTestBuilder {
           ...baseConfig.variables,
           AB_TEST_VARIANT: variant.name,
           AB_TEST_AUDIENCE: String(variant.audience),
-          ...(variant.changes ? Object.fromEntries(Object.entries(variant.changes).map(([k, v]) => [k, String(v)])) : {}),
+          ...(variant.changes
+            ? Object.fromEntries(Object.entries(variant.changes).map(([k, v]) => [k, String(v)]))
+            : {}),
         },
       };
 
@@ -222,16 +231,19 @@ class ABTestBuilder {
       baseEnvironment,
       domain: this.options.domain,
       subdomains: this.options.subdomains,
-      variants: builds.map((b) => ({
+      variants: builds.map(b => ({
         name: b.variant,
         bundle: b.build.outputs[0] || '',
         audience: b.audience,
         size: b.build.metrics.totalSize,
       })),
-      routing: builds.reduce((config, b) => {
-        config[b.variant] = b.audience;
-        return config;
-      }, {} as Record<string, number>),
+      routing: builds.reduce(
+        (config, b) => {
+          config[b.variant] = b.audience;
+          return config;
+        },
+        {} as Record<string, number>
+      ),
       generatedAt: new Date().toISOString(),
     };
 
@@ -248,7 +260,10 @@ class ABTestBuilder {
         throw new Error(`No build output for variant '${variant.variant}'`);
       }
 
-      const deployment = await deployToCDN(artifactPath, `ab-test/${this.options.domain}/${variant.variant}`);
+      const deployment = await deployToCDN(
+        artifactPath,
+        `ab-test/${this.options.domain}/${variant.variant}`
+      );
       deployments.push({
         variant: variant.variant,
         url: deployment.url,
@@ -313,13 +328,15 @@ function parseVariants(raw: string | undefined): VariantSpec[] {
       changes: entry.changes && typeof entry.changes === 'object' ? entry.changes : undefined,
     }));
   } catch (error) {
-    throw new Error(`Invalid AB_VARIANTS JSON: ${error instanceof Error ? error.message : String(error)}`);
+    throw new Error(
+      `Invalid AB_VARIANTS JSON: ${error instanceof Error ? error.message : String(error)}`
+    );
   }
 }
 
 function parseArgs(argv: string[]) {
   const get = (name: string): string | undefined => {
-    const direct = argv.find((a) => a.startsWith(`--${name}=`));
+    const direct = argv.find(a => a.startsWith(`--${name}=`));
     if (direct) return direct.slice(name.length + 3);
     const idx = argv.indexOf(`--${name}`);
     if (idx >= 0 && idx + 1 < argv.length) return argv[idx + 1];
@@ -332,12 +349,12 @@ function parseArgs(argv: string[]) {
     domain: get('domain') || process.env.DOMAIN || 'factory-wager.com',
     subdomains: (get('subdomains') || process.env.SUBDOMAINS || 'www,api,cdn')
       .split(',')
-      .map((s) => s.trim())
+      .map(s => s.trim())
       .filter(Boolean),
     experiment: get('experiment') || process.env.AB_EXPERIMENT || 'feature_experiment_1',
     entrypoints: (get('entrypoints') || './tools/scanner-cli.ts')
       .split(',')
-      .map((s) => s.trim())
+      .map(s => s.trim())
       .filter(Boolean),
     outdir: get('outdir') || './dist/ab-test-builds',
     manifestPath: get('manifest') || './reports/ab-tests/latest.json',
@@ -388,10 +405,16 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
+  main().catch(error => {
     console.error(`[ab-test-builder] ${error instanceof Error ? error.message : String(error)}`);
     process.exit(1);
   });
 }
 
-export { ABTestBuilder, EnvironmentBuildManager, type VariantSpec, type ABTestConfig, type CreateVariantResult };
+export {
+  ABTestBuilder,
+  EnvironmentBuildManager,
+  type VariantSpec,
+  type ABTestConfig,
+  type CreateVariantResult,
+};

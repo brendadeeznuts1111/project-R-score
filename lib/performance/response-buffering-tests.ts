@@ -32,7 +32,9 @@ class ResponseBufferingTests {
 
       console.info('✅ Response buffering methods:');
       console.info(`   response.text(): ${result.text.length} characters`);
-      console.info(`   response.json(): ${result.json ? 'parsed successfully' : 'failed to parse'}`);
+      console.info(
+        `   response.json(): ${result.json ? 'parsed successfully' : 'failed to parse'}`
+      );
       console.info(
         `   response.formData(): ${result.formData ? 'parsed successfully' : 'failed to parse'}`
       );

@@ -75,7 +75,7 @@ export class VariantTesting {
         this.trackEvent('variant_assigned', {
           testId,
           variantId: variant.id,
-          variantName: variant.name
+          variantName: variant.name,
         });
       }
     }
@@ -94,10 +94,10 @@ export class VariantTesting {
       description: 'Advanced UI with animations and micro-interactions',
       enabled: false,
       variants: {
-        'control': false,
-        'enhanced': true,
-        'minimal': false
-      }
+        control: false,
+        enhanced: true,
+        minimal: false,
+      },
     });
 
     this.featureFlags.set('advanced_analytics', {
@@ -105,7 +105,7 @@ export class VariantTesting {
       name: 'Advanced Analytics',
       description: 'Detailed analytics and performance metrics',
       enabled: true,
-      conditions: () => this.cookieManager.hasAnalyticsConsent()
+      conditions: () => this.cookieManager.hasAnalyticsConsent(),
     });
 
     this.featureFlags.set('smart_prefetch', {
@@ -117,7 +117,7 @@ export class VariantTesting {
         if (typeof navigator === 'undefined') return false;
         const connection = (navigator as any).connection;
         return !connection || connection.effectiveType !== 'slow-2g';
-      }
+      },
     });
 
     this.featureFlags.set('experimental_features', {
@@ -126,10 +126,10 @@ export class VariantTesting {
       description: 'Cutting-edge features in development',
       enabled: false,
       variants: {
-        'control': false,
-        'enhanced': false,
-        'minimal': true
-      }
+        control: false,
+        enhanced: false,
+        minimal: true,
+      },
     });
 
     // Performance Features
@@ -139,16 +139,16 @@ export class VariantTesting {
       description: 'Enhanced caching strategies for better performance',
       enabled: false,
       variants: {
-        'standard': false,
-        'optimized': true
-      }
+        standard: false,
+        optimized: true,
+      },
     });
 
     this.featureFlags.set('resource_hints', {
       id: 'resource_hints',
       name: 'Resource Hints',
       description: 'Preload and prefetch critical resources',
-      enabled: true
+      enabled: true,
     });
 
     // Content Features
@@ -160,7 +160,7 @@ export class VariantTesting {
       conditions: () => {
         const userRole = this.cookieManager.getCookie('fw_user_role');
         return userRole === 'beta_tester' || userRole === 'admin';
-      }
+      },
     });
   }
 
@@ -176,25 +176,25 @@ export class VariantTesting {
           name: 'Control - Standard UI',
           weight: 0.5,
           features: ['standard-layout', 'default-colors', 'basic-components'],
-          cookies: []
+          cookies: [],
         },
         {
           id: 'enhanced',
           name: 'Enhanced UI with Animations',
           weight: 0.3,
           features: ['enhanced-layout', 'gradient-colors', 'animated-components'],
-          cookies: []
+          cookies: [],
         },
         {
           id: 'minimal',
           name: 'Minimal UI',
           weight: 0.2,
           features: ['minimal-layout', 'monochrome-colors', 'simple-components'],
-          cookies: []
-        }
+          cookies: [],
+        },
       ],
       trafficAllocation: 1.0,
-      successMetrics: ['engagement_time', 'click_through_rate', 'conversion_rate']
+      successMetrics: ['engagement_time', 'click_through_rate', 'conversion_rate'],
     });
 
     // Performance Test
@@ -208,18 +208,18 @@ export class VariantTesting {
           name: 'Standard Performance',
           weight: 0.5,
           features: ['standard-caching', 'normal-prefetch'],
-          cookies: []
+          cookies: [],
         },
         {
           id: 'optimized',
           name: 'Optimized Performance',
           weight: 0.5,
           features: ['aggressive-caching', 'smart-prefetch', 'resource-hints'],
-          cookies: []
-        }
+          cookies: [],
+        },
       ],
       trafficAllocation: 0.5,
-      successMetrics: ['page_load_time', 'time_to_interactive', 'bounce_rate']
+      successMetrics: ['page_load_time', 'time_to_interactive', 'bounce_rate'],
     });
 
     // Feature Flag Test
@@ -233,25 +233,25 @@ export class VariantTesting {
           name: 'Basic Features',
           weight: 0.4,
           features: ['essential-only'],
-          cookies: []
+          cookies: [],
         },
         {
           id: 'enhanced',
           name: 'Enhanced Features',
           weight: 0.4,
           features: ['essential-plus', 'ui-improvements'],
-          cookies: []
+          cookies: [],
         },
         {
           id: 'full',
           name: 'Full Feature Set',
           weight: 0.2,
           features: ['all-features', 'experimental'],
-          cookies: []
-        }
+          cookies: [],
+        },
       ],
       trafficAllocation: 0.3,
-      successMetrics: ['feature_adoption', 'user_satisfaction', 'retention_rate']
+      successMetrics: ['feature_adoption', 'user_satisfaction', 'retention_rate'],
     });
   }
 
@@ -277,7 +277,7 @@ export class VariantTesting {
     if (testId) {
       const test = this.activeTests.get(testId);
       if (!test) return null;
-      
+
       const variant = this.cookieManager.assignVariant(testId);
       return variant;
     }
@@ -308,11 +308,13 @@ export class VariantTesting {
       userId: this.getUserId(),
       sessionId: sessionId || 'unknown',
       timestamp: new Date().toISOString(),
-      events: [{
-        type: eventType as any,
-        value: data?.value,
-        metadata: data
-      }]
+      events: [
+        {
+          type: eventType as any,
+          value: data?.value,
+          metadata: data,
+        },
+      ],
     };
 
     this.analytics.push(analyticsEvent);
@@ -327,7 +329,7 @@ export class VariantTesting {
       testId,
       variantId: variant.id,
       value,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -339,7 +341,7 @@ export class VariantTesting {
       element,
       testId,
       variantId: variant.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -351,7 +353,7 @@ export class VariantTesting {
       element,
       testId,
       variantId: variant.id,
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
     });
   }
 
@@ -379,38 +381,38 @@ export class VariantTesting {
     if (!variant) return null;
 
     const contentMap: Record<string, Record<string, any>> = {
-      'ui_variant_2024': {
-        'control': {
+      ui_variant_2024: {
+        control: {
           theme: 'default',
           layout: 'standard',
           animations: false,
-          colors: ['#3b82f6', '#22c55e', '#f59e0b']
+          colors: ['#3b82f6', '#22c55e', '#f59e0b'],
         },
-        'enhanced': {
+        enhanced: {
           theme: 'gradient',
           layout: 'modern',
           animations: true,
-          colors: ['#8b5cf6', '#ec4899', '#f97316']
+          colors: ['#8b5cf6', '#ec4899', '#f97316'],
         },
-        'minimal': {
+        minimal: {
           theme: 'monochrome',
           layout: 'clean',
           animations: false,
-          colors: ['#1f2937', '#6b7280', '#9ca3af']
-        }
+          colors: ['#1f2937', '#6b7280', '#9ca3af'],
+        },
       },
-      'performance_optimization': {
-        'standard': {
+      performance_optimization: {
+        standard: {
           prefetchLevel: 'conservative',
           cacheStrategy: 'basic',
-          resourceHints: false
+          resourceHints: false,
         },
-        'optimized': {
+        optimized: {
           prefetchLevel: 'aggressive',
           cacheStrategy: 'advanced',
-          resourceHints: true
-        }
-      }
+          resourceHints: true,
+        },
+      },
     };
 
     return contentMap[testId || 'ui_variant_2024']?.[variant.id] || null;
@@ -444,7 +446,7 @@ export class VariantTesting {
         path: '/',
         maxAge: 31536000, // 1 year
         secure: true,
-        sameSite: 'strict'
+        sameSite: 'strict',
       });
     }
     return userId;

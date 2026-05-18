@@ -42,9 +42,7 @@ export { styled, log, FW_COLORS } from './theme/colors';
 export { Utils } from './utils';
 export { DOC_PATTERNS, DocumentationUtils } from './docs';
 
-export {
-  VersionTracker,
-} from './versioning/version-tracking';
+export { VersionTracker } from './versioning/version-tracking';
 export {
   PackageManager,
   type PackageInfo,
@@ -59,21 +57,21 @@ export {
 } from './rss/rss-manager';
 
 // NEW: Bun Documentation Integration
-export { 
+export {
   BunDocumentationIntegration,
   type BunDocumentationIndex,
   type DocumentationCategory,
   type DocumentationPage,
   type CodeExample,
-  type BunMetricsExample
+  type BunMetricsExample,
 } from './bun-documentation-integration';
 
 // NEW: Wiki Integration
-export { 
+export {
   BunWikiIntegration,
   type WikiPage,
   type WikiCategory,
-  type WikiConfig
+  type WikiConfig,
 } from './wiki/bun-wiki-integration';
 
 // HTTP utilities with HSL health endpoints

@@ -67,8 +67,8 @@ async function main() {
             tags: {
               'factorywager:migrated': 'true',
               'factorywager:init-date': new Date().toISOString(),
-              'source': 'migration'
-            }
+              source: 'migration',
+            },
           });
 
           console.info(styled(`   ✅ Migrated to v${result.version}`, 'success'));
@@ -84,7 +84,6 @@ async function main() {
           console.info(styled(`   🔍 Would migrate (dry run)`, 'warning'));
           migrated++;
         }
-
       } catch (error) {
         console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
@@ -102,7 +101,6 @@ async function main() {
       console.info(styled('🎉 Versioning initialization complete!', 'success'));
       console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/versioning', 'accent'));
     }
-
   } catch (error) {
     console.error(styled(`❌ Initialization failed: ${error.message}`, 'error'));
     process.exit(1);
@@ -124,7 +122,7 @@ async function backupToR2(key: string, value: string, version: string) {
     version,
     value,
     timestamp: new Date().toISOString(),
-    type: 'initial-migration'
+    type: 'initial-migration',
   };
 
   // This would use env.R2_BUCKET.put() in a real implementation

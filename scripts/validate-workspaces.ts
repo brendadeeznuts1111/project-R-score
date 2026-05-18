@@ -14,27 +14,27 @@
  *   bun run check:workspaces --verbose
  */
 
-import { resolve, relative } from "path";
+import { resolve, relative } from 'path';
 
 // ---------- CLI Argument Parsing (simple) ----------
 const args = process.argv.slice(2);
-const verbose = args.includes("--verbose") || process.env.VERBOSE === "1";
+const verbose = args.includes('--verbose') || process.env.VERBOSE === '1';
 
 // ---------- Configuration ----------
 const IGNORE_GLOBS = [
-  "**/node_modules/**",
-  "**/.git/**",
-  "**/dist/**",
-  "**/build/**",
-  "**/coverage/**",
-  "**/.next/**",
-  "**/out/**",
-  "scratch/**",
-  "archive/**",
-  "**/test/**",
-  "**/__tests__/**",
-  "**/examples/**",
-  "**/template/**",
+  '**/node_modules/**',
+  '**/.git/**',
+  '**/dist/**',
+  '**/build/**',
+  '**/coverage/**',
+  '**/.next/**',
+  '**/out/**',
+  'scratch/**',
+  'archive/**',
+  '**/test/**',
+  '**/__tests__/**',
+  '**/examples/**',
+  '**/template/**',
 ];
 
 /**
@@ -50,29 +50,29 @@ const IGNORE_GLOBS = [
  * either fully include these apps or fully exclude them.
  */
 const EXEMPT_PATHS = [
-  "kimiremote/package.json",
-  "factorywager/package.json",
-  "barbershop/package.json",
-  "peer/package.json",
-  "tools/package.json",
-  "lib/package.json",
-  "examples/package.json",
+  'kimiremote/package.json',
+  'factorywager/package.json',
+  'barbershop/package.json',
+  'peer/package.json',
+  'tools/package.json',
+  'lib/package.json',
+  'examples/package.json',
 ];
 
 // Simple ANSI colors (no external dependency)
 const colors = {
-  reset: "\x1b[0m",
-  bold: "\x1b[1m",
-  green: "\x1b[32m",
-  red: "\x1b[31m",
-  yellow: "\x1b[33m",
-  cyan: "\x1b[36m",
-  dim: "\x1b[2m",
+  reset: '\x1b[0m',
+  bold: '\x1b[1m',
+  green: '\x1b[32m',
+  red: '\x1b[31m',
+  yellow: '\x1b[33m',
+  cyan: '\x1b[36m',
+  dim: '\x1b[2m',
 };
 
 // Detect which script name was used (for deprecation warning)
-const lifecycleEvent = process.env.npm_lifecycle_event || "";
-const isDeprecatedName = lifecycleEvent === "check:workspaces";
+const lifecycleEvent = process.env.npm_lifecycle_event || '';
+const isDeprecatedName = lifecycleEvent === 'check:workspaces';
 
 if (isDeprecatedName) {
   console.warn(
@@ -81,11 +81,11 @@ if (isDeprecatedName) {
 }
 
 // ---------- Load root workspace config ----------
-const rootDir = resolve(import.meta.dir, "..");
+const rootDir = resolve(import.meta.dir, '..');
 let rootPkg: any;
 try {
   // Use require() because Bun supports comments in package.json when loaded this way
-  rootPkg = require(resolve(rootDir, "package.json"));
+  rootPkg = require(resolve(rootDir, 'package.json'));
 } catch (err) {
   console.error(`${colors.red}❌ Failed to parse root package.json${colors.reset}`);
   console.error(err);
@@ -105,7 +105,7 @@ if (workspaceGlobs.length === 0) {
   process.exit(1);
 }
 
-const normalizedGlobs = workspaceGlobs.map((g: string) => g.replace(/^\.\//, ""));
+const normalizedGlobs = workspaceGlobs.map((g: string) => g.replace(/^\.\//, ''));
 
 /**
  * Important note on glob behavior:
@@ -120,7 +120,7 @@ function matchesWorkspaceGlob(relPath: string): boolean {
   let isMatch = false;
 
   for (const pattern of normalizedGlobs) {
-    const isNegation = pattern.startsWith("!");
+    const isNegation = pattern.startsWith('!');
     const cleanPattern = isNegation ? pattern.slice(1) : pattern;
 
     const glob = new Bun.Glob(cleanPattern);
@@ -139,7 +139,7 @@ function matchesWorkspaceGlob(relPath: string): boolean {
 // ---------- Find all package.json files ----------
 const allPackageFiles: string[] = [];
 
-const pkgGlob = new Bun.Glob("**/package.json");
+const pkgGlob = new Bun.Glob('**/package.json');
 
 for await (const pkgFile of pkgGlob.scan({
   cwd: rootDir,
@@ -148,7 +148,7 @@ for await (const pkgFile of pkgGlob.scan({
   // We will filter manually after.
 })) {
   // Manual ignore filtering
-  const rel = relative(rootDir, pkgFile).replace(/\\/g, "/");
+  const rel = relative(rootDir, pkgFile).replace(/\\/g, '/');
   let shouldIgnore = false;
   for (const ignorePattern of IGNORE_GLOBS) {
     if (new Bun.Glob(ignorePattern).match(rel)) {
@@ -166,7 +166,7 @@ const covered: string[] = [];
 const orphaned: string[] = [];
 
 for (const pkgFile of allPackageFiles) {
-  const relPath = relative(rootDir, pkgFile).replace(/\\/g, "/");
+  const relPath = relative(rootDir, pkgFile).replace(/\\/g, '/');
 
   if (EXEMPT_PATHS.includes(relPath)) {
     covered.push(pkgFile);
@@ -182,16 +182,18 @@ for (const pkgFile of allPackageFiles) {
 
 // ---------- Output ----------
 console.info(`${colors.bold}\n📦 Workspace Coverage Report\n${colors.reset}`);
-console.info(`  Root workspaces globs: ${colors.cyan}${normalizedGlobs.join(", ")}${colors.reset}\n`);
+console.info(
+  `  Root workspaces globs: ${colors.cyan}${normalizedGlobs.join(', ')}${colors.reset}\n`
+);
 
 console.info(`${colors.green}✅ Covered packages: ${covered.length}${colors.reset}`);
 if (covered.length > 0 && verbose) {
-  covered.forEach((f) => console.info(`   ${relative(rootDir, f)}`));
+  covered.forEach(f => console.info(`   ${relative(rootDir, f)}`));
 }
 
 console.info(`${colors.red}\n❌ Orphaned packages: ${orphaned.length}${colors.reset}`);
 if (orphaned.length > 0) {
-  orphaned.forEach((f) => console.info(`   ${colors.red}${relative(rootDir, f)}${colors.reset}`));
+  orphaned.forEach(f => console.info(`   ${colors.red}${relative(rootDir, f)}${colors.reset}`));
   console.info(
     `${colors.yellow}\n💡 Tip: Use --verbose to see all covered packages. Add missing paths to 'workspaces.packages' or move the package.json.${colors.reset}`
   );
@@ -199,9 +201,13 @@ if (orphaned.length > 0) {
 
 // ---------- Exit code ----------
 if (orphaned.length > 0) {
-  console.error(`${colors.red}\n❌ Workspace validation failed. Fix the orphaned packages above.\n${colors.reset}`);
+  console.error(
+    `${colors.red}\n❌ Workspace validation failed. Fix the orphaned packages above.\n${colors.reset}`
+  );
   process.exit(1);
 } else {
-  console.info(`${colors.green}\n✅ All packages are correctly covered by root workspaces.\n${colors.reset}`);
+  console.info(
+    `${colors.green}\n✅ All packages are correctly covered by root workspaces.\n${colors.reset}`
+  );
   process.exit(0);
 }

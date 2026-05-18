@@ -2,7 +2,7 @@
 
 /**
  * Enhanced Watch Engine v3.14 - Production-Hardened, Zero-Dependency
- * 
+ *
  * Tier-1380 optimization complete with adaptive debounce, health checks,
  * and real-time dashboard for Bun --watch + --filter integration.
  */
@@ -11,10 +11,23 @@ import { Glob, stringWidth } from 'bun';
 
 // Type assertions for Bun APIs
 const BunAPI = globalThis as any;
-const watch = BunAPI.Bun?.watch || (() => { throw new Error('watch not available'); });
-const spawn = BunAPI.Bun?.spawn || (() => { throw new Error('spawn not available'); });
-const serve = BunAPI.Bun?.serve || (() => { throw new Error('serve not available'); });
-const sleep = BunAPI.Bun?.sleep || ((ms: number) => new Promise(resolve => setTimeout(resolve, ms)));
+const watch =
+  BunAPI.Bun?.watch ||
+  (() => {
+    throw new Error('watch not available');
+  });
+const spawn =
+  BunAPI.Bun?.spawn ||
+  (() => {
+    throw new Error('spawn not available');
+  });
+const serve =
+  BunAPI.Bun?.serve ||
+  (() => {
+    throw new Error('serve not available');
+  });
+const sleep =
+  BunAPI.Bun?.sleep || ((ms: number) => new Promise(resolve => setTimeout(resolve, ms)));
 const inspect = BunAPI.Bun?.inspect || ((obj: any) => JSON.stringify(obj, null, 2));
 
 // Enhanced interfaces
@@ -74,7 +87,7 @@ async function loadGitignore(basePath: string): Promise<Set<string>> {
   const gitignorePath = `${basePath}/.gitignore`;
   const file = BunAPI.Bun.file(gitignorePath);
   if (!(await file.exists())) return new Set();
-  
+
   const content = await file.text();
   return new Set(
     content
@@ -86,15 +99,26 @@ async function loadGitignore(basePath: string): Promise<Set<string>> {
 
 function shouldIgnore(filename: string, gitignore: Set<string>): boolean {
   if (!filename) return true;
-  
-  const builtins = ['node_modules', '.git', 'dist', 'build', '.env', '.log', '.tmp', 'coverage', '.next', '.nuxt'];
+
+  const builtins = [
+    'node_modules',
+    '.git',
+    'dist',
+    'build',
+    '.env',
+    '.log',
+    '.tmp',
+    'coverage',
+    '.next',
+    '.nuxt',
+  ];
   if (builtins.some(b => filename.includes(b))) return true;
-  
+
   // Check gitignore patterns
   for (const pattern of Array.from(gitignore)) {
     if (filename.includes(pattern.replace('*', ''))) return true;
   }
-  
+
   return false;
 }
 
@@ -102,21 +126,21 @@ function shouldIgnore(filename: string, gitignore: Set<string>): boolean {
 class AdaptiveDebounce {
   private timers = new Map<string, number>();
   private burstCount = new Map<string, number>();
-  
+
   async wait(key: string, baseMs: number = 100): Promise<boolean> {
     const now = Date.now();
     const last = this.timers.get(key) || 0;
     const burst = (this.burstCount.get(key) || 0) + 1;
-    
+
     // Adaptive: more changes = longer debounce
     const adaptiveMs = Math.min(baseMs * Math.log2(burst + 1), 1000);
-    
+
     if (now - last < adaptiveMs) {
       await sleep(adaptiveMs - (now - last));
       this.burstCount.set(key, burst);
       return false; // Skipped (too rapid)
     }
-    
+
     this.timers.set(key, now);
     this.burstCount.set(key, 0);
     return true; // Proceed
@@ -135,7 +159,7 @@ export async function createWatchSession(
   const packages = await discoverWorkspacePackages();
   const glob = new Glob(pattern);
   const matched = packages.filter(p => glob.match(p.name));
-  
+
   if (matched.length === 0) {
     console.info(c.yellow(`⚠️  No packages match: ${pattern}`));
     return '';
@@ -149,21 +173,19 @@ export async function createWatchSession(
       name: p.name,
       path: p.path,
       status: 'idle',
-      lastRestart: 0
+      lastRestart: 0,
     })),
     startTime: Date.now(),
     restartCount: 0,
     lastChange: 0,
     status: 'active',
-    metrics: { totalRestarts: 0, avgRestartMs: 0, errors: 0 }
+    metrics: { totalRestarts: 0, avgRestartMs: 0, errors: 0 },
   };
 
   sessions.set(sessionId, session);
 
   // Setup watchers
-  await Promise.all(session.packages.map(pkg => 
-    setupPackageWatcher(session, pkg, opts)
-  ));
+  await Promise.all(session.packages.map(pkg => setupPackageWatcher(session, pkg, opts)));
 
   // Health check loop
   if (opts.healthCheckUrl) {
@@ -180,10 +202,10 @@ async function setupPackageWatcher(
   opts: WatchOptions
 ): Promise<void> {
   const gitignore = await loadGitignore(pkg.path);
-  
+
   pkg.watcher = watch(pkg.path, { recursive: true }, async (event, filename) => {
     if (shouldIgnore(filename || '', gitignore)) return;
-    
+
     const shouldProceed = await debounce.wait(`${pkg.name}:${filename}`, opts.debounceMs);
     if (!shouldProceed) return;
 
@@ -192,32 +214,36 @@ async function setupPackageWatcher(
     pkg.status = 'running';
 
     if (opts.clearScreen) console.clear();
-    
+
     const startMs = performance.now();
-    
+
     console.info(c.cyan(`\n[${fmtTime()}] 🔄 ${pkg.name}: ${event} ${c.bold(filename || '')}`));
 
     try {
       // Kill existing process if any
       if (pkg.pid) {
-        try { process.kill(pkg.pid, 'SIGTERM'); } catch {
-    console.error('Unhandled error:', error);
-  }
+        try {
+          process.kill(pkg.pid, 'SIGTERM');
+        } catch {
+          console.error('Unhandled error:', error);
+        }
       }
 
       const proc = spawn({
-        cmd: opts.smolMode ? ['bun', '--smol', 'run', session.script] : ['bun', 'run', session.script],
+        cmd: opts.smolMode
+          ? ['bun', '--smol', 'run', session.script]
+          : ['bun', 'run', session.script],
         cwd: pkg.path,
         stdout: 'pipe',
         stderr: 'pipe',
-        env: { 
-          ...BunAPI.Bun.env, 
+        env: {
+          ...BunAPI.Bun.env,
           FORCE_COLOR: '1',
           BUN_WATCH_SESSION: session.id,
           BUN_WATCH_PACKAGE: pkg.name,
           ...(opts.consoleDepth && { BUN_CONSOLE_DEPTH: String(opts.consoleDepth) }),
-          ...(opts.hotReload && { BUN_HOT_RELOAD: '1' })
-        }
+          ...(opts.hotReload && { BUN_HOT_RELOAD: '1' }),
+        },
       });
 
       pkg.pid = proc.pid;
@@ -228,12 +254,12 @@ async function setupPackageWatcher(
 
       const exitCode = await proc.exited;
       const duration = performance.now() - startMs;
-      
+
       // Update metrics
       session.metrics.totalRestarts++;
-      session.metrics.avgRestartMs = 
-        (session.metrics.avgRestartMs * (session.metrics.totalRestarts - 1) + duration) 
-        / session.metrics.totalRestarts;
+      session.metrics.avgRestartMs =
+        (session.metrics.avgRestartMs * (session.metrics.totalRestarts - 1) + duration) /
+        session.metrics.totalRestarts;
 
       if (exitCode === 0) {
         pkg.status = 'idle';
@@ -245,7 +271,6 @@ async function setupPackageWatcher(
       }
 
       session.restartCount++;
-
     } catch (err) {
       pkg.status = 'error';
       session.metrics.errors++;
@@ -256,19 +281,23 @@ async function setupPackageWatcher(
   });
 }
 
-function streamWithPrefix(stream: ReadableStream, pkgName: string, type: 'stdout' | 'stderr'): void {
+function streamWithPrefix(
+  stream: ReadableStream,
+  pkgName: string,
+  type: 'stdout' | 'stderr'
+): void {
   const color = type === 'stderr' ? c.red : (s: string) => s;
   const prefix = c.cyan(`[${pkgName}]`);
-  
+
   (async () => {
     const reader = stream.getReader();
     const decoder = new TextDecoder();
-    
+
     try {
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
-        
+
         const text = decoder.decode(value);
         const lines = text.trim().split('\n');
         lines.forEach(line => {
@@ -286,34 +315,40 @@ function streamWithPrefix(stream: ReadableStream, pkgName: string, type: 'stdout
 // 📊 ENHANCED: Real-time dashboard with Bun.inspect
 function renderSessionDashboard(session: WatchSession): void {
   if (!sessions.has(session.id)) return; // Session was stopped
-  
+
   console.clear();
   console.info(c.bold(`\n👁️  WATCH SESSION: ${session.pattern}\n`));
-  
+
   const tableData = session.packages.map(p => [
     p.name,
     getStatusIcon(p.status),
     p.pid || '-',
     p.lastRestart ? fmtTime(p.lastRestart) : '-',
-    `${Math.round(performance.now() - session.startTime / 1000)}s`
+    `${Math.round(performance.now() - session.startTime / 1000)}s`,
   ]);
 
-  console.info(inspect.table(tableData, {
-    headers: ['Package', 'Status', 'PID', 'Last Restart', 'Uptime'],
-    colors: true
-  }));
+  console.info(
+    inspect.table(tableData, {
+      headers: ['Package', 'Status', 'PID', 'Last Restart', 'Uptime'],
+      colors: true,
+    })
+  );
 
   console.info(c.bold(`\n📈 Metrics:`));
-  console.info(`  Restarts: ${session.metrics.totalRestarts} | ` +
-    `Avg: ${session.metrics.avgRestartMs.toFixed(0)}ms | ` +
-    `Errors: ${session.metrics.errors > 0 ? c.red(String(session.metrics.errors)) : '0'}`);
-  
+  console.info(
+    `  Restarts: ${session.metrics.totalRestarts} | ` +
+      `Avg: ${session.metrics.avgRestartMs.toFixed(0)}ms | ` +
+      `Errors: ${session.metrics.errors > 0 ? c.red(String(session.metrics.errors)) : '0'}`
+  );
+
   console.info(c.bold(`\n⚡ Performance:`));
-  console.info(`  Session: ${session.id} | ` +
-    `Packages: ${session.packages.length} | ` +
-    `Pattern: ${c.cyan(session.pattern)} | ` +
-    `Script: ${c.green(session.script)}`);
-  
+  console.info(
+    `  Session: ${session.id} | ` +
+      `Packages: ${session.packages.length} | ` +
+      `Pattern: ${c.cyan(session.pattern)} | ` +
+      `Script: ${c.green(session.script)}`
+  );
+
   console.info(c.yellow(`\nPress Ctrl+C to stop\n`));
 }
 
@@ -327,7 +362,7 @@ function getStatusIcon(status: string): string {
   const icons: Record<string, string> = {
     idle: '⏸️',
     running: '🔄',
-    error: '❌'
+    error: '❌',
   };
   return icons[status] || '❓';
 }
@@ -337,13 +372,13 @@ function fmtTime(ts?: number): string {
   return d.toLocaleTimeString('en-US', { hour12: false });
 }
 
-async function discoverWorkspacePackages(): Promise<Array<{name: string, path: string}>> {
+async function discoverWorkspacePackages(): Promise<Array<{ name: string; path: string }>> {
   // Read from package.json workspaces or bun.lockb
   const pkg = await BunAPI.Bun.file('package.json').json();
   const patterns = pkg.workspaces || ['packages/*'];
-  
-  const packages: Array<{name: string, path: string}> = [];
-  
+
+  const packages: Array<{ name: string; path: string }> = [];
+
   for (const pattern of patterns) {
     const glob = new Glob(pattern);
     for await (const path of glob.scan('.')) {
@@ -355,7 +390,7 @@ async function discoverWorkspacePackages(): Promise<Array<{name: string, path: s
       }
     }
   }
-  
+
   return packages;
 }
 
@@ -370,9 +405,11 @@ function startHealthCheck(session: WatchSession, url: string): void {
       // Trigger restart of all packages
       session.packages.forEach(p => {
         if (p.pid) {
-          try { process.kill(p.pid, 'SIGTERM'); } catch {
-    console.error('Unhandled error:', error);
-  }
+          try {
+            process.kill(p.pid, 'SIGTERM');
+          } catch {
+            console.error('Unhandled error:', error);
+          }
         }
       });
     }
@@ -388,56 +425,64 @@ export function startWebSocketDashboard(port: number = 3001): void {
         server.upgrade(req);
         return undefined;
       }
-      
+
       if (req.url === '/') {
         return new Response(getWatchDashboardHTML(), {
-          headers: { 'Content-Type': 'text/html' }
+          headers: { 'Content-Type': 'text/html' },
         });
       }
-      
+
       return new Response('Watch Dashboard API', { status: 200 });
     },
     websocket: {
       open(ws) {
         console.info(c.blue(`📡 Dashboard client connected`));
         // Send initial state
-        ws.send(JSON.stringify({
-          type: 'init',
-          sessions: Array.from(sessions.values())
-        }));
+        ws.send(
+          JSON.stringify({
+            type: 'init',
+            sessions: Array.from(sessions.values()),
+          })
+        );
       },
       message(ws, msg) {
         try {
           const { action, pattern, script, options } = JSON.parse(msg as string);
-          
+
           switch (action) {
             case 'start':
               createWatchSession(pattern, script, options).then(sessionId => {
-                ws.send(JSON.stringify({ 
-                  type: 'started', 
-                  sessionId,
-                  sessions: Array.from(sessions.values())
-                }));
+                ws.send(
+                  JSON.stringify({
+                    type: 'started',
+                    sessionId,
+                    sessions: Array.from(sessions.values()),
+                  })
+                );
               });
               break;
-              
+
             case 'stop':
               const session = Array.from(sessions.values()).find(s => s.pattern === pattern);
               if (session) {
                 stopWatchSession(session.id);
-                ws.send(JSON.stringify({ 
-                  type: 'stopped', 
-                  sessionId: session.id,
-                  sessions: Array.from(sessions.values())
-                }));
+                ws.send(
+                  JSON.stringify({
+                    type: 'stopped',
+                    sessionId: session.id,
+                    sessions: Array.from(sessions.values()),
+                  })
+                );
               }
               break;
-              
+
             case 'list':
-              ws.send(JSON.stringify({ 
-                type: 'sessions',
-                sessions: Array.from(sessions.values())
-              }));
+              ws.send(
+                JSON.stringify({
+                  type: 'sessions',
+                  sessions: Array.from(sessions.values()),
+                })
+              );
               break;
           }
         } catch (error) {
@@ -446,10 +491,10 @@ export function startWebSocketDashboard(port: number = 3001): void {
       },
       close(ws) {
         console.info(c.yellow(`📡 Dashboard client disconnected`));
-      }
-    }
+      },
+    },
   });
-  
+
   console.info(c.green(`🌐 Watch dashboard running on http://localhost:${port}`));
 }
 
@@ -673,18 +718,20 @@ function getWatchDashboardHTML(): string {
 export function stopWatchSession(sessionId: string): void {
   const session = sessions.get(sessionId);
   if (!session) return;
-  
+
   console.info(c.yellow(`🛑 Stopping watch session: ${session.pattern}`));
-  
+
   session.packages.forEach(pkg => {
     if (pkg.pid) {
-      try { process.kill(pkg.pid, 'SIGTERM'); } catch {
-    console.error('Unhandled error:', error);
-  }
+      try {
+        process.kill(pkg.pid, 'SIGTERM');
+      } catch {
+        console.error('Unhandled error:', error);
+      }
     }
     pkg.watcher?.stop();
   });
-  
+
   sessions.delete(sessionId);
 }
 
@@ -714,19 +761,22 @@ export async function runWatchCLI(): Promise<void> {
     hot: args.includes('--hot'),
     smol: args.includes('--smol'),
     filter: args.find((a, i) => args[i - 1] === '--filter') || '*',
-    script: args.find(a => !a.startsWith('-') && !['--filter', '--watch', '--hot', '--smol'].includes(a)) || 'dev',
+    script:
+      args.find(
+        a => !a.startsWith('-') && !['--filter', '--watch', '--hot', '--smol'].includes(a)
+      ) || 'dev',
     consoleDepth: (() => {
       const idx = args.findIndex(a => a === '--console-depth');
       return idx !== -1 ? parseInt(args[idx + 1]) || 2 : undefined;
-    })()
+    })(),
   };
 
   if (flags.watch || flags.hot) {
     console.info(c.bold('🚀 Starting Enhanced Watch Engine v3.14'));
-    
+
     // Start WebSocket dashboard
     startWebSocketDashboard(3001);
-    
+
     // Create watch session
     const sessionId = await createWatchSession(flags.filter, flags.script, {
       clearScreen: true,
@@ -735,9 +785,9 @@ export async function runWatchCLI(): Promise<void> {
       healthCheckUrl: process.env.HEALTH_CHECK_URL,
       hotReload: flags.hot,
       smolMode: flags.smol,
-      consoleDepth: flags.consoleDepth
+      consoleDepth: flags.consoleDepth,
     });
-    
+
     if (sessionId) {
       console.info(c.green(`✅ Watch session started: ${sessionId}`));
     } else {

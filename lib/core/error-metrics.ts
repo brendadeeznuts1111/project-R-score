@@ -1,9 +1,6 @@
 // lib/core/error-metrics.ts — Error metrics collection and alerting system
 
-import {
-  BaseEnterpriseError,
-  EnterpriseErrorCode,
-} from './core-errors';
+import { BaseEnterpriseError, EnterpriseErrorCode } from './core-errors';
 import { SecurityRiskLevel } from './core-types';
 
 /**
@@ -115,20 +112,20 @@ type AlertHandler = (alert: Alert) => Promise<void>;
 
 /**
  * Error Metrics Collector
- * 
+ *
  * Collects, aggregates, and alerts on error patterns in real-time.
  * Supports multiple alert channels with rate limiting and cooldowns.
- * 
+ *
  * @example
  * ```typescript
  * const metrics = new ErrorMetricsCollector({
  *   retentionMs: 24 * 60 * 60 * 1000, // 24 hours
  *   aggregationWindowMs: 5 * 60 * 1000, // 5 minutes
  * });
- * 
+ *
  * // Record errors
  * metrics.record(error);
- * 
+ *
  * // Configure alerts
  * metrics.addAlert({
  *   minSeverity: AlertSeverity.CRITICAL,
@@ -137,7 +134,7 @@ type AlertHandler = (alert: Alert) => Promise<void>;
  *   cooldownMs: 5 * 60 * 1000, // 5 minutes
  *   rateLimit: { maxAlerts: 10, windowMs: 60 * 60 * 1000 },
  * });
- * 
+ *
  * // Get aggregations
  * const stats = metrics.getAggregation({
  *   start: Date.now() - 60 * 60 * 1000, // last hour
@@ -175,12 +172,15 @@ export class ErrorMetricsCollector {
   /**
    * Record an error metric
    */
-  record(error: Error | BaseEnterpriseError, context?: {
-    service?: string;
-    endpoint?: string;
-    userId?: string;
-    requestId?: string;
-  }): void {
+  record(
+    error: Error | BaseEnterpriseError,
+    context?: {
+      service?: string;
+      endpoint?: string;
+      userId?: string;
+      requestId?: string;
+    }
+  ): void {
     const metric: ErrorMetric = {
       timestamp: Date.now(),
       code: this.extractErrorCode(error),
@@ -537,9 +537,13 @@ export class ErrorMetricsCollector {
 
   private registerDefaultHandlers(): void {
     // Console handler
-    this.alertHandlers.set(AlertChannel.CONSOLE, async (alert) => {
-      const icon = alert.severity === AlertSeverity.CRITICAL ? '🚨' :
-                   alert.severity === AlertSeverity.WARNING ? '⚠️' : 'ℹ️';
+    this.alertHandlers.set(AlertChannel.CONSOLE, async alert => {
+      const icon =
+        alert.severity === AlertSeverity.CRITICAL
+          ? '🚨'
+          : alert.severity === AlertSeverity.WARNING
+            ? '⚠️'
+            : 'ℹ️';
       console.info(`${icon} [${alert.severity.toUpperCase()}] ${alert.title}`);
       console.info(`   ${alert.message}`);
       console.info(`   Service: ${alert.error.service || 'unknown'}`);
@@ -547,7 +551,7 @@ export class ErrorMetricsCollector {
     });
 
     // Webhook handler
-    this.alertHandlers.set(AlertChannel.WEBHOOK, async (alert) => {
+    this.alertHandlers.set(AlertChannel.WEBHOOK, async alert => {
       const config = alert.error.context?.webhookConfig;
       if (!config?.url) return;
 
@@ -573,30 +577,36 @@ export class ErrorMetricsCollector {
     });
 
     // Slack handler
-    this.alertHandlers.set(AlertChannel.SLACK, async (alert) => {
+    this.alertHandlers.set(AlertChannel.SLACK, async alert => {
       const config = alert.error.context?.slackConfig;
       if (!config?.webhookUrl) return;
 
-      const color = alert.severity === AlertSeverity.CRITICAL ? '#FF0000' :
-                    alert.severity === AlertSeverity.WARNING ? '#FFA500' : '#36A64F';
+      const color =
+        alert.severity === AlertSeverity.CRITICAL
+          ? '#FF0000'
+          : alert.severity === AlertSeverity.WARNING
+            ? '#FFA500'
+            : '#36A64F';
 
       try {
         await fetch(config.webhookUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            attachments: [{
-              color,
-              title: alert.title,
-              text: alert.message,
-              fields: [
-                { title: 'Service', value: alert.error.service || 'unknown', short: true },
-                { title: 'Code', value: alert.error.code, short: true },
-                { title: 'Severity', value: alert.severity, short: true },
-                { title: 'Endpoint', value: alert.error.endpoint || 'N/A', short: true },
-              ],
-              ts: Math.floor(alert.timestamp / 1000),
-            }],
+            attachments: [
+              {
+                color,
+                title: alert.title,
+                text: alert.message,
+                fields: [
+                  { title: 'Service', value: alert.error.service || 'unknown', short: true },
+                  { title: 'Code', value: alert.error.code, short: true },
+                  { title: 'Severity', value: alert.severity, short: true },
+                  { title: 'Endpoint', value: alert.error.endpoint || 'N/A', short: true },
+                ],
+                ts: Math.floor(alert.timestamp / 1000),
+              },
+            ],
           }),
         });
       } catch (error) {
@@ -606,11 +616,14 @@ export class ErrorMetricsCollector {
   }
 
   private startCleanup(): void {
-    this.cleanupInterval = setInterval(() => {
-      const cutoff = Date.now() - this.config.retentionMs!;
-      this.metrics = this.metrics.filter(m => m.timestamp >= cutoff);
-      this.alerts = this.alerts.filter(a => a.timestamp >= cutoff);
-    }, 5 * 60 * 1000); // Clean up every 5 minutes
+    this.cleanupInterval = setInterval(
+      () => {
+        const cutoff = Date.now() - this.config.retentionMs!;
+        this.metrics = this.metrics.filter(m => m.timestamp >= cutoff);
+        this.alerts = this.alerts.filter(a => a.timestamp >= cutoff);
+      },
+      5 * 60 * 1000
+    ); // Clean up every 5 minutes
   }
 }
 
@@ -622,9 +635,9 @@ let globalCollector: ErrorMetricsCollector | null = null;
 /**
  * Get or create global metrics collector
  */
-export function getErrorMetricsCollector(config?: ConstructorParameters<
-  typeof ErrorMetricsCollector
->[0]): ErrorMetricsCollector {
+export function getErrorMetricsCollector(
+  config?: ConstructorParameters<typeof ErrorMetricsCollector>[0]
+): ErrorMetricsCollector {
   if (!globalCollector) {
     globalCollector = new ErrorMetricsCollector(config);
   }
@@ -678,15 +691,15 @@ if (import.meta.main) {
   // Record some errors
   console.info('Recording errors...\n');
 
-  metrics.record(
-    new Error('Database connection failed'),
-    { service: 'user-service', endpoint: '/api/users' }
-  );
+  metrics.record(new Error('Database connection failed'), {
+    service: 'user-service',
+    endpoint: '/api/users',
+  });
 
-  metrics.record(
-    new Error('API rate limit exceeded'),
-    { service: 'payment-service', endpoint: '/api/payments' }
-  );
+  metrics.record(new Error('API rate limit exceeded'), {
+    service: 'payment-service',
+    endpoint: '/api/payments',
+  });
 
   // Get aggregation
   const aggregation = metrics.getAggregation({

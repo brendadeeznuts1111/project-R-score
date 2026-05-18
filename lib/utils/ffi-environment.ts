@@ -88,8 +88,8 @@ export function verifyFFIEnvironment(): { valid: boolean; issues: string[] } {
         issues.push('NixOS/Guix require C_INCLUDE_PATH and LIBRARY_PATH');
       }
     } catch {
-    console.error('Unhandled error:', error);
-  }
+      console.error('Unhandled error:', error);
+    }
   }
 
   return {

@@ -132,8 +132,8 @@ class ProxyWebSocketClient {
         try {
           ws.close();
         } catch {
-    console.error('Unhandled error:', error);
-  }
+          console.error('Unhandled error:', error);
+        }
         reject(new Error('Connection timeout'));
       }, 10000);
       ws.onopen = () => {
@@ -157,8 +157,8 @@ class ProxyWebSocketClient {
         try {
           ws.close();
         } catch {
-    console.error('Unhandled error:', error);
-  }
+          console.error('Unhandled error:', error);
+        }
         console.error(`💥 WebSocket ${id} error:`, err);
         redis.publish('ws:error', JSON.stringify({ id, error: String(err) }));
         reject(err);

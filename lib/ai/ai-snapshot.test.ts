@@ -45,8 +45,8 @@ describe('snapshots', () => {
       cache.set('y', 2);
       cache.set('z', 3);
       cache.set('w', 4); // evicts 'x'
-      cache.get('y');     // hit
-      cache.get('x');     // miss (evicted)
+      cache.get('y'); // hit
+      cache.get('x'); // miss (evicted)
 
       const stats = cache.getStats();
       expect({
@@ -69,14 +69,12 @@ describe('snapshots', () => {
     it('hex format matches UUIDv7 pattern', () => {
       const id = Bun.randomUUIDv7();
       // UUIDv7: xxxxxxxx-xxxx-7xxx-yxxx-xxxxxxxxxxxx
-      expect(id).toMatch(
-        /^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/,
-      );
+      expect(id).toMatch(/^[0-9a-f]{8}-[0-9a-f]{4}-7[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/);
     });
 
     it('base64url encoding is shorter than hex', () => {
-      const hex = Bun.randomUUIDv7("hex");
-      const b64 = Bun.randomUUIDv7("base64url");
+      const hex = Bun.randomUUIDv7('hex');
+      const b64 = Bun.randomUUIDv7('base64url');
       expect({
         hexLength: hex.length,
         base64urlLength: b64.length,
@@ -85,7 +83,7 @@ describe('snapshots', () => {
     });
 
     it('buffer encoding returns Buffer', () => {
-      const buf = Bun.randomUUIDv7("buffer");
+      const buf = Bun.randomUUIDv7('buffer');
       expect({
         type: buf.constructor.name,
         byteLength: buf.byteLength,
@@ -94,8 +92,8 @@ describe('snapshots', () => {
 
     it('timestamp parameter syncs with UUIDv7 time', () => {
       const ts = 1700000000000; // fixed timestamp
-      const a = Bun.randomUUIDv7("hex", ts);
-      const b = Bun.randomUUIDv7("hex", ts);
+      const a = Bun.randomUUIDv7('hex', ts);
+      const b = Bun.randomUUIDv7('hex', ts);
       // Same timestamp prefix (first 12 hex chars encode the 48-bit ms timestamp)
       expect(a.slice(0, 13)).toBe(b.slice(0, 13));
     });
@@ -253,9 +251,8 @@ ab:
 
   describe('Bun.inspect.custom', () => {
     it('SecureVariantManager redacts secretKey', async () => {
-      const { SecureVariantManager } = await import(
-        '../../examples/cookie-crc32/cookie-crc32-integrator'
-      );
+      const { SecureVariantManager } =
+        await import('../../examples/cookie-crc32/cookie-crc32-integrator');
       const manager = new SecureVariantManager({
         secretKey: 'super-secret-key-for-testing-purposes',
       });

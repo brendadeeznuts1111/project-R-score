@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * FACTORYWAGER RIPGREP v4.0 - AI Purge Engine
- * 
+ *
  * Local Llama integration for intelligent code analysis and purification
  */
 
@@ -20,10 +20,10 @@ interface AIPurgeConfig {
 }
 
 interface PurityScore {
-  overall: number;        // 0-100
+  overall: number; // 0-100
   bun_compliance: number; // 0-100
-  security: number;      // 0-100
-  performance: number;   // 0-100
+  security: number; // 0-100
+  performance: number; // 0-100
   maintainability: number; // 0-100
 }
 
@@ -48,7 +48,7 @@ class AIPurgeEngine {
 Your task is to analyze code for Bun-purity, security, performance, and maintainability. 
 Provide specific, actionable recommendations and score each dimension from 0-100.
 Focus on identifying opportunities to migrate from Node.js patterns to Bun-specific optimizations.`,
-      ...config
+      ...config,
     };
   }
 
@@ -60,9 +60,9 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
       const { spawn } = await import('bun');
       const result = await spawn(['ollama', 'list'], {
         stdout: 'pipe',
-        stderr: 'ignore'
+        stderr: 'ignore',
       });
-      
+
       const output = await new Response(result.stdout).text();
       return output.includes('NAME');
     } catch (error) {
@@ -76,12 +76,12 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
   private async callLlama(prompt: string): Promise<string> {
     try {
       const { spawn } = await import('bun');
-      
+
       const fullPrompt = `${this.config.systemPrompt}\n\n${prompt}`;
-      
+
       const result = await spawn(['ollama', 'run', this.config.model, fullPrompt], {
         stdout: 'pipe',
-        stderr: 'pipe'
+        stderr: 'pipe',
       });
 
       const response = await new Response(result.stdout).text();
@@ -96,29 +96,28 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
    * Fallback rule-based analysis when AI is unavailable
    */
   private getRuleBasedAnalysis(prompt: string): string {
-    return JSON.stringify({
-      purityScore: {
-        overall: 75,
-        bun_compliance: 70,
-        security: 80,
-        performance: 75,
-        maintainability: 80
+    return JSON.stringify(
+      {
+        purityScore: {
+          overall: 75,
+          bun_compliance: 70,
+          security: 80,
+          performance: 75,
+          maintainability: 80,
+        },
+        recommendations: [
+          'Replace require() statements with ES6 imports',
+          'Consider using Bun.file() for file operations',
+          'Add input validation for security',
+          'Optimize async operations',
+        ],
+        criticalIssues: ['Some legacy Node.js patterns detected'],
+        transmutations: ['Migrate to Bun-specific APIs', 'Implement modern JavaScript patterns'],
+        summary: 'Code shows good structure but needs Bun-specific optimizations.',
       },
-      recommendations: [
-        'Replace require() statements with ES6 imports',
-        'Consider using Bun.file() for file operations',
-        'Add input validation for security',
-        'Optimize async operations'
-      ],
-      criticalIssues: [
-        'Some legacy Node.js patterns detected'
-      ],
-      transmutations: [
-        'Migrate to Bun-specific APIs',
-        'Implement modern JavaScript patterns'
-      ],
-      summary: 'Code shows good structure but needs Bun-specific optimizations.'
-    }, null, 2);
+      null,
+      2
+    );
   }
 
   /**
@@ -130,13 +129,13 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
       if (response.startsWith('{')) {
         return JSON.parse(response);
       }
-      
+
       // Extract JSON from response if embedded
       const jsonMatch = response.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         return JSON.parse(jsonMatch[0]);
       }
-      
+
       // Fallback: create analysis from text
       return this.createAnalysisFromText(response);
     } catch (error) {
@@ -150,19 +149,23 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
    */
   private createAnalysisFromText(text: string): AIAnalysis {
     const lines = text.split('\n').filter(line => line.trim());
-    
+
     return {
       purityScore: {
         overall: 75,
         bun_compliance: 70,
         security: 80,
         performance: 75,
-        maintainability: 80
+        maintainability: 80,
       },
       recommendations: lines.filter(line => line.includes('recommend')).slice(0, 5),
-      criticalIssues: lines.filter(line => line.includes('critical') || line.includes('issue')).slice(0, 3),
-      transmutations: lines.filter(line => line.includes('transmute') || line.includes('migrate')).slice(0, 3),
-      summary: text.substring(0, 200) + (text.length > 200 ? '...' : '')
+      criticalIssues: lines
+        .filter(line => line.includes('critical') || line.includes('issue'))
+        .slice(0, 3),
+      transmutations: lines
+        .filter(line => line.includes('transmute') || line.includes('migrate'))
+        .slice(0, 3),
+      summary: text.substring(0, 200) + (text.length > 200 ? '...' : ''),
     };
   }
 
@@ -176,20 +179,16 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
         bun_compliance: 65,
         security: 75,
         performance: 70,
-        maintainability: 75
+        maintainability: 75,
       },
       recommendations: [
         'Review code for Bun-specific optimizations',
         'Update legacy patterns to modern equivalents',
-        'Add comprehensive error handling'
+        'Add comprehensive error handling',
       ],
-      criticalIssues: [
-        'AI analysis unavailable - manual review recommended'
-      ],
-      transmutations: [
-        'Consider Bun-specific API migrations'
-      ],
-      summary: 'Analysis completed with rule-based fallback methods.'
+      criticalIssues: ['AI analysis unavailable - manual review recommended'],
+      transmutations: ['Consider Bun-specific API migrations'],
+      summary: 'Analysis completed with rule-based fallback methods.',
     };
   }
 
@@ -199,24 +198,24 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
   private calculatePurityScore(report: any): PurityScore {
     const totalIssues = report.issuesFound;
     const totalFiles = report.totalFiles || 1;
-    
+
     // Base score starts at 100, subtract for issues
-    let baseScore = Math.max(0, 100 - (totalIssues * 2));
-    
+    let baseScore = Math.max(0, 100 - totalIssues * 2);
+
     // Categorize issues
-    const securityIssues = report.scanResults.filter((r: any) => 
-      r.content.includes('eval') || r.content.includes('innerHTML')
+    const securityIssues = report.scanResults.filter(
+      (r: any) => r.content.includes('eval') || r.content.includes('innerHTML')
     ).length;
-    
+
     const nonBunIssues = report.scanResults.filter((r: any) => r.type === 'nonbun').length;
     const linkIssues = report.scanResults.filter((r: any) => r.type === 'link').length;
-    
+
     return {
       overall: Math.round(baseScore),
-      bun_compliance: Math.round(baseScore - (nonBunIssues * 3)),
-      security: Math.round(baseScore - (securityIssues * 5)),
-      performance: Math.round(baseScore - (totalIssues * 1.5)),
-      maintainability: Math.round(baseScore - (linkIssues * 2))
+      bun_compliance: Math.round(baseScore - nonBunIssues * 3),
+      security: Math.round(baseScore - securityIssues * 5),
+      performance: Math.round(baseScore - totalIssues * 1.5),
+      maintainability: Math.round(baseScore - linkIssues * 2),
     };
   }
 
@@ -230,7 +229,9 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
     try {
       // Check Ollama availability
       const hasOllama = await this.checkOllamaAvailability();
-      console.info(`🔧 AI Engine: ${hasOllama ? '✅ Ollama + Llama available' : '⚠️  Using rule-based fallback'}`);
+      console.info(
+        `🔧 AI Engine: ${hasOllama ? '✅ Ollama + Llama available' : '⚠️  Using rule-based fallback'}`
+      );
 
       console.info(`📁 Analyzing directory: ${directory}`);
       console.info('🧠 Performing intelligent code analysis...');
@@ -247,7 +248,7 @@ Focus on identifying opportunities to migrate from Node.js patterns to Bun-speci
 
       // Calculate initial purity score
       const initialScore = this.calculatePurityScore(report);
-      
+
       // Prepare AI prompt
       const prompt = `
 Analyze the following code scan results and provide detailed recommendations:
@@ -258,7 +259,10 @@ Scan Summary:
 - Scan Time: ${scanTime}ms
 
 Issues by Type:
-${report.scanResults.slice(0, 10).map((r: any) => `- ${r.type}: ${r.file}:${r.line} - ${r.content.substring(0, 60)}`).join('\n')}
+${report.scanResults
+  .slice(0, 10)
+  .map((r: any) => `- ${r.type}: ${r.file}:${r.line} - ${r.content.substring(0, 60)}`)
+  .join('\n')}
 
 Current Purity Scores:
 - Overall: ${initialScore.overall}/100
@@ -279,20 +283,30 @@ Respond with JSON format containing: purityScore, recommendations, criticalIssue
 
       console.info('\n🤖 Running AI analysis...');
       const aiStartTime = Date.now();
-      
+
       const aiResponse = await this.callLlama(prompt);
       const analysis = this.parseAnalysis(aiResponse);
-      
+
       const aiTime = Date.now() - aiStartTime;
       console.info(`⚡ AI Analysis completed in ${aiTime}ms`);
 
       // Display results
       console.info('\n🎯 AI PURITY SCORES:');
-      console.info(`  Overall Score: ${analysis.purityScore.overall}/100 ${this.getScoreEmoji(analysis.purityScore.overall)}`);
-      console.info(`  Bun Compliance: ${analysis.purityScore.bun_compliance}/100 ${this.getScoreEmoji(analysis.purityScore.bun_compliance)}`);
-      console.info(`  Security: ${analysis.purityScore.security}/100 ${this.getScoreEmoji(analysis.purityScore.security)}`);
-      console.info(`  Performance: ${analysis.purityScore.performance}/100 ${this.getScoreEmoji(analysis.purityScore.performance)}`);
-      console.info(`  Maintainability: ${analysis.purityScore.maintainability}/100 ${this.getScoreEmoji(analysis.purityScore.maintainability)}`);
+      console.info(
+        `  Overall Score: ${analysis.purityScore.overall}/100 ${this.getScoreEmoji(analysis.purityScore.overall)}`
+      );
+      console.info(
+        `  Bun Compliance: ${analysis.purityScore.bun_compliance}/100 ${this.getScoreEmoji(analysis.purityScore.bun_compliance)}`
+      );
+      console.info(
+        `  Security: ${analysis.purityScore.security}/100 ${this.getScoreEmoji(analysis.purityScore.security)}`
+      );
+      console.info(
+        `  Performance: ${analysis.purityScore.performance}/100 ${this.getScoreEmoji(analysis.purityScore.performance)}`
+      );
+      console.info(
+        `  Maintainability: ${analysis.purityScore.maintainability}/100 ${this.getScoreEmoji(analysis.purityScore.maintainability)}`
+      );
 
       if (analysis.criticalIssues.length > 0) {
         console.info('\n🚨 CRITICAL ISSUES:');
@@ -323,7 +337,7 @@ Respond with JSON format containing: purityScore, recommendations, criticalIssue
       const purge = await this.engine.purgeRipgrep({
         scope: 'AI',
         type: 'PURGE',
-        pattern: `ai-purity-${analysis.purityScore.overall}-score`
+        pattern: `ai-purity-${analysis.purityScore.overall}-score`,
       });
 
       console.info(`  🆔 Purge ID: ${purge.id}`);
@@ -335,7 +349,6 @@ Respond with JSON format containing: purityScore, recommendations, criticalIssue
       console.info(`  Code Scan: ${scanTime}ms`);
       console.info(`  AI Analysis: ${aiTime}ms`);
       console.info(`  Total Time: ${scanTime + aiTime}ms`);
-
     } catch (error) {
       console.error('❌ AI purge failed:', error.message);
       process.exit(1);
@@ -368,7 +381,7 @@ async function main() {
       const directory = args[0] || '.';
       await engine.purgeCommand(directory);
       break;
-      
+
     case 'help':
     case '--help':
     case '-h':
@@ -401,7 +414,7 @@ INSTALLATION:
   ollama pull llama3.2:latest
       `);
       break;
-      
+
     default:
       console.error(`❌ Unknown command: ${command}`);
       console.info('Run "bun run scripts/bun-ai-purge.ts help" for available commands');

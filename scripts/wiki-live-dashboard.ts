@@ -2,7 +2,7 @@
 
 /**
  * Wiki v3.19 - Live Dashboard with HMR Preview
- * 
+ *
  * Live wiki editor in native dashboard (Bun.markdown.react HMR + reactFastRefresh)
  * Multi-lang wiki support with JSONC i18n and real-time preview
  */
@@ -35,32 +35,32 @@ async function loadWikiI18n(): Promise<WikiI18n> {
     // Fallback to default i18n
     return {
       en: {
-        title: "AI Wiki v3.19",
+        title: 'AI Wiki v3.19',
         sections: {},
         metadata: {
           lastUpdated: new Date().toISOString(),
-          version: "v3.19.0",
-          author: "AI Generator"
-        }
+          version: 'v3.19.0',
+          author: 'AI Generator',
+        },
       },
       es: {
-        title: "Wiki IA v3.19",
+        title: 'Wiki IA v3.19',
         sections: {},
         metadata: {
           lastUpdated: new Date().toISOString(),
-          version: "v3.19.0",
-          author: "Generador IA"
-        }
+          version: 'v3.19.0',
+          author: 'Generador IA',
+        },
       },
       fr: {
-        title: "Wiki IA v3.19",
+        title: 'Wiki IA v3.19',
         sections: {},
         metadata: {
           lastUpdated: new Date().toISOString(),
-          version: "v3.19.0",
-          author: "Générateur IA"
-        }
-      }
+          version: 'v3.19.0',
+          author: 'Générateur IA',
+        },
+      },
     };
   }
 }
@@ -70,47 +70,51 @@ const server = (globalThis as any).Bun.serve({
   port: 8080,
   async fetch(req) {
     const url = new URL(req.url);
-    
+
     // CORS headers
     const corsHeaders = {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // /wiki-live → AI Gen + React Editor (HMR!)
     if (url.pathname === '/wiki-live') {
       const prompt = url.searchParams.get('prompt') || 'changelog section';
       const format = url.searchParams.get('format') || 'react';
       const lang = url.searchParams.get('lang') || 'en';
       const hmr = url.searchParams.get('hmr') !== 'false';
-      
+
       try {
         console.info(`🔥 Live Wiki Request: prompt="${prompt}" format="${format}" lang="${lang}"`);
         const startTime = performance.now();
-        
+
         // Generate AI wiki section
         const wikiSection = await aiWikiSection(prompt);
-        
+
         // Add i18n context
         const i18n = await loadWikiI18n();
         const localizedContent = `${i18n[lang]?.title || 'AI Wiki'}\n\n${wikiSection}`;
-        
+
         let renderTime = performance.now() - startTime;
         let content: string;
         let contentType: string;
-        
+
         switch (format) {
           case 'react':
             // Use Bun.markdown.react with HMR support
-            const reactEl = (globalThis as any).Bun.markdown.react(localizedContent, {}, { 
-              reactFastRefresh: hmr 
-            });
-            
+            const reactEl = (globalThis as any).Bun.markdown.react(
+              localizedContent,
+              {},
+              {
+                reactFastRefresh: hmr,
+              }
+            );
+
             // Simple React render (in production, you'd use a proper renderer)
             content = `
 <!DOCTYPE html>
@@ -196,61 +200,63 @@ const server = (globalThis as any).Bun.serve({
 </html>`;
             contentType = 'text/html';
             break;
-            
+
           case 'html':
             // Use Bun.markdown.html
             content = (globalThis as any).Bun.markdown.html(localizedContent);
             contentType = 'text/html';
             break;
-            
+
           case 'ansi':
             // Use Bun.markdown.ansi for terminal output
             content = (globalThis as any).Bun.markdown.ansi(localizedContent);
             contentType = 'text/plain';
             break;
-            
+
           default:
             content = localizedContent;
             contentType = 'text/plain';
         }
-        
+
         renderTime = performance.now() - startTime;
-        
-        return new Response(content, { 
-          headers: { 
+
+        return new Response(content, {
+          headers: {
             'Content-Type': contentType,
             'X-Render-Time': renderTime.toFixed(2),
             'X-HMR-Enabled': hmr.toString(),
             'X-Language': lang,
-            ...corsHeaders
-          } 
+            ...corsHeaders,
+          },
         });
-        
       } catch (error) {
-        return new Response(JSON.stringify({
-          error: error instanceof Error ? error.message : String(error),
-          timestamp: new Date().toISOString(),
-          prompt,
-          format,
-          lang
-        }), { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders }
-        });
+        return new Response(
+          JSON.stringify({
+            error: error instanceof Error ? error.message : String(error),
+            timestamp: new Date().toISOString(),
+            prompt,
+            format,
+            lang,
+          }),
+          {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          }
+        );
       }
     }
-    
+
     // POST /wiki-live → Submit markdown for preview
     if (url.pathname === '/wiki-live' && req.method === 'POST') {
       try {
         const body = await req.text();
         const { prompt, format = 'react', lang = 'en', hmr = true } = JSON.parse(body);
-        
+
         // Generate and render
         const wikiSection = await aiWikiSection(prompt);
         const i18n = await loadWikiI18n();
         const localizedContent = `${i18n[lang]?.title || 'AI Wiki'}\n\n${wikiSection}`;
-        
+
         let content: string;
         switch (format) {
           case 'html':
@@ -262,58 +268,66 @@ const server = (globalThis as any).Bun.serve({
           default:
             content = localizedContent;
         }
-        
-        return new Response(JSON.stringify({
-          content,
-          prompt,
-          format,
-          lang,
-          hmr,
-          timestamp: new Date().toISOString()
-        }), { 
-          headers: { 'Content-Type': 'application/json', ...corsHeaders }
-        });
-        
+
+        return new Response(
+          JSON.stringify({
+            content,
+            prompt,
+            format,
+            lang,
+            hmr,
+            timestamp: new Date().toISOString(),
+          }),
+          {
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          }
+        );
       } catch (error) {
-        return new Response(JSON.stringify({
-          error: error instanceof Error ? error.message : String(error)
-        }), { 
-          status: 400,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders }
-        });
+        return new Response(
+          JSON.stringify({
+            error: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            status: 400,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          }
+        );
       }
     }
-    
+
     // /wiki-i18n → Get i18n configuration
     if (url.pathname === '/wiki-i18n') {
       const i18n = await loadWikiI18n();
-      return new Response(JSON.stringify(i18n, null, 2), { 
-        headers: { 'Content-Type': 'application/json', ...corsHeaders }
+      return new Response(JSON.stringify(i18n, null, 2), {
+        headers: { 'Content-Type': 'application/json', ...corsHeaders },
       });
     }
-    
+
     // /wiki-gen → Generate full wiki
     if (url.pathname === '/wiki-gen') {
       const sections = url.searchParams.getAll('section');
       if (sections.length === 0) {
         sections.push('changelog section', 'config hierarchy', 'performance benchmarks');
       }
-      
+
       try {
         const wiki = await generateAIWiki(sections);
-        return new Response(wiki, { 
-          headers: { 'Content-Type': 'text/markdown', ...corsHeaders }
+        return new Response(wiki, {
+          headers: { 'Content-Type': 'text/markdown', ...corsHeaders },
         });
       } catch (error) {
-        return new Response(JSON.stringify({
-          error: error instanceof Error ? error.message : String(error)
-        }), { 
-          status: 500,
-          headers: { 'Content-Type': 'application/json', ...corsHeaders }
-        });
+        return new Response(
+          JSON.stringify({
+            error: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            status: 500,
+            headers: { 'Content-Type': 'application/json', ...corsHeaders },
+          }
+        );
       }
     }
-    
+
     // Root → Dashboard interface
     if (url.pathname === '/') {
       const html = `
@@ -432,16 +446,16 @@ const server = (globalThis as any).Bun.serve({
   </script>
 </body>
 </html>`;
-      return new Response(html, { 
-        headers: { 'Content-Type': 'text/html', ...corsHeaders }
+      return new Response(html, {
+        headers: { 'Content-Type': 'text/html', ...corsHeaders },
       });
     }
-    
-    return new Response('Not Found', { 
+
+    return new Response('Not Found', {
       status: 404,
-      headers: corsHeaders 
+      headers: corsHeaders,
     });
-  }
+  },
 });
 
 console.info(`🔥 Wiki v3.19 Live Dashboard running on http://localhost:${server.port}`);

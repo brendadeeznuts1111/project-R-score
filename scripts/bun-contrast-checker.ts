@@ -7,7 +7,11 @@
  * for HSL colors with automatic compliance checking.
  */
 
-import { ensureContrast, autoAdjustContrast, perceivedBrightness } from '../lib/utils/advanced-hsl-system.ts';
+import {
+  ensureContrast,
+  autoAdjustContrast,
+  perceivedBrightness,
+} from '../lib/utils/advanced-hsl-system.ts';
 import { colorize } from '../lib/utils/color-system.ts';
 
 interface ContrastResult {
@@ -31,7 +35,7 @@ function analyzeContrast(
     ratio: result.ratio,
     aaCompliant: result.ratio >= 4.5,
     aaaCompliant: result.ratio >= 7,
-    level: result.ratio >= 7 ? 'AAA' : result.ratio >= 4.5 ? 'AA' : 'FAIL'
+    level: result.ratio >= 7 ? 'AAA' : result.ratio >= 4.5 ? 'AA' : 'FAIL',
   };
 }
 
@@ -45,16 +49,16 @@ function generateComplianceReport(results: ContrastResult[]): void {
   let aaaCount = 0;
 
   results.forEach((result, i) => {
-    const statusIcon = result.level === 'AAA' ? '✅' :
-                      result.level === 'AA' ? '🟡' : '❌';
-    const statusColor = result.level === 'AAA' ? 'green' :
-                        result.level === 'AA' ? 'yellow' : 'red';
+    const statusIcon = result.level === 'AAA' ? '✅' : result.level === 'AA' ? '🟡' : '❌';
+    const statusColor = result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red';
 
     console.info(colorize(`${i + 1}. ${statusIcon} ${result.level}`, statusColor, true));
     console.info(`   FG: ${result.foreground}`);
     console.info(`   BG: ${result.background}`);
     console.info(`   Ratio: ${result.ratio.toFixed(2)}:1`);
-    console.info(`   AA: ${result.aaCompliant ? '✅' : '❌'} | AAA: ${result.aaaCompliant ? '✅' : '❌'}`);
+    console.info(
+      `   AA: ${result.aaCompliant ? '✅' : '❌'} | AAA: ${result.aaaCompliant ? '✅' : '❌'}`
+    );
     console.info();
 
     if (result.level !== 'FAIL') passCount++;
@@ -64,9 +68,15 @@ function generateComplianceReport(results: ContrastResult[]): void {
 
   console.info(colorize('📊 SUMMARY', 'cyan', true));
   console.info(`Total Combinations: ${results.length}`);
-  console.info(`AA Compliant: ${aaCount}/${results.length} (${((aaCount/results.length)*100).toFixed(1)}%)`);
-  console.info(`AAA Compliant: ${aaaCount}/${results.length} (${((aaaCount/results.length)*100).toFixed(1)}%)`);
-  console.info(`Overall Pass Rate: ${passCount}/${results.length} (${((passCount/results.length)*100).toFixed(1)}%)`);
+  console.info(
+    `AA Compliant: ${aaCount}/${results.length} (${((aaCount / results.length) * 100).toFixed(1)}%)`
+  );
+  console.info(
+    `AAA Compliant: ${aaaCount}/${results.length} (${((aaaCount / results.length) * 100).toFixed(1)}%)`
+  );
+  console.info(
+    `Overall Pass Rate: ${passCount}/${results.length} (${((passCount / results.length) * 100).toFixed(1)}%)`
+  );
 }
 
 function demoContrastScenarios(): void {
@@ -93,17 +103,17 @@ function demoContrastScenarios(): void {
     const result = analyzeContrast(scenario.fg, scenario.bg);
     return {
       ...result,
-      name: scenario.name
+      name: scenario.name,
     };
   });
 
   results.forEach(result => {
-    const statusIcon = result.level === 'AAA' ? '✅' :
-                      result.level === 'AA' ? '🟡' : '❌';
-    const statusColor = result.level === 'AAA' ? 'green' :
-                        result.level === 'AA' ? 'yellow' : 'red';
+    const statusIcon = result.level === 'AAA' ? '✅' : result.level === 'AA' ? '🟡' : '❌';
+    const statusColor = result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red';
 
-    console.info(`${statusIcon} ${colorize(result.name, statusColor)}: ${result.ratio.toFixed(2)}:1`);
+    console.info(
+      `${statusIcon} ${colorize(result.name, statusColor)}: ${result.ratio.toFixed(2)}:1`
+    );
   });
 
   console.info();
@@ -125,7 +135,9 @@ function demoContrastScenarios(): void {
   console.info('Auto-adjusted for AA compliance:');
   console.info(`  FG: hsl(${adjustedFg.h}, ${adjustedFg.s}%, ${adjustedFg.l}%)`);
   console.info(`  BG: hsl(${poorContrast.bg.h}, ${poorContrast.bg.s}%, ${poorContrast.bg.l}%)`);
-  console.info(`  Ratio: ${adjustedResult.ratio.toFixed(2)}:1 ${adjustedResult.level === 'AA' || adjustedResult.level === 'AAA' ? '✅ PASS' : '❌ FAIL'}`);
+  console.info(
+    `  Ratio: ${adjustedResult.ratio.toFixed(2)}:1 ${adjustedResult.level === 'AA' || adjustedResult.level === 'AAA' ? '✅ PASS' : '❌ FAIL'}`
+  );
 }
 
 const args = process.argv.slice(2);
@@ -149,28 +161,27 @@ if (command === 'check') {
   console.info(`Contrast Ratio: ${result.ratio.toFixed(2)}:1`);
   console.info(`WCAG AA: ${result.aaCompliant ? '✅ PASS' : '❌ FAIL'}`);
   console.info(`WCAG AAA: ${result.aaaCompliant ? '✅ PASS' : '❌ FAIL'}`);
-  console.info(`Overall: ${colorize(result.level, result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red')}`);
-
+  console.info(
+    `Overall: ${colorize(result.level, result.level === 'AAA' ? 'green' : result.level === 'AA' ? 'yellow' : 'red')}`
+  );
 } else if (command === 'demo') {
   demoContrastScenarios();
-
 } else if (command === 'report') {
   // Generate report for common UI color combinations
   const commonCombos = [
     // Light backgrounds
-    { fg: { h: 0, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } },     // Error on white
-    { fg: { h: 135, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } },  // Success on white
-    { fg: { h: 45, s: 95, l: 40 }, bg: { h: 0, s: 0, l: 100 } },   // Warning on white
-    { fg: { h: 210, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } },  // Info on white
+    { fg: { h: 0, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } }, // Error on white
+    { fg: { h: 135, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } }, // Success on white
+    { fg: { h: 45, s: 95, l: 40 }, bg: { h: 0, s: 0, l: 100 } }, // Warning on white
+    { fg: { h: 210, s: 95, l: 35 }, bg: { h: 0, s: 0, l: 100 } }, // Info on white
 
     // Dark backgrounds
-    { fg: { h: 0, s: 0, l: 90 }, bg: { h: 0, s: 95, l: 20 } },     // Light text on dark red
-    { fg: { h: 0, s: 0, l: 85 }, bg: { h: 210, s: 95, l: 15 } },  // Light text on dark blue
-    { fg: { h: 0, s: 0, l: 95 }, bg: { h: 0, s: 0, l: 10 } },     // White on dark gray
+    { fg: { h: 0, s: 0, l: 90 }, bg: { h: 0, s: 95, l: 20 } }, // Light text on dark red
+    { fg: { h: 0, s: 0, l: 85 }, bg: { h: 210, s: 95, l: 15 } }, // Light text on dark blue
+    { fg: { h: 0, s: 0, l: 95 }, bg: { h: 0, s: 0, l: 10 } }, // White on dark gray
   ];
 
   generateComplianceReport(commonCombos.map(combo => analyzeContrast(combo.fg, combo.bg)));
-
 } else {
   console.info(colorize('♿ WCAG Contrast Checker - HSL Edition', 'cyan', true));
   console.info(colorize('Usage:', 'yellow'));

@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Bun Filter CLI - Command-line interface for workspace package filtering
- * 
+ *
  * Usage:
  *   bun-filter-cli --filter 'ba*' test
  *   bun-filter-cli --filter 'app-*' --parallel build

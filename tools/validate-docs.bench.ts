@@ -39,31 +39,41 @@ console.info('='.repeat(60));
 const results: BenchResult[] = [];
 
 // 1. checkUrls — scans all files for broken URL patterns
-results.push(await bench('checkUrls()', async () => {
-  await checkUrls();
-}));
+results.push(
+  await bench('checkUrls()', async () => {
+    await checkUrls();
+  })
+);
 
 // 2. checkEnums — scans for duplicate enum definitions
-results.push(await bench('checkEnums()', async () => {
-  await checkEnums();
-}));
+results.push(
+  await bench('checkEnums()', async () => {
+    await checkEnums();
+  })
+);
 
 // 3. checkImports — scans for broken import paths
-results.push(await bench('checkImports()', async () => {
-  await checkImports();
-}));
+results.push(
+  await bench('checkImports()', async () => {
+    await checkImports();
+  })
+);
 
 // 4. All three checks (simulates `all` command)
-results.push(await bench('all checks combined', async () => {
-  await Promise.all([checkUrls(), checkEnums(), checkImports()]);
-}));
+results.push(
+  await bench('all checks combined', async () => {
+    await Promise.all([checkUrls(), checkEnums(), checkImports()]);
+  })
+);
 
 // 5. All checks sequential (simulates actual CLI flow)
-results.push(await bench('all checks sequential', async () => {
-  await checkUrls();
-  await checkEnums();
-  await checkImports();
-}));
+results.push(
+  await bench('all checks sequential', async () => {
+    await checkUrls();
+    await checkEnums();
+    await checkImports();
+  })
+);
 
 // Print results
 console.info('');

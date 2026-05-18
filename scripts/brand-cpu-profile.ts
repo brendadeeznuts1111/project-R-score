@@ -20,10 +20,21 @@ function parseArgs(argv: string[]): Options {
   const targetRaw = argv.find(a => a.startsWith('--target='))?.split('=')[1] || 'bench';
   const target = targetRaw === 'generate' ? 'generate' : 'bench';
   const seed = Number(argv.find(a => a.startsWith('--seed='))?.split('=')[1] || '210');
-  const interval = Number(argv.find(a => a.startsWith('--cpu-prof-interval='))?.split('=')[1] || '250');
+  const interval = Number(
+    argv.find(a => a.startsWith('--cpu-prof-interval='))?.split('=')[1] || '250'
+  );
   const runId = argv.find(a => a.startsWith('--run-id='))?.split('=')[1] || nowRunId();
-  const profilesDir = resolve(argv.find(a => a.startsWith('--profiles-dir='))?.split('=')[1] || 'reports/brand-bench/profiles');
-  const passthrough = argv.filter(a => !a.startsWith('--target=') && !a.startsWith('--seed=') && !a.startsWith('--cpu-prof-interval=') && !a.startsWith('--run-id=') && !a.startsWith('--profiles-dir='));
+  const profilesDir = resolve(
+    argv.find(a => a.startsWith('--profiles-dir='))?.split('=')[1] || 'reports/brand-bench/profiles'
+  );
+  const passthrough = argv.filter(
+    a =>
+      !a.startsWith('--target=') &&
+      !a.startsWith('--seed=') &&
+      !a.startsWith('--cpu-prof-interval=') &&
+      !a.startsWith('--run-id=') &&
+      !a.startsWith('--profiles-dir=')
+  );
 
   if (!Number.isFinite(seed)) {
     throw new Error('seed must be numeric');
@@ -39,13 +50,15 @@ async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   await mkdir(options.profilesDir, { recursive: true });
 
-  const profileName = options.target === 'generate'
-    ? `brand_seed_${options.seed}.cpuprofile`
-    : `brand_bench_${options.runId}.cpuprofile`;
+  const profileName =
+    options.target === 'generate'
+      ? `brand_seed_${options.seed}.cpuprofile`
+      : `brand_bench_${options.runId}.cpuprofile`;
 
-  const targetScript = options.target === 'generate'
-    ? './scripts/brand-generate.ts'
-    : './scripts/brand-bench-runner.ts';
+  const targetScript =
+    options.target === 'generate'
+      ? './scripts/brand-generate.ts'
+      : './scripts/brand-bench-runner.ts';
 
   const args = [
     'bun',
@@ -74,7 +87,9 @@ async function main(): Promise<void> {
   });
 
   const shutdown = createShutdown({ name: 'brand-cpu-profile', quiet: true });
-  shutdown.onCleanup(() => { child.kill('SIGTERM'); });
+  shutdown.onCleanup(() => {
+    child.kill('SIGTERM');
+  });
 
   const exitCode = await child.exited;
   shutdown.dispose();

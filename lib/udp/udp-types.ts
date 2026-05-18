@@ -8,7 +8,13 @@ export interface UDPServiceConfig {
   multicastTTL?: number;
   multicastLoopback?: boolean;
   packetTracking?: boolean;
-  packetTrackingScope?: "interface-local" | "link-local" | "site-local" | "organization" | "global" | "admin";
+  packetTrackingScope?:
+    | 'interface-local'
+    | 'link-local'
+    | 'site-local'
+    | 'organization'
+    | 'global'
+    | 'admin';
   packetTrackingFlags?: number;
   packetSourceId?: number;
   /** Sliding-window size for duplicate detection (default 2048). */
@@ -31,7 +37,7 @@ export interface UDPServiceConfig {
   };
 }
 
-export type UDPServiceState = "idle" | "binding" | "bound" | "connected" | "draining" | "closed";
+export type UDPServiceState = 'idle' | 'binding' | 'bound' | 'connected' | 'draining' | 'closed';
 
 export interface UDPDatagram {
   data: Buffer;
@@ -41,7 +47,7 @@ export interface UDPDatagram {
   sequenceId?: number;
   sourceId?: number;
   timestampUs?: bigint;
-  scope?: "interface-local" | "link-local" | "site-local" | "organization" | "global" | "admin";
+  scope?: 'interface-local' | 'link-local' | 'site-local' | 'organization' | 'global' | 'admin';
   flags?: number;
   crcValid?: boolean;
 }

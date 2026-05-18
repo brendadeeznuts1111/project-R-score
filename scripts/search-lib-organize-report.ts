@@ -45,22 +45,23 @@ async function runJson(cmd: string): Promise<any> {
 }
 
 function topN<T>(items: T[], count: number, score: (item: T) => number): T[] {
-  return items.slice().sort((a, b) => score(b) - score(a)).slice(0, count);
+  return items
+    .slice()
+    .sort((a, b) => score(b) - score(a))
+    .slice(0, count);
 }
 
 function summarizeHits(hits: CleanupHit[]): FileSummary[] {
   const map = new Map<string, FileSummary>();
   for (const hit of hits) {
     const key = normalizePath(hit.file);
-    const item =
-      map.get(key) ||
-      {
-        file: key,
-        hits: 0,
-        duplicateHits: 0,
-        docsNoiseHits: 0,
-        generatedHits: 0,
-      };
+    const item = map.get(key) || {
+      file: key,
+      hits: 0,
+      duplicateHits: 0,
+      docsNoiseHits: 0,
+      generatedHits: 0,
+    };
     item.hits += 1;
     const tag = (hit.qualityTag || '').toLowerCase();
     if (tag.includes('duplicate')) item.duplicateHits += 1;
@@ -71,7 +72,9 @@ function summarizeHits(hits: CleanupHit[]): FileSummary[] {
   return [...map.values()].sort((a, b) => b.hits - a.hits);
 }
 
-function directorySummary(files: FileSummary[]): Array<{ dir: string; hits: number; files: number }> {
+function directorySummary(
+  files: FileSummary[]
+): Array<{ dir: string; hits: number; files: number }> {
   const byDir = new Map<string, { dir: string; hits: number; files: number }>();
   for (const file of files) {
     const parts = normalizePath(file.file).split('/');
@@ -102,29 +105,31 @@ async function main(): Promise<void> {
 
   const policy = (await Bun.file('./.search/policies.json').json()) as PolicyShape;
   const demotionContains = (policy.deliveryDemotionContains || []).map(toPosixPattern);
-  const demotionExceptions = new Set((policy.deliveryDemotionExceptions || []).map((v) => normalizePath(v).toLowerCase()));
+  const demotionExceptions = new Set(
+    (policy.deliveryDemotionExceptions || []).map(v => normalizePath(v).toLowerCase())
+  );
 
   const hits = cleanup.hits || [];
   const fileSummaries = summarizeHits(hits);
   const dirSummaries = directorySummary(fileSummaries);
 
   const moveCandidates = fileSummaries
-    .filter((f) => {
-    const lower = normalizePath(f.file).toLowerCase();
-    if (!isDocsToolCandidate(lower)) return false;
-    if (demotionExceptions.has(lower)) return false;
-    return true;
-  })
-    .map((f) => {
+    .filter(f => {
+      const lower = normalizePath(f.file).toLowerCase();
+      if (!isDocsToolCandidate(lower)) return false;
+      if (demotionExceptions.has(lower)) return false;
+      return true;
+    })
+    .map(f => {
       const lower = normalizePath(f.file).toLowerCase();
       return {
         ...f,
-        policyMatched: demotionContains.some((pattern) => lower.includes(pattern)),
+        policyMatched: demotionContains.some(pattern => lower.includes(pattern)),
       };
     });
 
   const highRiskCrowding = fileSummaries.filter(
-    (f) => f.docsNoiseHits >= 2 || f.generatedHits >= 2 || f.duplicateHits >= 2
+    f => f.docsNoiseHits >= 2 || f.generatedHits >= 2 || f.duplicateHits >= 2
   );
 
   const payload = {
@@ -137,11 +142,11 @@ async function main(): Promise<void> {
       moveCandidates: moveCandidates.length,
       highRiskCrowding: highRiskCrowding.length,
     },
-    topDirectories: topN(dirSummaries, 15, (row) => row.hits),
-    topFiles: topN(fileSummaries, 20, (row) => row.hits),
-    moveCandidates: topN(moveCandidates, 25, (row) => row.hits),
+    topDirectories: topN(dirSummaries, 15, row => row.hits),
+    topFiles: topN(fileSummaries, 20, row => row.hits),
+    moveCandidates: topN(moveCandidates, 25, row => row.hits),
     coreExceptions: [...demotionExceptions].sort(),
-    highRiskCrowding: topN(highRiskCrowding, 20, (row) => row.hits),
+    highRiskCrowding: topN(highRiskCrowding, 20, row => row.hits),
   };
 
   const lines: string[] = [];
@@ -155,7 +160,9 @@ async function main(): Promise<void> {
   lines.push('');
   lines.push('## Core Loop Focus');
   lines.push('- Keep runtime/core search infra in `lib/` (exceptions list below).');
-  lines.push('- Move docs generator/template/validator-heavy modules out of core search scope where safe.');
+  lines.push(
+    '- Move docs generator/template/validator-heavy modules out of core search scope where safe.'
+  );
   lines.push('- Prioritize high-crowding files first to lower slop with minimal behavioral risk.');
   lines.push('');
   lines.push('## Top Directories By Crowding');
@@ -200,10 +207,18 @@ async function main(): Promise<void> {
   }
   lines.push('');
   lines.push('## Suggested Low-Risk Sequence');
-  lines.push('1. Relocate top docs-tool move candidates into a dedicated docs-tools path (outside runtime core search roots).');
-  lines.push('2. Keep imports/exports shims in original locations for compatibility, then phase them out.');
-  lines.push('3. Re-run `search:lib:strict` and `search:bench:snapshot:core:local` after each small batch.');
-  lines.push('4. Track impact via strict quality, strict p95, and slop delta before moving the next batch.');
+  lines.push(
+    '1. Relocate top docs-tool move candidates into a dedicated docs-tools path (outside runtime core search roots).'
+  );
+  lines.push(
+    '2. Keep imports/exports shims in original locations for compatibility, then phase them out.'
+  );
+  lines.push(
+    '3. Re-run `search:lib:strict` and `search:bench:snapshot:core:local` after each small batch.'
+  );
+  lines.push(
+    '4. Track impact via strict quality, strict p95, and slop delta before moving the next batch.'
+  );
   lines.push('');
 
   await Bun.write('reports/lib-organization-latest.json', `${JSON.stringify(payload, null, 2)}\n`);

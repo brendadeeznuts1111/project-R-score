@@ -507,13 +507,17 @@ export class AIIntegrationSystem {
       // Analyze for FactoryWager domain
       console.info(styled('\n🏭 FactoryWager Domain Analysis:', 'info'));
       const fwAnalysis = await this.analyzeEvidence(sampleEvidence, 'factory-wager.com');
-      console.info(styled(`   Confidence: ${(fwAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
+      console.info(
+        styled(`   Confidence: ${(fwAnalysis.confidence * 100).toFixed(1)}%`, 'success')
+      );
       console.info(styled(`   Recommendations: ${fwAnalysis.recommendations.length}`, 'muted'));
 
       // Analyze for DuoPlus domain
       console.info(styled('\n🎭 DuoPlus Domain Analysis:', 'info'));
       const dpAnalysis = await this.analyzeEvidence(sampleEvidence, 'duoplus.com');
-      console.info(styled(`   Confidence: ${(dpAnalysis.confidence * 100).toFixed(1)}%`, 'success'));
+      console.info(
+        styled(`   Confidence: ${(dpAnalysis.confidence * 100).toFixed(1)}%`, 'success')
+      );
       console.info(styled(`   Recommendations: ${dpAnalysis.recommendations.length}`, 'muted'));
 
       // Show cross-domain intelligence

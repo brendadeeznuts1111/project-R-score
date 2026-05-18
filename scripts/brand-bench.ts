@@ -1,6 +1,10 @@
 import { generatePalette } from '../lib/utils/advanced-hsl-colors';
 
-function bench(name: string, fn: () => void, n: number): { name: string; opsPerSec: number; ms: number } {
+function bench(
+  name: string,
+  fn: () => void,
+  n: number
+): { name: string; opsPerSec: number; ms: number } {
   const warmup = Math.min(20_000, Math.floor(n / 10));
   for (let i = 0; i < warmup; i++) fn();
   const start = Bun.nanoseconds();
@@ -12,21 +16,26 @@ function bench(name: string, fn: () => void, n: number): { name: string; opsPerS
 }
 
 function print(result: { name: string; opsPerSec: number; ms: number }): void {
-  console.info(`${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec (${result.ms.toFixed(1)} ms)`);
+  console.info(
+    `${result.name}: ${result.opsPerSec.toFixed(0)} ops/sec (${result.ms.toFixed(1)} ms)`
+  );
 }
 
 function printTable(results: { name: string; opsPerSec: number; ms: number }[]): void {
   console.info('\n📊 Benchmark Results:');
-  console.info(Bun.inspect.table(
-    results.map(r => ({
-      operation: r.name,
-      'ops/sec': r.opsPerSec.toFixed(0),
-      'time (ms)': r.ms.toFixed(2),
-      performance: r.opsPerSec > 1_000_000 ? '🔥 Fast' : r.opsPerSec > 500_000 ? '⚡ Good' : '✅ OK'
-    })),
-    ['operation', 'ops/sec', 'time (ms)', 'performance'],
-    { colors: true }
-  ));
+  console.info(
+    Bun.inspect.table(
+      results.map(r => ({
+        operation: r.name,
+        'ops/sec': r.opsPerSec.toFixed(0),
+        'time (ms)': r.ms.toFixed(2),
+        performance:
+          r.opsPerSec > 1_000_000 ? '🔥 Fast' : r.opsPerSec > 500_000 ? '⚡ Good' : '✅ OK',
+      })),
+      ['operation', 'ops/sec', 'time (ms)', 'performance'],
+      { colors: true }
+    )
+  );
 }
 
 function main(): void {
@@ -35,26 +44,46 @@ function main(): void {
   const md = `# Brand Seed ${seed}\n\n- primary\n- contrast\n\nUse deterministic defaults.`;
 
   const results = [
-    bench('brand.generatePalette', () => {
-      generatePalette({ h: seed, s: 90, l: 60 });
-    }, 200_000),
-    bench('brand.Bun.color(hex)', () => {
-      Bun.color(hsl, 'hex');
-    }, 400_000),
-    bench('brand.Bun.color(ansi)', () => {
-      Bun.color(hsl, 'ansi');
-    }, 400_000),
-    bench('brand.Bun.markdown.render', () => {
-      Bun.markdown.render(md);
-    }, 120_000),
-    bench('brand.Bun.markdown.react', () => {
-      Bun.markdown.react(md);
-    }, 120_000),
+    bench(
+      'brand.generatePalette',
+      () => {
+        generatePalette({ h: seed, s: 90, l: 60 });
+      },
+      200_000
+    ),
+    bench(
+      'brand.Bun.color(hex)',
+      () => {
+        Bun.color(hsl, 'hex');
+      },
+      400_000
+    ),
+    bench(
+      'brand.Bun.color(ansi)',
+      () => {
+        Bun.color(hsl, 'ansi');
+      },
+      400_000
+    ),
+    bench(
+      'brand.Bun.markdown.render',
+      () => {
+        Bun.markdown.render(md);
+      },
+      120_000
+    ),
+    bench(
+      'brand.Bun.markdown.react',
+      () => {
+        Bun.markdown.react(md);
+      },
+      120_000
+    ),
   ];
 
   // Print individual results
   for (const r of results) print(r);
-  
+
   // Print formatted table
   printTable(results);
 

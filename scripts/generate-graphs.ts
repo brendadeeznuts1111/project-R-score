@@ -36,14 +36,18 @@ async function main() {
     if (allSecrets) {
       // Get all secrets with versions (this would need to be implemented)
       secretsToProcess = await getAllVersionedSecrets();
-      console.info(styled(`📋 Processing all ${secretsToProcess.length} versioned secrets`, 'primary'));
+      console.info(
+        styled(`📋 Processing all ${secretsToProcess.length} versioned secrets`, 'primary')
+      );
     } else {
       // Process specific keys from arguments
       const keyArgs = args.filter(arg => !arg.startsWith('--'));
       secretsToProcess = keyArgs;
 
       if (secretsToProcess.length === 0) {
-        console.info(styled('❌ No secrets specified. Use --all-secrets or provide key names', 'error'));
+        console.info(
+          styled('❌ No secrets specified. Use --all-secrets or provide key names', 'error')
+        );
         process.exit(1);
       }
 
@@ -74,7 +78,6 @@ async function main() {
           console.info(styled(`   🔍 Would generate graph (dry run)`, 'warning'));
           generated++;
         }
-
       } catch (error) {
         console.info(styled(`   ❌ Error: ${error.message}`, 'error'));
         errors++;
@@ -90,13 +93,14 @@ async function main() {
     if (!dryRun && generated > 0) {
       console.info('');
       console.info(styled('🎉 Graph generation complete!', 'success'));
-      console.info(styled('📖 Docs: https://bun.com/docs/runtime/secrets/version-visualization', 'accent'));
+      console.info(
+        styled('📖 Docs: https://bun.com/docs/runtime/secrets/version-visualization', 'accent')
+      );
 
       if (outputR2) {
         console.info(styled('💾 All graphs stored in R2 bucket', 'success'));
       }
     }
-
   } catch (error) {
     console.error(styled(`❌ Graph generation failed: ${error.message}`, 'error'));
     process.exit(1);

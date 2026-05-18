@@ -26,7 +26,7 @@ const colors = {
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
   gray: '\x1b[90m',
-  magenta: '\x1b[35m'
+  magenta: '\x1b[35m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -40,7 +40,7 @@ async function getSystemStatus(): Promise<RitualStatus> {
     const platform = `${process.platform}-${process.arch}`;
 
     // Check if running latest
-    const response = await fetch("https://api.github.com/repos/oven-sh/bun/git/refs/heads/main");
+    const response = await fetch('https://api.github.com/repos/oven-sh/bun/git/refs/heads/main');
     const data = await response.json();
     const latestCommit = data.object.sha;
     const isLatest = Bun.revision === latestCommit;
@@ -51,15 +51,15 @@ async function getSystemStatus(): Promise<RitualStatus> {
       message: `Bun ${version} (${revision}) on ${platform}`,
       details: [
         isLatest ? '🟢 Running latest main commit' : '🟡 Running canary build',
-        `Latest: ${latestCommit.slice(0, 8)}`
-      ]
+        `Latest: ${latestCommit.slice(0, 8)}`,
+      ],
     };
   } catch (error) {
     return {
       component: 'System',
       status: 'warning',
       message: 'Unable to check system status',
-      details: [`Error: ${error}`]
+      details: [`Error: ${error}`],
     };
   }
 }
@@ -67,13 +67,15 @@ async function getSystemStatus(): Promise<RitualStatus> {
 async function getGitHubStatus(): Promise<RitualStatus> {
   try {
     // Quick commit check
-    const commitResponse = await fetch("https://api.github.com/repos/oven-sh/bun/git/refs/heads/main");
+    const commitResponse = await fetch(
+      'https://api.github.com/repos/oven-sh/bun/git/refs/heads/main'
+    );
     const commitData = await commitResponse.json();
 
     // Quick URL validation (sample)
     const urlChecks = await Promise.all([
       fetch('https://bun.com/docs', { method: 'HEAD' }),
-      fetch('https://bun.com/reference', { method: 'HEAD' })
+      fetch('https://bun.com/reference', { method: 'HEAD' }),
     ]);
 
     const healthyUrls = urlChecks.filter(r => r.status === 200).length;
@@ -84,10 +86,13 @@ async function getGitHubStatus(): Promise<RitualStatus> {
     try {
       const gitProc = Bun.spawn(['git', 'status', '--porcelain'], {
         stdout: 'pipe',
-        stderr: 'pipe'
+        stderr: 'pipe',
       });
       const gitOutput = await new Response(gitProc.stdout).text();
-      const changes = gitOutput.trim().split('\n').filter(line => line.length > 0).length;
+      const changes = gitOutput
+        .trim()
+        .split('\n')
+        .filter(line => line.length > 0).length;
       gitStatus = `${changes} uncommitted`;
     } catch {
       gitStatus = 'git check failed';
@@ -99,17 +104,14 @@ async function getGitHubStatus(): Promise<RitualStatus> {
       component: 'GitHub',
       status: isHealthy ? 'good' : 'error',
       message: `Latest: ${commitData.object.sha.slice(0, 8)} | URLs: ${healthyUrls}/${totalUrls} | Git: ${gitStatus}`,
-      details: [
-        `📊 Docs healthy: ${healthyUrls}/${totalUrls}`,
-        `🔄 Local changes: ${gitStatus}`
-      ]
+      details: [`📊 Docs healthy: ${healthyUrls}/${totalUrls}`, `🔄 Local changes: ${gitStatus}`],
     };
   } catch (error) {
     return {
       component: 'GitHub',
       status: 'error',
       message: 'GitHub check failed',
-      details: [`Error: ${error}`]
+      details: [`Error: ${error}`],
     };
   }
 }
@@ -133,17 +135,19 @@ async function getAIInsights(): Promise<RitualStatus> {
       status: hasIssues ? 'warning' : 'good',
       message: `Memory: ${heapRatio}% | Response: ${responseTime}ms | Cache: ${cacheHitRate}%`,
       details: [
-        heapRatio > 80 ? `⚠️ High memory usage: ${heapUsedMB}/${heapTotalMB}MB` : `✅ Memory usage normal`,
+        heapRatio > 80
+          ? `⚠️ High memory usage: ${heapUsedMB}/${heapTotalMB}MB`
+          : `✅ Memory usage normal`,
         responseTime > 100 ? `⚠️ Slow response time: ${responseTime}ms` : `✅ Response time good`,
-        cacheHitRate < 80 ? `⚠️ Low cache hit rate: ${cacheHitRate}%` : `✅ Cache performance good`
-      ]
+        cacheHitRate < 80 ? `⚠️ Low cache hit rate: ${cacheHitRate}%` : `✅ Cache performance good`,
+      ],
     };
   } catch (error) {
     return {
       component: 'AI Insights',
       status: 'warning',
       message: 'AI analysis limited',
-      details: [`Basic metrics available`]
+      details: [`Basic metrics available`],
     };
   }
 }
@@ -165,15 +169,14 @@ async function runMorningRitual(): Promise<void> {
   const [systemStatus, githubStatus, aiStatus] = await Promise.all([
     getSystemStatus(),
     getGitHubStatus(),
-    getAIInsights()
+    getAIInsights(),
   ]);
 
   const allStatuses = [systemStatus, githubStatus, aiStatus];
 
   // Display results
   for (const status of allStatuses) {
-    const icon = status.status === 'good' ? '✅' :
-                 status.status === 'warning' ? '⚠️' : '❌';
+    const icon = status.status === 'good' ? '✅' : status.status === 'warning' ? '⚠️' : '❌';
 
     console.info(`${icon} ${colorize(status.component, 'bright')}: ${status.message}`);
 
@@ -194,11 +197,21 @@ async function runMorningRitual(): Promise<void> {
   console.info(colorize('====================', 'cyan'));
 
   if (errors > 0) {
-    console.info(colorize(`❌ ${errors} system${errors > 1 ? 's' : ''} need${errors === 1 ? 's' : ''} attention`, 'red'));
+    console.info(
+      colorize(
+        `❌ ${errors} system${errors > 1 ? 's' : ''} need${errors === 1 ? 's' : ''} attention`,
+        'red'
+      )
+    );
   }
 
   if (warnings > 0) {
-    console.info(colorize(`⚠️ ${warnings} system${warnings > 1 ? 's' : ''} have${warnings === 1 ? 's' : ''} warnings`, 'yellow'));
+    console.info(
+      colorize(
+        `⚠️ ${warnings} system${warnings > 1 ? 's' : ''} have${warnings === 1 ? 's' : ''} warnings`,
+        'yellow'
+      )
+    );
   }
 
   if (goods > 0) {
@@ -220,17 +233,21 @@ async function runMorningRitual(): Promise<void> {
   console.info(`  ${colorize('bun run deep-links', 'yellow')}       - Generate doc links`);
 
   console.info();
-  console.info(colorize('🎯 Development environment status: ', 'bright') +
-              (errors > 0 ? colorize('NEEDS ATTENTION', 'red') :
-               warnings > 0 ? colorize('MONITOR CLOSELY', 'yellow') :
-               colorize('ALL SYSTEMS GO', 'green')));
+  console.info(
+    colorize('🎯 Development environment status: ', 'bright') +
+      (errors > 0
+        ? colorize('NEEDS ATTENTION', 'red')
+        : warnings > 0
+          ? colorize('MONITOR CLOSELY', 'yellow')
+          : colorize('ALL SYSTEMS GO', 'green'))
+  );
 
   console.info();
   console.info(colorize('✨ Morning ritual complete! Ready for development.', 'green'));
 }
 
 // Run the morning ritual
-runMorningRitual().catch((error) => {
+runMorningRitual().catch(error => {
   console.error(colorize(`Morning ritual failed: ${error}`, 'red'));
   process.exit(1);
 });

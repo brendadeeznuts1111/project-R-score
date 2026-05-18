@@ -56,7 +56,9 @@ export function getSecretsRuntimeInfo(): SecretsRuntimeInfo {
 export function validateSecretServiceName(service: string): string[] {
   const warnings: string[] = [];
   if (!service.includes('.')) {
-    warnings.push('Service name should use reverse-domain notation (for example, com.example.app).');
+    warnings.push(
+      'Service name should use reverse-domain notation (for example, com.example.app).'
+    );
   }
   if (GENERIC_SERVICE_NAMES.has(service)) {
     warnings.push(`Service name "${service}" is too generic and may collide with other tools.`);
@@ -84,7 +86,8 @@ export async function getSecret(options: SecretGetOptions): Promise<string | nul
     }
   }
 
-  const envKeys = options.envKeys && options.envKeys.length > 0 ? options.envKeys : defaultEnvKeys(primaryRef);
+  const envKeys =
+    options.envKeys && options.envKeys.length > 0 ? options.envKeys : defaultEnvKeys(primaryRef);
   for (const envKey of envKeys) {
     const value = Bun.env[envKey];
     if (typeof value === 'string' && value.length > 0) return value;

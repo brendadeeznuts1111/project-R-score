@@ -2,19 +2,19 @@
 /**
  * Unified Shell Bridge for Kimi Shell + OpenClaw + Profile Terminal
  * Integrates all three systems into a single MCP interface
- * 
+ *
  * Features:
  * - Bun-native signal handling (SIGINT, SIGTERM, SIGHUP)
  * - Graceful shutdown with cleanup
  * - Health monitoring and telemetry
  * - Error recovery and logging
- * 
+ *
  * @version 2.0.0
  * @bun >= 1.3.0
  */
 
-import { $ } from "bun";
-import { existsSync } from "fs";
+import { $ } from 'bun';
+import { existsSync } from 'fs';
 
 // ============================================================================
 // Types & Interfaces
@@ -79,17 +79,21 @@ const cleanupHandlers: Array<() => Promise<void>> = [];
 // Logging
 // ============================================================================
 
-function log(level: BridgeConfig['logLevel'], message: string, meta?: Record<string, unknown>): void {
+function log(
+  level: BridgeConfig['logLevel'],
+  message: string,
+  meta?: Record<string, unknown>
+): void {
   const levels = { debug: 0, info: 1, warn: 2, error: 3 };
   if (levels[level] < levels[CONFIG.logLevel]) return;
-  
+
   const entry = {
     timestamp: new Date().toISOString(),
     level: level.toUpperCase(),
     message,
     ...(meta || {}),
   };
-  
+
   if (level === 'error') {
     console.error(JSON.stringify(entry));
   } else if (level === 'warn') {
@@ -116,29 +120,29 @@ export function onCleanup(handler: () => Promise<void>): void {
 function initializeSignalHandlers(): void {
   // Handle SIGINT (Ctrl+C)
   process.on('SIGINT', () => handleSignal('SIGINT'));
-  
+
   // Handle SIGTERM (termination request)
   process.on('SIGTERM', () => handleSignal('SIGTERM'));
-  
+
   // Handle SIGHUP (terminal closed)
   process.on('SIGHUP', () => handleSignal('SIGHUP'));
-  
+
   // Handle beforeExit
-  process.on('beforeExit', (code) => {
+  process.on('beforeExit', code => {
     log('debug', 'Process beforeExit', { code, signals: signalState.receivedSignals });
   });
-  
+
   // Handle uncaught exceptions
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     log('error', 'Uncaught exception', { error: error.message, stack: error.stack });
     gracefulShutdown(1);
   });
-  
+
   // Handle unhandled rejections
   process.on('unhandledRejection', (reason, promise) => {
     log('error', 'Unhandled rejection', { reason: String(reason) });
   });
-  
+
   log('info', 'Signal handlers initialized', { pid: process.pid });
 }
 
@@ -150,15 +154,15 @@ function handleSignal(signal: string): void {
     log('warn', 'Shutdown already in progress, forcing exit', { signal });
     process.exit(1);
   }
-  
+
   signalState.receivedSignals.push(signal);
   signalState.isShuttingDown = true;
-  
+
   log('info', `Received ${signal}, starting graceful shutdown...`, {
     uptime: Date.now() - signalState.startTime,
     commandsExecuted: telemetry.commandsExecuted,
   });
-  
+
   gracefulShutdown(signal === 'SIGINT' ? 130 : 0);
 }
 
@@ -173,11 +177,11 @@ async function gracefulShutdown(exitCode: number): Promise<void> {
     });
     process.exit(exitCode || 1);
   }, CONFIG.gracefulShutdownTimeoutMs);
-  
+
   try {
     // Run all cleanup handlers
     log('debug', `Running ${cleanupHandlers.length} cleanup handlers...`);
-    
+
     for (const handler of cleanupHandlers) {
       try {
         await handler();
@@ -185,7 +189,7 @@ async function gracefulShutdown(exitCode: number): Promise<void> {
         log('error', 'Cleanup handler failed', { error: String(error) });
       }
     }
-    
+
     log('info', 'Graceful shutdown complete', {
       uptime: Date.now() - signalState.startTime,
       commandsExecuted: telemetry.commandsExecuted,
@@ -209,8 +213,8 @@ async function gracefulShutdown(exitCode: number): Promise<void> {
 async function getOpenClawToken(): Promise<string | null> {
   try {
     return await Bun.secrets.get({
-      service: "com.openclaw.gateway",
-      name: "gateway_token"
+      service: 'com.openclaw.gateway',
+      name: 'gateway_token',
     });
   } catch {
     return null;
@@ -223,7 +227,7 @@ async function getOpenClawToken(): Promise<string | null> {
 async function loadProfileEnv(profile: string): Promise<Record<string, string>> {
   const profilePath = `${process.env.HOME}/.matrix/profiles/${profile}.json`;
   if (!existsSync(profilePath)) return {};
-  
+
   try {
     const profileData = await Bun.file(profilePath).json();
     return profileData.env || {};
@@ -236,43 +240,40 @@ async function loadProfileEnv(profile: string): Promise<Record<string, string>> 
  * Execute command with full context
  */
 export async function executeCommand(
-  command: string, 
+  command: string,
   context: ShellContext = {}
 ): Promise<{ stdout: string; stderr: string; exitCode: number; durationMs: number }> {
   const startTime = performance.now();
-  
+
   try {
-    const env: Record<string, string> = { ...process.env as Record<string, string> };
-    
+    const env: Record<string, string> = { ...(process.env as Record<string, string>) };
+
     // Load profile context
     if (context.profile) {
       env.MATRIX_ACTIVE_PROFILE = context.profile;
       const profileEnv = await loadProfileEnv(context.profile);
       Object.assign(env, profileEnv);
     }
-    
+
     // Load OpenClaw token
     if (context.openclaw) {
       const token = await getOpenClawToken();
       if (token) env.OPENCLAW_GATEWAY_TOKEN = token;
     }
-    
+
     // Set working directory
     const cwd = context.workingDir || process.cwd();
-    
+
     // Execute with Bun's $ for optimal performance
-    const result = await $`${{ raw: command }}`
-      .env(env)
-      .cwd(cwd)
-      .nothrow();
-    
+    const result = await $`${{ raw: command }}`.env(env).cwd(cwd).nothrow();
+
     const durationMs = performance.now() - startTime;
-    
+
     if (CONFIG.enableTelemetry) {
       telemetry.commandsExecuted++;
       telemetry.lastCommandTime = Date.now();
     }
-    
+
     return {
       stdout: result.stdout.toString(),
       stderr: result.stderr.toString(),
@@ -283,7 +284,7 @@ export async function executeCommand(
     if (CONFIG.enableTelemetry) {
       telemetry.errors++;
     }
-    
+
     return {
       stdout: '',
       stderr: error instanceof Error ? error.message : String(error),
@@ -299,15 +300,15 @@ export async function executeCommand(
 async function getOpenClawStatus(): Promise<object> {
   const token = await getOpenClawToken();
   if (!token) {
-    return { error: "OpenClaw token not found in keychain" };
+    return { error: 'OpenClaw token not found in keychain' };
   }
-  
+
   try {
     const result = await $`openclaw status 2>&1`.env({ OPENCLAW_GATEWAY_TOKEN: token }).nothrow();
     return {
       running: result.exitCode === 0,
       output: result.stdout.toString(),
-      errors: result.stderr.toString()
+      errors: result.stderr.toString(),
     };
   } catch (e) {
     return { error: String(e) };
@@ -323,7 +324,7 @@ async function profileTerminal(command: string, args: string[] = []): Promise<ob
   return {
     stdout: result.stdout.toString(),
     stderr: result.stderr.toString(),
-    exitCode: result.exitCode
+    exitCode: result.exitCode,
   };
 }
 
@@ -334,7 +335,10 @@ async function listProfiles(): Promise<string[]> {
   const profilesDir = `${process.env.HOME}/.matrix/profiles`;
   try {
     const files = await $`ls ${profilesDir}/*.json 2>/dev/null`.text();
-    return files.split("\n").filter(f => f.trim()).map(f => f.replace(/.*\//, "").replace(".json", ""));
+    return files
+      .split('\n')
+      .filter(f => f.trim())
+      .map(f => f.replace(/.*\//, '').replace('.json', ''));
   } catch {
     return [];
   }
@@ -349,11 +353,13 @@ async function getHealthStatus(): Promise<object> {
     uptime: Date.now() - signalState.startTime,
     pid: process.pid,
     signals: signalState.receivedSignals,
-    telemetry: CONFIG.enableTelemetry ? {
-      commandsExecuted: telemetry.commandsExecuted,
-      errors: telemetry.errors,
-      startTime: telemetry.startTime,
-    } : null,
+    telemetry: CONFIG.enableTelemetry
+      ? {
+          commandsExecuted: telemetry.commandsExecuted,
+          errors: telemetry.errors,
+          startTime: telemetry.startTime,
+        }
+      : null,
   };
 }
 
@@ -365,9 +371,9 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
   if (signalState.isShuttingDown) {
     return { error: 'Bridge is shutting down' };
   }
-  
+
   switch (name) {
-    case "shell_execute": {
+    case 'shell_execute': {
       return executeCommand(args.command as string, {
         profile: args.profile as string | undefined,
         openclaw: args.openclaw as boolean | undefined,
@@ -375,88 +381,89 @@ async function handleToolCall(name: string, args: Record<string, unknown>): Prom
         workingDir: args.workingDir as string | undefined,
       });
     }
-    
-    case "shell_execute_stream": {
+
+    case 'shell_execute_stream': {
       const result = await executeCommand(args.command as string, {
         profile: args.profile as string | undefined,
         openclaw: args.openclaw as boolean | undefined,
       });
       return {
         ...result,
-        stream: true
+        stream: true,
       };
     }
-    
-    case "openclaw_status": {
+
+    case 'openclaw_status': {
       return getOpenClawStatus();
     }
-    
-    case "openclaw_gateway_restart": {
+
+    case 'openclaw_gateway_restart': {
       await $`pkill -f "openclaw gateway" 2>/dev/null || true`;
       await Bun.sleep(1000);
       const token = await getOpenClawToken();
-      if (!token) return { error: "Token not found" };
-      
-      await $`openclaw gateway --port 18789 &`
-        .env({ OPENCLAW_GATEWAY_TOKEN: token })
-        .nothrow();
-      
+      if (!token) return { error: 'Token not found' };
+
+      await $`openclaw gateway --port 18789 &`.env({ OPENCLAW_GATEWAY_TOKEN: token }).nothrow();
+
       return { restarted: true };
     }
-    
-    case "profile_list": {
+
+    case 'profile_list': {
       const profiles = await listProfiles();
       return { profiles };
     }
-    
-    case "profile_bind": {
-      return profileTerminal("bind", [args.profile as string]);
+
+    case 'profile_bind': {
+      return profileTerminal('bind', [args.profile as string]);
     }
-    
-    case "profile_switch": {
-      return profileTerminal("switch", [args.profile as string]);
+
+    case 'profile_switch': {
+      return profileTerminal('switch', [args.profile as string]);
     }
-    
-    case "profile_status": {
-      return profileTerminal("status");
+
+    case 'profile_status': {
+      return profileTerminal('status');
     }
-    
-    case "bridge_health": {
+
+    case 'bridge_health': {
       return getHealthStatus();
     }
-    
-    case "clawbot_migrate":
-      return handleMatrixAgentTools("clawbot_migrate", args);
-    case "clawbot_legacy_config":
-      return handleMatrixAgentTools("clawbot_legacy_config", args);
-    
-    case "matrix_agent_status": {
+
+    case 'clawbot_migrate':
+      return handleMatrixAgentTools('clawbot_migrate', args);
+    case 'clawbot_legacy_config':
+      return handleMatrixAgentTools('clawbot_legacy_config', args);
+
+    case 'matrix_agent_status': {
       const result = await $`bun ${process.env.HOME}/.matrix/matrix-agent.ts status`.nothrow();
       return {
         stdout: result.stdout.toString(),
         stderr: result.stderr.toString(),
-        exitCode: result.exitCode
+        exitCode: result.exitCode,
       };
     }
-    
-    case "cron_list": {
+
+    case 'cron_list': {
       const result = await $`crontab -l 2>/dev/null || echo "No crontab"`.nothrow();
       return {
-        crontab: result.stdout.toString()
+        crontab: result.stdout.toString(),
       };
     }
-    
+
     default:
       return { error: `Unknown tool: ${name}` };
   }
 }
 
 // Matrix Agent (Clawdbot) specific tools
-async function handleMatrixAgentTools(name: string, args: Record<string, unknown>): Promise<object> {
+async function handleMatrixAgentTools(
+  name: string,
+  args: Record<string, unknown>
+): Promise<object> {
   const agentPath = `${process.env.HOME}/.matrix/matrix-agent.ts`;
-  
+
   switch (name) {
-    case "clawbot_migrate": {
+    case 'clawbot_migrate': {
       const marker = `${process.env.HOME}/.matrix/.migrated-from-clawdbot`;
       if (existsSync(marker)) {
         const data = await Bun.file(marker).json();
@@ -464,57 +471,58 @@ async function handleMatrixAgentTools(name: string, args: Record<string, unknown
       }
       return { migrated: false };
     }
-    
-    case "clawbot_legacy_config": {
+
+    case 'clawbot_legacy_config': {
       const legacyConfig = `${process.env.HOME}/.clawdbot/clawdbot.json`;
       if (!existsSync(legacyConfig)) {
-        return { error: "Legacy config not found" };
+        return { error: 'Legacy config not found' };
       }
       try {
         const config = await Bun.file(legacyConfig).json();
-        return { 
+        return {
           legacyConfig: config,
-          note: "This is the legacy clawdbot config (read-only). Matrix Agent uses ~/.matrix/agent/config.json"
+          note: 'This is the legacy clawdbot config (read-only). Matrix Agent uses ~/.matrix/agent/config.json',
         };
       } catch (e) {
         return { error: String(e) };
       }
     }
-    
-    case "matrix_agent_init": {
+
+    case 'matrix_agent_init': {
       const result = await $`bun ${agentPath} init`.nothrow();
       return {
         initialized: result.exitCode === 0,
         output: result.stdout.toString(),
-        errors: result.stderr.toString()
+        errors: result.stderr.toString(),
       };
     }
-    
-    case "matrix_agent_health": {
+
+    case 'matrix_agent_health': {
       const result = await $`bun ${agentPath} health`.nothrow();
       return {
         healthy: result.exitCode === 0,
-        output: result.stdout.toString()
+        output: result.stdout.toString(),
       };
     }
-    
-    case "matrix_agent_migrate": {
+
+    case 'matrix_agent_migrate': {
       const result = await $`bun ${agentPath} migrate`.nothrow();
       return {
         migrated: result.exitCode === 0,
-        output: result.stdout.toString()
+        output: result.stdout.toString(),
       };
     }
-    
-    case "matrix_agent_profile": {
-      const result = await $`bun ${agentPath} profile ${args.command || 'list'} ${args.args || ''}`.nothrow();
+
+    case 'matrix_agent_profile': {
+      const result =
+        await $`bun ${agentPath} profile ${args.command || 'list'} ${args.args || ''}`.nothrow();
       return {
         output: result.stdout.toString(),
         stderr: result.stderr.toString(),
-        exitCode: result.exitCode
+        exitCode: result.exitCode,
       };
     }
-    
+
     default:
       return null;
   }
@@ -527,145 +535,151 @@ async function handleMatrixAgentTools(name: string, args: Record<string, unknown
 async function startMcpServer(): Promise<void> {
   // Initialize signal handlers first
   initializeSignalHandlers();
-  
+
   // Register cleanup handler
   onCleanup(async () => {
-    log('info', 'MCP server cleanup', { 
+    log('info', 'MCP server cleanup', {
       commandsExecuted: telemetry.commandsExecuted,
       errors: telemetry.errors,
     });
   });
-  
+
   // Send initialization response
-  console.info(JSON.stringify({
-    jsonrpc: "2.0",
-    id: 0,
-    result: {
-      protocolVersion: "2024-11-05",
-      capabilities: {
-        tools: {}
+  console.info(
+    JSON.stringify({
+      jsonrpc: '2.0',
+      id: 0,
+      result: {
+        protocolVersion: '2024-11-05',
+        capabilities: {
+          tools: {},
+        },
+        serverInfo: {
+          name: 'unified-shell-bridge',
+          version: '2.0.0',
+          bunVersion: Bun.version,
+        },
       },
-      serverInfo: {
-        name: "unified-shell-bridge",
-        version: "2.0.0",
-        bunVersion: Bun.version,
-      }
-    }
-  }));
-  
+    })
+  );
+
   log('info', 'MCP server started', { pid: process.pid });
-  
+
   // Main input loop
   for await (const line of console) {
     try {
       const request = JSON.parse(line);
-      
-      if (request.method === "tools/list") {
-        console.info(JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: {
-            tools: [
-              {
-                name: "shell_execute",
-                description: "Execute shell command with profile/OpenClaw context",
-                inputSchema: {
-                  type: "object",
-                  properties: {
-                    command: { type: "string" },
-                    profile: { type: "string", optional: true },
-                    openclaw: { type: "boolean", optional: true },
-                    workingDir: { type: "string", optional: true }
+
+      if (request.method === 'tools/list') {
+        console.info(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: request.id,
+            result: {
+              tools: [
+                {
+                  name: 'shell_execute',
+                  description: 'Execute shell command with profile/OpenClaw context',
+                  inputSchema: {
+                    type: 'object',
+                    properties: {
+                      command: { type: 'string' },
+                      profile: { type: 'string', optional: true },
+                      openclaw: { type: 'boolean', optional: true },
+                      workingDir: { type: 'string', optional: true },
+                    },
+                    required: ['command'],
                   },
-                  required: ["command"]
-                }
-              },
-              {
-                name: "shell_execute_stream",
-                description: "Execute shell command with streaming output",
-                inputSchema: {
-                  type: "object",
-                  properties: {
-                    command: { type: "string" },
-                    profile: { type: "string", optional: true },
-                    openclaw: { type: "boolean", optional: true }
+                },
+                {
+                  name: 'shell_execute_stream',
+                  description: 'Execute shell command with streaming output',
+                  inputSchema: {
+                    type: 'object',
+                    properties: {
+                      command: { type: 'string' },
+                      profile: { type: 'string', optional: true },
+                      openclaw: { type: 'boolean', optional: true },
+                    },
+                    required: ['command'],
                   },
-                  required: ["command"]
-                }
-              },
-              {
-                name: "openclaw_status",
-                description: "Check OpenClaw gateway status",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "openclaw_gateway_restart",
-                description: "Restart OpenClaw gateway",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "profile_list",
-                description: "List available Matrix profiles",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "profile_bind",
-                description: "Bind current directory to profile",
-                inputSchema: {
-                  type: "object",
-                  properties: {
-                    profile: { type: "string" }
+                },
+                {
+                  name: 'openclaw_status',
+                  description: 'Check OpenClaw gateway status',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'openclaw_gateway_restart',
+                  description: 'Restart OpenClaw gateway',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'profile_list',
+                  description: 'List available Matrix profiles',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'profile_bind',
+                  description: 'Bind current directory to profile',
+                  inputSchema: {
+                    type: 'object',
+                    properties: {
+                      profile: { type: 'string' },
+                    },
+                    required: ['profile'],
                   },
-                  required: ["profile"]
-                }
-              },
-              {
-                name: "profile_switch",
-                description: "Switch to different profile",
-                inputSchema: {
-                  type: "object",
-                  properties: {
-                    profile: { type: "string" }
+                },
+                {
+                  name: 'profile_switch',
+                  description: 'Switch to different profile',
+                  inputSchema: {
+                    type: 'object',
+                    properties: {
+                      profile: { type: 'string' },
+                    },
+                    required: ['profile'],
                   },
-                  required: ["profile"]
-                }
-              },
-              {
-                name: "profile_status",
-                description: "Show profile-terminal binding status",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "matrix_agent_status",
-                description: "Check Matrix Agent status",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "bridge_health",
-                description: "Check bridge health and telemetry",
-                inputSchema: { type: "object" }
-              },
-              {
-                name: "cron_list",
-                description: "List configured cron jobs",
-                inputSchema: { type: "object" }
-              }
-            ]
-          }
-        }));
-      } else if (request.method === "tools/call") {
+                },
+                {
+                  name: 'profile_status',
+                  description: 'Show profile-terminal binding status',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'matrix_agent_status',
+                  description: 'Check Matrix Agent status',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'bridge_health',
+                  description: 'Check bridge health and telemetry',
+                  inputSchema: { type: 'object' },
+                },
+                {
+                  name: 'cron_list',
+                  description: 'List configured cron jobs',
+                  inputSchema: { type: 'object' },
+                },
+              ],
+            },
+          })
+        );
+      } else if (request.method === 'tools/call') {
         const result = await handleToolCall(request.params.name, request.params.arguments);
-        console.info(JSON.stringify({
-          jsonrpc: "2.0",
-          id: request.id,
-          result: {
-            content: [{ type: "text", text: JSON.stringify(result, null, 2) }]
-          }
-        }));
+        console.info(
+          JSON.stringify({
+            jsonrpc: '2.0',
+            id: request.id,
+            result: {
+              content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
+            },
+          })
+        );
       }
     } catch (e) {
       log('error', 'Request processing error', { error: String(e) });
-      console.error("Error:", e);
+      console.error('Error:', e);
     }
   }
 }
@@ -675,7 +689,7 @@ async function startMcpServer(): Promise<void> {
 // ============================================================================
 
 if (import.meta.main) {
-  startMcpServer().catch((error) => {
+  startMcpServer().catch(error => {
     log('error', 'Failed to start MCP server', { error: String(error) });
     process.exit(1);
   });

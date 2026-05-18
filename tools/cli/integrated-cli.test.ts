@@ -30,7 +30,11 @@ describe('IntegratedCLI', () => {
 
   test('formatBytes produces human-readable output', async () => {
     // Test the module's formatBytes by importing it dynamically via eval in subprocess
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       const units = ['B', 'KB', 'MB', 'GB'];
       function formatBytes(bytes) {
         let size = bytes;
@@ -44,7 +48,10 @@ describe('IntegratedCLI', () => {
       console.info(formatBytes(0));
       console.info(formatBytes(1024));
       console.info(formatBytes(1048576));
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const text = await new Response(proc.stdout).text();
     await proc.exited;
     const lines = text.trim().split('\n');
@@ -58,13 +65,20 @@ describe('IntegratedCLI', () => {
     const src = await Bun.file(`${import.meta.dir}/integrated-cli.ts`).text();
     // Extract generatePackagePage function — it's an exported standalone function
     // We test via subprocess to avoid side effects of the module's top-level await
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       async function generatePackagePage(packageInfo) {
         return '<html><head><title>' + packageInfo.name + ' - Documentation</title></head></html>';
       }
       const html = await generatePackagePage({ name: 'my-pkg', version: '1.0.0', description: 'test' });
       console.info(html);
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const html = await new Response(proc.stdout).text();
     await proc.exited;
     expect(html).toContain('my-pkg');
@@ -72,7 +86,11 @@ describe('IntegratedCLI', () => {
   });
 
   test('generateRSS produces valid RSS XML', async () => {
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       function generateRSS(feed) {
         return '<?xml version="1.0" encoding="UTF-8"?>\\n<rss version="2.0">\\n  <channel>\\n    <title>' + feed.title + '</title>\\n    <link>' + feed.link + '</link>\\n    <description>' + feed.description + '</description>\\n    <lastBuildDate>' + feed.lastBuildDate + '</lastBuildDate>\\n    <ttl>' + feed.ttl + '</ttl>\\n    ' + feed.items.map(function(item) { return '<item><title><![CDATA[' + item.title + ']]></title><link>' + item.link + '</link></item>'; }).join('') + '\\n  </channel>\\n</rss>';
       }
@@ -82,7 +100,10 @@ describe('IntegratedCLI', () => {
         lastBuildDate: '2026-01-01', ttl: 60,
       });
       console.info(xml);
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const xml = await new Response(proc.stdout).text();
     await proc.exited;
     expect(xml).toContain('<?xml version="1.0"');
@@ -92,7 +113,11 @@ describe('IntegratedCLI', () => {
   });
 
   test('formatBytes handles 0 bytes', async () => {
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       const units = ['B', 'KB', 'MB', 'GB'];
       function formatBytes(bytes) {
         let size = bytes;
@@ -104,14 +129,21 @@ describe('IntegratedCLI', () => {
         return size.toFixed(2) + ' ' + units[unitIndex];
       }
       console.info(formatBytes(0));
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const text = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
     expect(text).toBe('0.00 B');
   });
 
   test('formatBytes handles GB-range values', async () => {
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       const units = ['B', 'KB', 'MB', 'GB'];
       function formatBytes(bytes) {
         let size = bytes;
@@ -123,25 +155,35 @@ describe('IntegratedCLI', () => {
         return size.toFixed(2) + ' ' + units[unitIndex];
       }
       console.info(formatBytes(2 * 1024 * 1024 * 1024));
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const text = (await new Response(proc.stdout).text()).trim();
     await proc.exited;
     expect(text).toBe('2.00 GB');
   });
 
   test('CLI with unknown command still shows help', async () => {
-    const proc = Bun.spawn(['bun', 'run', `${import.meta.dir}/integrated-cli.ts`, 'nonexistent-cmd'], {
-      stdout: 'pipe',
-      stderr: 'pipe',
-      env: { ...Bun.env, HOME: Bun.env.HOME },
-    });
+    const proc = Bun.spawn(
+      ['bun', 'run', `${import.meta.dir}/integrated-cli.ts`, 'nonexistent-cmd'],
+      {
+        stdout: 'pipe',
+        stderr: 'pipe',
+        env: { ...Bun.env, HOME: Bun.env.HOME },
+      }
+    );
     const text = await new Response(proc.stdout).text();
     await proc.exited;
     expect(text).toContain('Bun Documentation CLI');
   });
 
   test('generateRSS wraps titles in CDATA', async () => {
-    const proc = Bun.spawn(['bun', '-e', `
+    const proc = Bun.spawn(
+      [
+        'bun',
+        '-e',
+        `
       function generateRSS(feed) {
         return '<?xml version="1.0" encoding="UTF-8"?>\\n<rss version="2.0">\\n  <channel>\\n    <title>' + feed.title + '</title>\\n    ' + feed.items.map(function(item) { return '<item><title><![CDATA[' + item.title + ']]></title><link>' + item.link + '</link></item>'; }).join('') + '\\n  </channel>\\n</rss>';
       }
@@ -153,7 +195,10 @@ describe('IntegratedCLI', () => {
         lastBuildDate: '', ttl: 60,
       });
       console.info(xml);
-    `], { stdout: 'pipe', stderr: 'pipe' });
+    `,
+      ],
+      { stdout: 'pipe', stderr: 'pipe' }
+    );
     const xml = await new Response(proc.stdout).text();
     await proc.exited;
     expect(xml).toContain('<![CDATA[Title with <special> & chars]]>');

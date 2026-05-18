@@ -11,20 +11,22 @@
 
 import { Server } from '@modelcontextprotocol/sdk/server/index.js';
 import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js';
-import {
-  CallToolRequestSchema,
-  ListToolsRequestSchema,
-} from '@modelcontextprotocol/sdk/types.js';
+import { CallToolRequestSchema, ListToolsRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { PlaywriterR2Integration } from './r2-integration';
 
 // Check if R2 is configured
-const R2_ENABLED = !!(process.env.R2_ACCOUNT_ID && process.env.R2_ACCESS_KEY_ID && process.env.R2_SECRET_ACCESS_KEY);
+const R2_ENABLED = !!(
+  process.env.R2_ACCOUNT_ID &&
+  process.env.R2_ACCESS_KEY_ID &&
+  process.env.R2_SECRET_ACCESS_KEY
+);
 
 // Tool definitions
 const TOOLS = [
   {
     name: 'browser_execute',
-    description: 'Execute Playwright code in the browser. Variables available: page, context, state, require',
+    description:
+      'Execute Playwright code in the browser. Variables available: page, context, state, require',
     inputSchema: {
       type: 'object',
       properties: {
@@ -165,7 +167,9 @@ const TOOLS = [
 ];
 
 // Execute playwriter command
-async function executePlaywriter(args: string[]): Promise<{ stdout: string; stderr: string; exitCode: number }> {
+async function executePlaywriter(
+  args: string[]
+): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   const proc = Bun.spawn(['playwriter', ...args], {
     stdout: 'pipe',
     stderr: 'pipe',
@@ -197,7 +201,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => ({
 }));
 
 // Call tool
-server.setRequestHandler(CallToolRequestSchema, async (request) => {
+server.setRequestHandler(CallToolRequestSchema, async request => {
   const { name, arguments: args } = request.params;
 
   try {
@@ -238,7 +242,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'browser_fill': {
-        const { session, selector, value } = args as { session: number; selector: string; value: string };
+        const { session, selector, value } = args as {
+          session: number;
+          selector: string;
+          value: string;
+        };
         const code = `await page.locator('${selector}').fill('${value}'); console.info('Filled: ${selector}');`;
         const result = await executePlaywriter(['-s', String(session), '-e', code]);
         return {
@@ -256,7 +264,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       }
 
       case 'browser_screenshot': {
-        const { session, path, labels = true } = args as { session: number; path?: string; labels?: boolean };
+        const {
+          session,
+          path,
+          labels = true,
+        } = args as { session: number; path?: string; labels?: boolean };
         let code: string;
         if (labels) {
           code = `await screenshotWithAccessibilityLabels({ page }); console.info('Screenshot taken with labels');`;
@@ -284,12 +296,22 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'browser_screenshot_r2': {
         if (!R2_ENABLED) {
           return {
-            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            content: [
+              {
+                type: 'text',
+                text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY',
+              },
+            ],
             isError: true,
           };
         }
 
-        const { session, fullPage = true, labels = false, bucket } = args as { session: number; fullPage?: boolean; labels?: boolean; bucket?: string };
+        const {
+          session,
+          fullPage = true,
+          labels = false,
+          bucket,
+        } = args as { session: number; fullPage?: boolean; labels?: boolean; bucket?: string };
 
         try {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
@@ -330,7 +352,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         } catch (error) {
           return {
-            content: [{ type: 'text', text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}` }],
+            content: [
+              {
+                type: 'text',
+                text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
             isError: true,
           };
         }
@@ -339,7 +366,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'browser_snapshot_r2': {
         if (!R2_ENABLED) {
           return {
-            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            content: [
+              {
+                type: 'text',
+                text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY',
+              },
+            ],
             isError: true,
           };
         }
@@ -371,7 +403,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         } catch (error) {
           return {
-            content: [{ type: 'text', text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}` }],
+            content: [
+              {
+                type: 'text',
+                text: `R2 upload error: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
             isError: true,
           };
         }
@@ -380,7 +417,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
       case 'browser_list_artifacts': {
         if (!R2_ENABLED) {
           return {
-            content: [{ type: 'text', text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY' }],
+            content: [
+              {
+                type: 'text',
+                text: 'R2 not configured. Set R2_ACCOUNT_ID, R2_ACCESS_KEY_ID, R2_SECRET_ACCESS_KEY',
+              },
+            ],
             isError: true,
           };
         }
@@ -391,9 +433,11 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           const r2 = new PlaywriterR2Integration({ sessionId: session, bucket });
           const artifacts = await r2.listArtifacts();
 
-          const formatted = artifacts.map(a =>
-            `- ${a.key} (${(a.size / 1024).toFixed(2)} KB, ${a.lastModified.toISOString()})`
-          ).join('\n');
+          const formatted = artifacts
+            .map(
+              a => `- ${a.key} (${(a.size / 1024).toFixed(2)} KB, ${a.lastModified.toISOString()})`
+            )
+            .join('\n');
 
           return {
             content: [
@@ -403,7 +447,12 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
           };
         } catch (error) {
           return {
-            content: [{ type: 'text', text: `R2 list error: ${error instanceof Error ? error.message : String(error)}` }],
+            content: [
+              {
+                type: 'text',
+                text: `R2 list error: ${error instanceof Error ? error.message : String(error)}`,
+              },
+            ],
             isError: true,
           };
         }
@@ -429,7 +478,7 @@ async function main() {
   console.error('Playwriter MCP server running on stdio');
 }
 
-main().catch((error) => {
+main().catch(error => {
   console.error('Server error:', error);
   process.exit(1);
 });

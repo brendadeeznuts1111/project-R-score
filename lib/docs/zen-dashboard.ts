@@ -46,7 +46,7 @@ export class ZenDocumentationDashboard {
       networkStreams: 0,
       virtualFiles: 0,
       systemHealth: 'optimal',
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
 
     this.searcher = new ZenStreamSearcher();
@@ -59,7 +59,7 @@ export class ZenDocumentationDashboard {
    */
   startMonitoring(): void {
     console.info('📊 Starting Zen Documentation Dashboard...');
-    
+
     // Update metrics every 5 seconds
     this.updateInterval = setInterval(() => {
       this.updateMetrics();
@@ -108,7 +108,7 @@ export class ZenDocumentationDashboard {
    */
   private updateSystemHealth(): void {
     const { memoryUsage, averageSearchTime, totalSearches } = this.metrics;
-    
+
     if (memoryUsage > 100 || averageSearchTime > 1000) {
       this.metrics.systemHealth = 'critical';
     } else if (memoryUsage > 50 || averageSearchTime > 500) {
@@ -129,7 +129,7 @@ export class ZenDocumentationDashboard {
       matches,
       time,
       timestamp: new Date().toISOString(),
-      type
+      type,
     };
 
     this.searchHistory.unshift(search);
@@ -140,7 +140,7 @@ export class ZenDocumentationDashboard {
     // Update metrics
     this.metrics.totalSearches++;
     this.metrics.totalMatches += matches;
-    this.metrics.averageSearchTime = 
+    this.metrics.averageSearchTime =
       this.searchHistory.reduce((sum, s) => sum + s.time, 0) / this.searchHistory.length;
 
     if (type === 'network') {
@@ -154,25 +154,25 @@ export class ZenDocumentationDashboard {
   private renderDashboard(): void {
     // Clear screen
     console.clear();
-    
+
     console.info('🎪 Zen Documentation Dashboard - Real-time Monitoring');
     console.info('='.repeat(80));
-    
+
     // System Health Indicator
     this.renderSystemHealth();
-    
+
     // Key Metrics
     this.renderKeyMetrics();
-    
+
     // Recent Searches
     this.renderSearchHistory();
-    
+
     // Performance Graph
     this.renderPerformanceGraph();
-    
+
     // System Information
     this.renderSystemInfo();
-    
+
     console.info('\n🔄 Updating every 5 seconds... (Press Ctrl+C to stop)');
   }
 
@@ -183,11 +183,11 @@ export class ZenDocumentationDashboard {
     const health = this.metrics.systemHealth;
     const healthIcons = {
       optimal: '🟢',
-      good: '🟡', 
+      good: '🟡',
       warning: '🟠',
-      critical: '🔴'
+      critical: '🔴',
     };
-    
+
     console.info(`${healthIcons[health]} System Health: ${health.toUpperCase()}`);
     console.info(`   Last Update: ${new Date(this.metrics.lastUpdate).toLocaleString()}`);
     console.info('');
@@ -212,7 +212,7 @@ export class ZenDocumentationDashboard {
    */
   private renderSearchHistory(): void {
     console.info('📜 Recent Searches:');
-    
+
     if (this.searchHistory.length === 0) {
       console.info('   No searches performed yet.');
     } else {
@@ -221,10 +221,12 @@ export class ZenDocumentationDashboard {
           local: '🧘',
           network: '🌐',
           template: '🧭',
-          virtual: '🌐'
+          virtual: '🌐',
         };
-        
-        console.info(`   ${index + 1}. ${typeIcons[search.type]} "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms`);
+
+        console.info(
+          `   ${index + 1}. ${typeIcons[search.type]} "${search.query}" - ${search.matches} matches in ${search.time.toFixed(2)}ms`
+        );
       });
     }
     console.info('');
@@ -235,7 +237,7 @@ export class ZenDocumentationDashboard {
    */
   private renderPerformanceGraph(): void {
     console.info('📈 Performance Timeline:');
-    
+
     if (this.searchHistory.length === 0) {
       console.info('   No data to display.');
       return;
@@ -244,12 +246,12 @@ export class ZenDocumentationDashboard {
     // Create simple ASCII graph
     const maxTime = Math.max(...this.searchHistory.map(s => s.time));
     const graphWidth = 50;
-    
+
     this.searchHistory.slice(0, 8).forEach((search, index) => {
       const barLength = Math.round((search.time / maxTime) * graphWidth);
       const bar = '█'.repeat(barLength) + '░'.repeat(graphWidth - barLength);
       const query = search.query.substring(0, 12).padEnd(12);
-      
+
       console.info(`   ${query} │${bar}│ ${search.time.toFixed(0)}ms`);
     });
     console.info('');
@@ -330,17 +332,21 @@ export class ZenDocumentationDashboard {
         
         <div class="search-history">
             <h2>📜 Recent Searches</h2>
-            ${this.searchHistory.map(search => `
+            ${this.searchHistory
+              .map(
+                search => `
                 <div class="search-item">
                     <span>${search.type} - "${search.query}"</span>
                     <span>${search.matches} matches in ${search.time.toFixed(2)}ms</span>
                 </div>
-            `).join('')}
+            `
+              )
+              .join('')}
         </div>
     </div>
 </body>
 </html>`;
-    
+
     return html;
   }
 
@@ -349,47 +355,46 @@ export class ZenDocumentationDashboard {
    */
   async demonstrateDashboard(): Promise<void> {
     console.info('🎪 Zen Documentation Dashboard Demo');
-    console.info('=' .repeat(60));
-    
+    console.info('='.repeat(60));
+
     this.startMonitoring();
-    
+
     // Perform some demo searches
     const demoQueries = ['bun', 'performance', 'streaming', 'zen'];
-    
+
     for (const query of demoQueries) {
       console.info(`\n🔍 Performing demo search: ${query}`);
-      
+
       try {
         // Local search
         const startTime = performance.now();
         const results = await this.searcher.streamSearch({
           query,
-          cachePath: '/Users/nolarose/Projects/.cache'
+          cachePath: '/Users/nolarose/Projects/.cache',
         });
         const searchTime = performance.now() - startTime;
-        
+
         this.recordSearch(query, results.matchesFound, searchTime, 'local');
-        
+
         // Wait a bit for visual effect
         await new Promise(resolve => setTimeout(resolve, 2000));
-        
       } catch (error) {
         console.info(`⚠️ Search failed: ${error.message}`);
       }
     }
-    
+
     // Generate HTML dashboard
     console.info('\n📄 Generating HTML dashboard...');
     const htmlDashboard = await this.generateHTMLDashboard();
-    
+
     const dashboardFile = (Bun as any).file('zen-dashboard.html', { type: 'text/html' });
     await Bun.write(dashboardFile, new TextEncoder().encode(htmlDashboard));
-    
+
     console.info('✅ HTML dashboard saved as: zen-dashboard.html');
-    
+
     // Keep monitoring for a bit
     await new Promise(resolve => setTimeout(resolve, 10000));
-    
+
     this.stopMonitoring();
   }
 }

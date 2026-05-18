@@ -55,9 +55,15 @@ function printSecret(secret: string, key: string, level: string, metadata?: any)
   console.info(colorize('│', 'cyan') + ` Value: ${colorize('•'.repeat(secret.length), 'dim')}`);
 
   if (metadata) {
-    console.info(colorize('│', 'cyan') + ` Version: ${colorize(metadata.version || 'N/A', 'blue')}`);
-    console.info(colorize('│', 'cyan') + ` Author: ${colorize(metadata.author || 'system', 'blue')}`);
-    console.info(colorize('│', 'cyan') + ` Updated: ${colorize(metadata.timestamp || 'N/A', 'blue')}`);
+    console.info(
+      colorize('│', 'cyan') + ` Version: ${colorize(metadata.version || 'N/A', 'blue')}`
+    );
+    console.info(
+      colorize('│', 'cyan') + ` Author: ${colorize(metadata.author || 'system', 'blue')}`
+    );
+    console.info(
+      colorize('│', 'cyan') + ` Updated: ${colorize(metadata.timestamp || 'N/A', 'blue')}`
+    );
   }
 
   console.info(colorize('└─────────────────────────────────────────', 'cyan'));
@@ -80,7 +86,12 @@ async function getSecret(key: string, level: string) {
 
     // Validate security level
     if (result.metadata?.level && result.metadata.level !== level) {
-      console.info(colorize(`⚠️  Security level mismatch: expected ${level}, got ${result.metadata.level}`, 'yellow'));
+      console.info(
+        colorize(
+          `⚠️  Security level mismatch: expected ${level}, got ${result.metadata.level}`,
+          'yellow'
+        )
+      );
     }
 
     printSecret(result.value, key, level || result.metadata?.level || 'UNKNOWN', result.metadata);
@@ -92,7 +103,6 @@ async function getSecret(key: string, level: string) {
     } catch (error) {
       console.info(colorize(`⚠️  Could not save to clipboard: ${error.message}`, 'dim'));
     }
-
   } catch (error) {
     console.info(colorize(`❌ Error retrieving secret: ${error.message}`, 'red'));
     process.exit(1);
@@ -148,7 +158,6 @@ ${colorize('• Health Monitoring:', 'dim')} Secret availability checks
 `;
 
     console.info(docs);
-
   } catch (error) {
     console.info(colorize(`❌ Error showing documentation: ${error.message}`, 'red'));
     process.exit(1);
@@ -178,32 +187,49 @@ async function listSecrets() {
 
     console.info(colorize('\n📋 Secret Inventory:', 'bright'));
     console.info(colorize('┌─────────────────────────────────────┬──────────┬─────────┐', 'cyan'));
-    console.info(colorize('│', 'cyan') + ' Secret Key' + ' '.repeat(29) + colorize('│', 'cyan') + ' Level   ' + colorize('│', 'cyan') + ' Version ' + colorize('│', 'cyan'));
+    console.info(
+      colorize('│', 'cyan') +
+        ' Secret Key' +
+        ' '.repeat(29) +
+        colorize('│', 'cyan') +
+        ' Level   ' +
+        colorize('│', 'cyan') +
+        ' Version ' +
+        colorize('│', 'cyan')
+    );
     console.info(colorize('├─────────────────────────────────────┼──────────┼─────────┤', 'cyan'));
 
     mockSecrets.forEach(secret => {
-      const levelColor = secret.level === 'CRITICAL' ? 'red' :
-                        secret.level === 'HIGH' ? 'yellow' :
-                        secret.level === 'MEDIUM' ? 'green' : 'cyan';
+      const levelColor =
+        secret.level === 'CRITICAL'
+          ? 'red'
+          : secret.level === 'HIGH'
+            ? 'yellow'
+            : secret.level === 'MEDIUM'
+              ? 'green'
+              : 'cyan';
 
       const keyPadding = 37 - secret.key.length;
       const levelPadding = 8 - secret.level.length;
       const versionPadding = 7 - secret.version.length;
 
-      console.info(colorize('│', 'cyan') +
-                  ` ${secret.key}${' '.repeat(keyPadding)} ` +
-                  colorize('│', 'cyan') +
-                  ` ${colorize(secret.level, levelColor)}${' '.repeat(levelPadding)} ` +
-                  colorize('│', 'cyan') +
-                  ` ${secret.version}${' '.repeat(versionPadding)} ` +
-                  colorize('│', 'cyan'));
+      console.info(
+        colorize('│', 'cyan') +
+          ` ${secret.key}${' '.repeat(keyPadding)} ` +
+          colorize('│', 'cyan') +
+          ` ${colorize(secret.level, levelColor)}${' '.repeat(levelPadding)} ` +
+          colorize('│', 'cyan') +
+          ` ${secret.version}${' '.repeat(versionPadding)} ` +
+          colorize('│', 'cyan')
+      );
     });
 
     console.info(colorize('└─────────────────────────────────────┴──────────┴─────────┘', 'cyan'));
 
     console.info(colorize(`\n📊 Total: ${mockSecrets.length} secrets`, 'blue'));
-    console.info(colorize('🔐 Use "bun tools/secret-helper.ts get <KEY> <LEVEL>" to retrieve values', 'dim'));
-
+    console.info(
+      colorize('🔐 Use "bun tools/secret-helper.ts get <KEY> <LEVEL>" to retrieve values', 'dim')
+    );
   } catch (error) {
     console.info(colorize(`❌ Error listing secrets: ${error.message}`, 'red'));
     process.exit(1);
@@ -220,9 +246,21 @@ async function validateSecrets() {
 
     // Mock validation checks
     const validationResults = [
-      { check: 'Secret naming convention', status: 'PASS', message: 'All secrets follow naming pattern' },
-      { check: 'Security level assignment', status: 'PASS', message: 'Appropriate levels configured' },
-      { check: 'Version management', status: 'PASS', message: 'Versioning enabled for all secrets' },
+      {
+        check: 'Secret naming convention',
+        status: 'PASS',
+        message: 'All secrets follow naming pattern',
+      },
+      {
+        check: 'Security level assignment',
+        status: 'PASS',
+        message: 'Appropriate levels configured',
+      },
+      {
+        check: 'Version management',
+        status: 'PASS',
+        message: 'Versioning enabled for all secrets',
+      },
       { check: 'Encryption standards', status: 'PASS', message: 'AES-256 encryption in use' },
       { check: 'Access logging', status: 'PASS', message: 'Audit logging enabled' },
       { check: 'Backup configuration', status: 'WARN', message: 'R2 backup pending configuration' },
@@ -230,35 +268,56 @@ async function validateSecrets() {
     ];
 
     console.info(colorize('\n📋 Validation Results:', 'bright'));
-    console.info(colorize('┌─────────────────────────────────┬────────┬─────────────────────────┐', 'cyan'));
-    console.info(colorize('│', 'cyan') + ' Check' + ' '.repeat(29) + colorize('│', 'cyan') + ' Status ' + colorize('│', 'cyan') + ' Message' + ' '.repeat(17) + colorize('│', 'cyan'));
-    console.info(colorize('├─────────────────────────────────┼────────┼─────────────────────────┤', 'cyan'));
+    console.info(
+      colorize('┌─────────────────────────────────┬────────┬─────────────────────────┐', 'cyan')
+    );
+    console.info(
+      colorize('│', 'cyan') +
+        ' Check' +
+        ' '.repeat(29) +
+        colorize('│', 'cyan') +
+        ' Status ' +
+        colorize('│', 'cyan') +
+        ' Message' +
+        ' '.repeat(17) +
+        colorize('│', 'cyan')
+    );
+    console.info(
+      colorize('├─────────────────────────────────┼────────┼─────────────────────────┤', 'cyan')
+    );
 
     validationResults.forEach(result => {
-      const statusColor = result.status === 'PASS' ? 'green' :
-                         result.status === 'WARN' ? 'yellow' : 'red';
+      const statusColor =
+        result.status === 'PASS' ? 'green' : result.status === 'WARN' ? 'yellow' : 'red';
 
       const checkPadding = 33 - result.check.length;
       const messagePadding = 25 - result.message.length;
 
-      console.info(colorize('│', 'cyan') +
-                  ` ${result.check}${' '.repeat(checkPadding)} ` +
-                  colorize('│', 'cyan') +
-                  ` ${colorize(result.status, statusColor)}  ` +
-                  colorize('│', 'cyan') +
-                  ` ${result.message}${' '.repeat(messagePadding)} ` +
-                  colorize('│', 'cyan'));
+      console.info(
+        colorize('│', 'cyan') +
+          ` ${result.check}${' '.repeat(checkPadding)} ` +
+          colorize('│', 'cyan') +
+          ` ${colorize(result.status, statusColor)}  ` +
+          colorize('│', 'cyan') +
+          ` ${result.message}${' '.repeat(messagePadding)} ` +
+          colorize('│', 'cyan')
+      );
     });
 
-    console.info(colorize('└─────────────────────────────────┴────────┴─────────────────────────┘', 'cyan'));
+    console.info(
+      colorize('└─────────────────────────────────┴────────┴─────────────────────────┘', 'cyan')
+    );
 
     const passCount = validationResults.filter(r => r.status === 'PASS').length;
     const warnCount = validationResults.filter(r => r.status === 'WARN').length;
     const failCount = validationResults.filter(r => r.status === 'FAIL').length;
 
-    console.info(colorize(`\n📊 Summary: ${passCount} passed, ${warnCount} warnings, ${failCount} failed`,
-                      failCount > 0 ? 'red' : warnCount > 0 ? 'yellow' : 'green'));
-
+    console.info(
+      colorize(
+        `\n📊 Summary: ${passCount} passed, ${warnCount} warnings, ${failCount} failed`,
+        failCount > 0 ? 'red' : warnCount > 0 ? 'yellow' : 'green'
+      )
+    );
   } catch (error) {
     console.info(colorize(`❌ Error validating secrets: ${error.message}`, 'red'));
     process.exit(1);
@@ -290,7 +349,15 @@ async function auditSecrets() {
 
     console.info(colorize('\n📊 Audit Summary:', 'bright'));
     console.info(colorize('┌─────────────────────────────────┬─────────────────────────┐', 'cyan'));
-    console.info(colorize('│', 'cyan') + ' Metric' + ' '.repeat(29) + colorize('│', 'cyan') + ' Value' + ' '.repeat(19) + colorize('│', 'cyan'));
+    console.info(
+      colorize('│', 'cyan') +
+        ' Metric' +
+        ' '.repeat(29) +
+        colorize('│', 'cyan') +
+        ' Value' +
+        ' '.repeat(19) +
+        colorize('│', 'cyan')
+    );
     console.info(colorize('├─────────────────────────────────┼─────────────────────────┤', 'cyan'));
 
     const metrics = [
@@ -309,24 +376,33 @@ async function auditSecrets() {
 
     metrics.forEach(([metric, value]) => {
       const metricPadding = 33 - metric.length;
-      console.info(colorize('│', 'cyan') +
-                  ` ${metric}${' '.repeat(metricPadding)} ` +
-                  colorize('│', 'cyan') +
-                  ` ${value}${' '.repeat(25 - value.length)} ` +
-                  colorize('│', 'cyan'));
+      console.info(
+        colorize('│', 'cyan') +
+          ` ${metric}${' '.repeat(metricPadding)} ` +
+          colorize('│', 'cyan') +
+          ` ${value}${' '.repeat(25 - value.length)} ` +
+          colorize('│', 'cyan')
+      );
     });
 
     console.info(colorize('└─────────────────────────────────┴─────────────────────────┘', 'cyan'));
 
     console.info(colorize('\n🔍 Recent Activity:', 'bright'));
-    console.info(colorize('• API_KEY_V3 accessed by system', 'dim') + colorize(' (2 min ago)', 'blue'));
-    console.info(colorize('• DATABASE_URL_V2 rotated successfully', 'dim') + colorize(' (1 hour ago)', 'green'));
-    console.info(colorize('• JWT_SECRET_V3 access denied', 'dim') + colorize(' (3 hours ago)', 'yellow'));
-    console.info(colorize('• ENCRYPTION_KEY_V3 backup completed', 'dim') + colorize(' (6 hours ago)', 'green'));
+    console.info(
+      colorize('• API_KEY_V3 accessed by system', 'dim') + colorize(' (2 min ago)', 'blue')
+    );
+    console.info(
+      colorize('• DATABASE_URL_V2 rotated successfully', 'dim') + colorize(' (1 hour ago)', 'green')
+    );
+    console.info(
+      colorize('• JWT_SECRET_V3 access denied', 'dim') + colorize(' (3 hours ago)', 'yellow')
+    );
+    console.info(
+      colorize('• ENCRYPTION_KEY_V3 backup completed', 'dim') + colorize(' (6 hours ago)', 'green')
+    );
 
     console.info(colorize('\n✅ Audit completed successfully', 'green'));
     console.info(colorize('📄 Full report saved to: /tmp/secret-audit-2026-02-05.json', 'dim'));
-
   } catch (error) {
     console.info(colorize(`❌ Error during audit: ${error.message}`, 'red'));
     process.exit(1);

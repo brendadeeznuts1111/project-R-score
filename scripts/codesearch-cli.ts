@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * CodeSearch CLI - Fast, streaming code search
- * 
+ *
  * Usage:
  *   bun run scripts/codesearch-cli.ts "query" [options]
  *   bun run scripts/codesearch-cli.ts "export function" --path ./src --type ts
@@ -9,7 +9,12 @@
  *   bun run scripts/codesearch-cli.ts "class" --symbol --json
  */
 
-import { CodeSearch, searchWithScoring, type CodeSearchOptions, type ScoredMatch } from '../lib/docs/codesearch';
+import {
+  CodeSearch,
+  searchWithScoring,
+  type CodeSearchOptions,
+  type ScoredMatch,
+} from '../lib/docs/codesearch';
 
 // ============================================================================
 // CLI Argument Parsing
@@ -65,7 +70,10 @@ function parseArgs(argv: string[]): { query: string; options: CliOptions } | nul
         break;
       case '-p':
       case '--path':
-        const paths = argv[++i]?.split(',').map(p => p.trim()).filter(Boolean);
+        const paths = argv[++i]
+          ?.split(',')
+          .map(p => p.trim())
+          .filter(Boolean);
         if (paths?.length) options.paths = paths;
         break;
       case '-t':
@@ -234,9 +242,12 @@ function formatMatch(match: ScoredMatch, index: number, query: string, showScore
   const file = match.file.replace(process.cwd(), '.');
   const line = `${colors.bright}${file}:${match.line}${colors.reset}`;
   const col = match.column ? `:${match.column}` : '';
-  const score = showScore && match.score !== undefined ? ` ${colors.cyan}[${match.score}]${colors.reset}` : '';
-  const reasons = match.reasons?.length ? ` ${colors.dim}(${match.reasons.join(', ')})${colors.reset}` : '';
-  
+  const score =
+    showScore && match.score !== undefined ? ` ${colors.cyan}[${match.score}]${colors.reset}` : '';
+  const reasons = match.reasons?.length
+    ? ` ${colors.dim}(${match.reasons.join(', ')})${colors.reset}`
+    : '';
+
   let content = match.content;
   if (content.length > 120) {
     content = content.slice(0, 117) + '...';
@@ -246,19 +257,28 @@ function formatMatch(match: ScoredMatch, index: number, query: string, showScore
   let output = `${index + 1}. ${line}${col}${score}${reasons}\n   ${content}`;
 
   if (match.context?.before?.length) {
-    const before = match.context.before.slice(-2).map(l => `   ${colors.dim}${l.slice(0, 100)}${colors.reset}`).join('\n');
+    const before = match.context.before
+      .slice(-2)
+      .map(l => `   ${colors.dim}${l.slice(0, 100)}${colors.reset}`)
+      .join('\n');
     output = `${before}\n${output}`;
   }
 
   if (match.context?.after?.length) {
-    const after = match.context.after.slice(0, 2).map(l => `   ${colors.dim}${l.slice(0, 100)}${colors.reset}`).join('\n');
+    const after = match.context.after
+      .slice(0, 2)
+      .map(l => `   ${colors.dim}${l.slice(0, 100)}${colors.reset}`)
+      .join('\n');
     output = `${output}\n${after}`;
   }
 
   return output;
 }
 
-function formatStats(stats: { timeMs: number; filesSearched: number; matchesFound: number; cached?: boolean }, cacheSize?: number): string {
+function formatStats(
+  stats: { timeMs: number; filesSearched: number; matchesFound: number; cached?: boolean },
+  cacheSize?: number
+): string {
   const cached = stats.cached ? ` ${colors.green}[cached]${colors.reset}` : '';
   const cache = cacheSize !== undefined ? ` (cache: ${cacheSize})` : '';
   return `${colors.dim}Found ${stats.matchesFound} matches in ${stats.filesSearched} files (${stats.timeMs.toFixed(2)}ms)${cached}${cache}${colors.reset}`;
@@ -275,7 +295,7 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
   // Streaming mode
   if (options.stream && !options.json) {
     console.info(`${colors.dim}Streaming results for "${query}"...${colors.reset}\n`);
-    
+
     let count = 0;
     const files = new Set<string>();
 
@@ -283,14 +303,16 @@ async function runSearch(query: string, options: CliOptions): Promise<void> {
       count++;
       files.add(match.file);
       console.info(formatMatch(match as ScoredMatch, count - 1, query, false));
-      
+
       if (options.maxResults && count >= options.maxResults) {
         break;
       }
     }
 
     const totalTime = performance.now() - start;
-    console.info(`\n${formatStats({ timeMs: totalTime, filesSearched: files.size, matchesFound: count })}`);
+    console.info(
+      `\n${formatStats({ timeMs: totalTime, filesSearched: files.size, matchesFound: count })}`
+    );
     return;
   }
 
@@ -374,7 +396,10 @@ async function main(): Promise<void> {
   try {
     await runSearch(query, options);
   } catch (error) {
-    console.error(`${colors.red}Error:${colors.reset}`, error instanceof Error ? error.message : String(error));
+    console.error(
+      `${colors.red}Error:${colors.reset}`,
+      error instanceof Error ? error.message : String(error)
+    );
     process.exit(1);
   }
 }
@@ -382,7 +407,9 @@ async function main(): Promise<void> {
 async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   const isConfigMode = options.configPaths;
 
-  console.info(`${colors.bright}🔍 Path Migration Audit Mode${colors.reset}${isConfigMode ? ' (Config)' : ''}\n`);
+  console.info(
+    `${colors.bright}🔍 Path Migration Audit Mode${colors.reset}${isConfigMode ? ' (Config)' : ''}\n`
+  );
 
   const fromPath = options.from || (isConfigMode ? 'configs/' : null);
   const toPath = options.to || (isConfigMode ? 'config/' : null);
@@ -394,7 +421,9 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
 
   console.info(`Auditing references to paths...`);
   if (fromPath && toPath) {
-    console.info(`Migration audit: ${colors.yellow}${fromPath}${colors.reset} → ${colors.green}${toPath}${colors.reset}\n`);
+    console.info(
+      `Migration audit: ${colors.yellow}${fromPath}${colors.reset} → ${colors.green}${toPath}${colors.reset}\n`
+    );
   } else {
     console.info(`Showing references to "${fromPath}" (potential stale references).\n`);
   }
@@ -428,8 +457,8 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
 
   // Merge and deduplicate
   const allStale = [...staleResult.matches, ...dynamicResult.matches];
-  const uniqueStale = allStale.filter((m, index, self) =>
-    index === self.findIndex(t => t.file === m.file && t.line === m.line)
+  const uniqueStale = allStale.filter(
+    (m, index, self) => index === self.findIndex(t => t.file === m.file && t.line === m.line)
   );
 
   if (uniqueStale.length === 0) {
@@ -442,7 +471,10 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
       // Try to generate a suggested replacement if --from and --to were provided
       let suggestion = '';
       if (options.from && options.to) {
-        const suggested = content.replace(new RegExp(options.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), options.to);
+        const suggested = content.replace(
+          new RegExp(options.from.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'),
+          options.to
+        );
         if (suggested !== content) {
           suggestion = `\n     ${colors.green}→ Suggested: ${suggested.slice(0, 100)}${colors.reset}`;
         }
@@ -492,7 +524,9 @@ async function runPathMigrationAudit(options: CliOptions): Promise<void> {
   console.info(`  Current path references found: ${currentResult.matches.length}`);
 
   if (options.from && options.to && uniqueStale.length > 0) {
-    console.info(`\n${colors.yellow}Tip:${colors.reset} Use the suggested lines above to update your code.`);
+    console.info(
+      `\n${colors.yellow}Tip:${colors.reset} Use the suggested lines above to update your code.`
+    );
     console.info(`      Run with --json for machine-readable output in the future.`);
   }
 

@@ -62,7 +62,7 @@ export class BenchmarkRecoveryEngine {
    */
   static async run(
     file: string,
-    opts: { timeout?: number; cwd?: string } = {},
+    opts: { timeout?: number; cwd?: string } = {}
   ): Promise<RunResult> {
     const timeout = opts.timeout ?? this.DEFAULT_TIMEOUT;
     const cwd = opts.cwd ?? process.cwd();
@@ -125,7 +125,7 @@ export class BenchmarkRecoveryEngine {
       .split('\n')
       .filter(Boolean)
       .map(Number)
-      .filter((pid) => pid !== process.pid); // never kill self
+      .filter(pid => pid !== process.pid); // never kill self
 
     let killedCount = 0;
     for (const pid of pids) {
@@ -158,7 +158,7 @@ export class BenchmarkRecoveryEngine {
   static async tailCapture(
     file: string,
     lineCount = 50,
-    opts: { timeout?: number; cwd?: string } = {},
+    opts: { timeout?: number; cwd?: string } = {}
   ): Promise<TailResult> {
     const result = await this.run(file, opts);
     const allLines = result.stdout.split('\n');
@@ -181,7 +181,7 @@ export class BenchmarkRecoveryEngine {
    */
   static async fullRecovery(
     file: string,
-    opts: { timeout?: number; retries?: number; cwd?: string } = {},
+    opts: { timeout?: number; retries?: number; cwd?: string } = {}
   ): Promise<RecoveryResult> {
     const maxAttempts = (opts.retries ?? 1) + 1;
     const attempts: RunResult[] = [];
@@ -253,15 +253,21 @@ export interface PhaseConfig {
 
 export class ProgressiveDisclosureCLI {
   static readonly PHASES: readonly PhaseConfig[] = [
-    { depth: 1, name: 'Surface scan',   maxSafeMB: 100, circular: 'root-only',       devtools: 'limited'   },
-    { depth: 3, name: 'Standard debug', maxSafeMB: 50,  circular: 'partial',         devtools: 'good'      },
-    { depth: 6, name: 'Deep analysis',  maxSafeMB: 10,  circular: 'full',            devtools: 'excellent' },
-    { depth: 8, name: 'Full inspection', maxSafeMB: 5,  circular: 'full-with-cost',  devtools: 'full'      },
+    { depth: 1, name: 'Surface scan', maxSafeMB: 100, circular: 'root-only', devtools: 'limited' },
+    { depth: 3, name: 'Standard debug', maxSafeMB: 50, circular: 'partial', devtools: 'good' },
+    { depth: 6, name: 'Deep analysis', maxSafeMB: 10, circular: 'full', devtools: 'excellent' },
+    {
+      depth: 8,
+      name: 'Full inspection',
+      maxSafeMB: 5,
+      circular: 'full-with-cost',
+      devtools: 'full',
+    },
   ] as const;
 
   static async runWithProgressiveDisclosure(
     file: string,
-    opts: { timeout?: number; cwd?: string } = {},
+    opts: { timeout?: number; cwd?: string } = {}
   ): Promise<RunResult> {
     const result = await BenchmarkRecoveryEngine.run(file, opts);
 
@@ -269,18 +275,28 @@ export class ProgressiveDisclosureCLI {
     if (result.killed) {
       const heapDelta = result.heapAfter.heapKiB - result.heapBefore.heapKiB;
       const objDelta = result.heapAfter.objects - result.heapBefore.objects;
-      console.info(`STUCK  ${file}  killed after ${result.durationMs.toFixed(0)}ms  signal=${result.signal}`);
-      console.info(`heap: ${result.heapBefore.heapKiB}→${result.heapAfter.heapKiB} KiB (+${heapDelta})  objects: ${result.heapBefore.objects}→${result.heapAfter.objects} (+${objDelta})`);
-      if (result.stderr) { console.info('\n--- stderr ---'); console.info(result.stderr); }
+      console.info(
+        `STUCK  ${file}  killed after ${result.durationMs.toFixed(0)}ms  signal=${result.signal}`
+      );
+      console.info(
+        `heap: ${result.heapBefore.heapKiB}→${result.heapAfter.heapKiB} KiB (+${heapDelta})  objects: ${result.heapBefore.objects}→${result.heapAfter.objects} (+${objDelta})`
+      );
+      if (result.stderr) {
+        console.info('\n--- stderr ---');
+        console.info(result.stderr);
+      }
       console.info('\n--- stdout (captured before kill) ---');
       console.info(result.stdout);
     } else if (result.exitCode !== 0) {
       console.info(`ERR  ${file}  exit=${result.exitCode}  ${result.durationMs.toFixed(0)}ms`);
-      if (result.stderr) { console.info('\n--- stderr ---'); console.info(result.stderr); }
+      if (result.stderr) {
+        console.info('\n--- stderr ---');
+        console.info(result.stderr);
+      }
       const lines = result.stdout.split('\n');
       if (lines.length > 1) {
         console.info('\n--- stdout (last 10 lines) ---');
-        lines.slice(-10).forEach((l) => console.info(l));
+        lines.slice(-10).forEach(l => console.info(l));
       }
     } else {
       console.info(`ok  ${file}  ${result.durationMs.toFixed(0)}ms  hash=${result.outputHash}`);
@@ -291,7 +307,9 @@ export class ProgressiveDisclosureCLI {
       const inspected = Bun.inspect(result, { depth: phase.depth });
       const truncated = this.hasTruncation(inspected);
 
-      console.info(`\n--- ${phase.name} (depth=${phase.depth}, safe<${phase.maxSafeMB}MB, circular=${phase.circular}, devtools=${phase.devtools}) ---`);
+      console.info(
+        `\n--- ${phase.name} (depth=${phase.depth}, safe<${phase.maxSafeMB}MB, circular=${phase.circular}, devtools=${phase.devtools}) ---`
+      );
       console.info(inspected);
 
       if (!truncated) break;
@@ -310,10 +328,12 @@ export class ProgressiveDisclosureCLI {
   static async runWithProgressiveDisclosure(
     cmd: string,
     args: string[],
-    opts: { cwd?: string } = {},
+    opts: { cwd?: string } = {}
   ): Promise<{ exitCode: number; phase: string }> {
     for (const phase of this.PHASES) {
-      console.info(`\n--- ${phase.name} (depth=${phase.depth}, safe<${phase.maxSafeMB}MB, circular=${phase.circular}, devtools=${phase.devtools}) ---`);
+      console.info(
+        `\n--- ${phase.name} (depth=${phase.depth}, safe<${phase.maxSafeMB}MB, circular=${phase.circular}, devtools=${phase.devtools}) ---`
+      );
       const proc = Bun.spawn([cmd, ...args], {
         cwd: opts.cwd ?? process.cwd(),
         env: { ...process.env, BUN_CONSOLE_DEPTH: phase.depth.toString() },
@@ -340,10 +360,10 @@ export class ProgressiveDisclosureCLI {
 
 const ENV_DEPTH: Record<string, { default: number; onError: number; onStuck: number }> = {
   development: { default: 5, onError: 7, onStuck: 8 },
-  test:        { default: 3, onError: 5, onStuck: 6 },
-  staging:     { default: 2, onError: 4, onStuck: 6 },
-  production:  { default: 1, onError: 3, onStuck: 4 },
-  profiling:   { default: 3, onError: 4, onStuck: 5 },
+  test: { default: 3, onError: 5, onStuck: 6 },
+  staging: { default: 2, onError: 4, onStuck: 6 },
+  production: { default: 1, onError: 3, onStuck: 4 },
+  profiling: { default: 3, onError: 4, onStuck: 5 },
 };
 
 function envDepths() {
@@ -351,7 +371,9 @@ function envDepths() {
   return ENV_DEPTH[env] ?? ENV_DEPTH.development;
 }
 
-function depthForEnv(): number { return envDepths().default; }
+function depthForEnv(): number {
+  return envDepths().default;
+}
 
 function resultDepth(base: number, result: { killed: boolean; exitCode: number }): number {
   const e = envDepths();
@@ -397,11 +419,16 @@ Options:
   switch (cmd) {
     case 'run': {
       const file = rest[0];
-      if (!file) { console.error('Missing file argument.\n' + usage); process.exit(1); }
+      if (!file) {
+        console.error('Missing file argument.\n' + usage);
+        process.exit(1);
+      }
       const timeout = parseFlag(rest, '--timeout', BenchmarkRecoveryEngine.DEFAULT_TIMEOUT);
 
       if (rest.includes('--progressive')) {
-        const result = await ProgressiveDisclosureCLI.runWithProgressiveDisclosure(file, { timeout });
+        const result = await ProgressiveDisclosureCLI.runWithProgressiveDisclosure(file, {
+          timeout,
+        });
         process.exit(result.exitCode);
       }
 
@@ -416,7 +443,10 @@ Options:
 
     case 'detect': {
       const pattern = rest[0];
-      if (!pattern) { console.error('Missing pattern argument.\n' + usage); process.exit(1); }
+      if (!pattern) {
+        console.error('Missing pattern argument.\n' + usage);
+        process.exit(1);
+      }
       const d = await BenchmarkRecoveryEngine.detectStuckProcess(pattern);
       console.info(Bun.inspect(d, { depth }));
       process.exit(d.found > 0 ? 0 : 1);
@@ -425,7 +455,10 @@ Options:
 
     case 'kill': {
       const pattern = rest[0];
-      if (!pattern) { console.error('Missing pattern argument.\n' + usage); process.exit(1); }
+      if (!pattern) {
+        console.error('Missing pattern argument.\n' + usage);
+        process.exit(1);
+      }
       const killed = await BenchmarkRecoveryEngine.hardKill(pattern);
       console.info(killed ? 'Killed.' : 'No matching processes.');
       process.exit(killed ? 0 : 1);
@@ -435,10 +468,13 @@ Options:
     case 'tail': {
       const lines = parseInt(rest[0], 10) || 50;
       const file = rest[1];
-      if (!file) { console.error('Missing file argument.\n' + usage); process.exit(1); }
+      if (!file) {
+        console.error('Missing file argument.\n' + usage);
+        process.exit(1);
+      }
       const timeout = parseFlag(rest, '--timeout', BenchmarkRecoveryEngine.DEFAULT_TIMEOUT);
       const t = await BenchmarkRecoveryEngine.tailCapture(file, lines, { timeout });
-      t.lines.forEach((l) => console.info(l));
+      t.lines.forEach(l => console.info(l));
       console.info(`\n--- tail result ---`);
       console.info(Bun.inspect(t, { depth }));
       process.exit(t.exitCode);
@@ -447,7 +483,10 @@ Options:
 
     case 'recover': {
       const file = rest[0];
-      if (!file) { console.error('Missing file argument.\n' + usage); process.exit(1); }
+      if (!file) {
+        console.error('Missing file argument.\n' + usage);
+        process.exit(1);
+      }
       const timeout = parseFlag(rest, '--timeout', BenchmarkRecoveryEngine.DEFAULT_TIMEOUT);
       const retries = parseFlag(rest, '--retries', 1);
       const r = await BenchmarkRecoveryEngine.fullRecovery(file, { timeout, retries });
@@ -459,9 +498,12 @@ Options:
         console.info(Bun.inspect(a, { depth: attemptDepth }));
       }
       console.info(`\n--- recovery result ---`);
-      const finalDepth = r.finalStatus === 'stuck' ? Math.max(depth, envDepths().onStuck)
-        : r.finalStatus === 'crashed' ? Math.max(depth, envDepths().onError)
-        : depth;
+      const finalDepth =
+        r.finalStatus === 'stuck'
+          ? Math.max(depth, envDepths().onStuck)
+          : r.finalStatus === 'crashed'
+            ? Math.max(depth, envDepths().onError)
+            : depth;
       console.info(Bun.inspect(r, { depth: finalDepth }));
       process.exit(r.finalStatus === 'ok' ? 0 : 1);
       break;

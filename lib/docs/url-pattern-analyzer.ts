@@ -83,7 +83,10 @@ class URLPatternAnalyzer {
     // Registry URLs
     registry: {
       npm: ['https://registry.npmjs.org'],
-      'factory-wager': ['https://registry.factory-wager.com', 'https://registry.factory-wager.com/'],
+      'factory-wager': [
+        'https://registry.factory-wager.com',
+        'https://registry.factory-wager.com/',
+      ],
     },
 
     // Local development URLs

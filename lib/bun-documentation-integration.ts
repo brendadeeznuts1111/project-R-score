@@ -1,6 +1,6 @@
 /**
  * Bun Documentation Integration System
- * 
+ *
  * Integrates comprehensive Bun documentation with existing wiki and lib systems.
  * Provides unified access to Bun's complete API documentation, guides, and examples.
  */
@@ -71,7 +71,7 @@ export class BunDocumentationIntegration {
   private docCache: Map<string, DocumentationPage> = new Map();
   private documentationCache: Map<string, any> = new Map();
 
-  constructor(r2Config?: R2StorageConfig) { 
+  constructor(r2Config?: R2StorageConfig) {
     this.packageManager = new PackageManager();
     this.r2Storage = r2Config ? new R2Storage(r2Config) : undefined;
     this.rssManager = new RSSManager();
@@ -83,18 +83,18 @@ export class BunDocumentationIntegration {
    */
   async initialize(): Promise<void> {
     console.info('🦌 Initializing Bun Documentation Integration...');
-    
+
     // Load existing documentation index
     await this.loadDocumentationIndex();
-    
+
     // Subscribe to Bun RSS feed for updates
     if (this.rssManager) {
       await this.subscribeToBunRSS();
     }
-    
+
     // Analyze current package for Bun API usage
     await this.analyzeCurrentPackage();
-    
+
     console.info('✅ Bun Documentation Integration initialized');
   }
 
@@ -113,23 +113,23 @@ export class BunDocumentationIntegration {
               url: 'https://bun.com/docs/bundler',
               path: '/docs/bundler/index.md',
               category: 'Bundler',
-              description: 'Complete bundling guide with optimization techniques'
+              description: 'Complete bundling guide with optimization techniques',
             },
             {
               title: 'Code Splitting',
               url: 'https://bun.com/docs/bundler/code-splitting',
               path: '/docs/bundler/code-splitting.md',
               category: 'Bundler',
-              description: 'Advanced code splitting strategies'
+              description: 'Advanced code splitting strategies',
             },
             {
               title: 'Loaders',
               url: 'https://bun.com/docs/bundler/loaders',
               path: '/docs/bundler/loaders.md',
               category: 'Bundler',
-              description: 'Custom loaders and asset processing'
-            }
-          ]
+              description: 'Custom loaders and asset processing',
+            },
+          ],
         },
         {
           name: 'Runtime',
@@ -144,14 +144,14 @@ export class BunDocumentationIntegration {
               examples: [
                 {
                   title: 'Reading Files',
-                  description: 'Read files with Bun\'s optimized API',
+                  description: "Read files with Bun's optimized API",
                   code: `const file = Bun.file('./data.json');
 const content = await file.text();
 console.info(content);`,
                   language: 'typescript',
-                  runnable: true
-                }
-              ]
+                  runnable: true,
+                },
+              ],
             },
             {
               title: 'HTTP Server',
@@ -172,9 +172,9 @@ console.info(content);`,
 
 console.info(\`Server running on http://localhost:\${server.port}\`);`,
                   language: 'typescript',
-                  runnable: true
-                }
-              ]
+                  runnable: true,
+                },
+              ],
             },
             {
               title: 'Server Metrics',
@@ -182,7 +182,7 @@ console.info(\`Server running on http://localhost:\${server.port}\`);`,
               path: '/docs/runtime/http/metrics.md',
               category: 'Runtime',
               description: 'Monitor server activity with built-in metrics',
-              examples: this.getMetricsExamples()
+              examples: this.getMetricsExamples(),
             },
             {
               title: 'SQLite',
@@ -207,11 +207,11 @@ db.run(\`INSERT INTO users (name) VALUES (?)\`, ['Alice']);
 const users = db.query(\`SELECT * FROM users\`).all();
 console.info(users);`,
                   language: 'typescript',
-                  runnable: true
-                }
-              ]
-            }
-          ]
+                  runnable: true,
+                },
+              ],
+            },
+          ],
         },
         {
           name: 'Package Manager',
@@ -222,16 +222,16 @@ console.info(users);`,
               url: 'https://bun.com/docs/installation',
               path: '/docs/package-manager/index.md',
               category: 'Package Manager',
-              description: 'Fast package installation and management'
+              description: 'Fast package installation and management',
             },
             {
               title: 'Workspaces',
               url: 'https://bun.com/docs/runtime/workspaces',
               path: '/docs/package-manager/workspaces.md',
               category: 'Package Manager',
-              description: 'Monorepo workspace management'
-            }
-          ]
+              description: 'Monorepo workspace management',
+            },
+          ],
         },
         {
           name: 'Test Runner',
@@ -258,11 +258,11 @@ test('async operations', async () => {
   expect(result).toBe('success');
 });`,
                   language: 'typescript',
-                  runnable: true
-                }
-              ]
-            }
-          ]
+                  runnable: true,
+                },
+              ],
+            },
+          ],
         },
         {
           name: 'TypeScript',
@@ -273,14 +273,14 @@ test('async operations', async () => {
               url: 'https://bun.com/docs/typescript',
               path: '/docs/typescript/index.md',
               category: 'TypeScript',
-              description: 'Native TypeScript support without configuration'
-            }
-          ]
-        }
+              description: 'Native TypeScript support without configuration',
+            },
+          ],
+        },
       ],
       totalPages: 300,
       lastUpdated: new Date().toISOString(),
-      version: '1.3.8'
+      version: '1.3.8',
     };
 
     return index;
@@ -303,7 +303,7 @@ test('async operations', async () => {
   },
 });`,
         language: 'typescript',
-        runnable: true
+        runnable: true,
       },
       {
         title: 'WebSocket Topic Monitoring',
@@ -320,8 +320,8 @@ test('async operations', async () => {
   },
 });`,
         language: 'typescript',
-        runnable: true
-      }
+        runnable: true,
+      },
     ];
   }
 
@@ -331,7 +331,7 @@ test('async operations', async () => {
   async searchDocumentation(query: string): Promise<DocumentationPage[]> {
     const index = await this.getDocumentationIndex();
     const results: DocumentationPage[] = [];
-    
+
     const searchInCategory = (category: DocumentationCategory) => {
       category.pages.forEach(page => {
         if (
@@ -341,10 +341,10 @@ test('async operations', async () => {
           results.push(page);
         }
       });
-      
+
       category.subcategories?.forEach(searchInCategory);
     };
-    
+
     index.categories.forEach(searchInCategory);
     return results;
   }
@@ -357,23 +357,23 @@ test('async operations', async () => {
     if (this.documentationCache.has(path)) {
       return this.documentationCache.get(path)!;
     }
-    
+
     const index = await this.getDocumentationIndex();
-    
+
     const findPage = (category: DocumentationCategory): DocumentationPage | null => {
       const page = category.pages.find(p => p.path === path);
       if (page) return page;
-      
+
       if (category.subcategories) {
         for (const subcategory of category.subcategories) {
           const found = findPage(subcategory);
           if (found) return found;
         }
       }
-      
+
       return null;
     };
-    
+
     for (const category of index.categories) {
       const page = findPage(category);
       if (page) {
@@ -381,7 +381,7 @@ test('async operations', async () => {
         return page;
       }
     }
-    
+
     return null;
   }
 
@@ -390,11 +390,11 @@ test('async operations', async () => {
    */
   async generateWikiDocumentation(): Promise<string> {
     const index = await this.getDocumentationIndex();
-    
+
     let wiki = `# 🦌 Bun Documentation Integration Wiki\n\n`;
     wiki += `> **Comprehensive Bun documentation** integrated with FactoryWager systems\n\n`;
     wiki += `---\n\n`;
-    
+
     wiki += `## 📊 Overview\n\n`;
     wiki += `| Metric | Value |\n`;
     wiki += `|--------|-------|\n`;
@@ -402,25 +402,25 @@ test('async operations', async () => {
     wiki += `| **Total Pages** | ${index.totalPages} |\n`;
     wiki += `| **Version** | ${index.version} |\n`;
     wiki += `| **Last Updated** | ${new Date(index.lastUpdated).toLocaleDateString()} |\n\n`;
-    
+
     wiki += `## 📚 Documentation Categories\n\n`;
-    
+
     for (const category of index.categories) {
       wiki += `### ${category.name.toUpperCase()} {#${category.name.toLowerCase()}}\n\n`;
       wiki += `**${category.pages.length} pages** in this category.\n\n`;
       wiki += `| Page | Official Docs | Examples | Description |\n`;
       wiki += `|------|---------------|----------|-------------|\n`;
-      
+
       for (const page of category.pages) {
         const examplesBadge = page.examples && page.examples.length > 0 ? '✅' : '❌';
         wiki += `| [${page.title}](${page.url}) | [📚](${page.url}) | ${examplesBadge} | ${page.description || 'N/A'} |\n`;
       }
-      
+
       wiki += `\n`;
     }
-    
+
     wiki += `## 🚀 Quick Examples\n\n`;
-    
+
     // Add some key examples
     const metricsPage = await this.getDocumentationPage('/docs/runtime/http/metrics.md');
     if (metricsPage?.examples) {
@@ -431,10 +431,10 @@ test('async operations', async () => {
         wiki += `\`\`\`${example.language}\n${example.code}\n\`\`\`\n\n`;
       }
     }
-    
+
     wiki += `---\n\n`;
     wiki += `*Generated by Bun Documentation Integration on ${new Date().toISOString()}*\n`;
-    
+
     return wiki;
   }
 
@@ -477,7 +477,7 @@ test('async operations', async () => {
    */
   private async generateDocumentationIndex(): Promise<void> {
     console.info('🔄 Generating new documentation index...');
-    
+
     // Create comprehensive documentation structure
     this.docIndex = {
       categories: [
@@ -493,10 +493,10 @@ test('async operations', async () => {
               category: 'bundler',
               content: '# Bundler Overview\n\n...',
               examples: [],
-              lastModified: new Date().toISOString()
-            }
+              lastModified: new Date().toISOString(),
+            },
           ],
-          subcategories: []
+          subcategories: [],
         },
         {
           name: 'Runtime',
@@ -510,15 +510,15 @@ test('async operations', async () => {
               category: 'runtime',
               content: '# Runtime Overview\n\n...',
               examples: [],
-              lastModified: new Date().toISOString()
-            }
+              lastModified: new Date().toISOString(),
+            },
           ],
-          subcategories: []
-        }
+          subcategories: [],
+        },
       ],
       totalPages: 2,
       lastUpdated: new Date().toISOString(),
-      version: '1.0.0'
+      version: '1.0.0',
     };
 
     // Cache the documentation
@@ -546,7 +546,7 @@ test('async operations', async () => {
    */
   private async subscribeToBunRSS(): Promise<void> {
     if (!this.rssManager) return;
-    
+
     try {
       await this.rssManager.subscribe('https://bun.com/rss.xml', 'Bun Official Blog');
       console.info('✅ Subscribed to Bun RSS feed');
@@ -572,16 +572,18 @@ test('async operations', async () => {
    */
   async getAPIRecommendations(): Promise<string[]> {
     const recommendations: string[] = [];
-    
+
     // Add recommendations based on common patterns
     recommendations.push('🚀 Use Bun.serve() for high-performance HTTP servers');
-    recommendations.push('📊 Monitor server activity with built-in metrics (server.pendingRequests, server.pendingWebSockets)');
+    recommendations.push(
+      '📊 Monitor server activity with built-in metrics (server.pendingRequests, server.pendingWebSockets)'
+    );
     recommendations.push('🗄️ Leverage built-in SQLite for local data storage');
     recommendations.push('⚡ Use Bun.file() for optimized file operations');
     recommendations.push('🧪 Utilize Bun test runner for fast Jest-compatible testing');
     recommendations.push('📝 Take advantage of built-in Markdown parser (v1.3.8+)');
     recommendations.push('🔍 Use metafile-md for LLM-friendly build analysis (v1.3.8+)');
-    
+
     return recommendations;
   }
 
@@ -590,17 +592,17 @@ test('async operations', async () => {
    */
   async exportDocumentation(format: 'json' | 'markdown' | 'html'): Promise<string> {
     const index = await this.getDocumentationIndex();
-    
+
     switch (format) {
       case 'json':
         return JSON.stringify(index, null, 2);
-      
+
       case 'markdown':
         return await this.generateWikiDocumentation();
-      
+
       case 'html':
         return this.generateHTMLDocumentation(index);
-      
+
       default:
         throw new Error(`Unsupported format: ${format}`);
     }
@@ -635,7 +637,7 @@ test('async operations', async () => {
         <p>Comprehensive Bun documentation with ${index.totalPages} pages across ${index.categories.length} categories</p>
         <p><strong>Version:</strong> ${index.version} | <strong>Updated:</strong> ${new Date(index.lastUpdated).toLocaleDateString()}</p>
     </div>`;
-    
+
     for (const category of index.categories) {
       html += `
     <div class="category">
@@ -644,11 +646,11 @@ test('async operations', async () => {
             <p>${category.description}</p>
         </div>
         <div class="page-list">`;
-      
+
       for (const page of category.pages) {
-        const examplesBadge = page.examples && page.examples.length > 0 ? 
-          '<span class="badge">✅ Examples</span>' : '';
-        
+        const examplesBadge =
+          page.examples && page.examples.length > 0 ? '<span class="badge">✅ Examples</span>' : '';
+
         html += `
             <div class="page-item">
                 <div>
@@ -657,7 +659,7 @@ test('async operations', async () => {
                 </div>
                 ${examplesBadge}
             </div>`;
-        
+
         if (page.examples && page.examples.length > 0) {
           html += `
             <div class="examples">
@@ -666,16 +668,16 @@ test('async operations', async () => {
             </div>`;
         }
       }
-      
+
       html += `
         </div>
     </div>`;
     }
-    
+
     html += `
 </body>
 </html>`;
-    
+
     return html;
   }
 }

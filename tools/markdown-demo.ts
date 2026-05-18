@@ -30,7 +30,7 @@ console.info(styled`{bold}{cyan}📝 Bun.markdown API Demo{/cyan}{/bold}\n`);
 // 1. Bun.markdown.html() - Simple HTML output
 // ============================================================================
 console.info(styled`{bold}1. Bun.markdown.html(){/bold}`);
-console.info("Simple HTML rendering with GFM support:\n");
+console.info('Simple HTML rendering with GFM support:\n');
 
 const html = Bun.markdown.html(sampleMarkdown, {
   tables: true,
@@ -39,7 +39,7 @@ const html = Bun.markdown.html(sampleMarkdown, {
   autolinks: true,
 });
 
-console.info("Output:");
+console.info('Output:');
 console.info(html);
 console.info();
 
@@ -47,19 +47,27 @@ console.info();
 // 2. Bun.markdown.render() - Custom callbacks
 // ============================================================================
 console.info(styled`{bold}2. Bun.markdown.render(){/bold}`);
-console.info("Custom rendering with callbacks:\n");
+console.info('Custom rendering with callbacks:\n');
 
 // ANSI terminal output
 const ansi = Bun.markdown.render(sampleMarkdown, {
   heading: (children, { level }) => {
-    const colors = ['\x1b[1;31m', '\x1b[1;32m', '\x1b[1;33m', '\x1b[1;34m', '\x1b[1;35m', '\x1b[1;36m'];
+    const colors = [
+      '\x1b[1;31m',
+      '\x1b[1;32m',
+      '\x1b[1;33m',
+      '\x1b[1;34m',
+      '\x1b[1;35m',
+      '\x1b[1;36m',
+    ];
     const color = colors[level - 1] || '\x1b[1m';
     return `${color}${children}\x1b[0m\n${'─'.repeat(40)}\n`;
   },
   paragraph: children => `${children}\n`,
   strong: children => `\x1b[1m${children}\x1b[22m`,
   emphasis: children => `\x1b[3m${children}\x1b[23m`,
-  code: (children, { language }) => `\x1b[90m[${language || 'code'}]\x1b[0m\n\x1b[7m${children}\x1b[27m\n`,
+  code: (children, { language }) =>
+    `\x1b[90m[${language || 'code'}]\x1b[0m\n\x1b[7m${children}\x1b[27m\n`,
   link: (children, { href }) => `\x1b[34m\x1b[4m${children}\x1b[0m \x1b[90m(${href})\x1b[0m`,
   list: children => children,
   listItem: (children, { checked }) => {
@@ -73,7 +81,7 @@ const ansi = Bun.markdown.render(sampleMarkdown, {
   text: children => children,
 });
 
-console.info("ANSI Terminal Output:");
+console.info('ANSI Terminal Output:');
 console.info(ansi);
 
 // ============================================================================
@@ -87,7 +95,7 @@ const plaintext = Bun.markdown.render(sampleMarkdown, {
   strong: children => children,
   emphasis: children => children,
   link: children => children,
-  image: () => "",
+  image: () => '',
   code: children => children,
   codespan: children => children,
   table: children => children,
@@ -97,7 +105,7 @@ const plaintext = Bun.markdown.render(sampleMarkdown, {
   text: children => children,
 });
 
-console.info("Plaintext Output:");
+console.info('Plaintext Output:');
 console.info(plaintext);
 
 // ============================================================================
@@ -106,21 +114,25 @@ console.info(plaintext);
 console.info(styled`{bold}4. Extract all URLs from markdown{/bold}\n`);
 
 const urls: string[] = [];
-Bun.markdown.render(sampleMarkdown, {
-  link: (children, { href }) => {
-    urls.push(href);
-    return null;
+Bun.markdown.render(
+  sampleMarkdown,
+  {
+    link: (children, { href }) => {
+      urls.push(href);
+      return null;
+    },
+    autolink: ({ href }) => {
+      urls.push(href);
+      return null;
+    },
+    paragraph: () => null,
+    heading: () => null,
+    text: () => null,
   },
-  autolink: ({ href }) => {
-    urls.push(href);
-    return null;
-  },
-  paragraph: () => null,
-  heading: () => null,
-  text: () => null,
-}, { autolinks: true });
+  { autolinks: true }
+);
 
-console.info("URLs found:", urls);
+console.info('URLs found:', urls);
 console.info();
 
 // ============================================================================
@@ -139,7 +151,7 @@ This ~~strikethrough~~ is removed without strikethrough option.
 - [ ] Unchecked task
 `;
 
-console.info("With all GFM features enabled:");
+console.info('With all GFM features enabled:');
 const fullGfm = Bun.markdown.html(optionsDemo, {
   tables: true,
   strikethrough: true,
@@ -149,7 +161,7 @@ const fullGfm = Bun.markdown.html(optionsDemo, {
 });
 console.info(fullGfm);
 
-console.info("With minimal features:");
+console.info('With minimal features:');
 const minimal = Bun.markdown.html(optionsDemo, {
   tables: false,
   strikethrough: false,
@@ -164,9 +176,9 @@ console.info(minimal);
 // ============================================================================
 console.info(styled`{bold}{green}✅ Demo complete!{/green}{/bold}`);
 console.info();
-console.info("Key APIs:");
-console.info("  • Bun.markdown.html(markdown, options) - Fast HTML output");
-console.info("  • Bun.markdown.render(markdown, callbacks, options) - Custom rendering");
-console.info("  • Bun.markdown.react(markdown) - React elements");
+console.info('Key APIs:');
+console.info('  • Bun.markdown.html(markdown, options) - Fast HTML output');
+console.info('  • Bun.markdown.render(markdown, callbacks, options) - Custom rendering');
+console.info('  • Bun.markdown.react(markdown) - React elements');
 console.info();
-console.info("Documentation: https://bun.com/docs/runtime/markdown");
+console.info('Documentation: https://bun.com/docs/runtime/markdown');

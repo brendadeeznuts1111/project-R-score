@@ -19,7 +19,9 @@ async function main() {
   const daemon = args.includes('--daemon');
   const slackAlerts = args.includes('--slack-alerts');
   const r2Reports = args.includes('--r2-reports');
-  const interval = parseInt(args.find(arg => arg.startsWith('--interval='))?.split('=')[1] || '3600000'); // 1 hour default
+  const interval = parseInt(
+    args.find(arg => arg.startsWith('--interval='))?.split('=')[1] || '3600000'
+  ); // 1 hour default
 
   console.info(styled('⏰ FactoryWager Expiration Monitor v5.1', 'accent'));
   console.info(styled('=========================================', 'muted'));
@@ -82,7 +84,6 @@ async function main() {
       }
 
       console.info('');
-
     } catch (error) {
       console.error(styled(`❌ Check failed: ${error.message}`, 'error'));
     }
@@ -123,24 +124,24 @@ async function sendSlackAlert(expiring: Array<{ key: string; daysLeft: number }>
         type: 'header',
         text: {
           type: 'plain_text',
-          text: '🚨 Secret Expiration Alert'
-        }
+          text: '🚨 Secret Expiration Alert',
+        },
       },
       {
         type: 'section',
         text: {
           type: 'mrkdwn',
-          text: `*${expiring.length} secrets expiring soon*\n${critical.length} critical expirations`
-        }
+          text: `*${expiring.length} secrets expiring soon*\n${critical.length} critical expirations`,
+        },
       },
       {
         type: 'section',
         fields: expiring.slice(0, 10).map(secret => ({
           type: 'mrkdwn',
-          text: `*${secret.key}*\n${secret.daysLeft} days left`
-        }))
-      }
-    ]
+          text: `*${secret.key}*\n${secret.daysLeft} days left`,
+        })),
+      },
+    ],
   };
 
   console.info(styled('📤 Slack alert sent (mock)', 'success'));

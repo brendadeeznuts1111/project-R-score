@@ -1,13 +1,13 @@
 #!/usr/bin/env bun
 /**
  * 🚀 Prefetch Optimization for Examples
- * 
+ *
  * Adds prefetch hints, resource optimization, and performance improvements
  * to all example code and documentation
  */
 
-import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join } from "path";
+import { readFileSync, writeFileSync, readdirSync, statSync } from 'fs';
+import { join } from 'path';
 
 interface PrefetchOptimization {
   type: 'dns-prefetch' | 'preconnect' | 'prefetch' | 'preload' | 'modulepreload';
@@ -19,37 +19,42 @@ interface PrefetchOptimization {
 class ExamplePrefetchOptimizer {
   private readonly sourceDirectories = ['lib', 'services', 'docs', 'examples', 'tools'];
   private readonly fileExtensions = ['.ts', '.js', '.md', '.html'];
-  
+
   // Common external resources that should be prefetched
   private readonly prefetchResources: PrefetchOptimization[] = [
     // Bun documentation
     { type: 'preconnect', url: 'https://bun.sh', importance: 'high' },
     { type: 'dns-prefetch', url: 'https://bun.sh' },
-    { type: 'preload', url: 'https://bun.sh/logo.svg', importance: 'high', crossOrigin: 'anonymous' },
-    
+    {
+      type: 'preload',
+      url: 'https://bun.sh/logo.svg',
+      importance: 'high',
+      crossOrigin: 'anonymous',
+    },
+
     // Example domain resources
     { type: 'preconnect', url: 'https://example.com', importance: 'high' },
     { type: 'dns-prefetch', url: 'https://example.com' },
-    
+
     // Common CDNs
     { type: 'preconnect', url: 'https://cdn.jsdelivr.net', importance: 'high' },
     { type: 'dns-prefetch', url: 'https://cdn.jsdelivr.net' },
-    
+
     // GitHub resources
     { type: 'preconnect', url: 'https://github.com', importance: 'medium' },
     { type: 'dns-prefetch', url: 'https://github.com' },
-    
+
     // Documentation sites
     { type: 'preconnect', url: 'https://developer.mozilla.org', importance: 'medium' },
-    { type: 'dns-prefetch', url: 'https://developer.mozilla.org' }
+    { type: 'dns-prefetch', url: 'https://developer.mozilla.org' },
   ];
-  
+
   optimizeAll(): void {
     console.info('🚀 Optimizing examples with prefetch hints...\n');
-    
+
     let totalFiles = 0;
     let totalOptimizations = 0;
-    
+
     for (const dir of this.sourceDirectories) {
       try {
         statSync(dir);
@@ -60,11 +65,11 @@ class ExamplePrefetchOptimizer {
         // Directory doesn't exist, skip it
       }
     }
-    
+
     console.info(`\n🎯 Optimization Summary:`);
     console.info(`   Files processed: ${totalFiles}`);
     console.info(`   Optimizations made: ${totalOptimizations}`);
-    
+
     if (totalOptimizations > 0) {
       console.info('\n✅ Successfully added prefetch optimizations');
       console.info('🚀 Performance improvements:');
@@ -76,17 +81,17 @@ class ExamplePrefetchOptimizer {
       console.info('\nℹ️  No optimizations needed - examples already optimized');
     }
   }
-  
+
   private optimizeDirectory(dir: string): { fileCount: number; optimizations: number } {
     let fileCount = 0;
     let optimizations = 0;
-    
+
     function scanDirectory(currentDir: string): void {
       const entries = readdirSync(currentDir, { withFileTypes: true });
-      
+
       for (const entry of entries) {
         const fullPath = join(currentDir, entry.name);
-        
+
         if (entry.isDirectory()) {
           scanDirectory(fullPath);
         } else {
@@ -102,19 +107,19 @@ class ExamplePrefetchOptimizer {
         }
       }
     }
-    
+
     const self = this;
     scanDirectory = scanDirectory.bind(self);
     scanDirectory(dir);
-    
+
     return { fileCount, optimizations };
   }
-  
+
   private optimizeFile(filePath: string, extension: string): number {
     try {
       let content = readFileSync(filePath, 'utf8');
       const originalContent = content;
-      
+
       switch (extension) {
         case '.html':
           content = this.optimizeHtmlFile(content);
@@ -127,31 +132,30 @@ class ExamplePrefetchOptimizer {
           content = this.optimizeCodeFile(content);
           break;
       }
-      
+
       // Only write file if changes were made
       if (content !== originalContent) {
         writeFileSync(filePath, content);
         return this.countOptimizations(originalContent, content);
       }
-      
+
       return 0;
-      
     } catch (error) {
       console.warn(`⚠️  Could not process ${filePath}: ${error.message}`);
       return 0;
     }
   }
-  
+
   private optimizeHtmlFile(content: string): string {
     // Add prefetch hints to HTML head
     const prefetchHints = this.generatePrefetchHints();
-    
+
     // Find or create head tag
     const headMatch = content.match(/<head[^>]*>([\s\S]*?)<\/head>/i);
-    
+
     if (headMatch) {
       const existingHead = headMatch[1];
-      
+
       // Check if prefetch hints already exist
       if (!existingHead.includes('dns-prefetch') && !existingHead.includes('preconnect')) {
         const newHead = existingHead.trim() + '\n' + prefetchHints + '\n';
@@ -161,21 +165,24 @@ class ExamplePrefetchOptimizer {
       // Add head tag before body
       const bodyMatch = content.match(/<body/i);
       if (bodyMatch) {
-        content = content.replace(bodyMatch[0], `<head>\n${prefetchHints}\n</head>\n` + bodyMatch[0]);
+        content = content.replace(
+          bodyMatch[0],
+          `<head>\n${prefetchHints}\n</head>\n` + bodyMatch[0]
+        );
       }
     }
-    
+
     // Add optimization attributes to existing resources
     content = this.addResourceOptimizationAttributes(content);
-    
+
     return content;
   }
-  
+
   private optimizeMarkdownFile(content: string): string {
     // Add prefetch hints as HTML comments at the top
     const prefetchHints = this.generatePrefetchHints();
     const htmlComment = `<!-- Prefetch Optimizations -->\n${prefetchHints}\n<!-- End Prefetch Optimizations -->\n\n`;
-    
+
     // Check if already optimized
     if (!content.includes('Prefetch Optimizations')) {
       // Add after frontmatter if exists
@@ -186,13 +193,13 @@ class ExamplePrefetchOptimizer {
         content = htmlComment + content;
       }
     }
-    
+
     // Optimize external links
     content = this.optimizeMarkdownLinks(content);
-    
+
     return content;
   }
-  
+
   private optimizeCodeFile(content: string): string {
     // Add prefetch optimization comments to code files
     if (!content.includes('Prefetch Optimizations')) {
@@ -207,7 +214,7 @@ class ExamplePrefetchOptimizer {
  * Generated automatically by optimize-examples-prefetch.ts
  */
 `;
-      
+
       // Add after imports or at the top
       const importMatch = content.match(/^import[^;]+;?\n/m);
       if (importMatch) {
@@ -216,23 +223,25 @@ class ExamplePrefetchOptimizer {
         content = optimizationComment + content;
       }
     }
-    
+
     // Optimize fetch calls with prefetch hints
     content = this.optimizeFetchCalls(content);
-    
+
     return content;
   }
-  
+
   private generatePrefetchHints(): string {
     const hints: string[] = [];
-    
+
     for (const resource of this.prefetchResources) {
       switch (resource.type) {
         case 'dns-prefetch':
           hints.push(`  <link rel="dns-prefetch" href="${resource.url}">`);
           break;
         case 'preconnect':
-          const crossOriginAttr = resource.crossOrigin ? ` crossorigin="${resource.crossOrigin}"` : '';
+          const crossOriginAttr = resource.crossOrigin
+            ? ` crossorigin="${resource.crossOrigin}"`
+            : '';
           hints.push(`  <link rel="preconnect" href="${resource.url}"${crossOriginAttr}>`);
           break;
         case 'prefetch':
@@ -249,10 +258,10 @@ class ExamplePrefetchOptimizer {
           break;
       }
     }
-    
+
     return hints.join('\n');
   }
-  
+
   private addResourceOptimizationAttributes(content: string): string {
     // Add loading="lazy" to images
     content = content.replace(/<img([^>]*?)>/gi, (match, attrs) => {
@@ -261,18 +270,18 @@ class ExamplePrefetchOptimizer {
       }
       return match;
     });
-    
+
     // Add fetchpriority to critical resources
-    content = content.replace(/<link[^>]*rel="preload"[^>]*>/gi, (match) => {
+    content = content.replace(/<link[^>]*rel="preload"[^>]*>/gi, match => {
       if (!match.includes('fetchpriority=')) {
         return match.replace('>', ' fetchpriority="high">');
       }
       return match;
     });
-    
+
     return content;
   }
-  
+
   private optimizeMarkdownLinks(content: string): string {
     // Add external link indicators and prefetch hints
     content = content.replace(/\[([^\]]+)\]\(([^)]+)\)/gi, (match, text, url) => {
@@ -282,15 +291,17 @@ class ExamplePrefetchOptimizer {
       }
       return match;
     });
-    
+
     return content;
   }
-  
+
   private optimizeFetchCalls(content: string): string {
     // Add prefetch comments before fetch calls
-    content = content.replace(/(\s*)(await\s+fetch\()\s*(['"`]https?:\/\/[^'"`]+['"`])/g, 
-      '$1// 🚀 Prefetch hint: Consider preconnecting to $3 domain\n$1$2$3');
-    
+    content = content.replace(
+      /(\s*)(await\s+fetch\()\s*(['"`]https?:\/\/[^'"`]+['"`])/g,
+      '$1// 🚀 Prefetch hint: Consider preconnecting to $3 domain\n$1$2$3'
+    );
+
     // Add performance optimization comments
     if (content.includes('fetch(')) {
       const optimizationTip = `
@@ -301,15 +312,15 @@ class ExamplePrefetchOptimizer {
  * 3. Implementing request caching
  * 4. Using the native fetch API with keep-alive
  */`;
-      
+
       if (!content.includes('Performance Tip')) {
         content = content + optimizationTip;
       }
     }
-    
+
     return content;
   }
-  
+
   private countOptimizations(original: string, optimized: string): number {
     const originalLines = original.split('\n').length;
     const optimizedLines = optimized.split('\n').length;
@@ -324,14 +335,14 @@ class ExamplePrefetchOptimizer {
 async function main(): Promise<void> {
   const command = process.argv[2];
   const optimizer = new ExamplePrefetchOptimizer();
-  
+
   switch (command) {
     case 'optimize':
     case '':
       console.info('🚀 Example Prefetch Optimizer\n');
       optimizer.optimizeAll();
       break;
-      
+
     case 'help':
     case '--help':
     case '-h':
@@ -371,7 +382,7 @@ BENEFITS:
   🔍 Optimized resource loading
       `);
       break;
-      
+
     default:
       console.error(`Unknown command: ${command}`);
       console.error('Use "help" for usage information');

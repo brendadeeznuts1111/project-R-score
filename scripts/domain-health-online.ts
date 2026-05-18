@@ -140,7 +140,12 @@ async function checkDns(fullDomain: string, timeoutMs: number): Promise<DnsCheck
       } catch {
         // continue with original error
       }
-      const err = cError instanceof Error ? cError.message : (aError instanceof Error ? aError.message : String(aError));
+      const err =
+        cError instanceof Error
+          ? cError.message
+          : aError instanceof Error
+            ? aError.message
+            : String(aError);
       return {
         fullDomain,
         resolved: false,
@@ -172,12 +177,54 @@ async function loadKnownSubdomains(domain: string): Promise<SubdomainConfig[]> {
   }
 
   const fallback: SubdomainConfig[] = [
-    { subdomain: 'monitor', full_domain: `monitor.${domain}`, type: 'CNAME', content: `api.${domain}`, ttl: 300, proxied: true },
-    { subdomain: 'config', full_domain: `config.${domain}`, type: 'CNAME', content: `api.${domain}`, ttl: 300, proxied: true },
-    { subdomain: 'database', full_domain: `database.${domain}`, type: 'CNAME', content: `api.${domain}`, ttl: 300, proxied: false },
-    { subdomain: 'vault', full_domain: `vault.${domain}`, type: 'CNAME', content: `api.${domain}`, ttl: 300, proxied: false },
-    { subdomain: 'redis', full_domain: `redis.${domain}`, type: 'CNAME', content: `api.${domain}`, ttl: 300, proxied: false },
-    { subdomain: 'support', full_domain: `support.${domain}`, type: 'CNAME', content: `www.${domain}`, ttl: 300, proxied: true },
+    {
+      subdomain: 'monitor',
+      full_domain: `monitor.${domain}`,
+      type: 'CNAME',
+      content: `api.${domain}`,
+      ttl: 300,
+      proxied: true,
+    },
+    {
+      subdomain: 'config',
+      full_domain: `config.${domain}`,
+      type: 'CNAME',
+      content: `api.${domain}`,
+      ttl: 300,
+      proxied: true,
+    },
+    {
+      subdomain: 'database',
+      full_domain: `database.${domain}`,
+      type: 'CNAME',
+      content: `api.${domain}`,
+      ttl: 300,
+      proxied: false,
+    },
+    {
+      subdomain: 'vault',
+      full_domain: `vault.${domain}`,
+      type: 'CNAME',
+      content: `api.${domain}`,
+      ttl: 300,
+      proxied: false,
+    },
+    {
+      subdomain: 'redis',
+      full_domain: `redis.${domain}`,
+      type: 'CNAME',
+      content: `api.${domain}`,
+      ttl: 300,
+      proxied: false,
+    },
+    {
+      subdomain: 'support',
+      full_domain: `support.${domain}`,
+      type: 'CNAME',
+      content: `www.${domain}`,
+      ttl: 300,
+      proxied: true,
+    },
   ];
   return fallback;
 }
@@ -207,25 +254,32 @@ async function cfFetch(path: string, init: RequestInit): Promise<any> {
 
 async function resolveZoneId(domain: string, explicitZoneId?: string): Promise<string> {
   if (explicitZoneId) return explicitZoneId;
-  const json = await cfFetch(`/zones?name=${encodeURIComponent(domain)}&status=active&per_page=1`, { method: 'GET' });
+  const json = await cfFetch(`/zones?name=${encodeURIComponent(domain)}&status=active&per_page=1`, {
+    method: 'GET',
+  });
   const zone = Array.isArray(json?.result) ? json.result[0] : null;
   if (!zone?.id) throw new Error(`No active Cloudflare zone found for ${domain}`);
   return String(zone.id);
 }
 
-async function upsertDnsRecord(zoneId: string, cfg: SubdomainConfig): Promise<{ action: 'created' | 'updated'; id: string }> {
+async function upsertDnsRecord(
+  zoneId: string,
+  cfg: SubdomainConfig
+): Promise<{ action: 'created' | 'updated'; id: string }> {
   const name = cfg.full_domain;
   const type = cfg.type.toUpperCase();
   const existing = await cfFetch(
     `/zones/${zoneId}/dns_records?type=${encodeURIComponent(type)}&name=${encodeURIComponent(name)}&per_page=1`,
     { method: 'GET' }
   );
-  const current = Array.isArray(existing?.result) ? (existing.result[0] as CloudflareRecord | undefined) : undefined;
+  const current = Array.isArray(existing?.result)
+    ? (existing.result[0] as CloudflareRecord | undefined)
+    : undefined;
 
   const isPrivateIpv4 = (value: string): boolean => {
     const ip = String(value || '').trim();
     if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(ip)) return false;
-    const [a, b] = ip.split('.').map((n) => Number.parseInt(n, 10));
+    const [a, b] = ip.split('.').map(n => Number.parseInt(n, 10));
     if (a === 10) return true;
     if (a === 127) return true;
     if (a === 0) return true;
@@ -262,11 +316,11 @@ async function upsertDnsRecord(zoneId: string, cfg: SubdomainConfig): Promise<{ 
 async function main(): Promise<void> {
   const options = parseArgs(process.argv.slice(2));
   const known = await loadKnownSubdomains(options.domain);
-  const checks = await Promise.all(known.map((cfg) => checkDns(cfg.full_domain, options.timeoutMs)));
+  const checks = await Promise.all(known.map(cfg => checkDns(cfg.full_domain, options.timeoutMs)));
 
-  const unresolved = checks.filter((d) => !d.resolved);
+  const unresolved = checks.filter(d => !d.resolved);
   const unresolvedConfigs = unresolved
-    .map((u) => known.find((k) => k.full_domain === u.fullDomain))
+    .map(u => known.find(k => k.full_domain === u.fullDomain))
     .filter((v): v is SubdomainConfig => Boolean(v));
 
   const summary: any = {
@@ -274,7 +328,11 @@ async function main(): Promise<void> {
     lastCheckedAt: new Date().toISOString(),
     checked: checks.length,
     resolved: checks.length - unresolved.length,
-    unresolved: unresolved.map((u) => ({ fullDomain: u.fullDomain, error: u.error || u.source, lastCheckedAt: new Date().toISOString() })),
+    unresolved: unresolved.map(u => ({
+      fullDomain: u.fullDomain,
+      error: u.error || u.source,
+      lastCheckedAt: new Date().toISOString(),
+    })),
     apply: options.apply,
     changes: [],
     verify: null,
@@ -297,15 +355,17 @@ async function main(): Promise<void> {
 
     if (options.verify) {
       await Bun.sleep(2000);
-      const after = await Promise.all(unresolvedConfigs.map((cfg) => checkDns(cfg.full_domain, options.timeoutMs)));
+      const after = await Promise.all(
+        unresolvedConfigs.map(cfg => checkDns(cfg.full_domain, options.timeoutMs))
+      );
       summary.verify = {
         checked: after.length,
-        resolved: after.filter((a) => a.resolved).length,
-        unresolved: after.filter((a) => !a.resolved).map((a) => a.fullDomain),
+        resolved: after.filter(a => a.resolved).length,
+        unresolved: after.filter(a => !a.resolved).map(a => a.fullDomain),
       };
     }
   } else {
-    summary.proposed = unresolvedConfigs.map((cfg) => ({
+    summary.proposed = unresolvedConfigs.map(cfg => ({
       fullDomain: cfg.full_domain,
       type: cfg.type,
       content: cfg.content,
@@ -319,8 +379,10 @@ async function main(): Promise<void> {
 }
 
 if (import.meta.main) {
-  main().catch((error) => {
-    console.error(`[domain-health-online] ${error instanceof Error ? error.message : String(error)}`);
+  main().catch(error => {
+    console.error(
+      `[domain-health-online] ${error instanceof Error ? error.message : String(error)}`
+    );
     process.exit(1);
   });
 }

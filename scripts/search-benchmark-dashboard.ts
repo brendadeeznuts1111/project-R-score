@@ -2,7 +2,7 @@
 /**
  * Search Benchmark Dashboard v2.0
  * Real-time performance monitoring with extensive visualization capabilities
- * 
+ *
  * Features:
  * - Glassmorphism UI with dark/light themes
  * - Interactive charts (sparklines, bar charts, heatmaps)
@@ -12,7 +12,7 @@
  * - Keyboard shortcuts for power users
  * - Responsive design for all screen sizes
  * - Accessibility compliant (ARIA labels, keyboard nav)
- * 
+ *
  * @license MIT
  */
 
@@ -36,7 +36,12 @@ import { resolveR2BridgeConfig } from './lib/r2-bridge';
 import { resolveDomainBranding } from './lib/domain-branding';
 import { buildDomainRegistryStatus } from './domain-registry-status';
 import { buildUnifiedStatus } from './search-unified-status';
-import { comparePayload, compareSnapshotPayload, type CompareResultPayload, type Snapshot } from './search-benchmark-pin';
+import {
+  comparePayload,
+  compareSnapshotPayload,
+  type CompareResultPayload,
+  type Snapshot,
+} from './search-benchmark-pin';
 import {
   LOOP_FRESHNESS_WINDOW_MINUTES,
   formatLoopClosedReason,
@@ -196,9 +201,12 @@ function parseArgs(argv: string[]): Options {
   return out;
 }
 
-function resolveR2ReadOptions():
-  | { endpoint: string; bucket: string; accessKeyId: string; secretAccessKey: string }
-  | null {
+function resolveR2ReadOptions(): {
+  endpoint: string;
+  bucket: string;
+  accessKeyId: string;
+  secretAccessKey: string;
+} | null {
   const accountId = Bun.env.R2_ACCOUNT_ID || '';
   const endpoint =
     Bun.env.R2_ENDPOINT || (accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '');
@@ -304,10 +312,7 @@ async function runGitText(args: string[]): Promise<string> {
       stdout: 'pipe',
       stderr: 'ignore',
     });
-    const [exitCode, text] = await Promise.all([
-      proc.exited,
-      new Response(proc.stdout).text(),
-    ]);
+    const [exitCode, text] = await Promise.all([proc.exited, new Response(proc.stdout).text()]);
     return exitCode === 0 ? text.trim() : '';
   } catch {
     return '';
@@ -347,7 +352,7 @@ async function resolveBuildMeta(): Promise<BuildMeta> {
   const commitShort = commitFull ? commitFull.slice(0, 8) : 'unknown';
   const branchPath = branchName
     .split('/')
-    .map((part) => encodeURIComponent(part))
+    .map(part => encodeURIComponent(part))
     .join('/');
   const repoBranchUrl = `${repoUrl.replace(/\/+$/g, '')}/tree/${branchPath}`;
   return {
@@ -361,7 +366,8 @@ async function resolveBuildMeta(): Promise<BuildMeta> {
 
 function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState): string {
   const hasR2Credentials = Boolean(resolveR2ReadOptions());
-  const r2Label = options.r2Base || (hasR2Credentials ? 'credentialed (R2_* env)' : '(not configured)');
+  const r2Label =
+    options.r2Base || (hasR2Credentials ? 'credentialed (R2_* env)' : '(not configured)');
   const hotReloadEnabled = options.hotReload;
   const initialSource = state.prefSource === 'r2' ? 'r2' : 'local';
   const warningStatusLevels = {
@@ -379,9 +385,10 @@ function htmlShell(options: Options, buildMeta: BuildMeta, state: DashboardState
     error: 'Critical Action Required',
     closed: 'Loop Status Closed',
   };
-  const commitUrl = buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
-    ? `${buildMeta.repoUrl.replace(/\/+$/g, '')}/commit/${buildMeta.commitFull}`
-    : buildMeta.repoUrl;
+  const commitUrl =
+    buildMeta.commitFull && buildMeta.commitFull !== 'unknown'
+      ? `${buildMeta.repoUrl.replace(/\/+$/g, '')}/commit/${buildMeta.commitFull}`
+      : buildMeta.repoUrl;
   return `<!doctype html>
 <html lang="en">
 <head>
@@ -6453,7 +6460,12 @@ async function fetchR2Json(r2Base: string, name: string): Promise<Response> {
   }
 
   return jsonResponse(
-    { error: 'r2_fetch_failed', message: 'Failed to fetch R2 JSON via base URL', target: targets[1], tried: targets },
+    {
+      error: 'r2_fetch_failed',
+      message: 'Failed to fetch R2 JSON via base URL',
+      target: targets[1],
+      tried: targets,
+    },
     { status: 502, source: 'r2' }
   );
 }
@@ -6516,10 +6528,7 @@ async function fetchR2ObjectBySignature(
   });
 }
 
-async function readR2JsonByCredentials(
-  options: Options,
-  name: string
-): Promise<Response | null> {
+async function readR2JsonByCredentials(options: Options, name: string): Promise<Response | null> {
   const r2 = resolveR2ReadOptions();
   if (!r2) return null;
   try {
@@ -6583,17 +6592,21 @@ async function loadRemoteJson(options: Options, name: string): Promise<Response>
     return fetchR2Json(options.r2Base, name);
   }
   return jsonResponse(
-    { error: 'r2_not_configured', message: 'R2 not configured', hint: 'set R2_* creds or --r2-base' },
+    {
+      error: 'r2_not_configured',
+      message: 'R2 not configured',
+      hint: 'set R2_* creds or --r2-base',
+    },
     { status: 400, source: 'none' }
   );
 }
 
 async function main(): Promise<void> {
   const startedAt = Date.now();
-  process.on('uncaughtException', (error) => {
+  process.on('uncaughtException', error => {
     console.error('[search-bench:dashboard] uncaughtException', error);
   });
-  process.on('unhandledRejection', (error) => {
+  process.on('unhandledRejection', error => {
     console.error('[search-bench:dashboard] unhandledRejection', error);
   });
   const options = parseArgs(process.argv.slice(2));
@@ -6609,21 +6622,29 @@ async function main(): Promise<void> {
   const sseEncoder = new TextEncoder();
   const dnsPrefetchTtlMs = 120000;
   const nsCache = new Map<string, { expiresAt: number; servers: string[] }>();
-  const dnsCache = new Map<string, {
-    expiresAt: number;
-    resolved: boolean;
-    records: string[];
-    source: 'A' | 'CNAME' | 'none';
+  const dnsCache = new Map<
+    string,
+    {
+      expiresAt: number;
+      resolved: boolean;
+      records: string[];
+      source: 'A' | 'CNAME' | 'none';
       error?: string;
-  }>();
+    }
+  >();
 
   const zoneFromHost = (host: string): string => {
-    const parts = String(host || '').toLowerCase().split('.').filter(Boolean);
+    const parts = String(host || '')
+      .toLowerCase()
+      .split('.')
+      .filter(Boolean);
     if (parts.length >= 2) return `${parts[parts.length - 2]}.${parts[parts.length - 1]}`;
     return String(host || '').toLowerCase();
   };
 
-  const resolveDnsAuthoritative = async (host: string): Promise<{
+  const resolveDnsAuthoritative = async (
+    host: string
+  ): Promise<{
     resolved: boolean;
     records: string[];
     source: 'A' | 'CNAME' | 'none';
@@ -6644,7 +6665,12 @@ async function main(): Promise<void> {
       }
     }
     if (servers.length === 0) {
-      return { resolved: false, records: [], source: 'none', error: 'authoritative_nameservers_not_found' };
+      return {
+        resolved: false,
+        records: [],
+        source: 'none',
+        error: 'authoritative_nameservers_not_found',
+      };
     }
 
     for (const server of servers) {
@@ -6725,7 +6751,7 @@ async function main(): Promise<void> {
       return null;
     }
     try {
-      const idx = await Bun.file(indexJson).json() as { snapshots?: Array<{ id?: string }> };
+      const idx = (await Bun.file(indexJson).json()) as { snapshots?: Array<{ id?: string }> };
       const latestId = idx.snapshots?.[0]?.id;
       return latestId ? resolve(dir, latestId, 'publish-manifest.json') : null;
     } catch {
@@ -6737,7 +6763,7 @@ async function main(): Promise<void> {
     if (source === 'local') {
       if (!existsSync(indexJson)) return null;
       try {
-        const idx = await Bun.file(indexJson).json() as { snapshots?: Array<{ id?: string }> };
+        const idx = (await Bun.file(indexJson).json()) as { snapshots?: Array<{ id?: string }> };
         return idx.snapshots?.[0]?.id || null;
       } catch {
         return null;
@@ -6755,7 +6781,12 @@ async function main(): Promise<void> {
 
   const canonicalBaselinePath = resolve('.search/search-benchmark-pinned-baseline.json');
   let latestGateCache:
-    | { source: 'local' | 'r2'; snapshotId: string; payload: CompareResultPayload; checkedAt: string }
+    | {
+        source: 'local' | 'r2';
+        snapshotId: string;
+        payload: CompareResultPayload;
+        checkedAt: string;
+      }
     | { source: 'local' | 'r2'; snapshotId: string; error: string; checkedAt: string }
     | null = null;
 
@@ -6775,7 +6806,11 @@ async function main(): Promise<void> {
       return { ...base, gateError: 'missing_snapshot_id' };
     }
 
-    if (latestGateCache && latestGateCache.snapshotId === snapshotId && latestGateCache.source === source) {
+    if (
+      latestGateCache &&
+      latestGateCache.snapshotId === snapshotId &&
+      latestGateCache.source === source
+    ) {
       if ('payload' in latestGateCache) {
         return {
           ...base,
@@ -6793,7 +6828,13 @@ async function main(): Promise<void> {
     try {
       const gate =
         source === 'r2'
-          ? await compareSnapshotPayload(payload as Snapshot, undefined, canonicalBaselinePath, false, 'r2:latest.json')
+          ? await compareSnapshotPayload(
+              payload as Snapshot,
+              undefined,
+              canonicalBaselinePath,
+              false,
+              'r2:latest.json'
+            )
           : await comparePayload(latestJson, undefined, canonicalBaselinePath);
       latestGateCache = { source, snapshotId, payload: gate, checkedAt };
       return { ...base, gate, gateCheckedAt: checkedAt };
@@ -6813,7 +6854,7 @@ async function main(): Promise<void> {
         return { ok: false, error: `r2_latest_http_${remote.status}` };
       }
       try {
-        const payload = await remote.json() as LatestApiPayload;
+        const payload = (await remote.json()) as LatestApiPayload;
         return { ok: true, payload };
       } catch (error) {
         return { ok: false, error: error instanceof Error ? error.message : String(error) };
@@ -6824,7 +6865,7 @@ async function main(): Promise<void> {
       return { ok: false, error: 'latest_json_missing' };
     }
     try {
-      const payload = await Bun.file(latestJson).json() as LatestApiPayload;
+      const payload = (await Bun.file(latestJson).json()) as LatestApiPayload;
       return { ok: true, payload };
     } catch (error) {
       return { ok: false, error: error instanceof Error ? error.message : String(error) };
@@ -6832,8 +6873,12 @@ async function main(): Promise<void> {
   };
 
   const buildInventoryLocal = async (snapshotId: string | null) => {
-    const id = snapshotId || await resolveLatestSnapshotId('local');
-    const mk = (name: string, path: string, category: InventoryItem['category'] = 'snapshot'): InventoryItem => {
+    const id = snapshotId || (await resolveLatestSnapshotId('local'));
+    const mk = (
+      name: string,
+      path: string,
+      category: InventoryItem['category'] = 'snapshot'
+    ): InventoryItem => {
       if (!existsSync(path)) {
         return { name, exists: false, size: null, lastModified: null, category };
       }
@@ -6847,17 +6892,39 @@ async function main(): Promise<void> {
       };
     };
     const items: InventoryItem[] = [
-      mk('snapshot.json', id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json'), 'snapshot'),
-      mk('summary.md', id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md'), 'snapshot'),
-      mk('snapshot.json.gz', id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz'), 'snapshot'),
-      mk('summary.md.gz', id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz'), 'snapshot'),
-      mk('publish-manifest.json', id ? resolve(dir, id, 'publish-manifest.json') : resolve(dir, '__missing__/publish-manifest.json'), 'snapshot'),
+      mk(
+        'snapshot.json',
+        id ? resolve(dir, id, 'snapshot.json') : resolve(dir, '__missing__/snapshot.json'),
+        'snapshot'
+      ),
+      mk(
+        'summary.md',
+        id ? resolve(dir, id, 'summary.md') : resolve(dir, '__missing__/summary.md'),
+        'snapshot'
+      ),
+      mk(
+        'snapshot.json.gz',
+        id ? resolve(dir, id, 'snapshot.json.gz') : resolve(dir, '__missing__/snapshot.json.gz'),
+        'snapshot'
+      ),
+      mk(
+        'summary.md.gz',
+        id ? resolve(dir, id, 'summary.md.gz') : resolve(dir, '__missing__/summary.md.gz'),
+        'snapshot'
+      ),
+      mk(
+        'publish-manifest.json',
+        id
+          ? resolve(dir, id, 'publish-manifest.json')
+          : resolve(dir, '__missing__/publish-manifest.json'),
+        'snapshot'
+      ),
       mk('rss.xml', resolve(dir, 'rss.xml'), 'snapshot'),
       mk('health-report.json', resolve('reports', 'health-report.json'), 'domain-health'),
     ];
     const latestTs = items
-      .filter((it) => it.category === 'snapshot')
-      .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+      .filter(it => it.category === 'snapshot')
+      .map(it => (it.lastModified ? Date.parse(it.lastModified) : 0))
       .reduce((a, b) => Math.max(a, b), 0);
     return {
       source: 'local',
@@ -6868,7 +6935,7 @@ async function main(): Promise<void> {
   };
 
   const buildInventoryR2 = async (snapshotId: string | null) => {
-    const id = snapshotId || await resolveLatestSnapshotId('r2');
+    const id = snapshotId || (await resolveLatestSnapshotId('r2'));
     if (!id) {
       return { source: 'r2', snapshotId: null, freshnessSec: null, items: [] };
     }
@@ -6935,14 +7002,18 @@ async function main(): Promise<void> {
         lastModified?: string;
       }>;
       const allContents = [...contents, ...extras];
-      const byKey = new Map(allContents.map((c) => [c.key, c]));
-      const items: InventoryItem[] = keys.map((key) => {
+      const byKey = new Map(allContents.map(c => [c.key, c]));
+      const items: InventoryItem[] = keys.map(key => {
         const item = byKey.get(key);
-        const category: InventoryItem['category'] = key.includes('/snapshot') || key.includes('/summary') || key.includes('/publish-manifest') || key.endsWith('/rss.xml')
-          ? 'snapshot'
-          : key.startsWith('cookies/')
-            ? 'domain-cookie'
-            : 'domain-health';
+        const category: InventoryItem['category'] =
+          key.includes('/snapshot') ||
+          key.includes('/summary') ||
+          key.includes('/publish-manifest') ||
+          key.endsWith('/rss.xml')
+            ? 'snapshot'
+            : key.startsWith('cookies/')
+              ? 'domain-cookie'
+              : 'domain-health';
         return {
           name: key.replace(`${prefix}/`, ''),
           exists: Boolean(item),
@@ -6952,8 +7023,8 @@ async function main(): Promise<void> {
         };
       });
       const latestTs = items
-        .filter((it) => it.category === 'snapshot')
-        .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+        .filter(it => it.category === 'snapshot')
+        .map(it => (it.lastModified ? Date.parse(it.lastModified) : 0))
         .reduce((a, b) => Math.max(a, b), 0);
       return {
         source: 'r2',
@@ -6979,24 +7050,26 @@ async function main(): Promise<void> {
       `cookies/${options.domain}/latest_payload`,
       `domains/${options.domain}/cookies.json`,
     ];
-    const items: InventoryItem[] = await Promise.all(targets.map(async (name) => {
-      const res = await proxyFetch(`${base}/${name}`, { method: 'HEAD', cache: 'no-store' });
-      const category: InventoryItem['category'] = name.startsWith('cookies/')
-        ? 'domain-cookie'
-        : name.startsWith('domains/')
-          ? 'domain-health'
-          : 'snapshot';
-      return {
-        name,
-        exists: res.ok,
-        size: Number(res.headers.get('content-length') || 0) || null,
-        lastModified: res.headers.get('last-modified') || null,
-        category,
-      };
-    }));
+    const items: InventoryItem[] = await Promise.all(
+      targets.map(async name => {
+        const res = await proxyFetch(`${base}/${name}`, { method: 'HEAD', cache: 'no-store' });
+        const category: InventoryItem['category'] = name.startsWith('cookies/')
+          ? 'domain-cookie'
+          : name.startsWith('domains/')
+            ? 'domain-health'
+            : 'snapshot';
+        return {
+          name,
+          exists: res.ok,
+          size: Number(res.headers.get('content-length') || 0) || null,
+          lastModified: res.headers.get('last-modified') || null,
+          category,
+        };
+      })
+    );
     const latestTs = items
-      .filter((it) => it.category === 'snapshot')
-      .map((it) => (it.lastModified ? Date.parse(it.lastModified) : 0))
+      .filter(it => it.category === 'snapshot')
+      .map(it => (it.lastModified ? Date.parse(it.lastModified) : 0))
       .reduce((a, b) => Math.max(a, b), 0);
     return {
       source: 'r2',
@@ -7006,7 +7079,9 @@ async function main(): Promise<void> {
     };
   };
 
-  const resolveDnsPrefetch = async (host: string): Promise<{
+  const resolveDnsPrefetch = async (
+    host: string
+  ): Promise<{
     resolved: boolean;
     records: string[];
     source: 'A' | 'CNAME' | 'none';
@@ -7057,7 +7132,12 @@ async function main(): Promise<void> {
             resolved: false,
             records: [],
             source: 'none',
-            error: (cnameError instanceof Error ? cnameError.message : (aError instanceof Error ? aError.message : String(aError))),
+            error:
+              cnameError instanceof Error
+                ? cnameError.message
+                : aError instanceof Error
+                  ? aError.message
+                  : String(aError),
           };
         }
       }
@@ -7094,13 +7174,7 @@ async function main(): Promise<void> {
   };
 
   if (options.hotReload) {
-    const watchedPaths = [
-      Bun.main,
-      latestJson,
-      indexJson,
-      rssXml,
-      loopStatusJson,
-    ];
+    const watchedPaths = [Bun.main, latestJson, indexJson, rssXml, loopStatusJson];
     const mtimes = new Map<string, number>();
     const readMtime = (file: string): number => {
       try {
@@ -7234,11 +7308,12 @@ async function main(): Promise<void> {
       resolved: telemetry.dnsCookieResolved,
       domainMatchesRequested: domainMatches,
       syncDelta,
-      detail: domainMatches === false
-        ? 'cookie domain mismatch'
-        : syncDelta <= 0.05
-          ? 'dns cookie synced'
-          : 'dns cookie drift detected',
+      detail:
+        domainMatches === false
+          ? 'cookie domain mismatch'
+          : syncDelta <= 0.05
+            ? 'dns cookie synced'
+            : 'dns cookie drift detected',
       unresolved: telemetry.cookieUnresolved,
     };
   };
@@ -7258,7 +7333,10 @@ async function main(): Promise<void> {
     else if (h < 240) [r, g, b] = [0, x, c];
     else if (h < 300) [r, g, b] = [x, 0, c];
     else [r, g, b] = [c, 0, x];
-    const toHex = (v: number) => Math.round((v + m) * 255).toString(16).padStart(2, '0');
+    const toHex = (v: number) =>
+      Math.round((v + m) * 255)
+        .toString(16)
+        .padStart(2, '0');
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   };
 
@@ -7328,13 +7406,15 @@ async function main(): Promise<void> {
   const parseBooleanLike = (value: any): boolean => {
     if (value === true) return true;
     if (value === false) return false;
-    const text = String(value || '').trim().toLowerCase();
+    const text = String(value || '')
+      .trim()
+      .toLowerCase();
     return text === '1' || text === 'true' || text === 'yes' || text === 'on';
   };
 
   const computeCookieScore = (rows: any[]): Omit<R2CookieTelemetry, 'source' | 'key' | 'error'> => {
     const cookies = rows
-      .map((row) => normalizeCookieObject(row))
+      .map(row => normalizeCookieObject(row))
       .filter((v): v is Record<string, any> => Boolean(v));
     const total = cookies.length;
     if (total === 0) {
@@ -7360,20 +7440,27 @@ async function main(): Promise<void> {
     for (const cookie of cookies) {
       if (parseBooleanLike(cookie.secure)) secureCount += 1;
       if (parseBooleanLike(cookie.httpOnly ?? cookie.httponly)) httpOnlyCount += 1;
-      const sameSite = String(cookie.sameSite ?? cookie.samesite ?? '').trim().toLowerCase();
+      const sameSite = String(cookie.sameSite ?? cookie.samesite ?? '')
+        .trim()
+        .toLowerCase();
       if (sameSite === 'strict' || sameSite === 'lax') sameSiteCount += 1;
       const maxAge = Number(cookie.maxAge ?? cookie.max_age);
       const expiresMs = Number(
         cookie.expiresMs ??
-        cookie.expires_ms ??
-        (cookie.expires ? Date.parse(String(cookie.expires)) : NaN)
+          cookie.expires_ms ??
+          (cookie.expires ? Date.parse(String(cookie.expires)) : NaN)
       );
-      if ((Number.isFinite(maxAge) && maxAge > 0) || (Number.isFinite(expiresMs) && expiresMs > nowMs)) {
+      if (
+        (Number.isFinite(maxAge) && maxAge > 0) ||
+        (Number.isFinite(expiresMs) && expiresMs > nowMs)
+      ) {
         expiryCount += 1;
       }
       if (Array.isArray(cookie.unresolved)) {
         for (const host of cookie.unresolved) {
-          const normalized = String(host || '').trim().toLowerCase();
+          const normalized = String(host || '')
+            .trim()
+            .toLowerCase();
           if (normalized) unresolved.add(normalized);
         }
       }
@@ -7383,7 +7470,9 @@ async function main(): Promise<void> {
     const httpOnlyRatio = httpOnlyCount / total;
     const sameSiteRatio = sameSiteCount / total;
     const expiryRatio = expiryCount / total;
-    const score = Math.round(clamp01((secureRatio + httpOnlyRatio + sameSiteRatio + expiryRatio) / 4) * 100);
+    const score = Math.round(
+      clamp01((secureRatio + httpOnlyRatio + sameSiteRatio + expiryRatio) / 4) * 100
+    );
     return {
       score,
       disabled: false,
@@ -7401,7 +7490,9 @@ async function main(): Promise<void> {
     const fallback = defaultCookieTelemetry(domain);
     const r2 = resolveR2ReadOptions();
     if (!r2) return { ...fallback, key: legacyKey };
-    const getJsonByKey = async (key: string): Promise<{ ok: boolean; status: number; parsed?: any; error?: string }> => {
+    const getJsonByKey = async (
+      key: string
+    ): Promise<{ ok: boolean; status: number; parsed?: any; error?: string }> => {
       try {
         const objectRes = await fetchR2ObjectBySignature(
           r2.endpoint,
@@ -7430,7 +7521,13 @@ async function main(): Promise<void> {
         const rows = normalizeCookieRows(parsed);
         const computed = computeCookieScore(rows);
         const payloadUnresolved = Array.isArray(parsed?.unresolved)
-          ? parsed.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
+          ? parsed.unresolved
+              .map((v: any) =>
+                String(v || '')
+                  .trim()
+                  .toLowerCase()
+              )
+              .filter(Boolean)
           : [];
         return {
           ...computed,
@@ -7464,7 +7561,9 @@ async function main(): Promise<void> {
       const payload = payloadRes.parsed || {};
       const secure = parseBooleanLike(ctx?.secure);
       const httpOnly = parseBooleanLike(ctx?.httpOnly);
-      const sameSite = String(ctx?.sameSite || '').trim().toLowerCase();
+      const sameSite = String(ctx?.sameSite || '')
+        .trim()
+        .toLowerCase();
       const active = parseBooleanLike(state?.active);
       const cookieCount = Number(payload?.cookies);
       const keyCount = Array.isArray(payload?.keys) ? payload.keys.length : 0;
@@ -7481,12 +7580,18 @@ async function main(): Promise<void> {
       const score = Math.round(rawScore * 100);
 
       const unresolved = Array.isArray(state?.unresolved)
-        ? state.unresolved.map((v: any) => String(v || '').trim().toLowerCase()).filter(Boolean)
+        ? state.unresolved
+            .map((v: any) =>
+              String(v || '')
+                .trim()
+                .toLowerCase()
+            )
+            .filter(Boolean)
         : [];
       return {
         score,
         disabled: false,
-        total: Number.isFinite(cookieCount) && cookieCount >= 0 ? cookieCount : (active ? 1 : 0),
+        total: Number.isFinite(cookieCount) && cookieCount >= 0 ? cookieCount : active ? 1 : 0,
         secureCount: secure ? 1 : 0,
         httpOnlyCount: httpOnly ? 1 : 0,
         sameSiteCount: sameSite === 'strict' || sameSite === 'lax' ? 1 : 0,
@@ -7516,8 +7621,14 @@ async function main(): Promise<void> {
     const ctx = await createDomainContext({
       domain,
       zone: Bun.env.CLOUDFLARE_ZONE_NAME || Bun.env.CLOUDFLARE_ZONE_ID || domain,
-      bucket: r2Read?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
-      endpoint: r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
+      bucket:
+        r2Read?.bucket ||
+        Bun.env.R2_BUCKET ||
+        Bun.env.R2_BUCKET_NAME ||
+        Bun.env.R2_BENCH_BUCKET ||
+        null,
+      endpoint:
+        r2Read?.endpoint || Bun.env.R2_ENDPOINT || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null,
       accountIdRaw: Bun.env.CLOUDFLARE_ACCOUNT_ID || Bun.env.R2_ACCOUNT_ID || null,
     });
     const prefixes = ['health', 'ssl', 'analytics'];
@@ -7540,7 +7651,7 @@ async function main(): Promise<void> {
           const mgr = new mod.CloudflareDomainManager();
           const all = mgr.getAllSubdomains();
           knownSubdomains = all.length;
-          subdomainConfigs = all.map((entry) => ({
+          subdomainConfigs = all.map(entry => ({
             subdomain: entry.subdomain,
             full_domain: entry.full_domain,
             purpose: entry.purpose,
@@ -7558,7 +7669,7 @@ async function main(): Promise<void> {
 
     const dnsCheckedAt = new Date().toISOString();
     const subdomains = await Promise.all(
-      subdomainConfigs.map(async (entry) => {
+      subdomainConfigs.map(async entry => {
         const dns = await resolveDnsPrefetch(entry.full_domain);
         let path = '/';
         try {
@@ -7583,7 +7694,7 @@ async function main(): Promise<void> {
         };
       })
     );
-    const dnsResolvedCount = subdomains.filter((entry) => entry.dnsResolved).length;
+    const dnsResolvedCount = subdomains.filter(entry => entry.dnsResolved).length;
     const dnsRatio = subdomains.length > 0 ? dnsResolvedCount / subdomains.length : 0;
     const dnsPrefetch = {
       checked: subdomains.length,
@@ -7604,10 +7715,7 @@ async function main(): Promise<void> {
       : r2CookieScoreNorm;
     const mergedCookieStatus = statusFromRatio(mergedCookieScore);
     const mergedCookieUnresolved = Array.from(
-      new Set([
-        ...(requestCookieHealth.unresolved || []),
-        ...(r2CookieTelemetry.unresolved || []),
-      ])
+      new Set([...(requestCookieHealth.unresolved || []), ...(r2CookieTelemetry.unresolved || [])])
     );
     const cookieHealth = withCookieBadgeTelemetry({
       ...requestCookieHealth,
@@ -7626,7 +7734,7 @@ async function main(): Promise<void> {
         : 900;
 
     if (source === 'local') {
-      const latest = prefixes.map((type) => ({
+      const latest = prefixes.map(type => ({
         type,
         key: `${ctx.prefix}/${type}/YYYY-MM-DD.json`,
         exists: false,
@@ -7637,23 +7745,22 @@ async function main(): Promise<void> {
       const storageStatus = 'simulated';
       const storageRatio = 0;
       const storageScoreRatio = 1;
-      const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
-      const preliminaryStatus = degradedByStrictP95
-        ? 'degraded'
-        : dnsStatus;
-      const latencyScore = degradedByStrictP95 ? 0.55 : (strictP95Ms === null ? 0.85 : 1);
+      const degradedByStrictP95 =
+        typeof strictP95Ms === 'number' &&
+        Number.isFinite(strictP95Ms) &&
+        strictP95Ms > thresholdStrictP95Ms;
+      const preliminaryStatus = degradedByStrictP95 ? 'degraded' : dnsStatus;
+      const latencyScore = degradedByStrictP95 ? 0.55 : strictP95Ms === null ? 0.85 : 1;
       const overallScore = clamp01(
-        dnsRatio * 0.4 +
-        storageScoreRatio * 0.35 +
-        latencyScore * 0.15 +
-        cookieHealth.score * 0.1
+        dnsRatio * 0.4 + storageScoreRatio * 0.35 + latencyScore * 0.15 + cookieHealth.score * 0.1
       );
       const scoreStatus = statusFromRatio(overallScore);
-      const overallStatus = preliminaryStatus === 'critical'
-        ? 'critical'
-        : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
-          ? scoreStatus
-          : preliminaryStatus;
+      const overallStatus =
+        preliminaryStatus === 'critical'
+          ? 'critical'
+          : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
+            ? scoreStatus
+            : preliminaryStatus;
       return {
         source,
         domain,
@@ -7701,7 +7808,8 @@ async function main(): Promise<void> {
             detail: cookieHealth.detail,
           },
           latency: {
-            strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
+            strictP95Ms:
+              typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
             degradedAboveMs: thresholdStrictP95Ms,
             degradedByStrictP95,
             score: latencyScore,
@@ -7722,54 +7830,65 @@ async function main(): Promise<void> {
 
     const r2 = resolveR2ReadOptions();
     if (!r2) {
-      return { error: 'r2_not_configured_for_domain_health', source, domain, baseUrl: domain, zone, accountId, storage, domainRegistry: ctx.registry, knownSubdomains, managerNote };
-    }
-    const latest = await Promise.all(prefixes.map(async (type) => {
-      const prefix = `${ctx.prefix}/${type}/`;
-      const listed = await S3Client.list(
-        { prefix, limit: 1000 },
-        {
-          bucket: r2.bucket,
-          endpoint: r2.endpoint,
-          accessKeyId: r2.accessKeyId,
-          secretAccessKey: r2.secretAccessKey,
-        }
-      );
-      const contents = (listed.contents || []) as Array<{ key: string; lastModified?: string }>;
-      const sorted = contents
-        .filter((c) => c.key.endsWith('.json'))
-        .sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
-      const top = sorted[0];
       return {
-        type,
-        key: top?.key || `${prefix}YYYY-MM-DD.json`,
-        exists: Boolean(top),
-        lastModified: top?.lastModified || null,
+        error: 'r2_not_configured_for_domain_health',
+        source,
+        domain,
+        baseUrl: domain,
+        zone,
+        accountId,
+        storage,
+        domainRegistry: ctx.registry,
+        knownSubdomains,
+        managerNote,
       };
-    }));
-    const latestPresent = latest.filter((item) => item.exists).length;
+    }
+    const latest = await Promise.all(
+      prefixes.map(async type => {
+        const prefix = `${ctx.prefix}/${type}/`;
+        const listed = await S3Client.list(
+          { prefix, limit: 1000 },
+          {
+            bucket: r2.bucket,
+            endpoint: r2.endpoint,
+            accessKeyId: r2.accessKeyId,
+            secretAccessKey: r2.secretAccessKey,
+          }
+        );
+        const contents = (listed.contents || []) as Array<{ key: string; lastModified?: string }>;
+        const sorted = contents
+          .filter(c => c.key.endsWith('.json'))
+          .sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
+        const top = sorted[0];
+        return {
+          type,
+          key: top?.key || `${prefix}YYYY-MM-DD.json`,
+          exists: Boolean(top),
+          lastModified: top?.lastModified || null,
+        };
+      })
+    );
+    const latestPresent = latest.filter(item => item.exists).length;
     const latestCount = latest.length;
     const storageRatio = latestCount > 0 ? latestPresent / latestCount : 0;
     const storageStatus = latestCount > 0 && latestPresent === latestCount ? 'healthy' : 'critical';
-    const degradedByStrictP95 = typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) && strictP95Ms > thresholdStrictP95Ms;
-    const preliminaryStatus = storageStatus === 'critical'
-      ? 'critical'
-      : degradedByStrictP95
-        ? 'degraded'
-        : dnsStatus;
-    const latencyScore = degradedByStrictP95 ? 0.55 : (strictP95Ms === null ? 0.85 : 1);
+    const degradedByStrictP95 =
+      typeof strictP95Ms === 'number' &&
+      Number.isFinite(strictP95Ms) &&
+      strictP95Ms > thresholdStrictP95Ms;
+    const preliminaryStatus =
+      storageStatus === 'critical' ? 'critical' : degradedByStrictP95 ? 'degraded' : dnsStatus;
+    const latencyScore = degradedByStrictP95 ? 0.55 : strictP95Ms === null ? 0.85 : 1;
     const overallScore = clamp01(
-      dnsRatio * 0.4 +
-      storageRatio * 0.35 +
-      latencyScore * 0.15 +
-      cookieHealth.score * 0.1
+      dnsRatio * 0.4 + storageRatio * 0.35 + latencyScore * 0.15 + cookieHealth.score * 0.1
     );
     const scoreStatus = statusFromRatio(overallScore);
-    const overallStatus = preliminaryStatus === 'critical'
-      ? 'critical'
-      : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
-        ? scoreStatus
-        : preliminaryStatus;
+    const overallStatus =
+      preliminaryStatus === 'critical'
+        ? 'critical'
+        : scoreByState(scoreStatus) < scoreByState(preliminaryStatus)
+          ? scoreStatus
+          : preliminaryStatus;
     return {
       source,
       domain,
@@ -7817,7 +7936,8 @@ async function main(): Promise<void> {
           detail: cookieHealth.detail,
         },
         latency: {
-          strictP95Ms: typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
+          strictP95Ms:
+            typeof strictP95Ms === 'number' && Number.isFinite(strictP95Ms) ? strictP95Ms : null,
           degradedAboveMs: thresholdStrictP95Ms,
           degradedByStrictP95,
           score: latencyScore,
@@ -7854,7 +7974,12 @@ async function main(): Promise<void> {
     const publicBase = options.r2Base || Bun.env.SEARCH_BENCH_R2_PUBLIC_BASE || null;
     return {
       source,
-      bucket: r2?.bucket || Bun.env.R2_BUCKET || Bun.env.R2_BUCKET_NAME || Bun.env.R2_BENCH_BUCKET || null,
+      bucket:
+        r2?.bucket ||
+        Bun.env.R2_BUCKET ||
+        Bun.env.R2_BUCKET_NAME ||
+        Bun.env.R2_BENCH_BUCKET ||
+        null,
       endpoint: r2?.endpoint || Bun.env.R2_ENDPOINT || publicBase,
       prefix,
       rssKey,
@@ -7892,12 +8017,18 @@ async function main(): Promise<void> {
         secretAccessKey: r2.secretAccessKey,
       }
     );
-    const objects = (listed.contents || []) as Array<{ key: string; size?: number; lastModified?: string }>;
-    const sorted = objects.slice().sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
+    const objects = (listed.contents || []) as Array<{
+      key: string;
+      size?: number;
+      lastModified?: string;
+    }>;
+    const sorted = objects
+      .slice()
+      .sort((a, b) => (b.lastModified || '').localeCompare(a.lastModified || ''));
     const sampleTargets = sorted.slice(0, cappedLimit);
 
     const sample = await Promise.all(
-      sampleTargets.map(async (o) => {
+      sampleTargets.map(async o => {
         try {
           const res = await fetchR2ObjectBySignature(
             r2.endpoint,
@@ -7930,11 +8061,18 @@ async function main(): Promise<void> {
             const parsed = JSON.parse(text);
             envelope = {
               isJson: true,
-              keys: parsed && typeof parsed === 'object' ? Object.keys(parsed as Record<string, unknown>).slice(0, 12) : [],
-              version: Number.isFinite(Number((parsed as any)?.version)) ? Number((parsed as any).version) : null,
+              keys:
+                parsed && typeof parsed === 'object'
+                  ? Object.keys(parsed as Record<string, unknown>).slice(0, 12)
+                  : [],
+              version: Number.isFinite(Number((parsed as any)?.version))
+                ? Number((parsed as any).version)
+                : null,
               ivLen: typeof (parsed as any)?.iv === 'string' ? (parsed as any).iv.length : null,
-              dataLen: typeof (parsed as any)?.data === 'string' ? (parsed as any).data.length : null,
-              hmacLen: typeof (parsed as any)?.hmac === 'string' ? (parsed as any).hmac.length : null,
+              dataLen:
+                typeof (parsed as any)?.data === 'string' ? (parsed as any).data.length : null,
+              hmacLen:
+                typeof (parsed as any)?.hmac === 'string' ? (parsed as any).hmac.length : null,
             };
           } catch {
             envelope = { isJson: false, keys: [] };
@@ -8040,18 +8178,27 @@ async function main(): Promise<void> {
         );
       }
       if (url.pathname === '/api/status' || url.pathname === '/api/dashboard/status') {
-        const telemetrySource = (url.searchParams.get('source') || 'local') === 'r2' ? 'r2' : 'local';
-        const requestedDomain =
-          (url.searchParams.get('domain') || stateFromCookie?.domain || options.domain || 'factory-wager.com')
-            .trim()
-            .toLowerCase();
-        const hostHeader = String(req.headers.get('host') || '').trim().toLowerCase();
+        const telemetrySource =
+          (url.searchParams.get('source') || 'local') === 'r2' ? 'r2' : 'local';
+        const requestedDomain = (
+          url.searchParams.get('domain') ||
+          stateFromCookie?.domain ||
+          options.domain ||
+          'factory-wager.com'
+        )
+          .trim()
+          .toLowerCase();
+        const hostHeader = String(req.headers.get('host') || '')
+          .trim()
+          .toLowerCase();
         const hostForBranding = hostHeader.replace(/:\d+$/, '');
         const hostLooksLocal =
           hostForBranding === 'localhost' ||
           /^(\d{1,3}\.){3}\d{1,3}$/.test(hostForBranding) ||
           hostForBranding.includes(':');
-        const branding = resolveDomainBranding(hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain);
+        const branding = resolveDomainBranding(
+          hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain
+        );
         let benchmarkGate: Record<string, unknown> = {
           source: telemetrySource,
           available: false,
@@ -8167,23 +8314,31 @@ async function main(): Promise<void> {
         }
       }
       if (url.pathname === '/api/latest') {
-        const requestedDomain =
-          (url.searchParams.get('domain') || stateFromCookie?.domain || options.domain || 'factory-wager.com')
-            .trim()
-            .toLowerCase();
-        const hostHeader = String(req.headers.get('host') || '').trim().toLowerCase();
+        const requestedDomain = (
+          url.searchParams.get('domain') ||
+          stateFromCookie?.domain ||
+          options.domain ||
+          'factory-wager.com'
+        )
+          .trim()
+          .toLowerCase();
+        const hostHeader = String(req.headers.get('host') || '')
+          .trim()
+          .toLowerCase();
         const hostForBranding = hostHeader.replace(/:\d+$/, '');
         const hostLooksLocal =
           hostForBranding === 'localhost' ||
           /^(\d{1,3}\.){3}\d{1,3}$/.test(hostForBranding) ||
           hostForBranding.includes(':');
-        const branding = resolveDomainBranding(hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain);
+        const branding = resolveDomainBranding(
+          hostLooksLocal ? requestedDomain : hostForBranding || requestedDomain
+        );
         const source = url.searchParams.get('source') || 'local';
         if (source === 'r2') {
           const remote = await getCachedRemoteJson('r2:latest', 'latest.json');
           if (!remote.ok) return remote;
           try {
-            const latest = await remote.json() as LatestApiPayload;
+            const latest = (await remote.json()) as LatestApiPayload;
             const enriched = await enrichLatestWithGate(latest, 'r2');
             (enriched as any).branding = {
               ...branding,
@@ -8213,7 +8368,7 @@ async function main(): Promise<void> {
           );
         }
         try {
-          const latest = await Bun.file(latestJson).json() as LatestApiPayload;
+          const latest = (await Bun.file(latestJson).json()) as LatestApiPayload;
           const enriched = await enrichLatestWithGate(latest, 'local');
           (enriched as any).branding = {
             ...branding,
@@ -8244,7 +8399,10 @@ async function main(): Promise<void> {
         const source = url.searchParams.get('source') || 'local';
         const optional = url.searchParams.get('optional') === '1';
         if (!id) {
-          return jsonResponse({ error: 'missing_id', message: 'Query param `id` is required.' }, { status: 400, source: source === 'r2' ? 'r2' : 'local' });
+          return jsonResponse(
+            { error: 'missing_id', message: 'Query param `id` is required.' },
+            { status: 400, source: source === 'r2' ? 'r2' : 'local' }
+          );
         }
         if (source === 'r2') {
           const r2Snapshot = await getCachedRemoteJson(`r2:snapshot:${id}`, `${id}/snapshot.json`);
@@ -8292,16 +8450,27 @@ async function main(): Promise<void> {
           }
           if (!targetId) {
             return jsonResponse(
-              { error: 'manifest_not_found', message: 'No snapshot id available for publish manifest.', reason: 'no_snapshot_id' },
+              {
+                error: 'manifest_not_found',
+                message: 'No snapshot id available for publish manifest.',
+                reason: 'no_snapshot_id',
+              },
               { status: 404, source: 'r2' }
             );
           }
-          return getCachedRemoteJson(`r2:manifest:${targetId}`, `${targetId}/publish-manifest.json`);
+          return getCachedRemoteJson(
+            `r2:manifest:${targetId}`,
+            `${targetId}/publish-manifest.json`
+          );
         }
         const localManifestPath = await resolveLocalManifestPath(id);
         if (!localManifestPath) {
           return jsonResponse(
-            { error: 'manifest_not_found', message: 'No local snapshot id available for publish manifest.', reason: 'no_snapshot_id' },
+            {
+              error: 'manifest_not_found',
+              message: 'No local snapshot id available for publish manifest.',
+              reason: 'no_snapshot_id',
+            },
             { status: 404, source: 'local' }
           );
         }
@@ -8324,22 +8493,33 @@ async function main(): Promise<void> {
           stateFromCookie?.domain ||
           options.domain ||
           'factory-wager.com'
-        ).trim().toLowerCase();
+        )
+          .trim()
+          .toLowerCase();
         const strictP95Raw = url.searchParams.get('strictP95');
         const strictP95Ms = strictP95Raw === null ? null : Number(strictP95Raw);
         const strictP95 = Number.isFinite(strictP95Ms) ? strictP95Ms : null;
         const strictP95ThresholdRaw = url.searchParams.get('strictP95Threshold');
-        const strictP95ThresholdMs = strictP95ThresholdRaw === null ? null : Number(strictP95ThresholdRaw);
-        const strictP95Threshold = Number.isFinite(strictP95ThresholdMs) ? strictP95ThresholdMs : null;
+        const strictP95ThresholdMs =
+          strictP95ThresholdRaw === null ? null : Number(strictP95ThresholdRaw);
+        const strictP95Threshold = Number.isFinite(strictP95ThresholdMs)
+          ? strictP95ThresholdMs
+          : null;
         const cookieHeader = req.headers.get('cookie') || '';
-        const cookieMap = options.cookies ? CookieParser.parseCookieHeader(cookieHeader) : new Map<string, string>();
+        const cookieMap = options.cookies
+          ? CookieParser.parseCookieHeader(cookieHeader)
+          : new Map<string, string>();
         const rawDomainCookie = cookieMap.get('secure_domain_ctx') || '';
         const rawSubdomainCookie = cookieMap.get('secure_subdomain_state') || '';
         const parsedDomainCookie = rawDomainCookie
-          ? CookieParser.parseSecureCookie<DomainContextCookieData>(rawDomainCookie, { compressed: true })
+          ? CookieParser.parseSecureCookie<DomainContextCookieData>(rawDomainCookie, {
+              compressed: true,
+            })
           : null;
         const parsedSubdomainCookie = rawSubdomainCookie
-          ? CookieParser.parseSecureCookie<SubdomainStateCookieData>(rawSubdomainCookie, { compressed: true })
+          ? CookieParser.parseSecureCookie<SubdomainStateCookieData>(rawSubdomainCookie, {
+              compressed: true,
+            })
           : null;
         const dnsCookieChecked = Number(parsedSubdomainCookie?.checked);
         const dnsCookieResolved = Number(parsedSubdomainCookie?.resolved);
@@ -8357,18 +8537,25 @@ async function main(): Promise<void> {
           parsedState: Boolean(stateFromCookie),
           parsedDomain: Boolean(parsedDomainCookie),
           parsedSubdomain: Boolean(parsedSubdomainCookie),
-          domainMatchesRequested:
-            parsedDomainCookie?.domain
-              ? String(parsedDomainCookie.domain).trim().toLowerCase() === domain
-              : null,
+          domainMatchesRequested: parsedDomainCookie?.domain
+            ? String(parsedDomainCookie.domain).trim().toLowerCase() === domain
+            : null,
           dnsCookieChecked:
             Number.isFinite(dnsCookieChecked) && dnsCookieChecked >= 0 ? dnsCookieChecked : null,
           dnsCookieResolved:
             Number.isFinite(dnsCookieResolved) && dnsCookieResolved >= 0 ? dnsCookieResolved : null,
           dnsCookieRatio:
-            typeof dnsCookieRatio === 'number' && Number.isFinite(dnsCookieRatio) ? dnsCookieRatio : null,
+            typeof dnsCookieRatio === 'number' && Number.isFinite(dnsCookieRatio)
+              ? dnsCookieRatio
+              : null,
           cookieUnresolved: Array.isArray(parsedSubdomainCookie?.unresolved)
-            ? parsedSubdomainCookie.unresolved.map((v) => String(v || '').trim().toLowerCase()).filter(Boolean)
+            ? parsedSubdomainCookie.unresolved
+                .map(v =>
+                  String(v || '')
+                    .trim()
+                    .toLowerCase()
+                )
+                .filter(Boolean)
             : [],
         };
         const data: any = await buildDomainHealthSummary(
@@ -8396,7 +8583,7 @@ async function main(): Promise<void> {
           headers.append('set-cookie', StateManager.serialize(state, url));
           const pipeline = CookieParser.createTransformPipeline()
             .secure()
-            .rename((oldName) => `secure_${oldName}`)
+            .rename(oldName => `secure_${oldName}`)
             .setPath('/api');
           const domainCookie = pipeline.process(
             cookieFactory.domainContext({
@@ -8408,7 +8595,9 @@ async function main(): Promise<void> {
             })
           );
           const unresolved = Array.isArray(data?.subdomains)
-            ? data.subdomains.filter((s: any) => !s?.dnsResolved).map((s: any) => String(s?.fullDomain || s?.subdomain || ''))
+            ? data.subdomains
+                .filter((s: any) => !s?.dnsResolved)
+                .map((s: any) => String(s?.fullDomain || s?.subdomain || ''))
             : [];
           const subdomainCookie = pipeline.process(
             cookieFactory.subdomainState({
@@ -8454,7 +8643,9 @@ async function main(): Promise<void> {
       }
       if (url.pathname === '/api/search-status-unified') {
         const source = (url.searchParams.get('source') || 'local') as 'local' | 'r2';
-        const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com').trim().toLowerCase();
+        const domain = (url.searchParams.get('domain') || options.domain || 'factory-wager.com')
+          .trim()
+          .toLowerCase();
         try {
           const payload = await buildUnifiedStatus({
             json: true,
@@ -8484,15 +8675,24 @@ async function main(): Promise<void> {
           const credentialed = await readR2JsonByCredentials(options, 'rss.xml');
           if (credentialed) {
             const txt = await credentialed.text();
-            return new Response(txt, { headers: { 'content-type': 'application/rss+xml; charset=utf-8' } });
+            return new Response(txt, {
+              headers: { 'content-type': 'application/rss+xml; charset=utf-8' },
+            });
           }
           if (options.r2Base) {
             const rss = await fetchR2Json(options.r2Base, 'rss.xml');
             const txt = await rss.text();
-            return new Response(txt, { status: rss.status, headers: { 'content-type': 'application/rss+xml; charset=utf-8' } });
+            return new Response(txt, {
+              status: rss.status,
+              headers: { 'content-type': 'application/rss+xml; charset=utf-8' },
+            });
           }
           return jsonResponse(
-            { error: 'r2_not_configured', message: 'R2 not configured for RSS route', hint: 'set R2_* creds or --r2-base' },
+            {
+              error: 'r2_not_configured',
+              message: 'R2 not configured for RSS route',
+              hint: 'set R2_* creds or --r2-base',
+            },
             { status: 400, source: 'r2' }
           );
         }
@@ -8515,13 +8715,21 @@ async function main(): Promise<void> {
         const source = url.searchParams.get('source') || 'local';
         if (source !== 'local') {
           return jsonResponse(
-            { error: 'loop_status_local_only', message: 'Loop status endpoint currently supports local source only.', source },
+            {
+              error: 'loop_status_local_only',
+              message: 'Loop status endpoint currently supports local source only.',
+              source,
+            },
             { status: 400, source: 'local' }
           );
         }
         if (!existsSync(loopStatusJson)) {
           return jsonResponse(
-            { error: 'not_found', message: `Loop status file missing: ${loopStatusJson}`, path: loopStatusJson },
+            {
+              error: 'not_found',
+              message: `Loop status file missing: ${loopStatusJson}`,
+              path: loopStatusJson,
+            },
             { status: 404, source: 'local' }
           );
         }
@@ -8550,7 +8758,11 @@ async function main(): Promise<void> {
         const stages = Array.isArray(raw?.stages) ? [...raw.stages] : [];
         const freshnessIdx = stages.findIndex((s: any) => s?.id === 'status_freshness');
         const nextFreshnessStage = (() => {
-          if (!freshness.latestSnapshotIdSeen || !freshness.loopStatusSnapshotId || !freshness.isAligned) {
+          if (
+            !freshness.latestSnapshotIdSeen ||
+            !freshness.loopStatusSnapshotId ||
+            !freshness.isAligned
+          ) {
             return {
               id: 'status_freshness',
               status: 'fail',
@@ -8561,7 +8773,10 @@ async function main(): Promise<void> {
               ],
             };
           }
-          if (typeof freshness.staleMinutes === 'number' && freshness.staleMinutes > freshnessWindowMinutes) {
+          if (
+            typeof freshness.staleMinutes === 'number' &&
+            freshness.staleMinutes > freshnessWindowMinutes
+          ) {
             return {
               id: 'status_freshness',
               status: 'warn',
@@ -8631,7 +8846,9 @@ async function main(): Promise<void> {
   });
 
   const ansi = (text: string, hex: string): string => `${Bun.color(hex, 'ansi')}${text}\x1b[0m`;
-  console.info(ansi(`[search-bench:dashboard] http://localhost:${options.port}/dashboard`, '#22c55e'));
+  console.info(
+    ansi(`[search-bench:dashboard] http://localhost:${options.port}/dashboard`, '#22c55e')
+  );
   console.info(ansi(`[search-bench:dashboard] dir=${dir}`, '#60a5fa'));
   const proxyCfg = resolveProxyConfig();
   if (proxyCfg) {
@@ -8642,9 +8859,13 @@ async function main(): Promise<void> {
   } else {
     const r2Creds = resolveR2ReadOptions();
     if (r2Creds) {
-      console.info(ansi(`[search-bench:dashboard] r2=credentialed bucket=${r2Creds.bucket}`, '#f59e0b'));
+      console.info(
+        ansi(`[search-bench:dashboard] r2=credentialed bucket=${r2Creds.bucket}`, '#f59e0b')
+      );
     } else {
-      console.info(ansi('[search-bench:dashboard] r2=not-configured (set R2_* or --r2-base)', '#ef4444'));
+      console.info(
+        ansi('[search-bench:dashboard] r2=not-configured (set R2_* or --r2-base)', '#ef4444')
+      );
     }
   }
   console.info(ansi(`[search-bench:dashboard] cache-ttl-ms=${options.cacheTtlMs}`, '#a78bfa'));

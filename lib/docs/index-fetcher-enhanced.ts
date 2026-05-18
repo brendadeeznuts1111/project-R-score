@@ -26,7 +26,7 @@ export class EnhancedDocsFetcher {
     this.fallbackData = this.loadFallbackIndex();
     this.ripgrepSearcher = new RipgrepSearcher({
       cacheDir: `${process.env.HOME}/.cache/bun-docs/requests`,
-      maxConcurrency: 5
+      maxConcurrency: 5,
     });
   }
 
@@ -161,11 +161,14 @@ export class EnhancedDocsFetcher {
   /**
    * High-performance search using Bun.spawn and Ripgrep
    */
-  async searchWithRipgrep(query: string, options: {
-    caseSensitive?: boolean;
-    maxResults?: number;
-    includeContent?: boolean;
-  } = {}): Promise<{
+  async searchWithRipgrep(
+    query: string,
+    options: {
+      caseSensitive?: boolean;
+      maxResults?: number;
+      includeContent?: boolean;
+    } = {}
+  ): Promise<{
     apis: BunApiIndex[];
     content: RipgrepMatch[];
     performance: {
@@ -174,14 +177,14 @@ export class EnhancedDocsFetcher {
     };
   }> {
     const startTime = performance.now();
-    
+
     // Run API index search and content search in parallel
     const [apis, content] = await Promise.all([
       this.search(query, 'com'),
       this.ripgrepSearcher.search(query, {
         caseSensitive: options.caseSensitive,
-        maxResults: options.maxResults || 20
-      })
+        maxResults: options.maxResults || 20,
+      }),
     ]);
 
     const endTime = performance.now();
@@ -192,20 +195,23 @@ export class EnhancedDocsFetcher {
       content,
       performance: {
         searchTime: Number(searchTime.toFixed(2)),
-        totalMatches: apis.length + content.length
-      }
+        totalMatches: apis.length + content.length,
+      },
     };
   }
 
   /**
    * Ghost Search - Search multiple sources in parallel
    */
-  async ghostSearch(query: string, options: {
-    domains?: ('sh' | 'com')[];
-    includeProjectCode?: boolean;
-    projectDir?: string;
-    maxResults?: number;
-  } = {}): Promise<{
+  async ghostSearch(
+    query: string,
+    options: {
+      domains?: ('sh' | 'com')[];
+      includeProjectCode?: boolean;
+      projectDir?: string;
+      maxResults?: number;
+    } = {}
+  ): Promise<{
     bunSh: BunApiIndex[];
     bunCom: BunApiIndex[];
     content: RipgrepMatch[];
@@ -223,14 +229,12 @@ export class EnhancedDocsFetcher {
     const searches: Promise<any>[] = [
       this.search(query, 'sh'),
       this.search(query, 'com'),
-      this.ripgrepSearcher.search(query, { maxResults })
+      this.ripgrepSearcher.search(query, { maxResults }),
     ];
 
     if (options.includeProjectCode && options.projectDir) {
       const { searchProjectCode } = await import('./ripgrep-spawn');
-      searches.push(
-        searchProjectCode(query, options.projectDir, { maxResults })
-      );
+      searches.push(searchProjectCode(query, options.projectDir, { maxResults }));
     }
 
     // Execute all searches in parallel
@@ -238,7 +242,7 @@ export class EnhancedDocsFetcher {
     const endTime = performance.now();
 
     const parallelTime = endTime - startTime;
-    
+
     // Estimate sequential time for speedup calculation
     const estimatedSequentialTime = parallelTime * domains.length * 1.5; // Rough estimate
     const parallelSpeedup = Number((estimatedSequentialTime / parallelTime).toFixed(2));
@@ -250,8 +254,8 @@ export class EnhancedDocsFetcher {
       projectCode: results[3],
       performance: {
         totalTime: Number(parallelTime.toFixed(2)),
-        parallelSpeedup
-      }
+        parallelSpeedup,
+      },
     };
   }
 
@@ -276,7 +280,7 @@ export class EnhancedDocsFetcher {
         }
 
         // Debounce the search
-        return new Promise((resolve) => {
+        return new Promise(resolve => {
           timeoutId = setTimeout(async () => {
             const result = await this.searchWithRipgrep(query, options);
             lastQuery = query;
@@ -299,7 +303,7 @@ export class EnhancedDocsFetcher {
         lastQuery = '';
         lastResult = null;
         this.ripgrepSearcher.clearCache();
-      }
+      },
     };
   }
 

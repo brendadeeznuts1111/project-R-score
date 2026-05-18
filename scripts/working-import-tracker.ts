@@ -1,8 +1,8 @@
-import { plugin } from "bun";
-import { logger } from "../lib/utils/logger.ts";
+import { plugin } from 'bun';
+import { logger } from '../lib/utils/logger.ts';
 
 plugin({
-  name: "working import tracker",
+  name: 'working import tracker',
   setup(build) {
     const transpiler = new Bun.Transpiler();
     const trackedImports: Record<string, number> = {};
@@ -12,7 +12,7 @@ plugin({
     build.onLoad({ filter: /\.(ts|js)$/ }, async ({ path }) => {
       logger.info(`🔍 Processing: ${path}`);
       processedFiles++;
-      
+
       try {
         const contents = await Bun.file(path).text();
         const imports = transpiler.scanImports(new TextEncoder().encode(contents));
@@ -38,10 +38,10 @@ plugin({
     // Generate stats when requested - this uses defer()
     build.onLoad({ filter: /generate-stats\.ts$/ }, async ({ defer }) => {
       logger.info(`📊 Stats requested - waiting for ${processedFiles} files to complete...`);
-      
+
       // CRITICAL: Wait for all other modules to be loaded first
       await defer();
-      
+
       logger.info(`✅ All files processed! Generating final statistics...`);
       logger.info(`📋 Total unique imports tracked: ${Object.keys(trackedImports).length}`);
 
@@ -67,7 +67,7 @@ export default importStats;
 
       return {
         contents: statsContent,
-        loader: "ts",
+        loader: 'ts',
       };
     });
   },

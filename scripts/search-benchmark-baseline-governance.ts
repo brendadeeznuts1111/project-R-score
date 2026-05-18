@@ -73,7 +73,9 @@ function validateBaseline(path: string, baseline: PinnedBaseline): ValidationRes
 
   if (!('previousSnapshotId' in baseline)) {
     errors.push('previousSnapshotId field is required (string or null)');
-  } else if (!(baseline.previousSnapshotId === null || hasNonEmptyString(baseline.previousSnapshotId))) {
+  } else if (
+    !(baseline.previousSnapshotId === null || hasNonEmptyString(baseline.previousSnapshotId))
+  ) {
     errors.push('previousSnapshotId must be string or null');
   }
 
@@ -99,8 +101,8 @@ async function main(): Promise<void> {
 
   const entries = await readdir(root);
   const baselineFiles = entries
-    .filter((name) => /^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name))
-    .map((name) => resolve(root, name))
+    .filter(name => /^search-benchmark-pinned-baseline(\..+)?\.json$/i.test(name))
+    .map(name => resolve(root, name))
     .sort();
 
   if (baselineFiles.length === 0) {
@@ -114,7 +116,7 @@ async function main(): Promise<void> {
     results.push(validateBaseline(path, parsed));
   }
 
-  const failed = results.filter((r) => !r.ok);
+  const failed = results.filter(r => !r.ok);
   if (asJson) {
     console.info(
       JSON.stringify(

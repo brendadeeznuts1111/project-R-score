@@ -23,7 +23,7 @@ function addCheck(name: string, level: Level, detail: string) {
 
 function parseSemver(input: string): [number, number, number] {
   const core = input.split('-')[0];
-  const [maj, min, patch] = core.split('.').map((v) => Number.parseInt(v, 10) || 0);
+  const [maj, min, patch] = core.split('.').map(v => Number.parseInt(v, 10) || 0);
   return [maj, min, patch];
 }
 
@@ -35,10 +35,10 @@ function compareSemver(a: [number, number, number], b: readonly [number, number,
 
 function isPortInUse(port: number): boolean {
   try {
-    const output = Bun.spawnSync(
-      ['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'],
-      { stdout: 'pipe', stderr: 'pipe' }
-    );
+    const output = Bun.spawnSync(['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     return output.exitCode === 0 && new TextDecoder().decode(output.stdout).trim().length > 0;
   } catch {
     return false;
@@ -47,10 +47,10 @@ function isPortInUse(port: number): boolean {
 
 function getPortOwner(port: number): string {
   try {
-    const output = Bun.spawnSync(
-      ['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'],
-      { stdout: 'pipe', stderr: 'pipe' }
-    );
+    const output = Bun.spawnSync(['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     if (output.exitCode !== 0) return 'unknown';
     const text = new TextDecoder().decode(output.stdout).trim();
     const lines = text.split('\n');
@@ -64,10 +64,10 @@ function getPortOwner(port: number): string {
 
 function getPortOwnerPid(port: number): number | null {
   try {
-    const output = Bun.spawnSync(
-      ['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'],
-      { stdout: 'pipe', stderr: 'pipe' }
-    );
+    const output = Bun.spawnSync(['lsof', '-nP', '-iTCP:' + String(port), '-sTCP:LISTEN'], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     if (output.exitCode !== 0) return null;
     const text = new TextDecoder().decode(output.stdout).trim();
     const lines = text.split('\n');
@@ -82,10 +82,10 @@ function getPortOwnerPid(port: number): number | null {
 
 function commandForPid(pid: number): string {
   try {
-    const output = Bun.spawnSync(
-      ['ps', '-o', 'command=', '-p', String(pid)],
-      { stdout: 'pipe', stderr: 'pipe' }
-    );
+    const output = Bun.spawnSync(['ps', '-o', 'command=', '-p', String(pid)], {
+      stdout: 'pipe',
+      stderr: 'pipe',
+    });
     if (output.exitCode !== 0) return '';
     return new TextDecoder().decode(output.stdout).trim();
   } catch {
@@ -136,7 +136,11 @@ async function verifyRoutes(probePort: number): Promise<void> {
     const ready = await waitForRoute(healthUrl);
     if (!ready) {
       const stderrText = await new Response(child.stderr).text();
-      addCheck('route-contract', 'FAIL', `server did not become ready on ${probePort}; ${stderrText.trim()}`);
+      addCheck(
+        'route-contract',
+        'FAIL',
+        `server did not become ready on ${probePort}; ${stderrText.trim()}`
+      );
       return;
     }
 
@@ -155,12 +159,21 @@ async function verifyRoutes(probePort: number): Promise<void> {
       return;
     }
 
-    const health = await healthRes.json() as Record<string, unknown>;
-    const runtime = await runtimeRes.json() as Record<string, unknown>;
+    const health = (await healthRes.json()) as Record<string, unknown>;
+    const runtime = (await runtimeRes.json()) as Record<string, unknown>;
     const requiredHealth = ['status', 'timestamp', 'service', 'version', 'runtime', 'checks'];
-    const missingHealth = requiredHealth.filter((k) => !(k in health));
-    const requiredRuntime = ['bunVersion', 'bunRevision', 'platform', 'arch', 'pid', 'port', 'startedAt', 'uptimeSec'];
-    const missingRuntime = requiredRuntime.filter((k) => !(k in runtime));
+    const missingHealth = requiredHealth.filter(k => !(k in health));
+    const requiredRuntime = [
+      'bunVersion',
+      'bunRevision',
+      'platform',
+      'arch',
+      'pid',
+      'port',
+      'startedAt',
+      'uptimeSec',
+    ];
+    const missingRuntime = requiredRuntime.filter(k => !(k in runtime));
 
     if (missingHealth.length > 0 || missingRuntime.length > 0) {
       addCheck(
@@ -171,7 +184,11 @@ async function verifyRoutes(probePort: number): Promise<void> {
       return;
     }
 
-    addCheck('route-contract', 'PASS', `validated /api/health /api/dashboard /api/dashboard/runtime on port ${probePort}`);
+    addCheck(
+      'route-contract',
+      'PASS',
+      `validated /api/health /api/dashboard /api/dashboard/runtime on port ${probePort}`
+    );
   } finally {
     child.kill();
     await child.exited;
@@ -189,14 +206,26 @@ async function main() {
 
   const bunParsed = parseSemver(Bun.version);
   if (compareSemver(bunParsed, MIN_BUN) < 0) {
-    addCheck('bun-version-minimum', 'FAIL', `bun ${Bun.version} is below minimum ${MIN_BUN.join('.')}`);
+    addCheck(
+      'bun-version-minimum',
+      'FAIL',
+      `bun ${Bun.version} is below minimum ${MIN_BUN.join('.')}`
+    );
   } else {
-    addCheck('bun-version-minimum', 'PASS', `bun ${Bun.version} meets minimum ${MIN_BUN.join('.')}`);
+    addCheck(
+      'bun-version-minimum',
+      'PASS',
+      `bun ${Bun.version} meets minimum ${MIN_BUN.join('.')}`
+    );
   }
 
   const isCanary = Bun.version.includes('canary') || readBunRevision().includes('canary');
   if (isCanary && !ALLOW_CANARY_BUN) {
-    addCheck('bun-stability', 'WARN', 'canary build detected; set ALLOW_CANARY_BUN=true to suppress warning');
+    addCheck(
+      'bun-stability',
+      'WARN',
+      'canary build detected; set ALLOW_CANARY_BUN=true to suppress warning'
+    );
   } else if (isCanary) {
     addCheck('bun-stability', 'PASS', 'canary build explicitly allowed');
   } else {
@@ -204,9 +233,17 @@ async function main() {
   }
 
   if (compareSemver(bunParsed, RECOMMENDED_BUN) < 0) {
-    addCheck('bun-version-recommended', 'WARN', `recommended bun is ${RECOMMENDED_BUN.join('.')}+ stable`);
+    addCheck(
+      'bun-version-recommended',
+      'WARN',
+      `recommended bun is ${RECOMMENDED_BUN.join('.')}+ stable`
+    );
   } else {
-    addCheck('bun-version-recommended', 'PASS', `bun ${Bun.version} is at or above recommended ${RECOMMENDED_BUN.join('.')}`);
+    addCheck(
+      'bun-version-recommended',
+      'PASS',
+      `bun ${Bun.version} is at or above recommended ${RECOMMENDED_BUN.join('.')}`
+    );
   }
 
   const requiredFiles = [
@@ -228,7 +265,11 @@ async function main() {
     const ownerPid = getPortOwnerPid(REQUESTED_PORT);
     const ownerCmd = ownerPid ? commandForPid(ownerPid) : '';
     if (ownerCmd.includes('dashboard/dashboard-server.ts')) {
-      addCheck('dashboard-port', 'PASS', `port ${REQUESTED_PORT} already owned by active dashboard process pid=${ownerPid}`);
+      addCheck(
+        'dashboard-port',
+        'PASS',
+        `port ${REQUESTED_PORT} already owned by active dashboard process pid=${ownerPid}`
+      );
     } else {
       addCheck('dashboard-port', 'WARN', `port ${REQUESTED_PORT} in use by ${owner}`);
     }
@@ -248,10 +289,12 @@ async function main() {
     console.info(`${prefix} ${check.name}: ${check.detail}`);
   }
 
-  const failCount = checks.filter((c) => c.level === 'FAIL').length;
-  const warnCount = checks.filter((c) => c.level === 'WARN').length;
+  const failCount = checks.filter(c => c.level === 'FAIL').length;
+  const warnCount = checks.filter(c => c.level === 'WARN').length;
   console.info('');
-  console.info(`Summary: ${checks.length - failCount - warnCount} pass, ${warnCount} warn, ${failCount} fail`);
+  console.info(
+    `Summary: ${checks.length - failCount - warnCount} pass, ${warnCount} warn, ${failCount} fail`
+  );
   process.exit(failCount > 0 ? 1 : 0);
 }
 

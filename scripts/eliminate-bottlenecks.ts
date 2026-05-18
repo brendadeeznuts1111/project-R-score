@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * Bottleneck Elimination Script
- * 
+ *
  * Implements optimizations based on bottleneck analysis:
  * - Function object optimization (memoization, reuse)
  * - Large object optimization (streaming, pagination, object pooling)
@@ -11,11 +11,11 @@
 import { existsSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 import { $ } from 'bun';
-import { 
-  createProfilingError, 
+import {
+  createProfilingError,
   handleProfilingError,
   ProfilingErrorCode,
-  type ProfilingError 
+  type ProfilingError,
 } from './profiling-errors.ts';
 
 const ROOT_DIR = '/Users/nolarose/Projects';
@@ -36,22 +36,20 @@ interface Optimization {
  */
 function readBottleneckReport(): string | null {
   if (!existsSync(BOTTLENECK_REPORT)) {
-    const error = createProfilingError(
-      ProfilingErrorCode.PROFILE_NOT_FOUND,
-      { reportPath: BOTTLENECK_REPORT, suggestion: 'Run analyze-bottlenecks.ts first' }
-    );
+    const error = createProfilingError(ProfilingErrorCode.PROFILE_NOT_FOUND, {
+      reportPath: BOTTLENECK_REPORT,
+      suggestion: 'Run analyze-bottlenecks.ts first',
+    });
     error.log();
     return null;
   }
-  
+
   try {
     return readFileSync(BOTTLENECK_REPORT, 'utf-8');
   } catch (error) {
-    const profilingError = handleProfilingError(
-      error,
-      ProfilingErrorCode.PROFILE_PARSE_ERROR,
-      { reportPath: BOTTLENECK_REPORT }
-    );
+    const profilingError = handleProfilingError(error, ProfilingErrorCode.PROFILE_PARSE_ERROR, {
+      reportPath: BOTTLENECK_REPORT,
+    });
     profilingError.log();
     return null;
   }
@@ -62,7 +60,7 @@ function readBottleneckReport(): string | null {
  */
 function identifyOptimizations(report: string): Optimization[] {
   const optimizations: Optimization[] = [];
-  
+
   // Parse projects with high function counts
   const functionMatch = report.match(/clawdbot.*?(\d{1,3}(?:,\d{3})*)\s+functions/);
   if (functionMatch) {
@@ -77,7 +75,7 @@ function identifyOptimizations(report: string): Optimization[] {
       });
     }
   }
-  
+
   // Parse large objects
   const largeObjectMatch = report.match(/clawdbot.*?(\d+\.\d+)\s+MB total/);
   if (largeObjectMatch) {
@@ -92,7 +90,7 @@ function identifyOptimizations(report: string): Optimization[] {
       });
     }
   }
-  
+
   // Parse GC roots
   const gcRootMatch = report.match(/clawdbot.*?(\d{1,3}(?:,\d{3})*)\s+GC roots/);
   if (gcRootMatch) {
@@ -107,13 +105,13 @@ function identifyOptimizations(report: string): Optimization[] {
       });
     }
   }
-  
+
   // Similar checks for lib and warstrike-refractions
   ['lib', 'warstrike-refractions'].forEach(project => {
     const projectSection = report.match(new RegExp(`### ${project}([\\s\\S]*?)(?=###|$)`));
     if (projectSection) {
       const section = projectSection[1];
-      
+
       // Check function count
       const funcMatch = section.match(/Function Objects.*?(\d{1,3}(?:,\d{3})*)/);
       if (funcMatch) {
@@ -128,7 +126,7 @@ function identifyOptimizations(report: string): Optimization[] {
           });
         }
       }
-      
+
       // Check GC roots
       const gcMatch = section.match(/GC Roots.*?(\d{1,3}(?:,\d{3})*)/);
       if (gcMatch) {
@@ -145,7 +143,7 @@ function identifyOptimizations(report: string): Optimization[] {
       }
     }
   });
-  
+
   return optimizations;
 }
 
@@ -154,7 +152,7 @@ function identifyOptimizations(report: string): Optimization[] {
  */
 async function optimizeFunctions(project: string): Promise<boolean> {
   console.info(`  🔧 Applying function optimizations for ${project}...`);
-  
+
   // For clawdbot, focus on plugin system optimizations
   if (project === 'clawdbot') {
     const pluginRegistryPath = join(ROOT_DIR, 'clawdbot/src/plugins/registry.ts');
@@ -162,7 +160,7 @@ async function optimizeFunctions(project: string): Promise<boolean> {
       try {
         let content = readFileSync(pluginRegistryPath, 'utf-8');
         let modified = false;
-        
+
         // Add function memoization helper if not present
         if (!content.includes('functionMemoCache')) {
           const memoCacheCode = `
@@ -177,35 +175,38 @@ function memoizeFunction<T extends Function>(fn: T): T {
   return fn;
 }
 `;
-          
+
           // Insert after imports or at top of createPluginRegistry function
           const insertPoint = content.indexOf('export function createPluginRegistry');
           if (insertPoint > 0) {
             const functionStart = content.indexOf('{', insertPoint);
             if (functionStart > 0) {
-              content = content.slice(0, functionStart + 1) + memoCacheCode + content.slice(functionStart + 1);
+              content =
+                content.slice(0, functionStart + 1) +
+                memoCacheCode +
+                content.slice(functionStart + 1);
               modified = true;
             }
           }
         }
-        
+
         if (modified) {
           writeFileSync(pluginRegistryPath, content, 'utf-8');
           console.info(`    ✅ Added function memoization to ${pluginRegistryPath}`);
           return true;
         }
       } catch (error) {
-        const profilingError = handleProfilingError(
-          error,
-          ProfilingErrorCode.FILE_WRITE_FAILED,
-          { file: pluginRegistryPath, project, optimization: 'function-memoization' }
-        );
+        const profilingError = handleProfilingError(error, ProfilingErrorCode.FILE_WRITE_FAILED, {
+          file: pluginRegistryPath,
+          project,
+          optimization: 'function-memoization',
+        });
         profilingError.log();
         return false;
       }
     }
   }
-  
+
   // For lib, add cleanup utilities
   if (project === 'lib') {
     const utilsPath = join(ROOT_DIR, 'lib/utils/function-utils.ts');
@@ -249,17 +250,17 @@ export function cleanupFunction(fn: Function): void {
         console.info(`    ✅ Created function cleanup utilities at ${utilsPath}`);
         return true;
       } catch (error) {
-        const profilingError = handleProfilingError(
-          error,
-          ProfilingErrorCode.FILE_WRITE_FAILED,
-          { file: utilsPath, project, optimization: 'function-cleanup' }
-        );
+        const profilingError = handleProfilingError(error, ProfilingErrorCode.FILE_WRITE_FAILED, {
+          file: utilsPath,
+          project,
+          optimization: 'function-cleanup',
+        });
         profilingError.log();
         return false;
       }
     }
   }
-  
+
   return false;
 }
 
@@ -268,17 +269,17 @@ export function cleanupFunction(fn: Function): void {
  */
 async function optimizeLargeObjects(project: string): Promise<boolean> {
   console.info(`  🔧 Applying large object optimizations for ${project}...`);
-  
+
   // Create object pool utility
   const poolPath = join(ROOT_DIR, project, 'utils', 'object-pool.ts');
   const poolDir = join(ROOT_DIR, project, 'utils');
-  
+
   try {
     // Ensure utils directory exists
     if (!existsSync(poolDir)) {
       await $`mkdir -p ${poolDir}`.quiet();
     }
-    
+
     if (!existsSync(poolPath)) {
       const poolCode = `/**
  * Object pooling utility to reduce large object allocations
@@ -331,15 +332,15 @@ export class ObjectPool<T> {
       return true;
     }
   } catch (error) {
-    const profilingError = handleProfilingError(
-      error,
-      ProfilingErrorCode.FILE_WRITE_FAILED,
-      { file: poolPath, project, optimization: 'object-pool' }
-    );
+    const profilingError = handleProfilingError(error, ProfilingErrorCode.FILE_WRITE_FAILED, {
+      file: poolPath,
+      project,
+      optimization: 'object-pool',
+    });
     profilingError.log();
     return false;
   }
-  
+
   return false;
 }
 
@@ -348,17 +349,17 @@ export class ObjectPool<T> {
  */
 async function optimizeGCRoots(project: string): Promise<boolean> {
   console.info(`  🔧 Applying GC root optimizations for ${project}...`);
-  
+
   // Create cleanup manager
   const cleanupPath = join(ROOT_DIR, project, 'utils', 'cleanup-manager.ts');
   const utilsDir = join(ROOT_DIR, project, 'utils');
-  
+
   try {
     // Ensure utils directory exists
     if (!existsSync(utilsDir)) {
       await $`mkdir -p ${utilsDir}`.quiet();
     }
-    
+
     if (!existsSync(cleanupPath)) {
       const cleanupCode = `/**
  * Cleanup manager to break circular references and reduce GC roots
@@ -429,15 +430,15 @@ if (typeof process !== 'undefined') {
       return true;
     }
   } catch (error) {
-    const profilingError = handleProfilingError(
-      error,
-      ProfilingErrorCode.FILE_WRITE_FAILED,
-      { file: cleanupPath, project, optimization: 'gc-cleanup' }
-    );
+    const profilingError = handleProfilingError(error, ProfilingErrorCode.FILE_WRITE_FAILED, {
+      file: cleanupPath,
+      project,
+      optimization: 'gc-cleanup',
+    });
     profilingError.log();
     return false;
   }
-  
+
   return false;
 }
 
@@ -446,34 +447,34 @@ if (typeof process !== 'undefined') {
  */
 async function main() {
   console.info('🔍 Reading bottleneck report...\n');
-  
+
   const report = readBottleneckReport();
   if (!report) {
     process.exit(1);
   }
-  
+
   console.info('📊 Identifying optimizations...\n');
-  
+
   const optimizations = identifyOptimizations(report);
-  
+
   if (optimizations.length === 0) {
     console.info('✅ No optimizations needed!');
     return;
   }
-  
+
   console.info(`Found ${optimizations.length} optimization opportunities:\n`);
   optimizations.forEach((opt, idx) => {
     console.info(`${idx + 1}. [${opt.type}] ${opt.project}: ${opt.description}`);
     console.info(`   Fix: ${opt.fix}\n`);
   });
-  
+
   console.info('🚀 Applying optimizations...\n');
-  
+
   const results = {
     applied: 0,
     failed: 0,
   };
-  
+
   // Group optimizations by project and type
   const byProject = new Map<string, Optimization[]>();
   for (const opt of optimizations) {
@@ -482,14 +483,14 @@ async function main() {
     }
     byProject.get(opt.project)!.push(opt);
   }
-  
+
   for (const [project, opts] of byProject.entries()) {
     console.info(`\n📦 Processing ${project}:`);
-    
+
     for (const opt of opts) {
       try {
         let success = false;
-        
+
         switch (opt.type) {
           case 'function':
             success = await optimizeFunctions(project);
@@ -501,7 +502,7 @@ async function main() {
             success = await optimizeGCRoots(project);
             break;
         }
-        
+
         if (success) {
           opt.applied = true;
           results.applied++;
@@ -509,22 +510,22 @@ async function main() {
           results.failed++;
         }
       } catch (error) {
-        const profilingError = handleProfilingError(
-          error,
-          ProfilingErrorCode.OPTIMIZATION_FAILED,
-          { project, optimizationType: opt.type, description: opt.description }
-        );
+        const profilingError = handleProfilingError(error, ProfilingErrorCode.OPTIMIZATION_FAILED, {
+          project,
+          optimizationType: opt.type,
+          description: opt.description,
+        });
         profilingError.log();
         results.failed++;
       }
     }
   }
-  
+
   console.info(`\n\n📈 Summary:`);
   console.info(`   ✅ Applied: ${results.applied}`);
   console.info(`   ❌ Failed: ${results.failed}`);
   console.info(`   📊 Total: ${optimizations.length}`);
-  
+
   console.info(`\n💡 Next steps:`);
   console.info(`   1. Review the created utility files`);
   console.info(`   2. Integrate them into your codebase`);

@@ -38,10 +38,10 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
   async execute<T>(fn: () => Promise<T>): Promise<T> {
     // Check state and handle transitions
     const state = this.getState();
-    
+
     if (state === CircuitState.OPEN) {
       const timeSinceLastFailure = Date.now() - (this.getLastFailureTime() || 0);
-      
+
       if (timeSinceLastFailure >= this.getResetTimeoutMs()) {
         this.transitionTo(CircuitState.HALF_OPEN);
       } else {
@@ -57,7 +57,7 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
     if (this.getState() === CircuitState.HALF_OPEN) {
       // Acquire slot through queue
       await this.acquireHalfOpenSlot();
-      
+
       try {
         const result = await this.executeWithTimeout(fn);
         this.onSuccess();
@@ -84,7 +84,7 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
   private async acquireHalfOpenSlot(): Promise<void> {
     return new Promise((resolve, reject) => {
       const maxCalls = this.getHalfOpenMaxCalls();
-      
+
       if (this.getHalfOpenCalls() < maxCalls) {
         this.incrementHalfOpenCalls();
         resolve();
@@ -108,15 +108,13 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
    * Deferred logging to reduce event loop blocking
    */
   protected logStateTransition(oldState: CircuitState, newState: CircuitState): void {
-    this.logBuffer.push(
-      `🔌 Circuit breaker "${this.getServiceName()}": ${oldState} → ${newState}`
-    );
+    this.logBuffer.push(`🔌 Circuit breaker "${this.getServiceName()}": ${oldState} → ${newState}`);
     this.scheduleLogFlush();
   }
 
   private scheduleLogFlush(): void {
     if (this.logFlushScheduled) return;
-    
+
     this.logFlushScheduled = true;
     setImmediate(() => {
       if (this.logBuffer.length > 0) {
@@ -167,7 +165,7 @@ export class OptimizedCircuitBreaker extends CircuitBreaker {
   private transitionTo(state: CircuitState): void {
     const oldState = this.getState();
     if (oldState === state) return;
-    
+
     (this as any).transitionTo(state);
     this.logStateTransition(oldState, state);
   }
@@ -207,7 +205,7 @@ export class OptimizedCircuitBreakerRegistry {
     config?: Partial<CircuitBreakerConfig>
   ): OptimizedCircuitBreaker {
     this.updateLastAccessed(serviceName);
-    
+
     const existing = this.breakers.get(serviceName);
     if (existing) {
       return existing.breaker as OptimizedCircuitBreaker;
@@ -262,10 +260,8 @@ export class OptimizedCircuitBreakerRegistry {
   }> {
     return Array.from(this.breakers.entries()).map(([service, entry]) => {
       const stats = entry.breaker.getStats();
-      const rejectionRate = stats.totalCalls > 0
-        ? stats.rejectedCalls / stats.totalCalls
-        : 0;
-      
+      const rejectionRate = stats.totalCalls > 0 ? stats.rejectedCalls / stats.totalCalls : 0;
+
       return {
         service,
         healthy: entry.breaker.isClosed(),
@@ -304,9 +300,8 @@ export class OptimizedCircuitBreakerRegistry {
       oldest = Math.min(oldest, age);
     }
 
-    const avg = accessTimes.length > 0
-      ? accessTimes.reduce((a, b) => a + b, 0) / accessTimes.length
-      : 0;
+    const avg =
+      accessTimes.length > 0 ? accessTimes.reduce((a, b) => a + b, 0) / accessTimes.length : 0;
 
     return {
       totalBreakers: this.breakers.size,
@@ -339,7 +334,7 @@ export class OptimizedCircuitBreakerRegistry {
     const now = Date.now();
     const cutoff = now - this.ttlMs;
     let cleaned = 0;
-    
+
     for (const [name, entry] of this.breakers) {
       if (entry.lastAccessed < cutoff) {
         // Only clean healthy circuits to preserve failure state
@@ -350,7 +345,7 @@ export class OptimizedCircuitBreakerRegistry {
         }
       }
     }
-    
+
     if (cleaned > 0) {
       console.info(`🧹 Cleaned up ${cleaned} unused circuit breakers`);
     }
@@ -360,34 +355,38 @@ export class OptimizedCircuitBreakerRegistry {
 // Benchmark comparison
 export async function benchmarkCircuitBreaker(): Promise<void> {
   console.info('🔬 Circuit Breaker Performance Test\n');
-  
+
   const iterations = 100000;
-  
+
   // Test original
   const { CircuitBreaker: OriginalBreaker } = await import('./circuit-breaker');
   const original = new OriginalBreaker('original-test');
-  
+
   console.info(`Running ${iterations.toLocaleString()} iterations...\n`);
-  
+
   const start1 = performance.now();
   for (let i = 0; i < iterations; i++) {
     await original.execute(async () => 'success');
   }
   const time1 = performance.now() - start1;
-  
+
   // Test optimized
   const optimized = new OptimizedCircuitBreaker('optimized-test');
-  
+
   const start2 = performance.now();
   for (let i = 0; i < iterations; i++) {
     await optimized.execute(async () => 'success');
   }
   const time2 = performance.now() - start2;
-  
-  console.info(`Original:  ${time1.toFixed(2)}ms (${(iterations / (time1 / 1000)).toFixed(0)} ops/sec)`);
-  console.info(`Optimized: ${time2.toFixed(2)}ms (${(iterations / (time2 / 1000)).toFixed(0)} ops/sec)`);
+
+  console.info(
+    `Original:  ${time1.toFixed(2)}ms (${(iterations / (time1 / 1000)).toFixed(0)} ops/sec)`
+  );
+  console.info(
+    `Optimized: ${time2.toFixed(2)}ms (${(iterations / (time2 / 1000)).toFixed(0)} ops/sec)`
+  );
   console.info(`Overhead:  ${((time2 / time1 - 1) * 100).toFixed(1)}%`);
-  
+
   original.destroy();
   optimized.destroy();
 }

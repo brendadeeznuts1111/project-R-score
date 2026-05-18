@@ -51,7 +51,11 @@ ${leakSize > 10 ? '- Review event listener cleanup\n- Check for circular referen
 }
 
 // Simulate R2 upload
-async function simulateR2Upload(key: string, data: Uint8Array, metadata: R2Metadata): Promise<string> {
+async function simulateR2Upload(
+  key: string,
+  data: Uint8Array,
+  metadata: R2Metadata
+): Promise<string> {
   // In real implementation, this would upload to R2
   // For demo, we'll just return a mock URL
   return `https://r2.scanner-cookies.com/${key}`;
@@ -67,9 +71,13 @@ async function runHeapProfile() {
 
   // Extract heap size for severity analysis
   const heapSizeMatch = md.match(/Heap size: (\d+\.?\d*)MB/i);
-  const severity = heapSizeMatch ?
-    (parseFloat(heapSizeMatch[1]) > 100 ? "error" :
-     parseFloat(heapSizeMatch[1]) > 50 ? "warning" : "success") : "muted";
+  const severity = heapSizeMatch
+    ? parseFloat(heapSizeMatch[1]) > 100
+      ? 'error'
+      : parseFloat(heapSizeMatch[1]) > 50
+        ? 'warning'
+        : 'success'
+    : 'muted';
 
   const dominantColor = FW_COLORS[severity];
   const themeTag = `factorywager-${severity}`;
@@ -101,11 +109,13 @@ async function runHeapProfile() {
   const signed = await simulateR2Upload(key, zst, r2Metadata);
 
   // Color-coded output based on severity
-  const emoji = severity === "error" ? "🚨" : severity === "warning" ? "⚠️" : "✅";
+  const emoji = severity === 'error' ? '🚨' : severity === 'warning' ? '⚠️' : '✅';
   console.info(styled(`${emoji} Heap profile uploaded`, severity));
-  console.info(styled("   🔗 URL: ", "muted") + styled(signed, "primary"));
-  console.info(styled("   🎨 Visual tag: ", "muted") + styled(themeTag, severity));
-  console.info(styled("   📊 Metadata: ", "muted") + styled(Bun.color(dominantColor, "hex"), "accent"));
+  console.info(styled('   🔗 URL: ', 'muted') + styled(signed, 'primary'));
+  console.info(styled('   🎨 Visual tag: ', 'muted') + styled(themeTag, severity));
+  console.info(
+    styled('   📊 Metadata: ', 'muted') + styled(Bun.color(dominantColor, 'hex'), 'accent')
+  );
 
   // Display compression info
   log.metric('Original size', Utils.Performance.formatBytes(md.length), 'muted');

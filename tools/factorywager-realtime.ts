@@ -36,7 +36,7 @@ async function runRealTimeProfile() {
   console.info(styled('Press Ctrl+C to stop', 'muted'));
   console.info(styled('━'.repeat(40), 'muted'));
 
-  const colors = ["primary", "accent", "success"];
+  const colors = ['primary', 'accent', 'success'];
   const dataGenerator = generateProfileData();
   let lineCount = 0;
 
@@ -46,8 +46,7 @@ async function runRealTimeProfile() {
     const line = dataGenerator.next().value;
 
     // Animate the progress bar
-    const animated = line.replace(/█+/g, match =>
-      styled(match, color as any));
+    const animated = line.replace(/█+/g, match => styled(match, color as any));
 
     // Clear line and print new data
     process.stdout.write('\r' + ' '.repeat(80) + '\r');

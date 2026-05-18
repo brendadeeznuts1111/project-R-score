@@ -34,7 +34,7 @@ export class RealZenBunDashboard {
       totalSearches: 0,
       realSearchHistory: [],
       systemHealth: 'optimal',
-      lastUpdate: new Date().toISOString()
+      lastUpdate: new Date().toISOString(),
     };
 
     this.searcher = new ZenStreamSearcher();
@@ -46,33 +46,33 @@ export class RealZenBunDashboard {
    */
   async startRealBunDashboard(): Promise<void> {
     console.info('🎯 Starting REAL Zen Dashboard with Bun File Protocol!');
-    
+
     // Start Bun server with file protocol
     this.server = (Bun as any).serve({
       port: 3003,
       fetch: async (req: Request) => {
         const url = new URL(req.url);
-        
+
         // Serve REAL dashboard HTML
         if (url.pathname === '/' || url.pathname === '/dashboard') {
           const html = await this.generateRealHTMLDashboard();
           return new Response(html, {
-            headers: { 'Content-Type': 'text/html' }
+            headers: { 'Content-Type': 'text/html' },
           });
         }
-        
+
         // API endpoint for REAL metrics
         if (url.pathname === '/api/real-metrics') {
           return Response.json(this.metrics);
         }
-        
+
         // Perform REAL search on demand
         if (url.pathname === '/api/search') {
           const query = url.searchParams.get('query') || 'bun';
           const result = await this.performRealSearch(query);
           return Response.json(result);
         }
-        
+
         // Bun file protocol info
         if (url.pathname === '/api/bun-protocol') {
           return Response.json({
@@ -82,18 +82,18 @@ export class RealZenBunDashboard {
               'Direct file access without HTTP overhead',
               'Built-in caching and optimization',
               'Zero-configuration file serving',
-              'Real-time search integration'
+              'Real-time search integration',
             ],
-            realData: true
+            realData: true,
           });
         }
-        
+
         return new Response('Not Found', { status: 404 });
       },
     });
 
     console.info('🌐 REAL Zen Dashboard Server Started!');
-    console.info('=' .repeat(60));
+    console.info('='.repeat(60));
     console.info(`📱 Standard URL: http://localhost:${this.server.port}/dashboard`);
     console.info(`🔗 Bun Protocol: bun://localhost:${this.server.port}/dashboard`);
     console.info(`📊 Real Metrics: http://localhost:${this.server.port}/api/real-metrics`);
@@ -102,10 +102,10 @@ export class RealZenBunDashboard {
     console.info('');
     console.info('🎯 This dashboard shows 100% REAL search data!');
     console.info('🚀 Try opening: bun://localhost:3002/dashboard');
-    
+
     // Start performing real searches
     this.startRealSearches();
-    
+
     // Generate static HTML file too
     await this.generateStaticRealDashboard();
   }
@@ -129,7 +129,7 @@ export class RealZenBunDashboard {
   private async performRandomRealSearch(): Promise<void> {
     const queries = ['bun', 'performance', 'streaming', 'zen', 'fetch', 'spawn', 'ripgrep'];
     const randomQuery = queries[Math.floor(Math.random() * queries.length)];
-    
+
     await this.performRealSearch(randomQuery);
   }
 
@@ -138,12 +138,12 @@ export class RealZenBunDashboard {
    */
   private async performRealSearch(query: string): Promise<any> {
     console.info(`🔍 Performing REAL search: "${query}"`);
-    
+
     try {
       const startTime = performance.now();
       const results = await this.searcher.streamSearch({
         query,
-        cachePath: '/Users/nolarose/Projects/.cache'
+        cachePath: '/Users/nolarose/Projects/.cache',
       });
       const searchTime = performance.now() - startTime;
 
@@ -153,7 +153,7 @@ export class RealZenBunDashboard {
         matches: results.matchesFound,
         time: searchTime,
         memory: results.memoryUsage / 1024 / 1024, // MB
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
       };
 
       this.metrics.realSearchHistory.unshift(realSearch);
@@ -165,23 +165,24 @@ export class RealZenBunDashboard {
       this.updateSystemHealth();
       this.metrics.lastUpdate = new Date().toISOString();
 
-      console.info(`✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms (${realSearch.memory.toFixed(2)}MB)`);
-      
+      console.info(
+        `✅ REAL Search Results: ${results.matchesFound} matches in ${searchTime.toFixed(2)}ms (${realSearch.memory.toFixed(2)}MB)`
+      );
+
       return {
         success: true,
         query,
         matches: results.matchesFound,
         time: searchTime,
         memory: realSearch.memory,
-        totalSearches: this.metrics.totalSearches
+        totalSearches: this.metrics.totalSearches,
       };
-      
     } catch (error) {
       console.error(`❌ Real search failed: ${error.message}`);
       return {
         success: false,
         error: error.message,
-        query
+        query,
       };
     }
   }
@@ -195,8 +196,12 @@ export class RealZenBunDashboard {
       return;
     }
 
-    const avgTime = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length;
-    const avgMemory = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length;
+    const avgTime =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+      this.metrics.realSearchHistory.length;
+    const avgMemory =
+      this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+      this.metrics.realSearchHistory.length;
 
     if (avgTime > 100 || avgMemory > 50) {
       this.metrics.systemHealth = 'critical';
@@ -213,12 +218,16 @@ export class RealZenBunDashboard {
    * Generate REAL HTML dashboard
    */
   private async generateRealHTMLDashboard(): Promise<string> {
-    const avgTime = this.metrics.realSearchHistory.length > 0 
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) / this.metrics.realSearchHistory.length 
-      : 0;
-    const avgMemory = this.metrics.realSearchHistory.length > 0
-      ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) / this.metrics.realSearchHistory.length
-      : 0;
+    const avgTime =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.time, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
+    const avgMemory =
+      this.metrics.realSearchHistory.length > 0
+        ? this.metrics.realSearchHistory.reduce((sum, s) => sum + s.memory, 0) /
+          this.metrics.realSearchHistory.length
+        : 0;
     const totalMatches = this.metrics.realSearchHistory.reduce((sum, s) => sum + s.matches, 0);
 
     const html = `
@@ -373,14 +382,19 @@ export class RealZenBunDashboard {
         <div class="search-history">
             <h2>📜 REAL Search History - Live Data</h2>
             <div id="searchHistory">
-                ${this.metrics.realSearchHistory.length === 0 ? 
-                    '<p style="text-align: center; color: #64748b;">No real searches performed yet...</p>' :
-                    this.metrics.realSearchHistory.map(search => `
+                ${
+                  this.metrics.realSearchHistory.length === 0
+                    ? '<p style="text-align: center; color: #64748b;">No real searches performed yet...</p>'
+                    : this.metrics.realSearchHistory
+                        .map(
+                          search => `
                         <div class="search-item">
                             <span class="search-query">🔍 "${search.query}"</span>
                             <span class="search-stats">${search.matches} matches • ${search.time.toFixed(2)}ms • ${search.memory.toFixed(2)}MB</span>
                         </div>
-                    `).join('')
+                    `
+                        )
+                        .join('')
                 }
             </div>
         </div>
@@ -461,7 +475,7 @@ export class RealZenBunDashboard {
     </script>
 </body>
 </html>`;
-    
+
     return html;
   }
 
@@ -472,7 +486,7 @@ export class RealZenBunDashboard {
     const html = await this.generateRealHTMLDashboard();
     const staticFile = (Bun as any).file('real-zen-dashboard-bun.html', { type: 'text/html' });
     await Bun.write(staticFile, new TextEncoder().encode(html));
-    
+
     console.info('📄 Static REAL dashboard saved: real-zen-dashboard-bun.html');
     console.info('🎯 Open with: open real-zen-dashboard-bun.html');
   }
@@ -496,9 +510,9 @@ export class RealZenBunDashboard {
 // Run REAL dashboard with Bun file protocol
 if (import.meta.url === `file://${process.argv[1]}`) {
   const realDashboard = new RealZenBunDashboard();
-  
+
   realDashboard.startRealBunDashboard().catch(console.error);
-  
+
   // Handle graceful shutdown
   process.on('SIGINT', () => {
     console.info('\n👋 Shutting down REAL Zen Dashboard...');

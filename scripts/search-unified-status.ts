@@ -108,8 +108,10 @@ function asLoopStages(raw: any): LoopStage[] {
     .filter((stage: any) => stage.id && stage.status);
 }
 
-function toContractChecks(result: Awaited<ReturnType<typeof runSearchStatusContract>>): UnifiedContractCheck[] {
-  return result.checks.map((check) => ({
+function toContractChecks(
+  result: Awaited<ReturnType<typeof runSearchStatusContract>>
+): UnifiedContractCheck[] {
+  return result.checks.map(check => ({
     id: check.id,
     ok: check.ok,
     detail: check.detail,
@@ -143,10 +145,12 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
     : [];
 
   const stages = asLoopStages(loopRaw);
-  const staleMinutes = typeof loopRaw?.freshness?.staleMinutes === 'number'
-    ? Number(loopRaw.freshness.staleMinutes)
-    : null;
-  const latestSnapshotIdSeen = contract.summary.latestId || loopRaw?.freshness?.latestSnapshotIdSeen || null;
+  const staleMinutes =
+    typeof loopRaw?.freshness?.staleMinutes === 'number'
+      ? Number(loopRaw.freshness.staleMinutes)
+      : null;
+  const latestSnapshotIdSeen =
+    contract.summary.latestId || loopRaw?.freshness?.latestSnapshotIdSeen || null;
   const loopSnapshotId = loopRaw?.latestSnapshotId || contract.summary.loopStatusSnapshotId || null;
   const freshLevel = freshnessStatus({
     latestSnapshotIdSeen,
@@ -167,7 +171,8 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
         : null,
     blocked:
       Number(domainStatus.registry.tokenMissing || 0) > 0 ||
-      (Number(domainStatus.domainHealth.checkedRows || 0) > 0 && Number(domainStatus.domainHealth.onlineRows || 0) === 0),
+      (Number(domainStatus.domainHealth.checkedRows || 0) > 0 &&
+        Number(domainStatus.domainHealth.onlineRows || 0) === 0),
     reasons: [
       Number(domainStatus.registry.tokenMissing || 0) > 0
         ? `missing_domain_tokens=${Number(domainStatus.registry.tokenMissing || 0)}`
@@ -178,11 +183,16 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
     ].filter(Boolean),
   };
 
-  const stageLevels = stages.map((stage) => mapLoopStageToStatusLevel(stage.status));
+  const stageLevels = stages.map(stage => mapLoopStageToStatusLevel(stage.status));
   const contractChecks = toContractChecks(contract);
-  const checkLevels = contractChecks.map((check) => check.status);
+  const checkLevels = contractChecks.map(check => check.status);
   const domainLevel: StatusLevel = domainReadiness.blocked ? 'warn' : 'ok';
-  const overallStatus = computeOverallStatus([...stageLevels, ...checkLevels, freshLevel, domainLevel]);
+  const overallStatus = computeOverallStatus([
+    ...stageLevels,
+    ...checkLevels,
+    freshLevel,
+    domainLevel,
+  ]);
   const loopPolicy = isLoopClosedByPolicy(stages);
 
   return {
@@ -192,7 +202,9 @@ async function buildUnifiedStatus(options: Options): Promise<UnifiedStatusSnapsh
     freshness: {
       latestSnapshotIdSeen,
       loopStatusSnapshotId: loopSnapshotId,
-      isAligned: Boolean(latestSnapshotIdSeen && loopSnapshotId && latestSnapshotIdSeen === loopSnapshotId),
+      isAligned: Boolean(
+        latestSnapshotIdSeen && loopSnapshotId && latestSnapshotIdSeen === loopSnapshotId
+      ),
       staleMinutes,
       windowMinutes: LOOP_FRESHNESS_WINDOW_MINUTES,
       status: freshLevel,
@@ -214,8 +226,12 @@ function printText(status: UnifiedStatusSnapshot): void {
   console.info(`Overall: ${status.overall.status}`);
   console.info(`Loop closed: ${status.overall.loopClosed}`);
   console.info(`Latest snapshot: ${status.latestSnapshotId || 'n/a'}`);
-  console.info(`Freshness: ${status.freshness.status} aligned=${status.freshness.isAligned} staleMinutes=${status.freshness.staleMinutes ?? 'n/a'}`);
-  console.info(`Domain readiness: tokens ${status.domainReadiness.tokenConfigured}/${status.domainReadiness.totalDomains}, online ${status.domainReadiness.onlineRows}/${status.domainReadiness.checkedRows}`);
+  console.info(
+    `Freshness: ${status.freshness.status} aligned=${status.freshness.isAligned} staleMinutes=${status.freshness.staleMinutes ?? 'n/a'}`
+  );
+  console.info(
+    `Domain readiness: tokens ${status.domainReadiness.tokenConfigured}/${status.domainReadiness.totalDomains}, online ${status.domainReadiness.onlineRows}/${status.domainReadiness.checkedRows}`
+  );
   if (status.domainReadiness.reasons.length > 0) {
     console.info(`Reasons: ${status.domainReadiness.reasons.join(', ')}`);
   }

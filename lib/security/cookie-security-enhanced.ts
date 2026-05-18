@@ -2,7 +2,7 @@
 
 /**
  * Cookie Security System v3.25 - Enhanced with Bun v1.3.1 FileHandle.readLines()
- * 
+ *
  * This enhanced version integrates Bun v1.3.1's FileHandle.readLines() for:
  * - Efficient log file processing and analysis
  * - Batch cookie validation from files
@@ -11,8 +11,18 @@
  */
 
 import { open } from 'node:fs/promises';
-import { Cookie, CookieInspector, CSRFProtection, ABTestingVariant, JuniorRunnerCookieIntegration } from './cookie-security';
-import { CookieFileLogger, CookieBatchProcessor, type CookieLogEntry } from './cookie-file-operations';
+import {
+  Cookie,
+  CookieInspector,
+  CSRFProtection,
+  ABTestingVariant,
+  JuniorRunnerCookieIntegration,
+} from './cookie-security';
+import {
+  CookieFileLogger,
+  CookieBatchProcessor,
+  type CookieLogEntry,
+} from './cookie-file-operations';
 
 // 🚀 ENHANCED COOKIE SECURITY WITH FILEHANDLE.READLINES()
 export class EnhancedCookieSecurity {
@@ -42,12 +52,15 @@ export class EnhancedCookieSecurity {
    * Process cookie audit trail using FileHandle.readLines()
    * This is the key enhancement leveraging Bun v1.3.1
    */
-  async processAuditTrail(auditFilePath: string, options: {
-    dateRange?: { start: string; end: string };
-    cookieFilter?: string[];
-    severityFilter?: ('info' | 'warn' | 'error' | 'debug')[];
-    limit?: number;
-  } = {}): Promise<{
+  async processAuditTrail(
+    auditFilePath: string,
+    options: {
+      dateRange?: { start: string; end: string };
+      cookieFilter?: string[];
+      severityFilter?: ('info' | 'warn' | 'error' | 'debug')[];
+      limit?: number;
+    } = {}
+  ): Promise<{
     totalEntries: number;
     filteredEntries: CookieLogEntry[];
     securitySummary: {
@@ -65,20 +78,20 @@ export class EnhancedCookieSecurity {
 
     try {
       const file = await open(auditFilePath, 'r');
-      
+
       try {
         // 🚀 Using Bun v1.3.1's FileHandle.readLines() for efficient audit processing
         for await (const line of file.readLines({ encoding: 'utf8' })) {
           if (options.limit && processedCount >= options.limit) break;
-          
+
           try {
             const entry = JSON.parse(line) as CookieLogEntry;
-            
+
             // Apply filters
             if (this.passesFilters(entry, options)) {
               entries.push(entry);
             }
-            
+
             processedCount++;
           } catch {
             // Skip malformed lines
@@ -94,7 +107,7 @@ export class EnhancedCookieSecurity {
         totalEntries: 0,
         filteredEntries: [],
         securitySummary: { averageScore: 0, criticalIssues: 0, recommendations: [] },
-        performanceMetrics: { averageProcessingTime: 0, slowestOperations: [] }
+        performanceMetrics: { averageProcessingTime: 0, slowestOperations: [] },
       };
     }
 
@@ -106,7 +119,7 @@ export class EnhancedCookieSecurity {
       totalEntries: processedCount,
       filteredEntries: entries,
       securitySummary,
-      performanceMetrics
+      performanceMetrics,
     };
   }
 
@@ -115,13 +128,13 @@ export class EnhancedCookieSecurity {
    */
   async startRealTimeMonitoring(callback: (entry: CookieLogEntry) => void): Promise<void> {
     console.info('🔍 Starting real-time cookie security monitoring...');
-    
-    await this.fileLogger.monitorLogFile((entry) => {
+
+    await this.fileLogger.monitorLogFile(entry => {
       // Enhanced callback with real-time analysis
       if (entry.level === 'error' || entry.securityScore < 50) {
         console.warn(`🚨 Security Alert: ${entry.details} (Cookie: ${entry.cookieName})`);
       }
-      
+
       callback(entry);
     });
   }
@@ -141,16 +154,16 @@ export class EnhancedCookieSecurity {
   }> {
     // Get recent activity using FileHandle.readLines()
     const recentEntries: CookieLogEntry[] = [];
-    
+
     try {
       const file = await open(this.fileLogger['logPath'], 'r');
-      
+
       try {
         for await (const line of file.readLines({ encoding: 'utf8' })) {
           try {
             const entry = JSON.parse(line) as CookieLogEntry;
             recentEntries.push(entry);
-            
+
             // Get last 100 entries
             if (recentEntries.length >= 100) break;
           } catch {
@@ -165,16 +178,17 @@ export class EnhancedCookieSecurity {
     }
 
     const analysis = await this.fileLogger.analyzeLogFile();
-    
+
     // Calculate trends
     const scoreTrend = recentEntries
       .filter(e => e.securityScore)
       .map(e => ({ timestamp: e.timestamp, score: e.securityScore! }))
       .slice(-20); // Last 20 entries
 
-    const failureRate = recentEntries.length > 0 
-      ? (recentEntries.filter(e => e.result === 'failure').length / recentEntries.length) * 100
-      : 0;
+    const failureRate =
+      recentEntries.length > 0
+        ? (recentEntries.filter(e => e.result === 'failure').length / recentEntries.length) * 100
+        : 0;
 
     const issueCounts = new Map<string, number>();
     recentEntries.forEach(entry => {
@@ -196,22 +210,25 @@ export class EnhancedCookieSecurity {
       securityTrends: {
         scoreTrend,
         failureRate,
-        topIssues
+        topIssues,
       },
-      recommendations
+      recommendations,
     };
   }
 
   /**
    * Batch process cookies from file using FileHandle.readLines()
    */
-  async batchProcessFromFile(filePath: string, sessionId?: string): Promise<{
+  async batchProcessFromFile(
+    filePath: string,
+    sessionId?: string
+  ): Promise<{
     results: any;
     report: string;
   }> {
     const results = await this.batchProcessor.processCookieHeaders(filePath, sessionId);
     const report = await this.batchProcessor.generateSecurityReport();
-    
+
     return { results, report };
   }
 
@@ -221,7 +238,7 @@ export class EnhancedCookieSecurity {
       const entryTime = new Date(entry.timestamp).getTime();
       const startTime = new Date(options.dateRange.start).getTime();
       const endTime = new Date(options.dateRange.end).getTime();
-      
+
       if (entryTime < startTime || entryTime > endTime) {
         return false;
       }
@@ -248,16 +265,18 @@ export class EnhancedCookieSecurity {
     const securityScores = entries
       .filter(e => e.securityScore !== undefined)
       .map(e => e.securityScore!);
-    
-    const averageScore = securityScores.length > 0 
-      ? securityScores.reduce((sum, score) => sum + score, 0) / securityScores.length
-      : 0;
+
+    const averageScore =
+      securityScores.length > 0
+        ? securityScores.reduce((sum, score) => sum + score, 0) / securityScores.length
+        : 0;
 
     const criticalIssues = entries.filter(e => e.level === 'error').length;
 
     const recommendations = [];
     if (averageScore < 80) recommendations.push('Improve overall cookie security');
-    if (criticalIssues > entries.length * 0.1) recommendations.push('Address critical security issues');
+    if (criticalIssues > entries.length * 0.1)
+      recommendations.push('Address critical security issues');
 
     return { averageScore, criticalIssues, recommendations };
   }
@@ -267,16 +286,17 @@ export class EnhancedCookieSecurity {
       .filter(e => e.processingTime !== undefined)
       .map(e => e.processingTime!);
 
-    const averageProcessingTime = processingTimes.length > 0
-      ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length
-      : 0;
+    const averageProcessingTime =
+      processingTimes.length > 0
+        ? processingTimes.reduce((sum, time) => sum + time, 0) / processingTimes.length
+        : 0;
 
     const slowestOperations = entries
       .filter(e => e.processingTime && e.processingTime > 1.0)
       .map(e => ({
         operation: e.action,
         time: e.processingTime!,
-        cookie: e.cookieName
+        cookie: e.cookieName,
       }))
       .sort((a, b) => b.time - a.time)
       .slice(0, 5);
@@ -284,7 +304,11 @@ export class EnhancedCookieSecurity {
     return { averageProcessingTime, slowestOperations };
   }
 
-  private generateAdvancedRecommendations(analysis: any, failureRate: number, topIssues: any[]): string[] {
+  private generateAdvancedRecommendations(
+    analysis: any,
+    failureRate: number,
+    topIssues: any[]
+  ): string[] {
     const recommendations: string[] = [];
 
     if (analysis.securityMetrics.averageScore < 80) {
@@ -292,11 +316,18 @@ export class EnhancedCookieSecurity {
     }
 
     if (failureRate > 10) {
-      recommendations.push('⚠️ High failure rate detected - review cookie formats and validation logic');
+      recommendations.push(
+        '⚠️ High failure rate detected - review cookie formats and validation logic'
+      );
     }
 
     if (topIssues.length > 0) {
-      recommendations.push(`🚨 Address top issues: ${topIssues.slice(0, 3).map(i => i.issue).join(', ')}`);
+      recommendations.push(
+        `🚨 Address top issues: ${topIssues
+          .slice(0, 3)
+          .map(i => i.issue)
+          .join(', ')}`
+      );
     }
 
     if (analysis.performanceMetrics.averageProcessingTime > 5.0) {
@@ -310,42 +341,50 @@ export class EnhancedCookieSecurity {
 // 🚀 DEMO: FileHandle.readLines() Integration
 export async function demonstrateFileHandleIntegration() {
   console.info('🚀 Demonstrating Enhanced Cookie Security with Bun v1.3.1 FileHandle.readLines()');
-  
+
   const enhancedSecurity = new EnhancedCookieSecurity('./enhanced-cookie-security.log');
 
   // Test batch processing
   console.info('\n📦 Testing batch cookie processing...');
-  const batchResults = await enhancedSecurity.batchProcessFromFile('./test-cookies.txt', 'demo-session-enhanced');
-  
+  const batchResults = await enhancedSecurity.batchProcessFromFile(
+    './test-cookies.txt',
+    'demo-session-enhanced'
+  );
+
   console.info(`Processed: ${batchResults.results.processed} cookies`);
-  console.info(`Success rate: ${((batchResults.results.successful / batchResults.results.processed) * 100).toFixed(1)}%`);
+  console.info(
+    `Success rate: ${((batchResults.results.successful / batchResults.results.processed) * 100).toFixed(1)}%`
+  );
 
   // Test audit trail processing
   console.info('\n📋 Testing audit trail processing...');
   const auditResults = await enhancedSecurity.processAuditTrail('./enhanced-cookie-security.log', {
     limit: 50,
-    severityFilter: ['warn', 'error']
+    severityFilter: ['warn', 'error'],
   });
-  
+
   console.info(`Audit entries processed: ${auditResults.totalEntries}`);
   console.info(`Filtered entries: ${auditResults.filteredEntries.length}`);
-  console.info(`Average security score: ${auditResults.securitySummary.averageScore.toFixed(1)}/100`);
+  console.info(
+    `Average security score: ${auditResults.securitySummary.averageScore.toFixed(1)}/100`
+  );
 
   // Generate comprehensive report
   console.info('\n📊 Generating comprehensive security report...');
   const report = await enhancedSecurity.generateComprehensiveReport();
-  
+
   console.info(`Security score trend: ${report.securityTrends.scoreTrend.length} data points`);
   console.info(`Failure rate: ${report.securityTrends.failureRate.toFixed(1)}%`);
   console.info(`Recommendations: ${report.recommendations.length}`);
 
   // Test real-time monitoring (brief demo)
   console.info('\n🔍 Starting real-time monitoring demo (5 seconds)...');
-  
+
   let monitoringCount = 0;
-  await enhancedSecurity.startRealTimeMonitoring((entry) => {
+  await enhancedSecurity.startRealTimeMonitoring(entry => {
     monitoringCount++;
-    if (monitoringCount <= 3) { // Show first few entries
+    if (monitoringCount <= 3) {
+      // Show first few entries
       console.info(`  📝 ${entry.level.toUpperCase()}: ${entry.cookieName} - ${entry.action}`);
     }
   });
@@ -368,5 +407,5 @@ if (import.meta.main) {
 
 export default {
   EnhancedCookieSecurity,
-  demonstrateFileHandleIntegration
+  demonstrateFileHandleIntegration,
 };

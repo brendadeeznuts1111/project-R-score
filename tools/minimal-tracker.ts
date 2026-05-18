@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 // tools/minimal-tracker.ts — Minimal Bun plugin for file tracking
 
-import { plugin } from "bun";
+import { plugin } from 'bun';
 
 plugin({
-  name: "minimal tracker",
+  name: 'minimal tracker',
   setup(build) {
     let fileCount = 0;
 
@@ -26,8 +26,8 @@ plugin({
 console.info('🎯 FINAL REPORT');
 console.info('Total files processed:', ${fileCount});
         `,
-        loader: "ts"
+        loader: 'ts',
       };
     });
-  }
+  },
 });

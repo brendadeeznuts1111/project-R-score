@@ -50,7 +50,7 @@ const colors = {
   yellow: '\x1b[33m',
   blue: '\x1b[34m',
   cyan: '\x1b[36m',
-  gray: '\x1b[90m'
+  gray: '\x1b[90m',
 };
 
 function colorize(text: string, color: keyof typeof colors): string {
@@ -59,12 +59,12 @@ function colorize(text: string, color: keyof typeof colors): string {
 
 async function getLatestMainCommit(): Promise<ValidationResult> {
   try {
-    const response = await fetch("https://api.github.com/repos/oven-sh/bun/git/refs/heads/main");
+    const response = await fetch('https://api.github.com/repos/oven-sh/bun/git/refs/heads/main');
     if (!response.ok) {
       return {
         check: 'Latest Main Commit',
         status: 'error',
-        message: `GitHub API error: ${response.status}`
+        message: `GitHub API error: ${response.status}`,
       };
     }
 
@@ -76,13 +76,13 @@ async function getLatestMainCommit(): Promise<ValidationResult> {
       status: 'success',
       message: `Latest commit: ${colorize(commitHash.slice(0, 12), 'blue')}...`,
       data: { commitHash },
-      url: `https://github.com/oven-sh/bun/commit/${commitHash}`
+      url: `https://github.com/oven-sh/bun/commit/${commitHash}`,
     };
   } catch (error) {
     return {
       check: 'Latest Main Commit',
       status: 'error',
-      message: `Failed to fetch latest commit: ${error}`
+      message: `Failed to fetch latest commit: ${error}`,
     };
   }
 }
@@ -112,12 +112,15 @@ async function checkBunVersionStatus(): Promise<ValidationResult> {
       latestStable,
       isLatestStable,
       version: Bun.version,
-      platform: `${process.platform}-${process.arch}`
-    }
+      platform: `${process.platform}-${process.arch}`,
+    },
   };
 }
 
-async function getRawFileSnippet(path: string = 'packages/bun-types/bun.d.ts', lines: number = 5): Promise<ValidationResult> {
+async function getRawFileSnippet(
+  path: string = 'packages/bun-types/bun.d.ts',
+  lines: number = 5
+): Promise<ValidationResult> {
   try {
     const url = `https://raw.githubusercontent.com/oven-sh/bun/main/${path}`;
     const response = await fetch(url);
@@ -126,7 +129,7 @@ async function getRawFileSnippet(path: string = 'packages/bun-types/bun.d.ts', l
       return {
         check: 'Raw File Content',
         status: 'error',
-        message: `Failed to fetch ${path}: ${response.status}`
+        message: `Failed to fetch ${path}: ${response.status}`,
       };
     }
 
@@ -140,13 +143,13 @@ async function getRawFileSnippet(path: string = 'packages/bun-types/bun.d.ts', l
       status: 'success',
       message: `${path} (${totalLines} lines):\n${colorize(snippet, 'gray')}${lines < totalLines ? '\n...' : ''}`,
       data: { path, snippet, totalLines, requestedLines: lines },
-      url
+      url,
     };
   } catch (error) {
     return {
       check: 'Raw File Content',
       status: 'error',
-      message: `Failed to fetch raw file: ${error}`
+      message: `Failed to fetch raw file: ${error}`,
     };
   }
 }
@@ -161,7 +164,7 @@ function generateDeepLink(searchText: string, page: string = 'reference'): Valid
     status: 'success',
     message: `Generated deep link for "${colorize(searchText, 'cyan')}": ${colorize(deepLink, 'blue')}`,
     data: { searchText, page, deepLink, encodedText },
-    url: deepLink
+    url: deepLink,
   };
 }
 
@@ -180,14 +183,14 @@ async function validateDeepLink(url: string): Promise<ValidationResult> {
       status,
       message,
       data: { url, status: response.status, isValid },
-      url
+      url,
     };
   } catch (error) {
     return {
       check: 'Deep Link Validation',
       status: 'error',
       message: `Deep link check failed: ${error}`,
-      data: { url }
+      data: { url },
     };
   }
 }
@@ -195,7 +198,7 @@ async function validateDeepLink(url: string): Promise<ValidationResult> {
 async function validateCommit(commitHash: string): Promise<ValidationResult> {
   try {
     const response = await fetch(`https://github.com/oven-sh/bun/commit/${commitHash}`, {
-      method: 'HEAD'
+      method: 'HEAD',
     });
 
     const exists = response.status === 200;
@@ -209,14 +212,14 @@ async function validateCommit(commitHash: string): Promise<ValidationResult> {
       status,
       message,
       data: { commitHash, exists, status: response.status },
-      url: `https://github.com/oven-sh/bun/commit/${commitHash}`
+      url: `https://github.com/oven-sh/bun/commit/${commitHash}`,
     };
   } catch (error) {
     return {
       check: 'Commit Validation',
       status: 'error',
       message: `Commit check failed: ${error}`,
-      data: { commitHash }
+      data: { commitHash },
     };
   }
 }
@@ -237,13 +240,12 @@ async function runGitHubIntegration(): Promise<void> {
     generateDeepLink('TypedArray'),
     validateDeepLink('https://bun.com/reference#:~:text=Bun%20API%20Reference'),
     validateCommit('af76296637931381e9509c204c5f1af9cc174534'),
-    validateCommit('b64edcb490b486fb8af90cb2cb2dc51590453064')
+    validateCommit('b64edcb490b486fb8af90cb2cb2dc51590453064'),
   ]);
 
   // Display results
   for (const check of checks) {
-    const statusIcon = check.status === 'success' ? '✅' :
-                      check.status === 'warning' ? '⚠️' : '❌';
+    const statusIcon = check.status === 'success' ? '✅' : check.status === 'warning' ? '⚠️' : '❌';
 
     console.info(`${statusIcon} ${colorize(check.check, 'bright')}:`);
     console.info(`   ${check.message}`);
@@ -290,7 +292,9 @@ async function runGitHubIntegration(): Promise<void> {
   console.info();
   console.info(colorize('🔗 Useful Links:', 'bright'));
   console.info(`   ${colorize('Bun Repository:', 'gray')} https://github.com/oven-sh/bun`);
-  console.info(`   ${colorize('Latest Release:', 'gray')} https://github.com/oven-sh/bun/releases/tag/bun-v1.3.8`);
+  console.info(
+    `   ${colorize('Latest Release:', 'gray')} https://github.com/oven-sh/bun/releases/tag/bun-v1.3.8`
+  );
   console.info(`   ${colorize('Documentation:', 'gray')} https://bun.com/docs`);
   console.info(`   ${colorize('API Reference:', 'gray')} https://bun.com/reference`);
 
@@ -306,7 +310,7 @@ async function runGitHubIntegration(): Promise<void> {
 }
 
 // Run the GitHub integration suite
-runGitHubIntegration().catch((error) => {
+runGitHubIntegration().catch(error => {
   console.error(colorize(`GitHub integration failed: ${error}`, 'red'));
   process.exit(1);
 });

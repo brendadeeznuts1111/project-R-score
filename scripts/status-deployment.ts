@@ -1,10 +1,10 @@
 #!/usr/bin/env bun
 
-import { summarizeDeploymentReadiness } from "./deployment/readiness-matrix";
-import { ExecutiveVerdict } from "../dashboard/project-health";
+import { summarizeDeploymentReadiness } from './deployment/readiness-matrix';
+import { ExecutiveVerdict } from '../dashboard/project-health';
 
 const args = process.argv.slice(2);
-const simple = args.includes("--simple");
+const simple = args.includes('--simple');
 const report = summarizeDeploymentReadiness();
 
 if (simple) {
@@ -15,7 +15,7 @@ if (simple) {
       `beta=${report.summary.betaStagingCount}`,
       `overallReadiness=${report.summary.overallReadiness}`,
       `generatedAt=${report.generatedAt}`,
-    ].join(" ")
+    ].join(' ')
   );
   process.exit(0);
 }
