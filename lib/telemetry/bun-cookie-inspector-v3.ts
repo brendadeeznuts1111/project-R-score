@@ -269,7 +269,7 @@ export class CookieInspector {
     };
   }
 
-  private static categorizeCookie(cookie: Cookie, categories: any): void {
+  private static categorizeCookie(cookie: Cookie, categories: unknown): void {
     const name = cookie.name.toLowerCase();
     
     if (name.includes('session') || name.includes('sess')) {
@@ -817,7 +817,7 @@ export class CookieComparator {
   static compare(cookie1: Cookie, cookie2: Cookie): {
     sameValue: boolean;
     sameAttributes: boolean;
-    differences: Array<{ property: string; value1: any; value2: any }>;
+    differences: Array<{ property: string; value1: unknown; value2: unknown }>;
     securityImpact: 'none' | 'low' | 'medium' | 'high';
   } {
     const properties: Array<keyof Cookie> = [
@@ -825,7 +825,7 @@ export class CookieComparator {
       'secure', 'sameSite', 'partitioned', 'maxAge', 'httpOnly'
     ];
     
-    const differences: Array<{ property: string; value1: any; value2: any }> = [];
+    const differences: Array<{ property: string; value1: unknown; value2: unknown }> = [];
     
     for (const prop of properties) {
       const val1 = (cookie1 as any)[prop];
@@ -869,7 +869,7 @@ export class CookieComparator {
     name: string;
     count: number;
     instances: Cookie[];
-    conflicts: Array<{ property: string; values: any[] }>;
+    conflicts: Array<{ property: string; values: unknown[] }>;
   }> {
     const groups = new Map<string, Cookie[]>();
     
@@ -880,12 +880,12 @@ export class CookieComparator {
       groups.get(cookie.name)!.push(cookie);
     }
     
-    const duplicates: Array<{ name: string; count: number; instances: Cookie[]; conflicts: Array<{ property: string; values: any[] }> }> = [];
+    const duplicates: Array<{ name: string; count: number; instances: Cookie[]; conflicts: Array<{ property: string; values: unknown[] }> }> = [];
     
     for (const [name, instances] of groups.entries()) {
       if (instances.length > 1) {
         // Find conflicts
-        const conflicts: Array<{ property: string; values: any[] }> = [];
+        const conflicts: Array<{ property: string; values: unknown[] }> = [];
         const properties: Array<keyof Cookie> = ['domain', 'path', 'secure', 'httpOnly', 'sameSite'];
         
         for (const prop of properties) {

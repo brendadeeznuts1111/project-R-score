@@ -15,13 +15,7 @@ import path from 'node:path';
 const ROOT = process.cwd();
 const EXTENSIONS = new Set(['.ts', '.tsx', '.js', '.jsx']);
 
-const EXCLUDE_DIRS = new Set([
-  'node_modules',
-  '.git',
-  'dist',
-  'build',
-  '.cache',
-]);
+const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache']);
 
 async function* walkTsFiles(dir: string): AsyncGenerator<string> {
   let entries: string[];
@@ -57,15 +51,13 @@ for await (const file of walkTsFiles(ROOT)) {
   // Replace non-template-literal console.log calls
   // Skip lines that are already console.info/error/warn/table/group/groupEnd
   // This is a simple regex that catches most cases
-  const newContent = content.replace(
-    /(?<![.\w])console\.log\(/g,
-    'console.info('
-  );
+  const newContent = content.replace(/(?<![.\w])console\.log\(/g, 'console.info(');
 
   if (newContent !== content) {
     await writeFile(file, newContent, 'utf-8');
-    const count = (newContent.match(/console\.info\(/g) || []).length -
-                  (content.match(/console\.info\(/g) || []).length;
+    const count =
+      (newContent.match(/console\.info\(/g) || []).length -
+      (content.match(/console\.info\(/g) || []).length;
     replaced += count;
     filesChanged++;
     console.info(`Fixed ${file}: ${count} console.log -> console.info`);

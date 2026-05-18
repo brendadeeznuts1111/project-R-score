@@ -11,7 +11,7 @@ import { Cookie } from './bun-cookies-complete-v2';
 
 // 🌐 STORAGE ABSTRACTION INTERFACES
 export interface StorageAdapter {
-  set(key: string, value: any, options?: any): Promise<boolean>;
+  set(key: string, value: unknown, options?: unknown): Promise<boolean>;
   get(key: string): Promise<any>;
   delete(key: string): Promise<boolean>;
   clear(): Promise<boolean>;
@@ -62,7 +62,7 @@ export class CookieStorage implements StorageAdapter {
     this.secure = options.secure ?? true;
   }
   
-  async set(key: string, value: any, options: any = {}): Promise<boolean> {
+  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
     try {
       const cookie = new Cookie(key, JSON.stringify(value), {
         domain: options.domain || this.domain,
@@ -136,7 +136,7 @@ export class WebStorage implements StorageAdapter {
     this.prefix = prefix;
   }
   
-  async set(key: string, value: any, options: any = {}): Promise<boolean> {
+  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
     try {
       const fullKey = this.prefix + key;
       const serialized = JSON.stringify({
@@ -243,7 +243,7 @@ export class SecureStorage implements StorageAdapter {
     this.fallbackStorage = new WebStorage(localStorage, 'secure_');
   }
   
-  async set(key: string, value: any, options: any = {}): Promise<boolean> {
+  async set(key: string, value: unknown, options: unknown = {}): Promise<boolean> {
     try {
       const encrypted = await this.encrypt(JSON.stringify(value));
       return await this.fallbackStorage.set(key, encrypted, options);
@@ -377,9 +377,9 @@ export class FutureProofCookieSystem {
   // 🔄 UNIFIED STORAGE INTERFACE
   async store(
     key: string, 
-    value: any, 
+    value: unknown, 
     method: 'cookie' | 'localStorage' | 'sessionStorage' | 'httpOnly' = 'cookie',
-    options: any = {}
+    options: unknown = {}
   ): Promise<boolean> {
     try {
       // Check if cookies are supported/enabled
@@ -424,7 +424,7 @@ export class FutureProofCookieSystem {
     name: string, 
     value: string, 
     category: keyof ConsentSettings,
-    options: any = {}
+    options: unknown = {}
   ): Cookie | null {
     const consentManager = ConsentManager.getInstance();
     
@@ -438,7 +438,7 @@ export class FutureProofCookieSystem {
     return new Cookie(name, value, { ...settings, ...options });
   }
   
-  private static createEphemeralCookie(name: string, value: string, options: any = {}): Cookie {
+  private static createEphemeralCookie(name: string, value: string, options: unknown = {}): Cookie {
     return new Cookie(name, value, {
       ...options,
       maxAge: 0, // Session cookie only
@@ -448,7 +448,7 @@ export class FutureProofCookieSystem {
     });
   }
   
-  private static getSettingsForCategory(category: keyof ConsentSettings): any {
+  private static getSettingsForCategory(category: keyof ConsentSettings): unknown {
     const baseSettings = {
       secure: true,
       httpOnly: false,
@@ -496,7 +496,7 @@ export class FutureProofCookieSystem {
   }
   
   // 🔄 FALLBACK STRATEGIES
-  private async fallbackStore(key: string, value: any, options: any): Promise<boolean> {
+  private async fallbackStore(key: string, value: unknown, options: unknown): Promise<boolean> {
     console.info(`🔄 Using fallback strategy: ${this.fallbackStrategy}`);
     
     switch (this.fallbackStrategy) {

@@ -260,12 +260,12 @@ export class UnifiedCookieDataViewManager {
    * 📈 Generate Comprehensive Analytics Report
    */
   async generateAnalyticsReport(sessionId?: string): Promise<{
-    summary: any;
+    summary: unknown;
     cookieAnalytics: CookieMetrics;
-    dataViewAnalytics: any;
-    performanceAnalytics: any;
-    securityAnalytics: any;
-    trends: any;
+    dataViewAnalytics: unknown;
+    performanceAnalytics: unknown;
+    securityAnalytics: unknown;
+    trends: unknown;
   }> {
     const query = sessionId 
       ? 'SELECT * FROM unified_sessions WHERE session_id = ?'
@@ -310,7 +310,7 @@ export class UnifiedCookieDataViewManager {
     cookies: Uint8Array;
     performance: Uint8Array;
     security: Uint8Array;
-    metadata: any;
+    metadata: unknown;
   }> {
     // Export sessions with DataView serialization
     const sessions = this.db.query('SELECT * FROM unified_sessions').all() as any[];
@@ -433,7 +433,7 @@ export class UnifiedCookieDataViewManager {
     ]);
   }
   
-  private serializePerformanceMetrics(metrics: any): Uint8Array {
+  private serializePerformanceMetrics(metrics: unknown): Uint8Array {
     const buffer = new ArrayBuffer(32);
     const view = new DataView(buffer);
     view.setFloat32(0, metrics.requestLatency, true);
@@ -443,7 +443,7 @@ export class UnifiedCookieDataViewManager {
     return new Uint8Array(buffer);
   }
   
-  private serializeSecurityMetrics(metrics: any): Uint8Array {
+  private serializeSecurityMetrics(metrics: unknown): Uint8Array {
     const buffer = new ArrayBuffer(16);
     const view = new DataView(buffer);
     view.setUint16(0, metrics.secureCookies, true);
@@ -462,7 +462,7 @@ export class UnifiedCookieDataViewManager {
     }
   }
   
-  private aggregateCookieMetrics(sessions: any[]): CookieMetrics {
+  private aggregateCookieMetrics(sessions: unknown[]): CookieMetrics {
     // Simplified aggregation
     return {
       totalCookies: sessions.length,
@@ -474,7 +474,7 @@ export class UnifiedCookieDataViewManager {
     };
   }
   
-  private aggregateDataViewMetrics(sessions: any[]): any {
+  private aggregateDataViewMetrics(sessions: unknown[]): unknown {
     return {
       totalBuffers: sessions.length,
       totalSize: sessions.reduce((sum, s) => sum + (s.dataview_data?.length || 0), 0),
@@ -483,7 +483,7 @@ export class UnifiedCookieDataViewManager {
     };
   }
   
-  private aggregatePerformanceMetrics(sessions: any[]): any {
+  private aggregatePerformanceMetrics(sessions: unknown[]): unknown {
     return {
       averageLatency: 50, // ms
       averageThroughput: 20, // requests/sec
@@ -492,7 +492,7 @@ export class UnifiedCookieDataViewManager {
     };
   }
   
-  private aggregateSecurityMetrics(sessions: any[]): any {
+  private aggregateSecurityMetrics(sessions: unknown[]): unknown {
     return {
       overallScore: 95,
       secureCookieRate: 100,
@@ -502,7 +502,7 @@ export class UnifiedCookieDataViewManager {
     };
   }
   
-  private calculateTrends(sessions: any[]): any {
+  private calculateTrends(sessions: unknown[]): unknown {
     return {
       sessionGrowth: '+15%',
       performanceImprovement: '+8%',

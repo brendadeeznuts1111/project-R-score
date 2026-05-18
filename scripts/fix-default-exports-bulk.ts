@@ -102,7 +102,9 @@ for await (const file of walkFiles(ROOT)) {
   filesChanged++;
 }
 
-console.info(`\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} default exports across ${filesChanged} files.`);
+console.info(
+  `\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} default exports across ${filesChanged} files.`
+);
 if (DRY_RUN) {
   console.info('Run without --dry-run to apply fixes.');
 }

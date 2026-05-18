@@ -87,7 +87,7 @@ describe('R2Storage', () => {
     // by checking the error is about network, not about sanitization
     try {
       await storage.createBucketForPackage('@scope/pkg.name');
-    } catch (e: any) {
+    } catch (e: unknown) {
       // Should fail on network fetch, not on sanitization
       expect(e.message).not.toContain('no valid characters');
     }
@@ -98,7 +98,7 @@ describe('R2Storage', () => {
     const longName = 'a'.repeat(100);
     try {
       await storage.createBucketForPackage(longName);
-    } catch (e: any) {
+    } catch (e: unknown) {
       // Should fail on network, not sanitization — name is valid but long
       expect(e.message).not.toContain('no valid characters');
     }

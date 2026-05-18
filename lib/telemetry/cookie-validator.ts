@@ -11,12 +11,12 @@ export interface ValidationResult {
   valid: boolean;
   errors: ValidationError[];
   warnings: ValidationWarning[];
-  sanitized?: any;
+  sanitized?: unknown;
 }
 
 export interface ValidationError {
   property: string;
-  value: any;
+  value: unknown;
   rule: string;
   message: string;
   severity: 'error' | 'critical';
@@ -25,7 +25,7 @@ export interface ValidationError {
 
 export interface ValidationWarning {
   property: string;
-  value: any;
+  value: unknown;
   message: string;
   recommendation: string;
 }

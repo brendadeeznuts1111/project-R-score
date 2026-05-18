@@ -50,7 +50,9 @@ for await (const file of walkFiles(ROOT)) {
 
   for (let i = 0; i < lines.length; i++) {
     // Match non-null assertions that aren't in comments or strings
-    const matches = lines[i].match(/[a-zA-Z_$][a-zA-Z0-9_$.]*(?:\?\.(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*))*!/g);
+    const matches = lines[i].match(
+      /[a-zA-Z_$][a-zA-Z0-9_$.]*(?:\?\.(?:\([^)]*\)|[a-zA-Z_$][a-zA-Z0-9_$]*))*!/g
+    );
     if (matches) {
       fileCount += matches.length;
       total += matches.length;

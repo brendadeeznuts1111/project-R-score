@@ -199,7 +199,7 @@ export class SecureCookieManager {
   verifyCookie(cookie: Cookie): {
     valid: boolean;
     value: string | object;
-    decoded?: any;
+    decoded?: unknown;
   } {
     const rawValue = cookie.value;
     let finalValue = rawValue;
@@ -502,7 +502,7 @@ export class AnalyticsCookieMap extends CookieMap {
   }
   
   // 🔍 GET & VERIFY SECURE COOKIE
-  getSecure(name: string): { valid: boolean; value: any } {
+  getSecure(name: string): { valid: boolean; value: unknown } {
     const rawValue = this.get(name);
     if (!rawValue) return { valid: false, value: null };
     
@@ -562,7 +562,7 @@ export class AnalyticsCookieMap extends CookieMap {
 
 // 🚀 HIGH-PERFORMANCE COOKIE STORE
 export class CookieStore {
-  private cache: Map<string, { value: any; expires: number }> = new Map();
+  private cache: Map<string, { value: unknown; expires: number }> = new Map();
   private maxCacheSize: number = 1000;
   
   constructor() {
@@ -576,7 +576,7 @@ export class CookieStore {
   
   async set(
     key: string,
-    value: any,
+    value: unknown,
     ttl: number = 60 * 60 * 24 * 7 // 1 week default
   ): Promise<void> {
     const expires = Date.now() + ttl * 1000;

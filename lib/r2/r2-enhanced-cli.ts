@@ -110,7 +110,7 @@ class R2EnhancedCLI {
   }
 
   // Event System Commands
-  private async handleEvents(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleEvents(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         const stats = r2EventSystem.getStats();
@@ -151,7 +151,7 @@ class R2EnhancedCLI {
   }
 
   // Batch Operations Commands
-  private async handleBatch(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleBatch(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'upload':
         console.info(styled('\n📦 Batch Upload', 'accent'));
@@ -194,7 +194,7 @@ class R2EnhancedCLI {
   }
 
   // Lifecycle Management Commands
-  private async handleLifecycle(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleLifecycle(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2LifecycleManager.displayStatus();
@@ -252,7 +252,7 @@ class R2EnhancedCLI {
   }
 
   // Search Commands
-  private async handleSearch(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSearch(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'query':
         const query = options._[0] || options.q;
@@ -308,7 +308,7 @@ class R2EnhancedCLI {
   }
 
   // Sync Commands
-  private async handleSync(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSync(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2SyncService.displayStatus();
@@ -372,7 +372,7 @@ class R2EnhancedCLI {
   }
 
   // Backup Commands
-  private async handleBackup(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleBackup(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2BackupManager.displayStatus();
@@ -458,7 +458,7 @@ class R2EnhancedCLI {
   }
 
   // Analytics Commands
-  private async handleAnalytics(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleAnalytics(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'metrics':
         const metrics = r2Analytics.getMetrics();
@@ -533,7 +533,7 @@ class R2EnhancedCLI {
   }
 
   // Security Commands
-  private async handleSecurity(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleSecurity(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2SecurityManager.displayStatus();
@@ -606,7 +606,7 @@ class R2EnhancedCLI {
   }
 
   // Pipeline Commands
-  private async handlePipeline(subcommand: string | undefined, options: any): Promise<void> {
+  private async handlePipeline(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2TransformPipeline.displayStatus();
@@ -646,7 +646,7 @@ class R2EnhancedCLI {
   }
 
   // Webhook Commands
-  private async handleWebhook(subcommand: string | undefined, options: any): Promise<void> {
+  private async handleWebhook(subcommand: string | undefined, options: unknown): Promise<void> {
     switch (subcommand) {
       case 'status':
         r2WebhookManager.displayStatus();
@@ -836,8 +836,8 @@ class R2EnhancedCLI {
   }
 
   // Parse command line options
-  private parseOptions(args: string[]): any {
-    const options: any = { _: [] };
+  private parseOptions(args: string[]): unknown {
+    const options: unknown = { _: [] };
 
     for (let i = 0; i < args.length; i++) {
       const arg = args[i];

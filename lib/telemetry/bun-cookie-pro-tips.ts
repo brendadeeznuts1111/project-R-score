@@ -360,7 +360,7 @@ export class CookieMetrics {
     this.metrics.sessionValidationFailures++;
   }
   
-  recordError(error: any) {
+  recordError(error: unknown) {
     this.metrics.errors++;
   }
   

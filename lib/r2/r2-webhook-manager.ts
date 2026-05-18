@@ -48,7 +48,7 @@ export interface WebhookDelivery {
   event: {
     type: string;
     timestamp: string;
-    data: any;
+    data: unknown;
   };
   status: 'pending' | 'success' | 'failed';
   attempts: Array<{
@@ -214,7 +214,7 @@ export class R2WebhookManager {
   /**
    * Route event to matching webhooks
    */
-  private routeEvent(event: any): void {
+  private routeEvent(event: unknown): void {
     for (const webhook of this.webhooks.values()) {
       if (webhook.status !== 'active') continue;
 
@@ -280,7 +280,7 @@ export class R2WebhookManager {
   /**
    * Create delivery
    */
-  private createDelivery(webhookId: string, event: any): WebhookDelivery {
+  private createDelivery(webhookId: string, event: unknown): WebhookDelivery {
     const delivery: WebhookDelivery = {
       id: `del-${Date.now()}-${crypto.randomUUID().slice(0, 8)}`,
       webhookId,
@@ -401,7 +401,7 @@ export class R2WebhookManager {
   /**
    * Build webhook payload
    */
-  private buildPayload(delivery: WebhookDelivery): any {
+  private buildPayload(delivery: WebhookDelivery): unknown {
     return {
       event: delivery.event.type,
       timestamp: delivery.event.timestamp,
@@ -416,7 +416,7 @@ export class R2WebhookManager {
   /**
    * Generate HMAC signature
    */
-  private generateSignature(payload: any, secret: string): string {
+  private generateSignature(payload: unknown, secret: string): string {
     const data = JSON.stringify(payload);
     // In production, use proper HMAC
     return `sha256=${Bun.hash(data + secret).toString(16)}`;
@@ -425,7 +425,7 @@ export class R2WebhookManager {
   /**
    * Verify webhook signature
    */
-  verifySignature(payload: any, signature: string, secret: string): boolean {
+  verifySignature(payload: unknown, signature: string, secret: string): boolean {
     const expected = this.generateSignature(payload, secret);
     return signature === expected;
   }

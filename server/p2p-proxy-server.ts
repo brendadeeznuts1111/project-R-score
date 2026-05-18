@@ -1,21 +1,27 @@
 #!/usr/bin/env bun
 /**
  * P2P Proxy Server - Unified Payment Bridge
- * 
+ *
  * Clients pay directly to your personal accounts via P2P:
  * - CashApp: $HaircutPro
- * - Venmo: @HaircutPro  
+ * - Venmo: @HaircutPro
  * - PayPal: paypal.me/HaircutPro
- * 
+ *
  * Server catches webhooks → Fuses profiles → Auto-credits with stealth bonus
- * 
+ *
  * Flow:
  * Client App (P2P) → Your Personal Account → Webhook → Bun Proxy → Credit + Bonus
  */
 
 import Redis from 'ioredis';
 import crypto from 'node:crypto';
-import { getHabits, storeHabits, classifyHabits, calculateBonus, type HabitsData } from '@fw/business';
+import {
+  getHabits,
+  storeHabits,
+  classifyHabits,
+  calculateBonus,
+  type HabitsData,
+} from '@fw/business';
 
 // ============================================================================
 // Configuration
@@ -45,11 +51,11 @@ const WEBHOOK_SECRETS = {
 // ============================================================================
 
 const redis = new Redis(REDIS_URL, {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
-redis.on('error', (err) => console.error('Redis error:', err.message));
+redis.on('error', err => console.error('Redis error:', err.message));
 redis.on('connect', () => console.info('✅ Redis connected'));
 
 // ============================================================================
@@ -70,7 +76,7 @@ function verifyWebhookSignature(
     console.error('Webhook verification rejected: missing signature or secret');
     return false;
   }
-  
+
   const expected = hmacSha256Hex(secret, body);
   const cleanSig = prefix ? signature.replace(prefix, '') : signature;
   return cleanSig === expected || signature === expected;
@@ -91,20 +97,19 @@ interface ParsedPayment {
 async function parsePayPalWebhook(body: string, headers: Headers): Promise<ParsedPayment | null> {
   const sig = headers.get('paypal-transmission-sig');
   const isPayPal = headers.get('user-agent')?.includes('PayPal') || sig;
-  
+
   if (!isPayPal) return null;
-  
-  if (!await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.paypal, 'v1=')) {
+
+  if (!(await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.paypal, 'v1='))) {
     throw new Error('Invalid PayPal signature');
   }
-  
+
   const event = JSON.parse(body);
   if (event.event_type !== 'PAYMENT.SALE.COMPLETED') return null;
-  
-  const email = event.resource?.payer?.payer_info?.email ?? 
-                event.resource?.sender_email ?? '';
+
+  const email = event.resource?.payer?.payer_info?.email ?? event.resource?.sender_email ?? '';
   const amount = parseFloat(event.resource?.amount?.total ?? 0);
-  
+
   return {
     userId: email ? `@${email.split('@')[0]}` : '@unknown',
     rawUserId: email,
@@ -116,21 +121,22 @@ async function parsePayPalWebhook(body: string, headers: Headers): Promise<Parse
 
 async function parseVenmoWebhook(body: string, headers: Headers): Promise<ParsedPayment | null> {
   const sig = headers.get('x-venmo-signature');
-  
+
   if (!sig) return null;
-  
-  if (!await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.venmo, 'v1=')) {
+
+  if (!(await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.venmo, 'v1='))) {
     throw new Error('Invalid Venmo signature');
   }
-  
+
   const event = JSON.parse(body);
   if (event.type !== 'payment.created') return null;
-  
+
   const username = event.data?.actor?.username ?? 'unknown';
-  const amount = typeof event.data?.amount === 'string' 
-    ? parseFloat(event.data.amount) 
-    : Number(event.data?.amount ?? 0);
-  
+  const amount =
+    typeof event.data?.amount === 'string'
+      ? parseFloat(event.data.amount)
+      : Number(event.data?.amount ?? 0);
+
   return {
     userId: username.startsWith('@') ? username : `@${username}`,
     rawUserId: username,
@@ -142,22 +148,22 @@ async function parseVenmoWebhook(body: string, headers: Headers): Promise<Parsed
 
 async function parseCashAppWebhook(body: string, headers: Headers): Promise<ParsedPayment | null> {
   const sig = headers.get('square-signature') ?? headers.get('x-cashapp-signature');
-  
+
   // CashApp/Square webhooks
   const isCashApp = sig || body.includes('payment.created') || body.includes('cashapp');
   if (!isCashApp) return null;
-  
-  if (!await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.cashapp)) {
+
+  if (!(await verifyWebhookSignature(body, sig, WEBHOOK_SECRETS.cashapp))) {
     throw new Error('Invalid CashApp signature');
   }
-  
+
   const event = JSON.parse(body);
-  
+
   // Square/CashApp format
   const paymentData = event.data?.object ?? event.data;
   const amountCents = paymentData?.amount_money?.amount ?? paymentData?.amount ?? 0;
   const email = paymentData?.buyer_email_address ?? paymentData?.customer_email ?? '';
-  
+
   return {
     userId: email ? `@${email.split('@')[0]}` : '@cashapp_user',
     rawUserId: email || 'cashapp_user',
@@ -185,10 +191,10 @@ interface ProcessResult {
 async function processP2PPayment(payment: ParsedPayment): Promise<ProcessResult> {
   // 1. Generate anonymous ID (stealth hash)
   const anonId = Bun.hash(payment.userId).toString(36).slice(0, 12);
-  
+
   // 2. Get or create habits
   let habits = await getHabits(anonId);
-  
+
   if (!habits) {
     // First time user - start as casual
     habits = classifyHabits([{ amount: payment.amount, timestamp: new Date().toISOString() }]);
@@ -197,21 +203,21 @@ async function processP2PPayment(payment: ParsedPayment): Promise<ProcessResult>
     // Update habits with new transaction
     const newTxns = [
       ...Array(habits.txnCount - 1).fill({ amount: habits.avgTxn }),
-      { amount: payment.amount }
+      { amount: payment.amount },
     ];
     habits = classifyHabits(newTxns.map(a => ({ amount: a.amount })));
     await storeHabits(anonId, habits);
   }
-  
+
   // 3. Calculate bonus
   const bonusCalc = calculateBonus(payment.amount, habits);
   const totalCredit = payment.amount + bonusCalc.bonus;
-  
+
   // 4. Credit balance
   const balanceKey = `balance:${anonId}`;
   await redis.incrbyfloat(balanceKey, totalCredit);
   const newBalance = await redis.get(balanceKey);
-  
+
   // 5. Store transaction record
   const txnRecord = {
     ...payment,
@@ -222,35 +228,41 @@ async function processP2PPayment(payment: ParsedPayment): Promise<ProcessResult>
     newBalance: parseFloat(newBalance || '0'),
     processedAt: new Date().toISOString(),
   };
-  
+
   await redis.lpush(`txns:${anonId}`, JSON.stringify(txnRecord));
   await redis.ltrim(`txns:${anonId}`, 0, 99); // Keep last 100
-  
+
   // 6. Publish event
-  await redis.publish('P2P_PAYMENT', JSON.stringify({
-    proxyHandle: PROXY_HANDLES[payment.provider],
-    userId: anonId,
-    originalUser: payment.userId,
-    provider: payment.provider,
-    amount: payment.amount,
-    bonus: bonusCalc.bonus,
-    total: totalCredit,
-    tier: habits.tier,
-    balance: newBalance,
-  }));
-  
+  await redis.publish(
+    'P2P_PAYMENT',
+    JSON.stringify({
+      proxyHandle: PROXY_HANDLES[payment.provider],
+      userId: anonId,
+      originalUser: payment.userId,
+      provider: payment.provider,
+      amount: payment.amount,
+      bonus: bonusCalc.bonus,
+      total: totalCredit,
+      tier: habits.tier,
+      balance: newBalance,
+    })
+  );
+
   // 7. Publish personalized deposit for dashboard
-  await redis.publish('PERSONALIZED_DEPOSIT', JSON.stringify({
-    userId: anonId,
-    amount: payment.amount,
-    bonus: bonusCalc.bonus,
-    totalDeposit: totalCredit,
-    tier: habits.tier,
-    source: 'p2p_proxy',
-    provider: payment.provider,
-    timestamp: new Date().toISOString(),
-  }));
-  
+  await redis.publish(
+    'PERSONALIZED_DEPOSIT',
+    JSON.stringify({
+      userId: anonId,
+      amount: payment.amount,
+      bonus: bonusCalc.bonus,
+      totalDeposit: totalCredit,
+      tier: habits.tier,
+      source: 'p2p_proxy',
+      provider: payment.provider,
+      timestamp: new Date().toISOString(),
+    })
+  );
+
   return {
     success: true,
     anonId,
@@ -271,7 +283,7 @@ function generateQRPage(amount: number): string {
   const cashappUrl = `https://cash.app/${PROXY_HANDLES.cashapp.replace('$', '')}/${amount}`;
   const venmoUrl = `https://venmo.com/${PROXY_HANDLES.venmo.replace('@', '')}?txn=pay&amount=${amount}`;
   const paypalUrl = `https://${PROXY_HANDLES.paypal}/${amount}`;
-  
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -418,68 +430,76 @@ const server = Bun.serve({
   async fetch(req) {
     const url = new URL(req.url);
     const path = url.pathname;
-    
+
     const origin = req.headers.get('Origin') || '';
     const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
-    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
-      ? origin
-      : (allowedOrigins.length > 0 ? 'null' : '*');
+    const corsOrigin =
+      allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins.length > 0
+          ? 'null'
+          : '*';
     const corsHeaders = {
       'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
-      'Vary': 'Origin',
+      Vary: 'Origin',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check
     if (path === '/health') {
-      return new Response(JSON.stringify({
-        status: 'ok',
-        version: 'p2p-proxy-1.0',
-        handles: PROXY_HANDLES,
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          version: 'p2p-proxy-1.0',
+          handles: PROXY_HANDLES,
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Unified webhook endpoint
     if (path === '/webhook/proxy' && req.method === 'POST') {
       const body = await req.text();
       const headers = req.headers;
-      
+
       try {
         // Try each provider
         let payment: ParsedPayment | null = null;
-        
+
         payment = await parsePayPalWebhook(body, headers);
         if (!payment) payment = await parseVenmoWebhook(body, headers);
         if (!payment) payment = await parseCashAppWebhook(body, headers);
-        
+
         if (!payment) {
           console.info('⚠️  Unknown webhook format');
           return new Response(JSON.stringify({ received: true, processed: false }), {
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
           });
         }
-        
+
         // Process the payment
         const result = await processP2PPayment(payment);
         console.info(result.message);
-        
-        return new Response(JSON.stringify({
-          received: true,
-          processed: true,
-          ...result,
-        }), {
-          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        });
-        
+
+        return new Response(
+          JSON.stringify({
+            received: true,
+            processed: true,
+            ...result,
+          }),
+          {
+            headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          }
+        );
       } catch (err: any) {
         console.error('❌ Webhook error:', err.message);
         return new Response(JSON.stringify({ error: err.message }), {
@@ -488,7 +508,7 @@ const server = Bun.serve({
         });
       }
     }
-    
+
     // QR/Payment page
     if (path === '/qr' || path === '/pay') {
       const amount = Number(url.searchParams.get('amount')) || 20;
@@ -496,27 +516,31 @@ const server = Bun.serve({
         headers: { 'Content-Type': 'text/html' },
       });
     }
-    
+
     // API: Get balance
     if (path.startsWith('/api/balance/')) {
       const userId = path.split('/')[3];
       const anonId = Bun.hash(userId).toString(36).slice(0, 12);
       const balance = await redis.get(`balance:${anonId}`);
       const txns = await redis.lrange(`txns:${anonId}`, 0, 9);
-      
-      return new Response(JSON.stringify({
-        userId,
-        anonId,
-        balance: parseFloat(balance || '0'),
-        recentTransactions: txns.map(t => JSON.parse(t)),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+      return new Response(
+        JSON.stringify({
+          userId,
+          anonId,
+          balance: parseFloat(balance || '0'),
+          recentTransactions: txns.map(t => JSON.parse(t)),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Root documentation
     if (path === '/') {
-      return new Response(`<!DOCTYPE html>
+      return new Response(
+        `<!DOCTYPE html>
 <html>
 <head>
   <title>P2P Proxy Server</title>
@@ -560,9 +584,11 @@ const server = Bun.serve({
   -H "paypal-transmission-sig: v1=test" \\
   -d '{"event_type":"PAYMENT.SALE.COMPLETED","resource":{"amount":{"total":"25.00"},"sender_email":"client@example.com"}}'</pre>
 </body>
-</html>`, { headers: { 'Content-Type': 'text/html' } });
+</html>`,
+        { headers: { 'Content-Type': 'text/html' } }
+      );
     }
-    
+
     return new Response('Not found', { status: 404, headers: corsHeaders });
   },
 });

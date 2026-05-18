@@ -7,7 +7,7 @@ export interface BatchOperation {
   id: string;
   type: 'upload' | 'download' | 'delete' | 'copy' | 'move';
   key: string;
-  data?: any;
+  data?: unknown;
   metadata?: Record<string, string>;
   options?: Record<string, any>;
 }
@@ -81,7 +81,7 @@ export class R2BatchOperations {
    */
   async batchUpload(
     bucket: string,
-    items: Array<{ key: string; data: any; metadata?: Record<string, string> }>,
+    items: Array<{ key: string; data: unknown; metadata?: Record<string, string> }>,
     options?: Partial<BatchConfig>
   ): Promise<BatchJob> {
     const config = { ...this.config, ...options };

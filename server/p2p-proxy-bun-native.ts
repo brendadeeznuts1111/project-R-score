@@ -1,7 +1,7 @@
 #!/usr/bin/env bun
 /**
  * P2P Proxy Server - Bun-Native Version
- * 
+ *
  * Uses Bun's native APIs:
  * - Bun.CryptoHasher for HMAC signatures
  * - Bun.secrets for OS-level secret storage
@@ -31,7 +31,7 @@ const BRAND_CONFIG = {
 // ============================================================================
 
 const redis = new Redis(REDIS_URL, {
-  retryStrategy: (times) => Math.min(times * 50, 2000),
+  retryStrategy: times => Math.min(times * 50, 2000),
   maxRetriesPerRequest: 3,
 });
 
@@ -49,13 +49,13 @@ async function getWebhookSecret(provider: 'paypal' | 'venmo' | 'cashapp'): Promi
   try {
     const secret = await Bun.secrets?.get?.({
       service: 'p2p-proxy',
-      name: `${provider.toUpperCase()}_WEBHOOK_SECRET`
+      name: `${provider.toUpperCase()}_WEBHOOK_SECRET`,
     });
     if (secret) return secret;
   } catch {
     // Bun.secrets might not be available on all platforms
   }
-  
+
   // Fallback to environment variable
   return Bun.env[`${provider.toUpperCase()}_WEBHOOK_SECRET`] ?? null;
 }
@@ -71,7 +71,7 @@ async function storeWebhookSecret(
     await Bun.secrets?.set?.({
       service: 'p2p-proxy',
       name: `${provider.toUpperCase()}_WEBHOOK_SECRET`,
-      value: secret
+      value: secret,
     });
     console.info(`✅ Stored ${provider} secret in OS keychain`);
   } catch (err: any) {
@@ -94,23 +94,23 @@ class P2PProxy {
     provider: 'paypal' | 'venmo' | 'cashapp'
   ): Promise<boolean> {
     const secret = await getWebhookSecret(provider);
-    
+
     if (!secret) {
       console.info(`⚠️  ${provider} secret not configured - accepting (dev mode)`);
       return true;
     }
-    
+
     // Use Bun.CryptoHasher for HMAC (native, no node:crypto)
     const hasher = new Bun.CryptoHasher('sha256', secret);
     hasher.update(body);
     const expectedSig = hasher.digest('hex');
-    
+
     const headerName = {
       paypal: 'paypal-transmission-sig',
       venmo: 'x-venmo-signature',
-      cashapp: 'square-signature'
+      cashapp: 'square-signature',
     }[provider];
-    
+
     const receivedSig = headers.get(headerName)?.replace('v1=', '');
     return expectedSig === receivedSig;
   }
@@ -122,11 +122,11 @@ class P2PProxy {
   static generateStealthId(rawId: string, provider: string): string {
     // Combine inputs for uniqueness
     const input = `${rawId}:${provider}:${BRAND_CONFIG.brandName}`;
-    
+
     // Use Bun.hash for fast non-cryptographic hash
     // For password/credential hashing, use Bun.password instead
     const hashValue = Bun.hash(input);
-    
+
     // Convert to base36 string and take first 16 chars
     return `user_${hashValue.toString(36).substring(0, 16)}`;
   }
@@ -140,70 +140,67 @@ class P2PProxy {
   ): Promise<{ bonus: number; tier: string; bonusRate: number }> {
     const habitsKey = `habits:${stealthId}`;
     const habits = await redis.hgetall(habitsKey);
-    
+
     let tier = habits?.tier || 'new';
     let bonusRate = 0.05; // Default 5%
-    
+
     // Tier-based rates
-    if (tier === 'whale') bonusRate = 0.20;
+    if (tier === 'whale') bonusRate = 0.2;
     else if (tier === 'high-volume') bonusRate = 0.15;
-    else if (tier === 'active') bonusRate = 0.10;
-    
+    else if (tier === 'active') bonusRate = 0.1;
+
     // First-time bonus
     const txnCount = parseInt(habits?.txnCount || '0');
     if (txnCount === 0) {
       bonusRate += 0.05; // Extra 5% for first payment
       tier = 'new';
     }
-    
+
     return {
       bonus: Math.round(amount * bonusRate * 100) / 100,
       tier,
-      bonusRate
+      bonusRate,
     };
   }
 
   /**
    * Process payment webhook
    */
-  static async processPayment(
-    provider: 'paypal' | 'venmo' | 'cashapp',
-    payload: any
-  ) {
+  static async processPayment(provider: 'paypal' | 'venmo' | 'cashapp', payload: any) {
     // Extract payment data
     let userId: string, amount: number, paymentId: string;
-    
+
     switch (provider) {
       case 'paypal':
-        userId = payload.resource?.payer?.payer_info?.email ?? 
-                payload.resource?.sender_email ?? 'unknown';
+        userId =
+          payload.resource?.payer?.payer_info?.email ?? payload.resource?.sender_email ?? 'unknown';
         amount = parseFloat(payload.resource?.amount?.total || 0);
         paymentId = payload.resource?.id ?? `pp_${Date.now()}`;
         break;
-        
+
       case 'venmo':
         userId = payload.data?.actor?.username ?? 'unknown';
-        amount = typeof payload.data?.amount === 'string'
-          ? parseFloat(payload.data.amount)
-          : Number(payload.data?.amount || 0);
+        amount =
+          typeof payload.data?.amount === 'string'
+            ? parseFloat(payload.data.amount)
+            : Number(payload.data?.amount || 0);
         paymentId = payload.data?.id ?? `vm_${Date.now()}`;
         break;
-        
+
       case 'cashapp':
-        userId = payload.data?.buyer_email_address ?? 
-                payload.data?.customer_id ?? 'cashapp_user';
+        userId = payload.data?.buyer_email_address ?? payload.data?.customer_id ?? 'cashapp_user';
         amount = parseFloat(payload.data?.amount_money?.amount || 0) / 100;
         paymentId = payload.data?.payment_id ?? `ca_${Date.now()}`;
         break;
     }
-    
+
     if (!userId || amount <= 0) {
       throw new Error('Invalid payment data');
     }
-    
+
     // Generate stealth ID
     const stealthId = this.generateStealthId(userId, provider);
-    
+
     // Record transaction
     const txnKey = `p2p:${stealthId}:${Date.now()}`;
     await redis.hmset(txnKey, {
@@ -212,33 +209,33 @@ class P2PProxy {
       stealthId,
       amount: amount.toString(),
       timestamp: new Date().toISOString(),
-      status: 'received'
+      status: 'received',
     });
-    
+
     // Calculate bonus
     const { bonus, tier, bonusRate } = await this.calculateBonus(stealthId, amount);
     const totalCredit = amount + bonus;
-    
+
     // Update balance
     await redis.incrbyfloat(`balance:${stealthId}`, totalCredit);
-    
+
     // Update habits
     const habitsKey = `habits:${stealthId}`;
     const newCount = await redis.hincrby(habitsKey, 'txnCount', 1);
     await redis.hset(habitsKey, 'lastTxn', Date.now().toString());
     await redis.hincrbyfloat(habitsKey, 'totalSpent', amount);
-    
+
     // Recalculate tier
-    const totalSpent = parseFloat(await redis.hget(habitsKey, 'totalSpent') || '0');
+    const totalSpent = parseFloat((await redis.hget(habitsKey, 'totalSpent')) || '0');
     const avgTxn = totalSpent / newCount;
-    
+
     let newTier = 'casual';
     if (newCount > 100 && avgTxn > 100) newTier = 'whale';
     else if (newCount > 50) newTier = 'high-volume';
     else if (newCount > 20 && avgTxn > 20) newTier = 'active';
-    
+
     await redis.hset(habitsKey, 'tier', newTier);
-    
+
     // Publish events
     const eventData = {
       stealthId,
@@ -249,17 +246,20 @@ class P2PProxy {
       totalCredit,
       tier: newTier,
       timestamp: Date.now(),
-      paymentId
+      paymentId,
     };
-    
+
     await redis.publish('p2p:payment', JSON.stringify(eventData));
-    await redis.publish('PERSONALIZED_DEPOSIT', JSON.stringify({
-      ...eventData,
-      userId: stealthId,
-      totalDeposit: totalCredit,
-      source: 'p2p_proxy'
-    }));
-    
+    await redis.publish(
+      'PERSONALIZED_DEPOSIT',
+      JSON.stringify({
+        ...eventData,
+        userId: stealthId,
+        totalDeposit: totalCredit,
+        source: 'p2p_proxy',
+      })
+    );
+
     // Store receipt
     const receiptId = `rcpt_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`;
     await redis.hmset(`receipt:${receiptId}`, {
@@ -269,9 +269,9 @@ class P2PProxy {
       total: totalCredit.toString(),
       tier: newTier,
       timestamp: new Date().toISOString(),
-      brand: BRAND_CONFIG.brandName
+      brand: BRAND_CONFIG.brandName,
     });
-    
+
     return {
       success: true,
       stealthId,
@@ -279,7 +279,7 @@ class P2PProxy {
       bonus,
       totalCredit,
       tier: newTier,
-      message: `💈 ${provider}: $${amount} + $${bonus} bonus → $${totalCredit} (${newTier})`
+      message: `💈 ${provider}: $${amount} + $${bonus} bonus → $${totalCredit} (${newTier})`,
     };
   }
 }
@@ -292,7 +292,7 @@ function generatePaymentPage(amount: number, description: string): string {
   const cashappUrl = `https://cash.app/${BRAND_CONFIG.cashTag.replace('$', '')}/${amount}`;
   const venmoUrl = `https://venmo.com/${BRAND_CONFIG.venmoHandle.replace('@', '')}?txn=pay&amount=${amount}`;
   const paypalUrl = `https://${BRAND_CONFIG.paypalLink}/${amount}`;
-  
+
   return `<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -461,49 +461,55 @@ function generatePaymentPage(amount: number, description: string): string {
 const server = Bun.serve({
   port: PORT,
   hostname: '0.0.0.0',
-  
+
   async fetch(req) {
     const url = new URL(req.url);
     const body = await req.text();
     const headers = req.headers;
-    
+
     const origin = req.headers.get('Origin') || '';
     const allowedOrigins = (process.env.CORS_ALLOWED_ORIGINS || '').split(',').filter(Boolean);
-    const corsOrigin = allowedOrigins.length > 0 && allowedOrigins.includes(origin)
-      ? origin
-      : (allowedOrigins.length > 0 ? 'null' : '*');
+    const corsOrigin =
+      allowedOrigins.length > 0 && allowedOrigins.includes(origin)
+        ? origin
+        : allowedOrigins.length > 0
+          ? 'null'
+          : '*';
     const corsHeaders = {
       'Access-Control-Allow-Origin': corsOrigin,
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type',
-      'Vary': 'Origin',
+      Vary: 'Origin',
     };
-    
+
     if (req.method === 'OPTIONS') {
       return new Response(null, { headers: corsHeaders });
     }
-    
+
     // Health check with Bun APIs info
     if (url.pathname === '/health') {
       const secretsAvailable = typeof Bun.secrets?.get === 'function';
-      
-      return new Response(JSON.stringify({
-        status: 'ok',
-        version: 'p2p-proxy-bun-native',
-        bun: {
-          version: Bun.version,
-          cryptoHasher: true,
-          secrets: secretsAvailable,
-          hash: true,
-        },
-        brand: BRAND_CONFIG,
-        redis: redis.status === 'ready' ? 'connected' : 'disconnected',
-        timestamp: new Date().toISOString(),
-      }), {
-        headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+
+      return new Response(
+        JSON.stringify({
+          status: 'ok',
+          version: 'p2p-proxy-bun-native',
+          bun: {
+            version: Bun.version,
+            cryptoHasher: true,
+            secrets: secretsAvailable,
+            hash: true,
+          },
+          brand: BRAND_CONFIG,
+          redis: redis.status === 'ready' ? 'connected' : 'disconnected',
+          timestamp: new Date().toISOString(),
+        }),
+        {
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        }
+      );
     }
-    
+
     // Store secret (admin endpoint)
     if (url.pathname === '/admin/secret' && req.method === 'POST') {
       try {
@@ -519,68 +525,71 @@ const server = Bun.serve({
         });
       }
     }
-    
+
     // Unified webhook endpoint
     if (url.pathname === '/webhook/proxy' && req.method === 'POST') {
       try {
         // Detect provider
         let provider: 'paypal' | 'venmo' | 'cashapp' | null = null;
-        
-        if (headers.get('user-agent')?.includes('PayPal') || headers.get('paypal-transmission-sig')) {
+
+        if (
+          headers.get('user-agent')?.includes('PayPal') ||
+          headers.get('paypal-transmission-sig')
+        ) {
           provider = 'paypal';
         } else if (headers.get('x-venmo-signature')) {
           provider = 'venmo';
         } else if (headers.get('square-signature')) {
           provider = 'cashapp';
         }
-        
+
         if (!provider) {
-          return new Response(
-            JSON.stringify({ error: 'Unknown provider' }),
-            { status: 400, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Unknown provider' }), {
+            status: 400,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Verify signature using Bun.CryptoHasher
         const isValid = await P2PProxy.verifySignature(body, headers, provider);
         if (!isValid) {
-          return new Response(
-            JSON.stringify({ error: 'Invalid signature' }),
-            { status: 401, headers: corsHeaders }
-          );
+          return new Response(JSON.stringify({ error: 'Invalid signature' }), {
+            status: 401,
+            headers: corsHeaders,
+          });
         }
-        
+
         // Process payment
         const payload = JSON.parse(body);
         const result = await P2PProxy.processPayment(provider, payload);
-        
+
         console.info(result.message);
-        
+
         return new Response(JSON.stringify(result), {
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         });
-        
       } catch (err: any) {
         console.error('Webhook error:', err);
-        return new Response(
-          JSON.stringify({ error: err.message }),
-          { status: 500, headers: corsHeaders }
-        );
+        return new Response(JSON.stringify({ error: err.message }), {
+          status: 500,
+          headers: corsHeaders,
+        });
       }
     }
-    
+
     // Payment page
     if ((url.pathname === '/pay' || url.pathname === '/qr') && req.method === 'GET') {
       const amount = Number(url.searchParams.get('amount')) || 20;
       const description = url.searchParams.get('desc') || 'Service';
-      
+
       return new Response(generatePaymentPage(amount, description), {
         headers: { 'Content-Type': 'text/html' },
       });
     }
-    
+
     // Root
-    return new Response(`<!DOCTYPE html>
+    return new Response(
+      `<!DOCTYPE html>
 <html>
 <head>
   <title>${BRAND_CONFIG.brandName} P2P Proxy</title>
@@ -616,9 +625,11 @@ const server = Bun.serve({
   <br>
   <p>Webhook: <code>POST /webhook/proxy</code></p>
 </body>
-</html>`, {
-      headers: { 'Content-Type': 'text/html' },
-    });
+</html>`,
+      {
+        headers: { 'Content-Type': 'text/html' },
+      }
+    );
   },
 });
 

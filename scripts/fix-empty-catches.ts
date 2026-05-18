@@ -85,7 +85,9 @@ async function main() {
     console.info(`Fixed ${file}: ${matches.length} empty catch(es)`);
   }
 
-  console.info(`\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} empty catches across ${filesChanged} files.`);
+  console.info(
+    `\nDone! ${DRY_RUN ? 'Found' : 'Fixed'} ${totalFixed} empty catches across ${filesChanged} files.`
+  );
   if (DRY_RUN) {
     console.info('Run without --dry-run to apply fixes.');
   }

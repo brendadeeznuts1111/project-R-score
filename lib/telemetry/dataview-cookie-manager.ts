@@ -186,7 +186,7 @@ export class DataViewCookieManager {
   /**
    * Record session events with binary data
    */
-  async recordSessionEvent(sessionId: string, eventType: string, eventData: any): Promise<void> {
+  async recordSessionEvent(sessionId: string, eventType: string, eventData: unknown): Promise<void> {
     const eventBuffer = this.serializer.serialize(eventData, {
       sessionId,
       timestamp: Date.now(),

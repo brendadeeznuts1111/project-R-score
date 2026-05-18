@@ -74,7 +74,7 @@ export interface PipelineRun {
 
 export interface DataValidator {
   name: string;
-  validate: (data: any) => { valid: boolean; errors: string[] };
+  validate: (data: unknown) => { valid: boolean; errors: string[] };
 }
 
 export class R2TransformPipeline {
@@ -316,7 +316,7 @@ export class R2TransformPipeline {
     objectKey: string,
     run: PipelineRun
   ): Promise<{ success: boolean; outputSize: number }> {
-    let data: any = await this.readObject(pipeline.source.bucket, objectKey);
+    let data: unknown = await this.readObject(pipeline.source.bucket, objectKey);
     let currentSize = JSON.stringify(data).length;
     run.metrics.bytesIn += currentSize;
 
@@ -349,7 +349,7 @@ export class R2TransformPipeline {
   /**
    * Execute a single transformation step
    */
-  private async executeStep(step: TransformStep, data: any, sourceKey: string): Promise<any> {
+  private async executeStep(step: TransformStep, data: unknown, sourceKey: string): Promise<any> {
     switch (step.operation) {
       case 'compress':
         return await this.compressData(data, step.config.algorithm);
@@ -398,7 +398,7 @@ export class R2TransformPipeline {
   /**
    * Compress data
    */
-  private async compressData(data: any, algorithm: string): Promise<Buffer> {
+  private async compressData(data: unknown, algorithm: string): Promise<Buffer> {
     const json = JSON.stringify(data);
     const buffer = Buffer.from(json);
 
@@ -425,7 +425,7 @@ export class R2TransformPipeline {
   /**
    * Convert data format
    */
-  private async convertFormat(data: any, from: string, to: string): Promise<any> {
+  private async convertFormat(data: unknown, from: string, to: string): Promise<any> {
     if (from === to) return data;
 
     // JSON to CSV
@@ -458,7 +458,7 @@ export class R2TransformPipeline {
   /**
    * Filter data based on condition
    */
-  private filterData(data: any[], condition: string): any[] {
+  private filterData(data: unknown[], condition: string): unknown[] {
     if (!Array.isArray(data)) return data;
     // Simple filter - in production use a proper expression parser
     return data.filter(item => {
@@ -474,7 +474,7 @@ export class R2TransformPipeline {
    * Aggregate data
    */
   private async aggregateData(
-    data: any[],
+    data: unknown[],
     config: { window: string; groupBy: string }
   ): Promise<any> {
     if (!Array.isArray(data)) return data;
@@ -501,7 +501,7 @@ export class R2TransformPipeline {
   /**
    * Sanitize data by removing sensitive fields
    */
-  private sanitizeData(data: any, removeFields: string[]): any {
+  private sanitizeData(data: unknown, removeFields: string[]): unknown {
     if (typeof data !== 'object' || data === null) return data;
 
     const sanitized = { ...data };
@@ -515,7 +515,7 @@ export class R2TransformPipeline {
   /**
    * Enrich data with additional information
    */
-  private async enrichData(data: any, enrichments: any[]): Promise<any> {
+  private async enrichData(data: unknown, enrichments: unknown[]): Promise<any> {
     // In production, would fetch enrichment data from external sources
     return {
       ...data,
@@ -547,7 +547,7 @@ export class R2TransformPipeline {
   /**
    * Write object to R2
    */
-  private async writeObject(bucket: string, key: string, data: any): Promise<void> {
+  private async writeObject(bucket: string, key: string, data: unknown): Promise<void> {
     // In production, would write to R2
     console.info(styled(`  💾 Writing: ${bucket}/${key}`, 'muted'));
   }

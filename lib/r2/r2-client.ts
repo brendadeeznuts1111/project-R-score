@@ -21,7 +21,7 @@ function isLocalMode(): boolean {
 /**
  * Upload data to R2 storage
  */
-export async function uploadToR2(key: string, data: any, options: R2UploadOptions = {}): Promise<void> {
+export async function uploadToR2(key: string, data: unknown, options: R2UploadOptions = {}): Promise<void> {
   try {
     console.info(`📤 Uploading to R2: ${key}`);
 

@@ -60,7 +60,7 @@ export class R2Storage {
     return bucketName;
   }
 
-  async uploadPackageDocs(packageName: string, docs: any): Promise<string> {
+  async uploadPackageDocs(packageName: string, docs: unknown): Promise<string> {
     const bucketName = await this.getOrCreateBucket(packageName);
     const timestamp = Date.now();
     const key = `packages/${packageName}/${timestamp}/docs.json`;
@@ -76,7 +76,7 @@ export class R2Storage {
     return `https://${bucketName}.${this.config.accountId}.r2.dev/packages/${packageName}/`;
   }
 
-  private async generateHtmlDocs(packageName: string, docs: any): Promise<string> {
+  private async generateHtmlDocs(packageName: string, docs: unknown): Promise<string> {
     const template = `
 <!DOCTYPE html>
 <html>
@@ -233,7 +233,7 @@ export class R2Storage {
     await this.put(this.config.defaultBucket, key, Buffer.from(data));
   }
 
-  private async putJson(key: string, data: any): Promise<void> {
+  private async putJson(key: string, data: unknown): Promise<void> {
     await this.put(this.config.defaultBucket, key, Buffer.from(JSON.stringify(data)));
   }
 
@@ -266,8 +266,8 @@ export class R2Storage {
   /**
    * Parse S3 XML response for list objects
    */
-  private parseListObjectsResponse(xml: string): any[] {
-    const objects: any[] = [];
+  private parseListObjectsResponse(xml: string): unknown[] {
+    const objects: unknown[] = [];
     
     // Simple XML parsing for S3 ListObjects response
     // In production, you'd want to use a proper XML parser

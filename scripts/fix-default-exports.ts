@@ -16,7 +16,8 @@ const ROOT = process.cwd();
 const EXCLUDE_DIRS = new Set(['node_modules', '.git', 'dist', 'build', '.cache', '.npm-cache']);
 const EXTENSIONS = new Set(['.ts', '.tsx']);
 
-const defaultExportRE = /export\s+default\s+(function|class|const|let|var|interface|type|abstract\s+class)\s+(\w+)/;
+const defaultExportRE =
+  /export\s+default\s+(function|class|const|let|var|interface|type|abstract\s+class)\s+(\w+)/;
 const defaultExportObjectRE = /export\s+default\s*\{/;
 const defaultExportExprRE = /export\s+default\s+(\w+);?$/m;
 
@@ -53,7 +54,9 @@ for await (const file of walkFiles(ROOT)) {
   let match;
 
   if ((match = content.match(defaultExportRE))) {
-    console.info(`${file}:\n  export default ${match[1]} ${match[2]} -> export ${match[1]} ${match[2]}`);
+    console.info(
+      `${file}:\n  export default ${match[1]} ${match[2]} -> export ${match[1]} ${match[2]}`
+    );
   } else if ((match = content.match(defaultExportObjectRE))) {
     console.info(`${file}:\n  export default { ... } -> export const ... = { ... }`);
   } else if ((match = content.match(defaultExportExprRE))) {

@@ -216,7 +216,7 @@ export class R2EventSystem {
   /**
    * Broadcast event to all WebSocket clients
    */
-  private broadcastToWebSockets(event: any): void {
+  private broadcastToWebSockets(event: unknown): void {
     const message = JSON.stringify(event);
     this.wsClients.forEach(ws => {
       try {
@@ -514,7 +514,7 @@ export class R2EventSystem {
 export const r2EventSystem = new R2EventSystem();
 
 // Helper functions for common events
-export function emitObjectCreated(bucket: string, key: string, metadata?: any): void {
+export function emitObjectCreated(bucket: string, key: string, metadata?: unknown): void {
   r2EventSystem.emit({
     type: 'object:created',
     bucket,
@@ -524,7 +524,7 @@ export function emitObjectCreated(bucket: string, key: string, metadata?: any): 
   });
 }
 
-export function emitObjectUpdated(bucket: string, key: string, metadata?: any): void {
+export function emitObjectUpdated(bucket: string, key: string, metadata?: unknown): void {
   r2EventSystem.emit({
     type: 'object:updated',
     bucket,

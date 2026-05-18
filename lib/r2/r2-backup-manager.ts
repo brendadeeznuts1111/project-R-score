@@ -630,7 +630,7 @@ export class R2BackupManager {
     return true;
   }
 
-  private async calculateChecksum(data: any): Promise<string> {
+  private async calculateChecksum(data: unknown): Promise<string> {
     const hash = await crypto.subtle.digest(
       'SHA-256',
       new TextEncoder().encode(JSON.stringify(data))
